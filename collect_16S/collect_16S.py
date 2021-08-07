@@ -20,6 +20,11 @@ tblout_header = 'target_name\taccession\tquery_name\taccession\tmdl\tmdl_from\tm
 # possible_seqstart_trunc_note = '16S ribosomal RNA rRNA prediction is too short'
 # cmsearch_note = 'Derived by automated computational analysis using gene prediction method: cmsearch.'
 
+# note:
+# 16S ribosomal RNA rRNA prediction is too short
+# note:
+# possible 16S ribosomal RNA but does not have goodblast hits on one or both of the ends
+
 stats_header = [
     'ass_id', 'refseq_id', 'acc', 'title',
     'seq_start_truncation', 'improper_16S_annotation', 'topology',
