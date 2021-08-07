@@ -1,0 +1,5 @@
+1. assembly2refseq_id.py
+2. gis_to_accs.py
+3. merge_assID2acc_and_remove_WGS.py
+4. download_genomes.py
+5. collect_16S.py
