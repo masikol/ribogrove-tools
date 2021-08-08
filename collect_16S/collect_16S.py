@@ -40,16 +40,24 @@ ssu_product_names = {
     'RIBOSOMAL RNA-16S'
 }
 
+trunc_ssu_notes = {
+    '16S RIBOSOMAL RNA RRNA PREDICTION IS TOO SHORT',
+    'POSSIBLE 16S RIBOSOMAL RNA',
+}
+
 def is_ssu(feature):
     qualifiers = feature.qualifiers
 
     norm_ssu = 'product' in qualifiers.keys() \
                and qualifiers['product'][0].upper() in ssu_product_names
 
-    # maybe_trunc_ssu = 'note' in qualifiers.keys() \
-    #                   and possible_seqstart_trunc_note in qualifiers['note']
+    maybe_trunc_ssu = False
+    if 'note' in qualifiers.keys():
+        concat_notes = ''.join(qualifiers['note']).upper()
+        maybe_trunc_ssu = any(map(lambda note: note in concat_notes, trunc_ssu_notes))
+    # end if
 
-    return norm_ssu# or maybe_trunc_ssu
+    return norm_ssu or maybe_trunc_ssu
 # end def is_ssu
 
 def filter_ssu_genes(features):
@@ -225,7 +233,7 @@ def extract_reannotated_genes(gbrecord, topology):
     reformat_tblout(tblout_fpath)
 
     tblout_df = pd.read_csv(tblout_fpath, sep='\t')
-    tblout_df = tblout_df[tblout_df['trunc'] == 'no']
+    # tblout_df = tblout_df[tblout_df['trunc'] == 'no']
 
     genes = list()
 
