@@ -3,3 +3,7 @@
 3. merge_assID2acc_and_remove_WGS.py
 4. download_genomes.py
 5. collect_16S.py
+6. find_pivotal_genes.py
+7. assign_genome_categories.py
+8. get_taxIDs.py
+9. add_taxonomy_names.py

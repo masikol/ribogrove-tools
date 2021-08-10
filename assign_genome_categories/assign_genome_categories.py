@@ -2,12 +2,14 @@
 
 import os
 import sys
+import gzip
 import subprocess as sp
 
-import padnas as pd
+import pandas as pd
 from Bio import SeqIO
 
-in_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_collect_16S_stats.tsv'
+
+in_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_16S_stats.tsv'
 fasta_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta'
 gbk_dpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/genomes-data/gbk'
 
@@ -21,12 +23,12 @@ seem_like_ont_but_not = {
     # ~~~
 }
 
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_genome_categories.tsv'
-seqtech_logfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_genome_seqtechs.log'
-genes_categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_16S_genes_categories.tsv'
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_genome_categories.tsv'
+seqtech_logfpath = '/mnt/1.5_drive_0/16S_scrubbling/logs/bacteria_genome_seqtechs.log'
+genes_categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_16S_genes_categories.tsv'
 
 
-def find_degenerate_in_16S(fasta_seqs_fpath):
+def find_degenerate_in_16S(fasta_seqs_fpath, stats_df):
 
     cmd = f'seqkit grep -srp "[RYWSKMHVBDN]" {fasta_seqs_fpath} | seqkit seq -ni | cut -f1 -d":" | sort | uniq'
     pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
@@ -46,11 +48,9 @@ def find_degenerate_in_16S(fasta_seqs_fpath):
 # end def find_degenerate_in_16S
 
 
-def get_genes_seqIDs(fasta_seqs_fpath, accs):
+def get_genes_seqIDs(fasta_seqs_fpath):
 
-    acc_options = '-p "' + '" -p "'.join(accs) + '"'
-
-    cmd = f'seqkit grep -nr {acc_options} {fasta_seqs_fpath} | seqkit seq -ni'
+    cmd = f'seqkit seq -ni {fasta_seqs_fpath}'
     pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
     stdout_stderr = pipe.communicate()
 
@@ -89,7 +89,7 @@ def make_acc_seqIDs_dict(fasta_seqs_fpath):
     # end for
 
     return acc_seqIDs_dict
-# end def
+# end def make_acc_seqIDs_dict
 
 
 def read_seqtech_vocab(fpath):
@@ -157,8 +157,6 @@ def parse_seqtech(gbrecord, logfile):
         struct_comment = gbrecord.annotations['structured_comment']
     except KeyError as err:
         logfile.write(f'{gbrecord.id} - Error (no structured_comment): {err}\n')
-        out_str = f'{gbrecord.id}\t{n_gbrecords}\tNA\n'
-        resfile.write(out_str)
         return None
     # end try
 
@@ -169,8 +167,6 @@ def parse_seqtech(gbrecord, logfile):
     else:
         logfile.write(f'{gbrecord.id} - Error: no `(Genome)-Assembly-Data` in keys of structured_comment. ')
         logfile.write(f'Keys: {";".join(struct_comment.keys())}\n')
-        out_str = f'{gbrecord.id}\t{n_gbrecords}\tNA\n'
-        resfile.write(out_str)
         return None
     # end if
 
@@ -185,14 +181,12 @@ def parse_seqtech(gbrecord, logfile):
     else:
         logfile.write(f'{gbrecord.id} - Error: no `Sequencing Technology` in keys of `Assembly data` ')
         logfile.write(f'Keys: {";".join(assembly_data.keys())}\n')
-        out_str = f'{gbrecord.id}\t{n_gbrecords}\tNA\n'
-        resfile.write(out_str)
         return None
     # end if
 
     seqtech = assembly_data[seqtech_key]
     logfile.write(f'{gbrecord.id} - ok\n')
-    return seqtech
+    return seqtech.upper().strip()
 # end def parse_seqtech
 
 
@@ -207,6 +201,7 @@ stats_df = pd.read_csv(
 )
 n_accs = stats_df.shape[0]
 
+
 pacbio_vocab = read_seqtech_vocab(pacbio_vocab_fpath)
 illumina_vocab = read_seqtech_vocab(illumina_vocab_fpath)
 nanopore_vocab = read_seqtech_vocab(nanopore_vocab_fpath)
@@ -214,19 +209,21 @@ nanopore_vocab = read_seqtech_vocab(nanopore_vocab_fpath)
 
 print('Searching for 16S genes containing degenerate bases...')
 ass_ids_degenerate_in_16S = find_degenerate_in_16S(fasta_seqs_fpath, stats_df)
-print(f'Found {len(ass_ids_degenerate_in_16S)} 16S genes containing degenerate bases')
+print(f'Found {len(ass_ids_degenerate_in_16S)} assemblies containing 16S genes with degenerate bases')
 
 print('Building `acc_seqIDs_dict`')
 acc_seqIDs_dict = make_acc_seqIDs_dict(fasta_seqs_fpath)
 # accs_with_16S_genes = set(acc_seqIDs_dict.keys())
 print('`acc_seqIDs_dict` is built')
 
+
 with open(outfpath, 'wt') as outfile, open(seqtech_logfpath, 'wt') as logfile, open(genes_categories_fpath, 'wt') as genes_cat_outfile:
 
-    outfile.write('ass_id\taccs\tseqtech\tcontains_NNN\tdegenerate_in_16S\tcategory\n')
+    outfile.write('ass_id\taccs\tseqtech\tcontains_NNN\tdegenerate_in_16S\tunlocalized_16S\tcategory\n')
     genes_cat_outfile.write('ass_id\tseqID\tcategory\n')
 
-    assembly_IDs = tuple(stats_df['ass_id'])
+    assembly_IDs = tuple(set(stats_df['ass_id']))
+    # assembly_IDs = tuple(stats_df.sample(100)['ass_id'])
 
     for i, ass_id in enumerate(assembly_IDs):
         print(f'\rDoing {i+1}/{len(assembly_IDs)}: {ass_id}', end=' '*10)
@@ -235,10 +232,10 @@ with open(outfpath, 'wt') as outfile, open(seqtech_logfpath, 'wt') as logfile, o
 
         unlocalized_16S = False
         contains_NNN = False
-        degenerate_in_16S = False
-        seqtech = ''
+        degenerate_in_16S = ass_id in ass_ids_degenerate_in_16S
+        seqtechs = list()
 
-        for acc_i, acc in ass_df.iterrows():
+        for acc_i, row in ass_df.iterrows():
             acc = row['acc']
             title = row['title']
 
@@ -255,15 +252,18 @@ with open(outfpath, 'wt') as outfile, open(seqtech_logfpath, 'wt') as logfile, o
             # end with
 
             contains_NNN = contains_NNN or find_NNN(gbrecord)
-            degenerate_in_16S = degenerate_in_16S or ass_id in ass_ids_degenerate_in_16S
 
             curr_seqtech = parse_seqtech(gbrecord, logfile)
             if not curr_seqtech is None:
-                seqtech = f'{seqtech}. {curr_seqtech}'
+                seqtechs.append(curr_seqtech)
             # end if
         # end for
 
-        seqtech = seqtech.strip()
+        if len(seqtechs) != 0:
+            seqtech = '. '.join(seqtechs)
+        else:
+            seqtech = 'NA'
+        # end if
 
         category = None
         if contains_NNN or degenerate_in_16S or unlocalized_16S:
@@ -274,11 +274,12 @@ with open(outfpath, 'wt') as outfile, open(seqtech_logfpath, 'wt') as logfile, o
             category = 2
         # end if
 
-        accs = tuple(ass_df['accs'])
+        accs = tuple(ass_df['acc'])
 
         outfile.write(f'{ass_id}\t{";".join(accs)}\t')
         outfile.write(f'{seqtech}\t{1 if contains_NNN else 0}\t')
-        outfile.write(f'{1 if degenerate_in_16S else 0}\t{category}\n')
+        outfile.write(f'{1 if degenerate_in_16S else 0}\t{1 if unlocalized_16S else 0}\t')
+        outfile.write(f'{category}\n')
 
         for acc in accs:
             try:
