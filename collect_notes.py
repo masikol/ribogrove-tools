@@ -8,13 +8,13 @@ import statistics as sts
 import pandas as pd
 from Bio import SeqIO
 
-# in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/test_bacteria_ass_refseq_accs_merged.tsv'
-# gbk_dpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/genomes-data/gbk'
-# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/all_genes_notes.tsv'
+in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
+gbk_dpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/genomes-data/gbk'
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/all_genes_notes.tsv'
 
-in_acc_fpath = '/home/deynonih/cager/new_16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
-gbk_dpath = '/home/deynonih/Desktop/gbk'
-outfpath = '/home/deynonih/cager/new_16S_scrubbling/all_genes_notes.tsv'
+# in_acc_fpath = '/home/deynonih/cager/new_16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
+# gbk_dpath = '/home/deynonih/Desktop/gbk'
+# outfpath = '/home/deynonih/cager/new_16S_scrubbling/all_genes_notes.tsv'
 
 
 # note:
@@ -27,11 +27,6 @@ acc_df = pd.read_csv(
     in_acc_fpath,
     sep='\t'
 )
-
-acc_df = acc_df[
-    (acc_df['acc'] == 'NZ_CP009125.1') \
-  | (acc_df['acc'] == 'NZ_CP036528.1')
-]
 
 needed_types = {'RRNA', 'MISC_FEATURE'}
 

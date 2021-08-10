@@ -7,8 +7,8 @@ import statistics as sts
 import pandas as pd
 from Bio import SeqIO
 
-in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/test_bacteria_ass_refseq_accs_merged.tsv'
-# in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
+# in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/test_bacteria_ass_refseq_accs_merged.tsv'
+in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
 gbk_dpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/genomes-data/gbk'
 fasta_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta.gz'
 outstats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_collect_16S_stats.tsv'
@@ -394,7 +394,7 @@ tmpfasta = os.path.join(
     'tmpBILLY.fasta'
 )
 os.system(f'zcat {fasta_outfpath} | seqkit rmdup -n | gzip > {tmpfasta}')
-os.system(f'cat {tmpfasta} | seqkit seq -u > {fasta_outfpath}')
+os.system(f'zcat {tmpfasta} | seqkit seq -u | gzip > {fasta_outfpath}')
 print('Done\n')
 
 print('\nCompleted!')
