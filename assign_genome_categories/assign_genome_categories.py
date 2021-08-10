@@ -8,19 +8,22 @@ import padnas as pd
 from Bio import SeqIO
 
 in_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_collect_16S_stats.tsv'
-fasta_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta.gz'
+fasta_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta'
 gbk_dpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/genomes-data/gbk'
-pacbio_vocab_fpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/seqtech_dicts/pacbio'
-illumina_vocab_fpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/seqtech_dicts/illumina'
-nanopore_vocab_fpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/seqtech_dicts/ont'
+
+pacbio_vocab_fpath = 'seqtech_dicts/pacbio'
+illumina_vocab_fpath = 'seqtech_dicts/illumina'
+nanopore_vocab_fpath = 'seqtech_dicts/ont'
+seem_like_ont_but_not = {
+    'IONTORRENT',
+    # ~~~
+    'CONTIG', # see NC_020549.1
+    # ~~~
+}
+
 outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_genome_categories.tsv'
 seqtech_logfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_genome_seqtechs.log'
 genes_categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_16S_genes_categories.tsv'
-
-stats_df = pd.read_csv(
-    in_stats_fpath,
-    sep='\t'
-)
 
 
 def find_degenerate_in_16S(fasta_seqs_fpath):
@@ -43,8 +46,11 @@ def find_degenerate_in_16S(fasta_seqs_fpath):
 # end def find_degenerate_in_16S
 
 
-def get_genes_seqIDs(fasta_seqs_fpath):
-    cmd = f'seqkit seq -ni {fasta_seqs_fpath}'
+def get_genes_seqIDs(fasta_seqs_fpath, accs):
+
+    acc_options = '-p "' + '" -p "'.join(accs) + '"'
+
+    cmd = f'seqkit grep -nr {acc_options} {fasta_seqs_fpath} | seqkit seq -ni'
     pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
     stdout_stderr = pipe.communicate()
 
@@ -98,10 +104,6 @@ def read_seqtech_vocab(fpath):
     return vocab
 # end
 
-pacbio_vocab = read_seqtech_vocab(pacbio_vocab_fpath)
-illumina_vocab = read_seqtech_vocab(illumina_vocab_fpath)
-nanopore_vocab = read_seqtech_vocab(nanopore_vocab_fpath)
-
 
 def is_pacbio(seqtech_str):
     global pacbio_vocab
@@ -137,13 +139,16 @@ def is_nanopore(seqtech_str):
                 return True
             # end if
         else:
-            if keyword in seqtech_str and not "IONTORRENT" in seqtech_str:
+            for word in seem_like_ont_but_not:
+                seqtech_str = seqtech_str.replace(word, '')
+            # end for
+            if keyword in seqtech_str:
                 return True
             # end if
         # end if
     # end for
     return False
-# end
+# end def is_nanopore
 
 
 def parse_seqtech(gbrecord, logfile):
@@ -196,7 +201,16 @@ def find_NNN(gbrecord):
 # end def find_NNN
 
 
+stats_df = pd.read_csv(
+    in_stats_fpath,
+    sep='\t'
+)
 n_accs = stats_df.shape[0]
+
+pacbio_vocab = read_seqtech_vocab(pacbio_vocab_fpath)
+illumina_vocab = read_seqtech_vocab(illumina_vocab_fpath)
+nanopore_vocab = read_seqtech_vocab(nanopore_vocab_fpath)
+
 
 print('Searching for 16S genes containing degenerate bases...')
 ass_ids_degenerate_in_16S = find_degenerate_in_16S(fasta_seqs_fpath, stats_df)
@@ -204,7 +218,7 @@ print(f'Found {len(ass_ids_degenerate_in_16S)} 16S genes containing degenerate b
 
 print('Building `acc_seqIDs_dict`')
 acc_seqIDs_dict = make_acc_seqIDs_dict(fasta_seqs_fpath)
-accs_with_16S_genes = set(acc_seqIDs_dict.keys())
+# accs_with_16S_genes = set(acc_seqIDs_dict.keys())
 print('`acc_seqIDs_dict` is built')
 
 with open(outfpath, 'wt') as outfile, open(seqtech_logfpath, 'wt') as logfile, open(genes_categories_fpath, 'wt') as genes_cat_outfile:
@@ -222,7 +236,7 @@ with open(outfpath, 'wt') as outfile, open(seqtech_logfpath, 'wt') as logfile, o
         unlocalized_16S = False
         contains_NNN = False
         degenerate_in_16S = False
-        seqtech = None
+        seqtech = ''
 
         for acc_i, acc in ass_df.iterrows():
             acc = row['acc']
@@ -242,55 +256,43 @@ with open(outfpath, 'wt') as outfile, open(seqtech_logfpath, 'wt') as logfile, o
 
             contains_NNN = contains_NNN or find_NNN(gbrecord)
             degenerate_in_16S = degenerate_in_16S or ass_id in ass_ids_degenerate_in_16S
+
+            curr_seqtech = parse_seqtech(gbrecord, logfile)
+            if not curr_seqtech is None:
+                seqtech = f'{seqtech}. {curr_seqtech}'
+            # end if
         # end for
 
-    # end for
-
-
-
-    for i, row in stats_df.iterrows():
-        ass_id = row['ass_id']
-        acc = row['acc']
-        title = row['title']
-        print(f'\rDoing {i+1}/{n_accs}: {acc}', end=' ')
-
-        gbk_fpath = os.path.join(
-            gbk_dpath,
-            f'{acc}.gbk.gz'
-        )
-
-        with gzip.open(gbk_fpath, 'rt') as gbfile:
-            gbrecord = tuple(SeqIO.parse(gbfile, 'gb'))[0]
-        # end with
-
-        map_unlocalized = 'MAP UNLOCALIZED' in title.upper()
-        unlocalized_16S = map_unlocalized and row['num_genes'] != 0
-
-        seqtech = parse_seqtech(gbrecord, logfile).upper()
-        contains_NNN = find_NNN(gbrecord)
-        degenerate_in_16S = acc in accs_degenerate_in_16S
+        seqtech = seqtech.strip()
 
         category = None
         if contains_NNN or degenerate_in_16S or unlocalized_16S:
             category = 3
-        elif seqtech is None:
-            category = 2
         elif is_pacbio(seqtech) or (is_illumina(seqtech) and is_nanopore(seqtech)):
             category = 1
         else:
             category = 2
         # end if
 
-        outfile.write(f'{acc}\t{seqtech}\t{1 contains_NNN else 0}\t{1 if degenerate_in_16S else 0}\t{category}\n')
+        accs = tuple(ass_df['accs'])
 
-        if acc in accs_with_16S_genes:
-            for seqID in acc_seqIDs_dict[acc]:
-                genes_cat_outfile.write(f'{seqID}\t{category}\n')
-            # end for
-        # end if
+        outfile.write(f'{ass_id}\t{";".join(accs)}\t')
+        outfile.write(f'{seqtech}\t{1 if contains_NNN else 0}\t')
+        outfile.write(f'{1 if degenerate_in_16S else 0}\t{category}\n')
 
+        for acc in accs:
+            try:
+                for seqID in acc_seqIDs_dict[acc]:
+                    genes_cat_outfile.write(f'{ass_id}\t{seqID}\t{category}\n')
+                # end for
+            except KeyError:
+                pass
+            # end try
+        # end for
     # end for
 # end with
 
 print('\nCompleted!')
 print(outfpath)
+print(seqtech_logfpath)
+print(genes_categories_fpath)
