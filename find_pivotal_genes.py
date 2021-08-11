@@ -12,7 +12,7 @@ from Bio import SeqIO
 
 genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_collect_16S_stats.tsv'
 fasta_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta'
-# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/pivotal_genes.tsv'
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/pivotal_genes.tsv'
 
 rfam = '/mnt/1.5_drive_0/16S_scrubbling/rfam/RF00177.14.6.cm'
 cmscan = '/home/cager/Misc_soft/infernal/infernal-1.1.4/bin/cmscan'
@@ -28,7 +28,7 @@ def select_seqs(accs, fasta_seqs_fpath, query_fasta_fpath):
     acc_options = '-p "' + '" -p "'.join(accs) + '"'
     cmd = f'cat {fasta_seqs_fpath} | seqkit grep -nr {acc_options} > {query_fasta_fpath}'
 
-    print(f'\n{cmd}')
+    # print(f'\n{cmd}')
 
     returncode = os.system(cmd)
     if returncode != 0:

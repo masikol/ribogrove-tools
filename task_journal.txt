@@ -7,3 +7,4 @@
 7. assign_genome_categories.py
 8. get_taxIDs.py
 9. add_taxonomy_names.py
+10. intragenomic_diff_with_pivotal_genes.py

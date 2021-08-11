@@ -10,11 +10,14 @@ from Bio import SeqIO
 # in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/test_bacteria_ass_refseq_accs_merged.tsv'
 in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
 gbk_dpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/genomes-data/gbk'
+
 fasta_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta.gz'
 outstats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_collect_16S_stats.tsv'
+# fasta_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_all_collected.fasta.gz'
+# outstats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_all_collected_collect_16S_stats.tsv'
 
 cmsearch = '/home/cager/Misc_soft/infernal/infernal-1.1.1/bin/cmsearch'
-rfam_12_0_fpath = '/mnt/1.5_drive_0/16S_scrubbling/SSU_rRNA_bacteria_12.0.cm'
+rfam_12_0_fpath = '/mnt/1.5_drive_0/16S_scrubbling/rfam/RF00177.12.0.cm'
 tblout_header = 'target_name\taccession\tquery_name\taccession\tmdl\tmdl_from\tmdl_to\tseq_from\tseq_to\tstrand\ttrunc\tpass\tgc\tbias\tscore\tEvalue\tinc\tdescription_of_target'
 
 # possible_seqstart_trunc_note = '16S ribosomal RNA rRNA prediction is too short'
@@ -153,7 +156,7 @@ def extract_gene_as_is(feature, gbrecord):
     seq_end = feature.location.end
     seq_strand = feature.location.strand
 
-    seq = gbrecord.seq[seq_start : seq_end]
+    seq = gbrecord.seq[seq_start-1 : seq_end]
     if seq_strand == -1:
         seq = seq.reverse_complement()
     # end if

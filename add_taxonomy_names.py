@@ -21,7 +21,7 @@ rankedlineage_df = pd.read_csv(
     names=['taxID', 'tax_name', 'species', 'genus', 'family', 'order', 'class', 'phylum', 'kingdom', 'superkingdom'],
     header=None,
     dtype={
-        'taxID': pd.Int32DType(),
+        'taxID': pd.Int32Dtype(),
         'tax_name': str,
         'species': str,
         'genus': str,
@@ -46,7 +46,7 @@ taxid_df = pd.read_csv(
     dtype={
         'ass_id': int,
         'accs': str,
-        'taxID': pd.Int32DType()
+        'taxID': pd.Int32Dtype()
     }
 )
 
@@ -78,7 +78,7 @@ per_gene_taxid_df = pd.read_csv(
         'seqID': str,
         'ass_id': int,
         'accs': str,
-        'taxID': pd.Int32DType()
+        'taxID': pd.Int32Dtype()
     }
 )
 
