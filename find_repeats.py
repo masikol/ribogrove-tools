@@ -2,6 +2,7 @@
 
 import re
 
+# https://github.com/deprekate/RepeatFinder
 import repeatfinder as rf
 from Bio import SeqIO
 
