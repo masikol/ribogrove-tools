@@ -34,7 +34,7 @@ with open(outfpath, 'wt') as outfile:
 
         repeats = rf.get_repeats(str(record.seq))
 
-        lengths = map(get_repeat_len, repeats)
+        # lengths = map(get_repeat_len, repeats)
 
         for r in repeats:
             if not re.search(nonredundant_pattern, str(record.seq[r[0] : r[1]])) is None:

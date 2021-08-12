@@ -8,11 +8,12 @@ import subprocess as sp
 
 import pandas as pd
 from Bio import SeqIO
+# https://github.com/deprekate/RepeatFinder
+import repeatfinder as rf
 
 
 genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_collect_16S_stats.tsv'
-fasta_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/NN/gene_seqs_NN.fasta'
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/pivotal_genes.tsv'
+fasta_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
 
 rfam = '/mnt/1.5_drive_0/16S_scrubbling/rfam/RF00177.14.6.cm'
 cmscan = '/home/cager/Misc_soft/infernal/infernal-1.1.4/bin/cmscan'
@@ -20,6 +21,9 @@ tblout_header = 'target_name\taccession\tquery_name\taccession\tmdl\tmdl_from\tm
 
 query_fasta_fpath = 'tmpQUERY.fasta'
 tblout_dpath = '/mnt/1.5_drive_0/16S_scrubbling/tblout'
+
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/pivotal_genes.tsv'
+pivotal_genes_repeats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/pivotal_genes_repeats.tsv'
 
 lendiff_threshold = 5
 
@@ -118,6 +122,19 @@ def amend_scores(seqIDs, out_text, tblout_df):
 # end def amend_scores
 
 
+def extract_pivotal_seq_records(query_fasta_fpath, best_gene_seqIDs):
+
+    seq_records = tuple(SeqIO.parse(query_fasta_fpath, 'fasta'))
+
+    pivotal_records = filter(
+        lambda rec: rec.id in best_gene_seqIDs,
+        seq_records
+    )
+
+    return {r.id: r.seq for r in pivotal_records}
+# end def extract_pivotal_seq_records
+
+
 def extract_pivotal_gene_lengths(query_fasta_fpath, best_gene_seqIDs):
 
     seq_records = tuple(SeqIO.parse(query_fasta_fpath, 'fasta'))
@@ -129,6 +146,11 @@ def extract_pivotal_gene_lengths(query_fasta_fpath, best_gene_seqIDs):
 
     return {r.id: len(r.seq) for r in pivotal_records}
 # end def extract_pivotal_genes
+
+
+def get_repeat_len(repeat_out):
+    return repeat_out[1] - repeat_out[0] + 1
+# end
 
 
 
@@ -145,13 +167,15 @@ grpd_df['lendiff'] = grpd_df['max_len'] - grpd_df['min_len']
 ass_ids = set(stats_df['ass_id'])
 
 
-with open(outfpath, 'wt') as outfile:
+with open(outfpath, 'wt') as outfile, \
+     open(pivotal_genes_repeats_fpath, 'wt') as repeats_outfile:
 
-    outfile.write(f'ass_id\tdiff_large\tpivotal_gene_seqID\tpivotal_gene_len\tmin_len\tmax_len\n')
+    outfile.write('ass_id\tdiff_large\tpivotal_gene_seqID\tpivotal_gene_len\tmin_len\tmax_len\n')
+    repeats_outfile.write('ass_id\tpivotal_gene_seqID\tr1_start\tr1_end\tr2_start\tr2_end\trep_len\n')
 
     for i, ass_id in enumerate(ass_ids):
 
-        print(f'\rDoing {i+1}/{len(ass_ids)}: {ass_id}', end=''*10)
+        print(f'\rDoing {i+1}/{len(ass_ids)}: {ass_id}', end=' '*10)
 
         curr_grpd_df = grpd_df[grpd_df['ass_id'] == ass_id]
         min_len = curr_grpd_df['min_len'].values[0]
@@ -191,11 +215,19 @@ with open(outfpath, 'wt') as outfile:
             best_score = tblout_df['score'].max() - 1e-6
             best_gene_seqIDs = tuple(tblout_df[tblout_df['score'] >= best_score]['query_name'])
 
-            # print(best_gene_seqIDs, best_score)
+            pivotal_seq_records = extract_pivotal_seq_records(query_fasta_fpath, best_gene_seqIDs)
+            for seqID, seq_record in pivotal_seq_records.items():
+
+                repeats = rf.get_repeats(str(seq_record.seq))
+
+                for r in repeats:
+                    rep_len = get_repeat_len(r)
+                    repeats_outfile.write(f'{ass_id}\t{seqID}\t{r[1]}\t{r[2]}\t{r[3]}\t{rep_len}\n')
+                # end for
+            # end for
+
 
             pivotal_gene_len_dict = extract_pivotal_gene_lengths(query_fasta_fpath, best_gene_seqIDs)
-
-            # print(pivotal_gene_len_dict)
 
             for seqID, length in pivotal_gene_len_dict.items():
                 outfile.write(f'{ass_id}\t1\t{seqID}\t{length}\t{min_len}\t{max_len}\n')
