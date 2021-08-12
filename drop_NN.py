@@ -4,14 +4,15 @@ import re
 
 from Bio import SeqIO
 
-# seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta'
-seqs_fpath = '/home/deynonih/cager/new_16S_scrubbling/gene_seqs/all_collected.fasta'
+seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta'
+# seqs_fpath = '/home/deynonih/cager/new_16S_scrubbling/gene_seqs/all_collected.fasta'
 
-# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
-outfpath = '/home/deynonih/cager/new_16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
+# outfpath = '/home/deynonih/cager/new_16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
 
-# nn_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/NN/gene_seqs_NN.fasta'
-nn_seqs_fpath = '/home/deynonih/cager/new_16S_scrubbling/gene_seqs/gene_seqs_NN.fasta'
+nn_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/NN/gene_seqs_NN.fasta'
+# nn_seqs_fpath = '/home/deynonih/cager/new_16S_scrubbling/gene_seqs/gene_seqs_NN.fasta'
+
 
 nn_pattern = r'NN'
 nn_count = 0

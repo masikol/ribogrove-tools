@@ -11,7 +11,7 @@ from Bio import SeqIO
 
 
 genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_collect_16S_stats.tsv'
-fasta_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta'
+fasta_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/NN/gene_seqs_NN.fasta'
 outfpath = '/mnt/1.5_drive_0/16S_scrubbling/pivotal_genes.tsv'
 
 rfam = '/mnt/1.5_drive_0/16S_scrubbling/rfam/RF00177.14.6.cm'
