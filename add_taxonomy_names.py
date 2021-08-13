@@ -4,13 +4,25 @@
 import numpy as np
 import pandas as pd
 
+
 infpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/taxIDs.tsv'
 per_gene_infpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxIDs.tsv'
 
 rankedlineage_path = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/new-taxdump/rankedlineage_2.dmp'
 
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/taxIDs.tsv'
-per_gene_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxIDs.tsv'
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/taxonomy.tsv'
+per_gene_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxonomy.tsv'
+
+
+
+def amend_Cyanophyceae(row):
+
+    if row['phylum'] == 'Cyanobacteria':
+        row['class'] = 'Cyanophyceae'
+    # end if
+
+    return row
+# end def amend_Cyanophyceae
 
 
 # =========
@@ -53,6 +65,8 @@ taxid_df = pd.read_csv(
 
 taxonomy_df = taxid_df.merge(rankedlineage_df, on='taxID', how='left')
 
+taxonomy_df = taxonomy_df.apply(amend_Cyanophyceae, axis=1)
+
 print(taxonomy_df.shape)
 print(taxonomy_df.head())
 
@@ -83,6 +97,8 @@ per_gene_taxid_df = pd.read_csv(
 )
 
 per_gene_taxonomy_df = per_gene_taxid_df.merge(rankedlineage_df, on='taxID', how='left')
+
+per_gene_taxonomy_df = per_gene_taxonomy_df.apply(amend_Cyanophyceae, axis=1)
 
 print(per_gene_taxonomy_df.shape)
 print(per_gene_taxonomy_df.head())

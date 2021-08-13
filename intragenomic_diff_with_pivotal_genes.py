@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import math
+import operator
 from io import StringIO
 import subprocess as sp
 from array import array
@@ -16,8 +17,8 @@ from Bio import SeqIO
 
 
 pivotal_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/pivotal_genes.tsv'
-stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_16S_stats.tsv'
-gene_seqs_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta'
+stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_stats_no_NN.tsv'
+gene_seqs_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
 
 muscle = '/home/cager/Misc_soft/muscle3.8.31'
 
@@ -34,30 +35,18 @@ aberrant_seqIDs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterog
 # aberrant_seqIDs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/test_aberrant_seqIDs.txt'
 
 
-def select_gene_seqs(ass_id, gene_seqs_fasta_fpath, stats_df):
+def select_gene_seqs(ass_id, seq_records, stats_df):
 
-    accs = tuple(stats_df[stats_df['ass_id'] == ass_id]['acc'])
-    acc_options = '-p "' + '" -p "'.join(accs) + '"'
+    accs = set(stats_df[stats_df['ass_id'] == ass_id]['acc'])
 
-    cmd = f'seqkit grep -nr {acc_options} {gene_seqs_fasta_fpath}'
+    selected_seq_records = tuple(
+        filter(
+            lambda r: r.id.partition(':')[0] in accs,
+            seq_records
+        )
+    )
 
-    pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
-    stdout_stderr = pipe.communicate()
-
-    if pipe.returncode != 0:
-        print(f'Error selecting gene seqs for assembly {ass_id}!')
-        print(stdout_stderr[1].decode('utf-8'))
-        print(f'\t{cmd}')
-        sys.exit(1)
-    else:
-        fasta_str = stdout_stderr[0].decode('utf-8')
-    # end if
-
-    fasta_io = StringIO(fasta_str)
-    seq_records = list(SeqIO.parse(fasta_io, 'fasta'))
-    fasta_io.close()
-
-    return {r.id: r for r in seq_records}
+    return {r.id: r for r in selected_seq_records}
 # end def select_gene_seqs
 
 
@@ -264,6 +253,8 @@ ass_ids = tuple(set(stats_df['ass_id']))
 #     7359321,
 # ]
 
+seq_records = tuple(SeqIO.parse(gene_seqs_fasta_fpath, 'fasta'))
+
 
 with open(pident_outfpath, 'wt') as pident_outfile, \
      open(insertions_outfpath, 'wt') as insertions_outfile, \
@@ -282,21 +273,23 @@ with open(pident_outfpath, 'wt') as pident_outfile, \
         curr_pivotal_df = pivotal_genes_df[pivotal_genes_df['ass_id'] == ass_id]
         pivotal_gene_num = curr_pivotal_df[~ pd.isnull(curr_pivotal_df['pivotal_gene_seqID'])].shape[0]
 
-        seq_records = select_gene_seqs(ass_id, gene_seqs_fasta_fpath, stats_df)
+        selected_seq_records = select_gene_seqs(ass_id, seq_records, stats_df)
 
         if pivotal_gene_num != 0:
 
-            seqIDs = set(seq_records.keys())
+            seqIDs = set(selected_seq_records.keys())
             pivotal_seqIDs = tuple(curr_pivotal_df['pivotal_gene_seqID'])
+
+            aberrant_seqIDs_setlist = list()
 
             for pivotal_seqID in pivotal_seqIDs:
 
-                pivotal_seq_record = seq_records[pivotal_seqID]
-                aberrant_seqIDs = set()
+                pivotal_seq_record = selected_seq_records[pivotal_seqID]
+                curr_aberrant_seqIDs = set()
 
                 for seqID in seqIDs - {pivotal_seqID}:
 
-                    seq_record = seq_records[seqID]
+                    seq_record = selected_seq_records[seqID]
                     pivotal_aln_record, aln_record = pairwise_align(pivotal_seq_record, seq_record, muscle)
 
                     pident = pairwise_percent_identity(pivotal_aln_record, aln_record)
@@ -322,20 +315,24 @@ with open(pident_outfpath, 'wt') as pident_outfile, \
                     # end for
 
                     if len(insertions) != 0 or len(deletions) != 0:
-                        if not seqID in pivotal_seqIDs:
-                            aberrant_seqIDs.add(seqID)
-                            aberrant_seqIDs_outfile.write(f'{seqID}\n')
-                        # end if
+                        curr_aberrant_seqIDs.add(seqID)
                     # end if
                 # end for
 
-                seqIDs_for_msa = seqIDs - aberrant_seqIDs
-                seq_records_for_msa = [seq_records[seqID] for seqID in seqIDs_for_msa]
+                aberrant_seqIDs_setlist.append(curr_aberrant_seqIDs)
+
+                seqIDs_for_msa = seqIDs - curr_aberrant_seqIDs
+                seq_records_for_msa = [selected_seq_records[seqID] for seqID in seqIDs_for_msa]
 
                 calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id, pivotal_seqID)
             # end for
+
+            aberrant_seqIDs = reduce(operator.and_, aberrant_seqIDs_setlist)
+            for seqID in aberrant_seqIDs:
+                aberrant_seqIDs_outfile.write(f'{seqID}\n')
+            # end for
         else:
-            seq_records_for_msa = seq_records.values()
+            seq_records_for_msa = selected_seq_records.values()
             calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id)
         # end if
     # end for

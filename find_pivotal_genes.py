@@ -12,7 +12,7 @@ from Bio import SeqIO
 import repeatfinder as rf
 
 
-genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_collect_16S_stats.tsv'
+genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_stats_no_NN.tsv'
 fasta_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
 
 rfam = '/mnt/1.5_drive_0/16S_scrubbling/rfam/RF00177.14.6.cm'
@@ -31,8 +31,6 @@ lendiff_threshold = 5
 def select_seqs(accs, fasta_seqs_fpath, query_fasta_fpath):
     acc_options = '-p "' + '" -p "'.join(accs) + '"'
     cmd = f'cat {fasta_seqs_fpath} | seqkit grep -nr {acc_options} > {query_fasta_fpath}'
-
-    # print(f'\n{cmd}')
 
     returncode = os.system(cmd)
     if returncode != 0:
@@ -131,7 +129,7 @@ def extract_pivotal_seq_records(query_fasta_fpath, best_gene_seqIDs):
         seq_records
     )
 
-    return {r.id: r.seq for r in pivotal_records}
+    return {r.id: r for r in pivotal_records}
 # end def extract_pivotal_seq_records
 
 
@@ -166,9 +164,10 @@ grpd_df['lendiff'] = grpd_df['max_len'] - grpd_df['min_len']
 
 ass_ids = set(stats_df['ass_id'])
 
-
 with open(outfpath, 'wt') as outfile, \
      open(pivotal_genes_repeats_fpath, 'wt') as repeats_outfile:
+# with open(outfpath, 'at') as outfile, \
+#      open(pivotal_genes_repeats_fpath, 'at') as repeats_outfile:
 
     outfile.write('ass_id\tdiff_large\tpivotal_gene_seqID\tpivotal_gene_len\tmin_len\tmax_len\n')
     repeats_outfile.write('ass_id\tpivotal_gene_seqID\tr1_start\tr1_end\tr2_start\tr2_end\trep_len\n')
@@ -222,7 +221,7 @@ with open(outfpath, 'wt') as outfile, \
 
                 for r in repeats:
                     rep_len = get_repeat_len(r)
-                    repeats_outfile.write(f'{ass_id}\t{seqID}\t{r[1]}\t{r[2]}\t{r[3]}\t{rep_len}\n')
+                    repeats_outfile.write(f'{ass_id}\t{seqID}\t{r[0]}\t{r[1]}\t{r[2]}\t{r[3]}\t{rep_len}\n')
                 # end for
             # end for
 
@@ -241,3 +240,4 @@ with open(outfpath, 'wt') as outfile, \
 
 print('\nCompleted!')
 print(outfpath)
+print(pivotal_genes_repeats_fpath)

@@ -3,35 +3,23 @@
 import os
 import sys
 from io import StringIO
-import subprocess as sp
+# import subprocess as sp
 import statistics as sts
 
 import pandas as pd
 from Bio import SeqIO
 
 
-def _select_seqs(acc, seqs_fasta_fpath):
+def _select_seqs(acc, seq_records):
 
-    cmd = f'cat {seqs_fasta_fpath} | seqkit grep -nrp {acc}'
+    selected_seq_records = tuple(
+        filter(
+            lambda r: acc in r.id,
+            seq_records
+        )
+    )
 
-    pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
-    stdout_stderr = pipe.communicate()
-
-    if pipe.returncode != 0:
-        print('\nError while selectins genes')
-        print(stdout_stderr[1].decode('utf-8'))
-        print(f'Accession: {" ".join(acc)}')
-        print(cmd)
-        sys.exit(1)
-    else:
-        fasta_str = stdout_stderr[0].decode('ascii')
-    # end if
-
-    fasta_io = StringIO(fasta_str)
-    seq_records = list(SeqIO.parse(fasta_io, 'fasta'))
-    fasta_io.close()
-
-    return seq_records
+    return selected_seq_records
 # end def _select_seqs
 
 
@@ -43,6 +31,8 @@ def _get_len(record):
 def gene_seqs_2_stats(seqs_fasta_fpath, ass_acc_fpath, stats_outfpath):
 
     ass_acc_df = pd.read_csv(ass_acc_fpath, sep='\t')
+
+    seq_records = tuple(SeqIO.parse(seqs_fasta_fpath, 'fasta'))
 
     with open(stats_outfpath, 'wt') as stats_outfile:
 
@@ -57,12 +47,12 @@ def gene_seqs_2_stats(seqs_fasta_fpath, ass_acc_fpath, stats_outfpath):
 
             print(f'\rDoing {i+1}/{ass_acc_df.shape[0]}: {acc}', end=' '*10)
 
-            seq_records = _select_seqs(acc, seqs_fasta_fpath)
+            selected_seq_records = _select_seqs(acc, seq_records)
 
-            num_genes = len(seq_records)
+            num_genes = len(selected_seq_records)
 
             if num_genes != 0:
-                gene_lengths = tuple(map(_get_len, seq_records))
+                gene_lengths = tuple(map(_get_len, selected_seq_records))
                 min_len = min(gene_lengths)
                 max_len = max(gene_lengths)
                 mean_len = sts.mean(gene_lengths)

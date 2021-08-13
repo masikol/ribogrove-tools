@@ -12,7 +12,7 @@ in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.
 gbk_dpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/genomes-data/gbk'
 
 fasta_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta.gz'
-outstats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_collect_16S_stats.tsv'
+outstats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_16S_stats.tsv'
 # fasta_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_all_collected.fasta.gz'
 # outstats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_all_collected_collect_16S_stats.tsv'
 
