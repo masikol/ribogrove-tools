@@ -6,7 +6,7 @@ import gzip
 from Bio import SeqIO
 
 accs_fpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/degenerate_in_16S/degenerate_in_16S_accs.txt'
-gbk_dpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/genomes-data/gbk'
+gbk_dpath = '/mnt/1.5_drive_0/16S_scrubbling/genomes-data/gbk'
 outfpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/degenerate_in_16S/degenerate_in_16S_accs_and_NN.tsv'
 
 accs = tuple(

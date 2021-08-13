@@ -10,7 +10,7 @@ from Bio import SeqIO
 
 in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
 # fasta_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta.gz'
-gbk_dpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/genomes-data/gbk'
+gbk_dpath = '/mnt/1.5_drive_0/16S_scrubbling/genomes-data/gbk'
 outfpath = '/mnt/1.5_drive_0/16S_scrubbling/check_seqtech_seqtechs.tsv'
 seqtech_logfpath = '/mnt/1.5_drive_0/16S_scrubbling/check_seqtech_bacteria_genome_seqtechs.log'
 

@@ -9,7 +9,7 @@ import pandas as pd
 from Bio import SeqIO
 
 in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
-gbk_dpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/genomes-data/gbk'
+gbk_dpath = '/mnt/1.5_drive_0/16S_scrubbling/genomes-data/gbk'
 outfpath = '/mnt/1.5_drive_0/16S_scrubbling/all_genes_notes.tsv'
 
 # in_acc_fpath = '/home/deynonih/cager/new_16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'

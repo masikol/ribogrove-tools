@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+# -*- encoding: utf-8 -*-
+
+# Script downloads genomes in GenBank format, and saves them all to local directory.
+# Output files will be all gziped.
+# The script downloads records using efetch utility (https://www.ncbi.nlm.nih.gov/books/NBK25497/)
+
+# Input file (`acc_fpath`) is output of script merge_assID2acc_and_remove_WGS.py.
+
+# Output files are:
+# 1. `.gbk.gz` files in directory `outdir`
+# 2. log file `log_fpath`, which will contain information about errors.
+#    If reocrd is successfully downloaded, the script writes "ok" to correcponding line of log file.
+
 
 import os
 import sys
@@ -14,11 +27,12 @@ from Bio import Entrez
 Entrez.email = "maximdeynonih@gmail.com"
 
 acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
-outdir = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/genomes-data/gbk'
-log_fpath = '/mnt/1.5_drive_0/16S_scrubbling/genomes-download.0.log'
+outdir = '/mnt/1.5_drive_0/16S_scrubbling/genomes-data/gbk'
+log_fpath = '/mnt/1.5_drive_0/16S_scrubbling/logs/genomes-download.0.log'
 
 
-def write_to_file(text, log_fpath):
+def write_to_file(text: str, log_fpath: str):
+    # Function for writingto log file
     if text != '':
         with open(log_fpath, 'a') as logfile:
             logfile.write(f'{text}\n')
@@ -28,13 +42,13 @@ def write_to_file(text, log_fpath):
 
 write_to_log_file = partial(write_to_file, log_fpath=log_fpath)
 
-
+# Empty log file
 with open(log_fpath, 'w') as _:
     pass
 # end with
 
-n_done = 0
 
+# Read input
 accs = tuple(
     pd.read_csv(
         acc_fpath,
@@ -44,15 +58,20 @@ accs = tuple(
 
 
 n_accs = len(accs)
-max_errors = 3
-downloaded = 0
+max_errors = 3 # We will terminate if 3 errors occur in a row
+downloaded = 0 # amount of downloaded records
+
+
+# == Proceed ==
 
 for i, acc in enumerate(accs):
 
     print(f'\rDoing {i+1}/{n_accs}: {acc}', end=' '*10)
 
+    # Configure output file path (e.g. `NZ_CP063178.1.gbk.gz`)
     outfpath = os.path.join(outdir, f'{acc}.gbk.gz')
 
+    # Skip this record if it is already downloaded
     if os.path.exists(outfpath):
         write_to_log_file(f'{acc} - ok (already exists)')
         continue
@@ -60,6 +79,7 @@ for i, acc in enumerate(accs):
 
     downloaded += 1
 
+    # Request record
     errors = 0
     while errors < max_errors:
 
@@ -73,6 +93,7 @@ for i, acc in enumerate(accs):
                 linkname='refseq'
             )
 
+            # Write gbk content to output file
             with gzip.open(outfpath, 'wt') as outfile:
                 outfile.write(gbk_handle.read())
             # end with
@@ -89,6 +110,7 @@ for i, acc in enumerate(accs):
             break
         # end try
 
+        # Wait a bit: we don't want NCBI to ban us :)
         time.sleep(0.4)
     # end while
 
@@ -101,8 +123,7 @@ for i, acc in enumerate(accs):
     # end if
 
     print(f'\r{i+1}/{n_accs} done', end=' '*10)
-
 # end for
 
 print('\n\nCompleted!')
-print(f'downloaded = {downloaded}')
+print(f'Number of actually downloaded genomes = {downloaded}')

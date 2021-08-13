@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
+
+# Script takes IDs (IDs of database NCBI Assembly) from file `assm_id_fpath` (one per line)
+#   and translates them to RefSeq GI numbers using elink utility (https://www.ncbi.nlm.nih.gov/books/NBK25497/).
+# The script writes result to TSV file `outfpath` of 2 columns (ass_ID, refseq_id)
+
 
 import os
 import sys
@@ -8,18 +13,13 @@ import time
 from Bio import Entrez
 Entrez.email = 'maximdeynonih@gmail.com'
 
-# Setup
+
 assm_id_fpath = '/mnt/1.5_drive_0/16S_scrubbling/assembly_UIDs.txt'
-# assm_id_fpath = sys.argv[1]
-if not os.path.exists(assm_id_fpath):
-    print('Error: file `{}` does not exist'.format(assm_id_fpath))
-    sys.exit(0)
-# end if
 
 outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq.tsv'
-# assm_id_fpath = sys.argv[2]
 
 
+# Read assembly IDs
 ass_ids = tuple(
     map(
         str.strip,
@@ -27,28 +27,23 @@ ass_ids = tuple(
     )
 )
 
-# done_ass_ids = set(
-#     map(
-#         lambda l: l.split('\t')[0],
-#         open(outfpath).readlines()
-#     )
-# )
 
-# with open(outfpath, 'at') as outfile:
+# == Proceed ==
+
 with open(outfpath, 'wt') as outfile:
 
+    # Write header
     outfile.write(f'ass_id\trefseq_id\n')
 
+    # Iterate over assembly IDs
     for i, ass_id in enumerate(ass_ids):
-
-        # if ass_id in done_ass_ids:
-        #     continue
-        # # end if
 
         print(f'\rDoing {i+1}/{len(ass_ids)}: {ass_id}', end=' ')
 
+        # We will terminate if 3 errors occur in a row
         n_errors = 0
 
+        # Request RefSeq GI number
         while n_errors < 3:
             try:
                 handle = Entrez.elink(
@@ -76,16 +71,19 @@ with open(outfpath, 'wt') as outfile:
             continue
         # end if
 
+        # Extract RefSeq GI number
         try:
             refseq_ids = [link['Id'] for link in record[0]['LinkSetDb'][0]['Link']]
         except IndexError:
             pass
         else:
+            # Write output
             for refseq_id in refseq_ids:
                 outfile.write(f'{ass_id}\t{refseq_id}\n')
             # end for
         # end try
 
+        # Wait a bit: we don't want NCBI to ban us :)
         time.sleep(0.4)
     # end for
 # end with

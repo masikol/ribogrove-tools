@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# -*- encoding: utf-8 -*-
+
+# The script takes output of script assembly2refseq_id.py (RefSeq GI numbers) as input (file `infpath`)
+#   and translates them to "accession.version"s and titles.
+# Output (file `outfpath`) is a TSV file of 3 columns (refseq_id, acc, title).
 
 
 import os
@@ -13,26 +18,27 @@ Entrez.email = 'maximdeynonih@gmail.com'
 infpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq.tsv'
 outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs.tsv'
 
+
+# Read input
 gi_df = pd.read_csv(
     infpath,
     sep='\t'
 )
 
-# gis = tuple(
-#     map(
-#         lambda l: l.split('\t')[0],
-#         open(infpath).readlines()
-#     )
-# )[1:]
 
 chunk_size = 50
 n_done_ids = 0
 
 print('\r0/{}'.format(gi_df.shape[0]), end=' ')
 
+
+# == Proceed ==
 with open(outfpath, 'wt') as outfile:
+
+    # Write header
     outfile.write(f'refseq_id\tacc\ttitle\n')
 
+    # Iterate over chunks of RefSeq IDs and get their "accession.version"s and titles
     for i in range(0, gi_df.shape[0], chunk_size):
 
         curr_gis = tuple(
@@ -42,6 +48,8 @@ with open(outfpath, 'wt') as outfile:
             )
         )
 
+        # We will terminate if 3 errors occur in a row
+        # Request summary for RefSeq record
         error = True
         n_errors = 0
         while error:
@@ -62,10 +70,12 @@ with open(outfpath, 'wt') as outfile:
             # end try
         # end while
 
+        # Rwite output
         for rec in records:
             outfile.write(f'{rec["Id"]}\t{rec["AccessionVersion"]}\t{rec["Title"]}\n')
         # end for
 
+        # Wait a bit: we don't want NCBI to ban us :)
         time.sleep(0.4)
 
         n_done_ids += chunk_size

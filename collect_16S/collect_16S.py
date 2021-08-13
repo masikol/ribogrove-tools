@@ -1,40 +1,60 @@
 #!/usr/bin/env python3
+# -*- encoding: utf-8 -*-
+
+# Script extracts sequences of 16S genes from downloaded genomes in GenBank format.
+
+# Input files:
+# 1. `in_acc_fpath` is output of script merge_assID2acc_and_remove_WGS.py.
+# 2. RefSeq records downloaded by script download_genomes.py
+
+# Output files:
+# 1. `fasta_outfpath`: fasta file containing sequences of collected genes
+# 2. `outstats_fpath`: file with statistics of collected 16S genes
+
 
 import os
 import gzip
 import statistics as sts
+from typing import List
 
 import pandas as pd
 from Bio import SeqIO
+from Bio.SeqFeature import SeqFeature
+from Bio.SeqRecord import SeqRecord
+
+
+# == Input files ==
 
 # in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/test_bacteria_ass_refseq_accs_merged.tsv'
 in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
-gbk_dpath = '/mnt/1.5_drive_0/preprocess-dev/own_db/bacteria/pileup/genomes-dwnld/genomes-data/gbk'
+gbk_dpath = '/mnt/1.5_drive_0/16S_scrubbling/genomes-data/gbk'
 
-fasta_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta.gz'
-outstats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_16S_stats.tsv'
-# fasta_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_all_collected.fasta.gz'
+
+# == Output files ==
+
+# fasta_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_all_collected.fasta'
 # outstats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_all_collected_collect_16S_stats.tsv'
+fasta_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta'
+outstats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_16S_stats.tsv'
 
+
+# Path to cmsearch (VERSION 1.1.1 !!!)
 cmsearch = '/home/cager/Misc_soft/infernal/infernal-1.1.1/bin/cmsearch'
+# Path to RFAM family RF00177 (VERSION 12.0 !!!)
 rfam_12_0_fpath = '/mnt/1.5_drive_0/16S_scrubbling/rfam/RF00177.12.0.cm'
+
+# Header of cmsearch's .tblout output files
 tblout_header = 'target_name\taccession\tquery_name\taccession\tmdl\tmdl_from\tmdl_to\tseq_from\tseq_to\tstrand\ttrunc\tpass\tgc\tbias\tscore\tEvalue\tinc\tdescription_of_target'
 
-# possible_seqstart_trunc_note = '16S ribosomal RNA rRNA prediction is too short'
-# cmsearch_note = 'Derived by automated computational analysis using gene prediction method: cmsearch.'
 
-# note:
-# 16S ribosomal RNA rRNA prediction is too short
-# note:
-# possible 16S ribosomal RNA but does not have goodblast hits on one or both of the ends
-
+# Header of statistics file
 stats_header = [
     'ass_id', 'refseq_id', 'acc', 'title',
     'seq_start_truncation', 'improper_16S_annotation', 'topology',
     'num_genes', 'min_len', 'max_len', 'mean_len', 'median_len',
 ]
 
-
+# Possible values of `product` qualifier if a 16S rRNA gene feature
 ssu_product_names = {
     '16S RIBOSOMAL RNA',
     'SMALL SUBUNIT RIBOSOMAL RNA',
@@ -43,12 +63,15 @@ ssu_product_names = {
     'RIBOSOMAL RNA-16S'
 }
 
+# Notes which are assigned to truncated 16S genes
 trunc_ssu_notes = {
     '16S RIBOSOMAL RNA RRNA PREDICTION IS TOO SHORT',
     'POSSIBLE 16S RIBOSOMAL RNA',
 }
 
-def is_ssu(feature):
+
+def is_ssu(feature: SeqFeature):
+    # Script checks if feature is a 16S rRNA gene
     qualifiers = feature.qualifiers
 
     norm_ssu = 'product' in qualifiers.keys() \
@@ -63,7 +86,9 @@ def is_ssu(feature):
     return norm_ssu or maybe_trunc_ssu
 # end def is_ssu
 
-def filter_ssu_genes(features):
+
+def filter_ssu_genes(features: List[SeqFeature]):
+    # Function filters features: it keeps only 16S rRNA genes
     return tuple(
         filter(
             is_ssu,
@@ -73,29 +98,39 @@ def filter_ssu_genes(features):
 # end def filter_ssu_genes
 
 
-def is_annotated_with_pgap(gbrecord):
+def is_annotated_with_pgap(gbrecord: SeqRecord):
+    # Function checks if GenBank record is annotated with PGAP
+    #   (NCBI Prokaryotic Genome Annotation Pipeline).
+    # If it is -- returns True. If not -- returns False.
+
+    # Find structured comment
     try:
         struct_comment = gbrecord.annotations['structured_comment']
     except KeyError as err:
         return False
     # end try
 
+    # Find section "Genome-Annotation-Data" in structured comment
     if 'Genome-Annotation-Data' in struct_comment.keys():
         assembly_key = 'Genome-Annotation-Data'
     else:
         return False
     # end if
 
-    assembly_data = struct_comment[assembly_key]
+    # Get annotation data
+    annotation_data = struct_comment[assembly_key]
 
-    if 'Annotation Pipeline' in assembly_data.keys():
+    # Find field "Annotation Pipeline" in `annotation_data`
+    if 'Annotation Pipeline' in annotation_data.keys():
         annot_pipe_key = 'Annotation Pipeline'
     else:
         return False
     # end if
 
-    annot_pipe = assembly_data[annot_pipe_key]
+    # Get field containing info about annotation pipeline
+    annot_pipe = annotation_data[annot_pipe_key]
 
+    # Find "NCBI PROKARYOTIC GENOME ANNOTATION PIPELINE" in this field
     if 'NCBI PROKARYOTIC GENOME ANNOTATION PIPELINE' in annot_pipe.upper():
         return True
     else:
@@ -104,43 +139,10 @@ def is_annotated_with_pgap(gbrecord):
 # end def
 
 
-# def need_to_run_cmsearch(features):
+def seq_start_may_truncate_ssu(gbrecord: SeqRecord, features: List[SeqFeature]):
+    # Function checks if gbrecord can contain 16S genes truncated by sequences start.
+    # It it can -- returns True. therwise -- False.
 
-#     for f in features:
-#         if not 'note' in f.qualifiers:
-#             return True
-#         elif not cmsearch_note in f.qualifiers['note']:
-#             return True
-#         # end if
-#     # end for
-
-#     return False
-# # end def get_notes
-
-
-# def remove_internal_truncated_genes(features, gbrecord):
-#     seq_end_coord = len(gbrecord.seq)
-
-#     def is_internal_truncated(feature):
-#         truncated = 'note' in feature.qualifiers.keys() \
-#                     and possible_seqstart_trunc_note in feature.qualifiers['note']
-#         if not truncated:
-#             return True
-#         # end if
-#         internal = feature.location.start != 0 and feature.location.end != seq_end_coord
-#         return not (truncated and internal)
-#     # end def is_internal_truncated
-
-#     return list(
-#         filter(
-#             is_internal_truncated,
-#             features
-#         )
-#     )
-# # end def remove_internal_truncated_genes
-
-
-def seq_start_may_truncate_ssu(gbrecord, features):
     for f in features:
         if f.location.start == 0 or f.location.end == len(gbrecord.seq):
             return True
@@ -150,17 +152,23 @@ def seq_start_may_truncate_ssu(gbrecord, features):
 # end def seq_start_may_truncate_ssu
 
 
-def extract_gene_as_is(feature, gbrecord):
+def extract_gene_as_is(feature: SeqFeature, gbrecord: SeqRecord):
+    # Function extracts sequence of gene feature `feature` from `gbrecord`
 
+    # We will report 1-based left-closed and right-closed coordinates
     seq_start = feature.location.start + 1
     seq_end = feature.location.end
     seq_strand = feature.location.strand
 
+    # Extract sequence
     seq = gbrecord.seq[seq_start-1 : seq_end]
+
+    # Make it reverse-complement if appropriate
     if seq_strand == -1:
         seq = seq.reverse_complement()
     # end if
 
+    # Set `strand` value
     strand_str = 'plus' if seq_strand == 1 else 'minus'
 
     header = f'{gbrecord.id}:{seq_start}-{seq_end}_{strand_str} {gbrecord.description}'
@@ -169,11 +177,13 @@ def extract_gene_as_is(feature, gbrecord):
 # end def extract_gene_as_is
 
 
-def run_cmsearch(fasta_fpath):
+def run_cmsearch(fasta_fpath: str):
+    # Function runs cmsearch searching for 16S rRNA genes in sequence 
+    #   stored in file `fasta_fpath`
+    # Returns path to result .tblout file
+
     tblout_fpath = 'tmpXXX_tblout.tsv'
     out_fpath = 'tmpXXX_cmsearch_out.txt'
-    # ~/Misc_soft/infernal/infernal-1.1.1/bin/cmsearch --noali -o cmsearch_output.txt \
-    #   --tblout cmsearch_tblout.tsv --cpu 4 SSU_rRNA_bacteria_12.0.cm ../genomes-data/fasta/NZ_CP060094.1.fasta.gz
     cmd = f'{cmsearch} --noali -o {out_fpath} --tblout {tblout_fpath} --cpu 6 {rfam_12_0_fpath} {fasta_fpath}'
     # cmd = f'{cmsearch} -o {out_fpath} --tblout {tblout_fpath} --cpu 6 {rfam_12_0_fpath} {fasta_fpath}'
 
@@ -185,8 +195,10 @@ def run_cmsearch(fasta_fpath):
 # end def run_cmsearch
 
 
-def reformat_tblout(tblout_fpath):
+def reformat_tblout(tblout_fpath: str):
+    # Function makes raw file `tblout_fpath` (it's output of cmsearch) readable for pandas.read_csv
 
+    # Read all lines not commented with #'s
     with open(tblout_fpath, 'rt') as tblout_file:
         lines = list(
             map(
@@ -199,16 +211,24 @@ def reformat_tblout(tblout_fpath):
         )
     # end with
 
+    # Replace multiple spaces with single spaces
     for i in range(len(lines)):
         for space_num in range(20, 1, -1):
             lines[i] = lines[i].replace(' '*space_num, ' ')
         # end for
     # end for
 
+    # Replace spaces in some vulnerable column values with underscores
+    for i in range(len(lines)):
+        lines[i] = lines[i].replace('Bacterial small subunit ribosomal RNA', 'Bacterial_small_subunit_ribosomal_RNA')
+    # end for
+
+    # Replace spaces with tabs
     for i in range(len(lines)):
         lines[i] = lines[i].replace(' ', '\t')
     # end for
 
+    # Write result to the same .tblout file
     with open(tblout_fpath, 'wt') as tblout_file:
         tblout_file.write(f'{tblout_header}\n')
         tblout_file.write('\n'.join(lines) + '\n')
@@ -216,18 +236,20 @@ def reformat_tblout(tblout_fpath):
 # end def reformat_tblout
 
 
-def extract_reannotated_genes(gbrecord, topology):
+def extract_reannotated_genes(gbrecord: SeqRecord, topology: str):
+    # Function reannotates 16S rRNA genes in `gbrecord` with cmsearch
+    #   and extracts sequences of discovered genes from it.
 
+    # Save original length of sequence
     original_len = len(gbrecord.seq)
 
     # Make circular sequence a bit longer in order to annotate properly
     #   genes truncated by sequecne start
     if topology == 'circular':
-        # print(f'Len before = {original_len}')
         gbrecord.seq = gbrecord.seq + gbrecord.seq[:2000]
-        # print(f'Len after = {len(gbrecord.seq)}')
     # end if
 
+    # Perform reannotations
     tmp_fasta = 'tmpXXX.fasta'
     with open(tmp_fasta, 'w') as tmpf:
         tmpf.write(f'>{gbrecord.id}\n{str(gbrecord.seq)}\n')
@@ -235,23 +257,23 @@ def extract_reannotated_genes(gbrecord, topology):
     tblout_fpath = run_cmsearch(tmp_fasta)
     reformat_tblout(tblout_fpath)
 
+    # Now we have `tblout_fpath` and cam extract genes sequences from `gbrecord`
+
     tblout_df = pd.read_csv(tblout_fpath, sep='\t')
-    # tblout_df = tblout_df[tblout_df['trunc'] == 'no']
 
     genes = list()
 
+    # Iterate over rows of tblout_df and extract sequences of annotated genes
     for i, row in tblout_df.iterrows():
         seq_start = row['seq_from']
         seq_end = row['seq_to']
         seq_strand = row['strand']
 
         if seq_strand == '+':
-            # seq_start -= 1
-            seq = gbrecord.seq[seq_start : seq_end]
+            seq = gbrecord.seq[seq_start-1 : seq_end]
         else:
             seq_start, seq_end = seq_end, seq_start
-            # seq_start -= 1
-            seq = gbrecord.seq[seq_start : seq_end].reverse_complement()
+            seq = gbrecord.seq[seq_start-1 : seq_end].reverse_complement()
         # end if
 
         strand_str = 'plus' if seq_strand == '+' else 'minus'
@@ -267,6 +289,7 @@ def extract_reannotated_genes(gbrecord, topology):
             seq_end_for_header -= original_len
         # end if
 
+        # Configure sequence header
         seq_header = '{}:{}-{}_{} {}'\
             .format(
                 gbrecord.id,
@@ -276,29 +299,33 @@ def extract_reannotated_genes(gbrecord, topology):
                 gbrecord.description
             )
 
+        # Add extracted gene to the list
         genes.append(
             [
                 seq_header,
                 seq
             ]
         )
-
     # end for
-
-    # for g in genes:
-    #     print(f'>{g[0]}')
-    #     print(f'LEN = {len(g[1])}')
 
     return genes
 # end def extract_reannotated_genes
 
 
-def get_seq_lengths(extracted_genes):
+def get_seq_lengths(extracted_genes: List[List[str, str]]):
+    # Function returns lengths of genes passed to it.
+    # `extracted_genes` is an object retuned by `extract_reannotated_genes`
     lengths = [len(gene[1]) for gene in extracted_genes]
     return lengths
 # end def get_seq_lengths
 
-def calc_gene_stats(extracted_genes):
+def calc_gene_stats(extracted_genes: List[List[str, str]]):
+    # Function calculates statistics for gene set passed to it:
+    #  number of genes
+    #  min length
+    #  max length
+    #  mean length
+    #  median length
     lengths = get_seq_lengths(extracted_genes)
 
     if len(lengths) == 0:
@@ -314,6 +341,7 @@ def calc_gene_stats(extracted_genes):
 # end def calc_gene_stats
 
 
+# Read input data
 
 acc_df = pd.read_csv(
     in_acc_fpath,
@@ -322,82 +350,85 @@ acc_df = pd.read_csv(
 
 n_accs = acc_df.shape[0]
 
-with gzip.open(fasta_outfpath, 'wt') as fasta_outfile, open(outstats_fpath, 'wt') as stats_outfile:
 
+# == Proceed ==
+
+with open(fasta_outfpath, 'wt') as fasta_outfile, open(outstats_fpath, 'wt') as stats_outfile:
+
+    # Write header of stats file
     stats_outfile.write('{}\n'.format('\t'.join(stats_header)))
 
+    # For each RefSeq record: extract 16S rRNA genes from it
     for i, row in acc_df.iterrows():
+
         ass_id = row['ass_id']
         refseq_id = row['refseq_id']
         acc = row['acc']
         title = row['title']
+
         print(f'\rDoing {i+1}/{n_accs}: {acc}', end=' '*10)
 
+        # Configure output file path (e.g. `NZ_CP063178.1.gbk.gz`)
         gbk_fpath = os.path.join(
             gbk_dpath,
             f'{acc}.gbk.gz'
         )
 
+        # Read GenBank file
         with gzip.open(gbk_fpath, 'rt') as gbfile:
             gbrecord = tuple(SeqIO.parse(gbfile, 'gb'))[0]
         # end with
 
-        # print()
-
+        # Get 16S rRNA features
         ssu_features = filter_ssu_genes(gbrecord.features)
-        # ssu_features = remove_internal_truncated_genes(ssu_features, gbrecord)
 
-        # for f in ssu_features:
-        #     print(f.location.start, f.location.end)
-        # # end for
-
+        # Check if 16S rRNA genes may be truncated by sequence start
         seq_start_truncation = seq_start_may_truncate_ssu(gbrecord, ssu_features)
-        # print(f'seq_start_truncation = {seq_start_truncation}')
 
+        # Check if sequenec was annotated with PGAP
         improper_16S_annotation = not is_annotated_with_pgap(gbrecord)
-        # improper_16S_annotation = need_to_run_cmsearch(ssu_features)
-        # print(f'improper_16S_annotation = {improper_16S_annotation}')
 
+        # Get topology
         topology = None
         if 'topology' in gbrecord.annotations.keys():
             topology = gbrecord.annotations['topology']
         # end if
 
-        # print(f'topology: {topology}')
-
         if improper_16S_annotation or (seq_start_truncation and topology == 'circular'):
+            # Reannotate 16S rRNA genes using cmsearch
+            # And extract reannotated genes
             extracted_genes = extract_reannotated_genes(gbrecord, topology)
             for header, seq in extracted_genes:
                 fasta_outfile.write(f'>{header}\n{seq}\n')
             # end for
-        # if not improper_16S_annotation and not seq_start_truncation:
         else:
+            # Just extract genes, that have been already annotated
             extracted_genes = [extract_gene_as_is(f, gbrecord) for f in ssu_features]
             for header, seq in extracted_genes:
                 fasta_outfile.write(f'>{header}\n{seq}\n')
             # end for
         # end if
 
+        # Write statistics to stats file
         stats_outfile.write(f'{ass_id}\t{refseq_id}\t{acc}\t{title}\t')
         stats_outfile.write(f'{1 if seq_start_truncation else 0}\t{1 if improper_16S_annotation else 0}\t{topology}\t')
 
         num_genes, min_len, max_len, mean_len, median_len = calc_gene_stats(extracted_genes)
         stats_outfile.write(f'{num_genes}\t{min_len}\t{max_len}\t{mean_len}\t{median_len}\n')
-
-        # print('-' * 20)
-        # input()
-
-        # fasta_outfile.write(f'{acc}\t{seqtech}\n')
     # end for
 # end with
 
+
+# Some genes may be duplicated because of appending sequence's start to it's end
+# THerefore, we need to dereplicate sequences by name (seqkit rmdup -n)
 print('\nRunning seqkit rmdup...')
 tmpfasta = os.path.join(
     os.path.dirname(fasta_outfpath),
-    'tmpBILLY.fasta'
+    'tmp_ALL_GENES.fasta'
 )
-os.system(f'zcat {fasta_outfpath} | seqkit rmdup -n | gzip > {tmpfasta}')
-os.system(f'zcat {tmpfasta} | seqkit seq -u | gzip > {fasta_outfpath}')
+os.system(f'cat {fasta_outfpath} | seqkit rmdup -n > {tmpfasta}')
+os.system(f'cat {tmpfasta} | seqkit seq -u > {fasta_outfpath}')
+os.unlink(tmpfasta)
 print('Done\n')
 
 print('\nCompleted!')
