@@ -14,11 +14,13 @@ from functools import reduce
 import numpy as np
 import pandas as pd
 from Bio import SeqIO
+from Bio import SeqUtils
 
 
 pivotal_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/pivotal_genes.tsv'
 stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_stats_no_NN.tsv'
 gene_seqs_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
+conserved_regions_fpath = '/mnt/1.5_drive_0/16S_scrubbling/consensus_seqs/conserved_regions_NR.fasta'
 
 muscle = '/home/cager/Misc_soft/muscle3.8.31'
 
@@ -187,7 +189,7 @@ def calc_entropy(msa_records):
 # end def calc_entropy
 
 
-def calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id, pivotal_seqID='NA'):
+def calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id):
 
     if len(seq_records_for_msa) > 1:
 
@@ -196,7 +198,7 @@ def calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id,
         entropy_arr = calc_entropy(msa_records)
 
         for i, entropy in enumerate(entropy_arr):
-            entropy_outfile.write(f'{ass_id}\t{pivotal_seqID}\t{i}\t{entropy}\n')
+            entropy_outfile.write(f'{ass_id}\t{i}\t{entropy}\n')
         # end for
     # end if
 # end def get_entropy_array
@@ -205,7 +207,7 @@ def calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id,
 def find_insertions_and_deletions(pivotal_aln_record, aln_record):
 
     min_indel_len = 10
-    indel_pattern = r'[-]{%d,}' % min_indel_len
+    indel_pattern = r'[-]{%d,}' % int(min_indel_len+1)
 
     # = Find insertions =
 
@@ -237,6 +239,24 @@ def find_insertions_and_deletions(pivotal_aln_record, aln_record):
 # end def find_insertions_and_deletions
 
 
+def find_conserved_regions(seq_record, conserved_seq_records):
+
+    seq = str(seq_record.seq)
+
+    return set(
+        map(
+            lambda cons_rec: cons_rec.id,
+            filter(
+                lambda cons_rec: len(SeqUtils.nt_search(seq, str(cons_rec.seq))) > 1,
+                conserved_seq_records
+            )
+        )
+    )
+# end def find_conserved_regions
+
+
+conserved_seq_records = tuple(SeqIO.parse(conserved_regions_fpath, 'fasta'))
+
 
 pivotal_genes_df = pd.read_csv(pivotal_genes_fpath, sep='\t')
 stats_df = pd.read_csv(stats_fpath, sep='\t')
@@ -251,6 +271,10 @@ ass_ids = tuple(set(stats_df['ass_id']))
 #     5131611,
 #     9310321,
 #     7359321,
+#     1005941,
+#     5394991,
+#     1491951,
+#     9924121,
 # ]
 
 seq_records = tuple(SeqIO.parse(gene_seqs_fasta_fpath, 'fasta'))
@@ -287,6 +311,16 @@ with open(pident_outfpath, 'wt') as pident_outfile, \
                 pivotal_seq_record = selected_seq_records[pivotal_seqID]
                 curr_aberrant_seqIDs = set()
 
+                conserv_IDs_in_pivotal_gene = find_conserved_regions(
+                    pivotal_seq_record,
+                    conserved_seq_records
+                )
+
+                # print(f'\nPivotal:')
+                # print(pivotal_seq_record.id)
+                # print(conserv_IDs_in_pivotal_gene)
+                # input()
+
                 for seqID in seqIDs - {pivotal_seqID}:
 
                     seq_record = selected_seq_records[seqID]
@@ -314,26 +348,43 @@ with open(pident_outfpath, 'wt') as pident_outfile, \
                         deletions_outfile.write(f'{deletion[0]}\t{deletion[1]}\n')
                     # end for
 
-                    if len(insertions) != 0 or len(deletions) != 0:
+                    conserv_IDs_in_curr_gene = find_conserved_regions(
+                        seq_record,
+                        conserved_seq_records
+                    )
+
+                    # print(seq_record.id)
+                    # print(conserv_IDs_in_curr_gene)
+                    # input()
+
+                    missing_conserved_regions = len(conserv_IDs_in_curr_gene) < len(conserv_IDs_in_pivotal_gene)
+
+                    if len(insertions) != 0 or len(deletions) != 0 or missing_conserved_regions:
                         curr_aberrant_seqIDs.add(seqID)
                     # end if
                 # end for
 
                 aberrant_seqIDs_setlist.append(curr_aberrant_seqIDs)
-
-                seqIDs_for_msa = seqIDs - curr_aberrant_seqIDs
-                seq_records_for_msa = [selected_seq_records[seqID] for seqID in seqIDs_for_msa]
-
-                calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id, pivotal_seqID)
             # end for
 
             aberrant_seqIDs = reduce(operator.and_, aberrant_seqIDs_setlist)
             for seqID in aberrant_seqIDs:
                 aberrant_seqIDs_outfile.write(f'{seqID}\n')
             # end for
-        else:
-            seq_records_for_msa = selected_seq_records.values()
+
+            seqIDs_for_msa = seqIDs - aberrant_seqIDs
+            seq_records_for_msa = [selected_seq_records[seqID] for seqID in seqIDs_for_msa]
             calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id)
+        else:
+            if tuple(curr_pivotal_df['all_truncated'])[0] == 1:
+                aberrant_seqIDs = seqIDs
+                for seqID in aberrant_seqIDs:
+                    aberrant_seqIDs_outfile.write(f'{seqID}\n')
+                # end for
+            else:
+                seq_records_for_msa = selected_seq_records.values()
+                calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id)
+            # end if
         # end if
     # end for
 # end with

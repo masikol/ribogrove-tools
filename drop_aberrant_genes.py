@@ -6,6 +6,7 @@ import subprocess as sp
 from io import StringIO
 
 import pandas as pd
+from Bio import SeqIO
 
 from gene_seqs_2_stats import gene_seqs_2_stats
 
@@ -77,11 +78,11 @@ def remove_3cat_sort_tail(non_aberrant_genes_seqs_fpath, categories_fpath):
 
     seqIDs_to_keep = set(lengths_df['seqID'])
 
-    seq_records = SeqIO.parse(non_aberrant_genes_seqs_fpath, 'fasta')
+    seq_records = tuple(SeqIO.parse(non_aberrant_genes_seqs_fpath, 'fasta'))
 
     no_3cat_tail_seq_records = tuple(
-        map(
-            filter: lambda r: r.id in seqIDs_to_keep,
+        filter(
+            lambda r: r.id in seqIDs_to_keep,
             seq_records
         )
     )
