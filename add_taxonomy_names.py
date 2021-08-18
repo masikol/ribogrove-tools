@@ -8,7 +8,7 @@ import pandas as pd
 infpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/taxIDs.tsv'
 per_gene_infpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxIDs.tsv'
 
-rankedlineage_path = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/new-taxdump/rankedlineage_2.dmp'
+rankedlineage_path = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/new_taxdump/ranked_lineage_just_tabs.dmp'
 
 outfpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/taxonomy.tsv'
 per_gene_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxonomy.tsv'
