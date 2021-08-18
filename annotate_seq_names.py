@@ -9,14 +9,14 @@ import pandas as pd
 from Bio import SeqIO
 
 
-in_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
-# in_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs.fasta'
+# in_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
+in_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs.fasta'
 
 tax_fpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxonomy.tsv'
 cat_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_16S_genes_categories.tsv'
 
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/TEST_gene_seqs_no_NN_annotated.fasta'
-# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs_annotated.fasta'
+# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/TEST_gene_seqs_no_NN_annotated.fasta'
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs_annotated.fasta'
 
 tax_sep = ';'
 
@@ -76,17 +76,24 @@ with open(outfpath, 'wt') as outfile:
         )
 
         if not pd.isnull(curr_tax_record['tax_name']):
-            tax_name = curr_tax_record['tax_name']
+            tax_name = curr_tax_record['tax_name'].replace(' ', '_')
         else:
             tax_name = 'no_taxonomy_name'
         # end if
 
         category = cat_df[cat_df['seqID'] == seq_record.id]['category'].values[0]
 
-        seq_record.description = f'{seq_record.id} {tax_name}_{tax_sep}{taxonomy}{tax_sep}_category:{category}'
+        seq_record.description = f'{seq_record.id} {tax_name} {tax_sep}{taxonomy}{tax_sep} category:{category}'
         outfile.write(f'>{seq_record.description}\n{seq_record.seq}\n')
     # end for
 # end with
+
+tmp_fasta_fpath = './tmp.fasta'
+os.system(f'cat {outfpath} | seqkit seq -u > {tmp_fasta_fpath}')
+os.system(f'cat {tmp_fasta_fpath} > {outfpath}')
+os.unlink(tmp_fasta_fpath)
+
+os.system(f'seqkit stats -a {outfpath}')
 
 print('\nCompleted!')
 print(outfpath)

@@ -9,20 +9,18 @@ from Bio import SeqIO
 from gene_seqs_2_stats import gene_seqs_2_stats
 
 
-# no_aberrant_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/non_aberrant_genes.fasta'
-no_aberrant_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
-# non_aberrant_genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/non_aberrant_genes_stats.tsv'
-non_aberrant_genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_stats_no_NN.tsv'
+no_aberrant_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/non_aberrant_genes.fasta'
+non_aberrant_genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/non_aberrant_genes_stats.tsv'
 
 ass_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
 repeats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/repeats_no_NN.tsv'
 cat_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_genome_categories.tsv'
 
-pure_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_pure_genes_seqs.fasta'
-pure_genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_pure_genes_stats.tsv'
+# pure_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_pure_genes_seqs.fasta'
+# pure_genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_pure_genes_stats.tsv'
 
-# pure_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs.fasta'
-# pure_genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_stats.tsv'
+pure_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs.fasta'
+pure_genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_stats.tsv'
 
 
 def select_gene_seqs(ass_id, seq_records, stats_df):
@@ -70,9 +68,14 @@ non_aberrant_genes_stats_df = pd.read_csv(non_aberrant_genes_stats_fpath, sep='\
 
 cat_df = pd.read_csv(cat_fpath, sep='\t')
 
+seq_records = tuple(SeqIO.parse(no_aberrant_genes_fpath, 'fasta'))
+
+seqIDs = set( (r.id for r in seq_records) )
+
 
 repeats_df = read_repeats_df(repeats_fpath)
 repeats_df = repeats_df[repeats_df['cons_reg_count'] != 0]
+repeats_df = repeats_df.query('seqID in @seqIDs')
 
 # We need some additional info for finding repeat length threshold.
 # Namely, we need assembly IDs, categories and repeat lengths in the same dataframe.
@@ -88,7 +91,6 @@ repeats_df = repeats_df.groupby('ass_id').agg({'rep_len': 'max'}) \
     .reset_index()
 
 
-seq_records = tuple(SeqIO.parse(no_aberrant_genes_fpath, 'fasta'))
 
 
 # == Find repeat length thresgold ==
@@ -97,6 +99,8 @@ repeat_len_threshold = repeats_df['rep_len'].max() + 1
 
 print(f'max repeat length = {repeat_len_threshold}')
 
+print(repeats_df.head(15))
+
 for i, row in repeats_df.iterrows():
 
     ass_id = row['ass_id']
@@ -104,8 +108,8 @@ for i, row in repeats_df.iterrows():
     
     selected_seq_records = select_gene_seqs(ass_id, seq_records, non_aberrant_genes_stats_df)
 
-    genes_are_identical = len(set([str(r.seq) for r in selected_seq_records.values()])) < 2
-    # genes_are_identical = len(set([len(r.seq) for r in selected_seq_records.values()])) < 2
+    # genes_are_identical = len(set([str(r.seq) for r in selected_seq_records.values()])) < 2
+    genes_are_identical = len(set([len(r.seq) for r in selected_seq_records.values()])) < 2
 
     if not genes_are_identical or category == 3:
         repeat_len_threshold = row['rep_len']

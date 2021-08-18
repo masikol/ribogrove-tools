@@ -264,17 +264,18 @@ stats_df = pd.read_csv(stats_fpath, sep='\t')
 
 ass_ids = tuple(set(stats_df['ass_id']))
 # ass_ids = [
-#     131461,
-#     9961891,
-#     3810951,
-#     1442141,
-#     5131611,
-#     9310321,
-#     7359321,
-#     1005941,
-#     5394991,
-#     1491951,
-#     9924121,
+#     1691841,
+    # 131461,
+    # 9961891,
+    # 3810951,
+    # 1442141,
+    # 5131611,
+    # 9310321,
+    # 7359321,
+    # 1005941,
+    # 5394991,
+    # 1491951,
+    # 9924121,
 # ]
 
 seq_records = tuple(SeqIO.parse(gene_seqs_fasta_fpath, 'fasta'))
@@ -377,7 +378,7 @@ with open(pident_outfpath, 'wt') as pident_outfile, \
             calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id)
         else:
             if tuple(curr_pivotal_df['all_truncated'])[0] == 1:
-                aberrant_seqIDs = seqIDs
+                aberrant_seqIDs = set(selected_seq_records.keys())
                 for seqID in aberrant_seqIDs:
                     aberrant_seqIDs_outfile.write(f'{seqID}\n')
                 # end for
