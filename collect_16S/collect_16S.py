@@ -171,7 +171,13 @@ def extract_gene_as_is(feature: SeqFeature, gbrecord: SeqRecord):
     # Set `strand` value
     strand_str = 'plus' if seq_strand == 1 else 'minus'
 
-    header = f'{gbrecord.id}:{seq_start}-{seq_end}_{strand_str} {gbrecord.description}'
+    # Remove chars '<' and '>': they will appear if
+    #   Bio.SeqFeature.BeforePosition or Bio.SeqFeature.AfterPosition
+    #   are converted to str
+    seq_start_for_header = str(seq_start).replace('<', '')
+    seq_end_for_header = str(seq_end).replace('>', '')
+
+    header = f'{gbrecord.id}:{seq_start_for_header}-{seq_end_for_header}_{strand_str} {gbrecord.description}'
 
     return header, seq
 # end def extract_gene_as_is

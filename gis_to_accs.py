@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
-# The script takes output of script assembly2refseq_id.py (RefSeq GI numbers) as input (file `infpath`)
+# The script takes output of script assembly2refseq_id.py (RefSeq GI numbers) as input (file `gi_fpath`)
 #   and translates them to "accession.version"s and titles.
 # Output (file `outfpath`) is a TSV file of 3 columns (refseq_id, acc, title).
 
@@ -9,19 +9,56 @@
 import os
 import sys
 import time
+import argparse
 
 import pandas as pd
 
 from Bio import Entrez
 Entrez.email = 'maximdeynonih@gmail.com'
 
-infpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq.tsv'
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs.tsv'
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    '-i',
+    '--gi-fpath',
+    help='TSV file (with header) with Assembly IDs and GI numbers separated by tabs',
+    required=True
+)
+
+parser.add_argument(
+    '-o',
+    '--outfpath',
+    help='file mapping RefSeq GI numbers to corresponding ACCESSION.VERSION\'s and titles',
+    required=True
+)
+
+args = parser.parse_args()
+
+# Check existance of input file
+if not os.path.exists(args.gi_fpath):
+    print(f'Error: file `{args.gi_fpath}` does not exist!')
+    sys.exit(1)
+# end if
+
+if not os.path.isdir(os.path.dirname(args.outfpath)):
+    try:
+        os.makedirs(os.path.dirname(args.outfpath))
+    except OSError as err:
+        print(f'Error: cannot create directory `{os.path.dirname(args.outfpath)}`')
+        sys.exit(1)
+    # end try
+# end if
+
+
+# For convenience
+gi_fpath = args.gi_fpath
+outfpath = args.outfpath
 
 
 # Read input
 gi_df = pd.read_csv(
-    infpath,
+    gi_fpath,
     sep='\t'
 )
 

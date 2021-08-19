@@ -15,6 +15,7 @@ import argparse
 from Bio import Entrez
 Entrez.email = 'maximdeynonih@gmail.com'
 
+# == Parse arguments ==
 
 parser = argparse.ArgumentParser()
 
@@ -34,6 +35,8 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+
+# Check existance of input file
 if not os.path.exists(args.assm_id_fpath):
     print(f'Error: file `{args.assm_id_fpath}` does not exist!')
     sys.exit(1)
@@ -48,7 +51,7 @@ if not os.path.isdir(os.path.dirname(args.outfpath)):
     # end try
 # end if
 
-
+# For convenience
 assm_id_fpath = args.assm_id_fpath
 outfpath = args.outfpath
 
