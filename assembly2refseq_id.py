@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
-# Script takes IDs (IDs of database NCBI Assembly) from file `assm_id_fpath` (one per line)
+# Script takes IDs (IDs of database NCBI Assembly) from file `-i/--assm-id-file` (one per line)
 #   and translates them to RefSeq GI numbers using elink utility (https://www.ncbi.nlm.nih.gov/books/NBK25497/).
-# The script writes result to TSV file `outfpath` of 2 columns (ass_ID, refseq_id)
+# The script writes result to TSV file `-o/--outfile` of 2 columns (ass_ID, refseq_id)
 
 
 import os
@@ -21,14 +21,14 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument(
     '-i',
-    '--assm-id-fpath',
+    '--assm-id-file',
     help='file with Assembly IDs, one per line',
     required=True
 )
 
 parser.add_argument(
     '-o',
-    '--outfpath',
+    '--outfile',
     help='file mapping Assembly IDs to RefSeq GI numbers',
     required=True
 )
@@ -36,24 +36,25 @@ parser.add_argument(
 args = parser.parse_args()
 
 
+# For convenience
+assm_id_fpath = os.path.realpath(args.assm_id_file)
+outfpath = os.path.realpath(args.outfile)
+
+
 # Check existance of input file
-if not os.path.exists(args.assm_id_fpath):
-    print(f'Error: file `{args.assm_id_fpath}` does not exist!')
+if not os.path.exists(assm_id_fpath):
+    print(f'Error: file `{assm_id_fpath}` does not exist!')
     sys.exit(1)
 # end if
 
-if not os.path.isdir(os.path.dirname(args.outfpath)):
+if not os.path.isdir(os.path.dirname(outfpath)):
     try:
-        os.makedirs(os.path.dirname(args.outfpath))
+        os.makedirs(os.path.dirname(outfpath))
     except OSError as err:
-        print(f'Error: cannot create directory `{os.path.dirname(args.outfpath)}`')
+        print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
         sys.exit(1)
     # end try
 # end if
-
-# For convenience
-assm_id_fpath = os.path.realpath(args.assm_id_fpath)
-outfpath = os.path.realpath(args.outfpath)
 
 
 # Read assembly IDs

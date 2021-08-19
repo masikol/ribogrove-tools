@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
-# Scripts merges TSV file, which is output of script assembly2refseq_id.py (`assm_2_gi_fpath`)
-#   and TSV file, which is output of script gis_to_accs.py (`gi_2_acc_fpath`) on column `refseq_id`.
-# Output (file `outfpath`) is a TSV file of 4 columns (ass_id, refseq_id, acc, title).
+# Scripts merges TSV file, which is output of script assembly2refseq_id.py (-s/--assm-2-gi-file)
+#   and TSV file, which is output of script gis_to_accs.py (-c/--gi-2-acc-file) on column `refseq_id`.
+# Output (file -o/--outfile) is a TSV file of 4 columns (ass_id, refseq_id, acc, title).
 
 import os
 import argparse
@@ -18,14 +18,14 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument(
     '-s',
-    '--assm-2-gi-fpath',
+    '--assm-2-gi-file',
     help='TSV file (with header) with Assembly IDs and GI numbers separated by tabs',
     required=True
 )
 
 parser.add_argument(
     '-c',
-    '--gi-2-acc-fpath',
+    '--gi-2-acc-file',
     help="""TSV file (with header) with
     GI numbers, ACCESSION.VERSION's and titles separated by tabs""",
     required=True
@@ -33,7 +33,7 @@ parser.add_argument(
 
 parser.add_argument(
     '-o',
-    '--outfpath',
+    '--outfile',
     help='file mapping Assembly IDs to RefSeq accession and titles',
     required=True
 )
@@ -41,31 +41,31 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-# Check existance of input file -s/--assm-2-gi-fpath
-if not os.path.exists(args.assm_2_gi_fpath):
-    print(f'Error: file `{args.assm_2_gi_fpath}` does not exist!')
+assm_2_gi_fpath = os.path.realpath(args.assm_2_gi_file)
+gi_2_acc_fpath = os.path.realpath(args.gi_2_acc_file)
+outfpath = os.path.realpath(args.outfile)
+
+
+# Check existance of input file -s/--assm-2-gi-file
+if not os.path.exists(assm_2_gi_fpath):
+    print(f'Error: file `{assm_2_gi_fpath}` does not exist!')
     sys.exit(1)
 # end if
 
-# Check existance of input file -c/--gi-2-acc-fpath
-if not os.path.exists(args.gi_2_acc_fpath):
-    print(f'Error: file `{args.gi_2_acc_fpath}` does not exist!')
+# Check existance of input file -c/--gi-2-acc-file
+if not os.path.exists(gi_2_acc_fpath):
+    print(f'Error: file `{gi_2_acc_fpath}` does not exist!')
     sys.exit(1)
 # end if
 
-if not os.path.isdir(os.path.dirname(args.outfpath)):
+if not os.path.isdir(os.path.dirname(outfpath)):
     try:
-        os.makedirs(os.path.dirname(args.outfpath))
+        os.makedirs(os.path.dirname(outfpath))
     except OSError as err:
-        print(f'Error: cannot create directory `{os.path.dirname(args.outfpath)}`')
+        print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
         sys.exit(1)
     # end try
 # end if
-
-
-assm_2_gi_fpath = os.path.realpath(args.assm_2_gi_fpath)
-gi_2_acc_fpath = os.path.realpath(args.gi_2_acc_fpath)
-outfpath = os.path.realpath(args.outfpath)
 
 
 # Read input

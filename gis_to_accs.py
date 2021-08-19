@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
-# The script takes output of script assembly2refseq_id.py (RefSeq GI numbers) as input (file `gi_fpath`)
+# The script takes output of script assembly2refseq_id.py (RefSeq GI numbers) as input
+#   (file `-i/--gi-file`)
 #   and translates them to "accession.version"s and titles.
-# Output (file `outfpath`) is a TSV file of 3 columns (refseq_id, acc, title).
+# Output (file `-o/--outfile`) is a TSV file of 3 columns (refseq_id, acc, title).
 
 
 import os
@@ -21,39 +22,39 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument(
     '-i',
-    '--gi-fpath',
+    '--gi-file',
     help='TSV file (with header) with Assembly IDs and GI numbers separated by tabs',
     required=True
 )
 
 parser.add_argument(
     '-o',
-    '--outfpath',
+    '--outfile',
     help='file mapping RefSeq GI numbers to corresponding ACCESSION.VERSION\'s and titles',
     required=True
 )
 
 args = parser.parse_args()
 
+# For convenience
+gi_fpath = os.path.realpath(args.gi_ffile)
+outfpath = os.path.realpath(args.outfile)
+
+
 # Check existance of input file
-if not os.path.exists(args.gi_fpath):
-    print(f'Error: file `{args.gi_fpath}` does not exist!')
+if not os.path.exists(gi_fpath):
+    print(f'Error: file `{gi_fpath}` does not exist!')
     sys.exit(1)
 # end if
 
-if not os.path.isdir(os.path.dirname(args.outfpath)):
+if not os.path.isdir(os.path.dirname(outfpath)):
     try:
-        os.makedirs(os.path.dirname(args.outfpath))
+        os.makedirs(os.path.dirname(outfpath))
     except OSError as err:
-        print(f'Error: cannot create directory `{os.path.dirname(args.outfpath)}`')
+        print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
         sys.exit(1)
     # end try
 # end if
-
-
-# For convenience
-gi_fpath = os.path.realpath(args.gi_fpath)
-outfpath = os.path.realpath(args.outfpath)
 
 
 # Read input
