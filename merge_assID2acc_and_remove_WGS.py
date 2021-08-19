@@ -1,36 +1,90 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
-# Scripts merges TSV file, which is output of script assembly2refseq_id.py (`ass_gi_fpath`)
-#   and TSV file, which is output of script gis_to_accs.py (`gi_acc_fpath`) on column `refseq_id`.
+# Scripts merges TSV file, which is output of script assembly2refseq_id.py (`assm_2_gi_fpath`)
+#   and TSV file, which is output of script gis_to_accs.py (`gi_2_acc_fpath`) on column `refseq_id`.
 # Output (file `outfpath`) is a TSV file of 4 columns (ass_id, refseq_id, acc, title).
+
+import os
+import argparse
 
 import numpy as np
 import pandas as pd
 
 
-ass_gi_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq.tsv'
-gi_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs.tsv'
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
+# == Parse arguments ==
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    '-s',
+    '--assm-2-gi-fpath',
+    help='TSV file (with header) with Assembly IDs and GI numbers separated by tabs',
+    required=True
+)
+
+parser.add_argument(
+    '-c',
+    '--gi-2-acc-fpath',
+    help="""TSV file (with header) with
+    GI numbers, ACCESSION.VERSION's and titles separated by tabs""",
+    required=True
+)
+
+parser.add_argument(
+    '-o',
+    '--outfpath',
+    help='file mapping Assembly IDs to RefSeq accession and titles',
+    required=True
+)
+
+args = parser.parse_args()
+
+
+# Check existance of input file -s/--assm-2-gi-fpath
+if not os.path.exists(args.assm_2_gi_fpath):
+    print(f'Error: file `{args.assm_2_gi_fpath}` does not exist!')
+    sys.exit(1)
+# end if
+
+# Check existance of input file -c/--gi-2-acc-fpath
+if not os.path.exists(args.gi_2_acc_fpath):
+    print(f'Error: file `{args.gi_2_acc_fpath}` does not exist!')
+    sys.exit(1)
+# end if
+
+if not os.path.isdir(os.path.dirname(args.outfpath)):
+    try:
+        os.makedirs(os.path.dirname(args.outfpath))
+    except OSError as err:
+        print(f'Error: cannot create directory `{os.path.dirname(args.outfpath)}`')
+        sys.exit(1)
+    # end try
+# end if
+
+
+assm_2_gi_fpath = os.path.realpath(args.assm_2_gi_fpath)
+gi_2_acc_fpath = os.path.realpath(args.gi_2_acc_fpath)
+outfpath = os.path.realpath(args.outfpath)
 
 
 # Read input
-ass_gi_df = pd.read_csv(
-    ass_gi_fpath,
+ass_2_gi_df = pd.read_csv(
+    assm_2_gi_fpath,
     sep='\t'
 )
 
-gi_acc_df = pd.read_csv(
-    gi_acc_fpath,
+gi_2_acc_df = pd.read_csv(
+    gi_2_acc_fpath,
     sep='\t'
 )
 
 
-print(ass_gi_df.shape)
-print(ass_gi_df.head())
+print(ass_2_gi_df.shape)
+print(ass_2_gi_df.head())
 
-print(gi_acc_df.shape)
-print(gi_acc_df.head())
+print(gi_2_acc_df.shape)
+print(gi_2_acc_df.head())
 
 
 def set_is_WGS(row):
@@ -43,18 +97,18 @@ def set_is_WGS(row):
 
 # == Remove "WHOLE GENOME SHOTGUN SEQUENCE"s ==
 
-print(f'len before rm WGS = {gi_acc_df.shape[0]}')
+print(f'number of rows before rm WGS = {gi_2_acc_df.shape[0]}')
 
-gi_acc_df['is_WGS'] = np.repeat(None, gi_acc_df.shape[0])
-gi_acc_df = gi_acc_df.apply(set_is_WGS, axis=1)
-gi_acc_df = gi_acc_df[gi_acc_df['is_WGS'] == False]
+gi_2_acc_df['is_WGS'] = np.repeat(None, gi_2_acc_df.shape[0])
+gi_2_acc_df = gi_2_acc_df.apply(set_is_WGS, axis=1)
+gi_2_acc_df = gi_2_acc_df[gi_2_acc_df['is_WGS'] == False]
 
-print(f'len after rm WGS = {gi_acc_df.shape[0]}')
+print(f'number of rows after rm WGS = {gi_2_acc_df.shape[0]}')
 
 
-# == Merge Assembly IDs with RefSeq Accession.Version ==
+# == Merge Assembly IDs with RefSeq ACCESSION.VERSION ==
 
-merged_df = ass_gi_df.merge(gi_acc_df, on='refseq_id', how='right')
+merged_df = ass_2_gi_df.merge(gi_2_acc_df, on='refseq_id', how='right')
 
 print('MERGED: DATAFRAME')
 print(merged_df.shape)

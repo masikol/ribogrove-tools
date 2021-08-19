@@ -52,8 +52,8 @@ if not os.path.isdir(os.path.dirname(args.outfpath)):
 # end if
 
 # For convenience
-assm_id_fpath = args.assm_id_fpath
-outfpath = args.outfpath
+assm_id_fpath = os.path.realpath(args.assm_id_fpath)
+outfpath = os.path.realpath(args.outfpath)
 
 
 # Read assembly IDs

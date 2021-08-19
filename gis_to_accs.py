@@ -52,8 +52,8 @@ if not os.path.isdir(os.path.dirname(args.outfpath)):
 
 
 # For convenience
-gi_fpath = args.gi_fpath
-outfpath = args.outfpath
+gi_fpath = os.path.realpath(args.gi_fpath)
+outfpath = os.path.realpath(args.outfpath)
 
 
 # Read input
