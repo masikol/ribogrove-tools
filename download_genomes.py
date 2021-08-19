@@ -43,7 +43,7 @@ parser.add_argument(
 parser.add_argument(
     '-o',
     '--outdir',
-    help='output directory that will contain downlaoded gbk.gz files',
+    help='output directory that will contain downloaded gbk.gz files',
     required=True
 )
 

@@ -4,16 +4,23 @@
 # Script extracts sequences of 16S genes from downloaded genomes in GenBank format.
 
 # Input files:
-# 1. `in_acc_fpath` is output of script merge_assID2acc_and_remove_WGS.py.
-# 2. RefSeq records downloaded by script download_genomes.py
+# 1. `-i/--assm-acc-file` is output of script merge_assID2acc_and_remove_WGS.py.
+# 2. RefSeq records downloaded by script download_genomes.py (in directory -g/--gbk-dir)
 
 # Output files:
-# 1. `fasta_outfpath`: fasta file containing sequences of collected genes
-# 2. `outstats_fpath`: file with statistics of collected 16S genes
+# 1. `-o/--out-fasta`: fasta file containing sequences of collected genes
+# 2. `-s/--out-stats`: file with statistics of collected 16S genes
+
+# Dependencies:
+# 1. cmsearch executable (--cmsearch)
+# 2. .cm file containing covariance model of target gene family (--rfam-family-cm)
+#   (RF00177 for bacterial ribosomal SSU, RF01959 for archaeal ribosomal SSU)
+# 3. seqkit executable (--seqkit)
 
 
 import os
 import gzip
+import argparse
 import statistics as sts
 from typing import List
 
@@ -23,29 +30,121 @@ from Bio.SeqFeature import SeqFeature
 from Bio.SeqRecord import SeqRecord
 
 
-# == Input files ==
+# == Parse arguments ==
 
-# in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/test_bacteria_ass_refseq_accs_merged.tsv'
-in_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
-gbk_dpath = '/mnt/1.5_drive_0/16S_scrubbling/genomes-data/gbk'
+parser = argparse.ArgumentParser()
+
+# Input files
+parser.add_argument(
+    '-i',
+    '--assm-acc-file',
+    help="""TSV file (with header) with
+  Assembly IDs, GI numbers, ACCESSION.VERSION's and titles separated by tabs""",
+    required=True
+)
+
+parser.add_argument(
+    '-g',
+    '--gbk-dir',
+    help='directory that contains downloaded gbk.gz files',
+    required=True
+)
+
+# Output files
+parser.add_argument(
+    '-o',
+    '--out-fasta',
+    help='output fasta file for genes sequences',
+    required=True
+)
+
+parser.add_argument(
+    '-s',
+    '--out-stats',
+    help='output TSV file for per-replicon statistics',
+    required=True
+)
+
+# Dependencies
+parser.add_argument(
+    '--cmsearch',
+    help='cmsearch executable',
+    required=True
+)
+
+parser.add_argument(
+    '--rfam-family-cm',
+    help=""".cm file containing covariance model of target gene family
+  (RF00177 for bacterial ribosomal SSU, RF01959 for archaeal ribosomal SSU)""",
+    required=True
+)
+
+parser.add_argument(
+    '--seqkit',
+    help='seqkit executable',
+    required=True
+)
 
 
-# == Output files ==
-
-# fasta_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_all_collected.fasta'
-# outstats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_all_collected_collect_16S_stats.tsv'
-fasta_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected.fasta'
-outstats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/all_collected_16S_stats.tsv'
+args = parser.parse_args()
 
 
-# Path to cmsearch (VERSION 1.1.1 !!!)
-cmsearch = '/home/cager/Misc_soft/infernal/infernal-1.1.1/bin/cmsearch'
-# Path to RFAM family RF00177 (VERSION 12.0 !!!)
-rfam_12_0_fpath = '/mnt/1.5_drive_0/16S_scrubbling/rfam/RF00177.12.0.cm'
+assm_acc_fpath = os.path.realpath(args.assm_acc_file)
+gbk_dpath = os.path.realpath(args.gbk_dir)
+fasta_outfpath = os.path.realpath(args.out_fasta)
+outstats_fpath = os.path.realpath(args.out_stats)
+cmsearch_fpath = os.path.realpath(args.cmsearch)
+rfam_family_fpath = os.path.realpath(args.rfam_family_cm)
+seqkit_fpath = os.path.realpath(args.seqkit)
+
+
+# Check existance of input file -i/--assm-acc-file
+if not os.path.exists(assm_acc_fpath):
+    print(f'Error: file `{assm_acc_fpath}` does not exist!')
+    sys.exit(1)
+# end if
+
+# Check existance of gbk directory -g/--gbk-dir
+if not os.path.isdir(gbk_dpath):
+    print(f'Error: directory `{gbk_dpath}` does not exist!')
+    sys.exit(1)
+# end if
+
+# Create output directories if needed
+for some_dir in map(os.path.dirname, [fasta_outfpath, outstats_fpath]):
+    if not os.path.isdir(some_dir):
+        try:
+            os.makedirs(some_dir)
+        except OSError as err:
+            print(f'Error: cannot create directory `{some_dir}`')
+            sys.exit(1)
+        # end try
+    # end if
+# end if
+
+# Check existance of cmsearch executables --cmsearch and --seqkit
+# And check if they are executable
+for fpath in (cmsearch_fpath, seqkit_fpath):
+    if not os.path.exists(fpath):
+        print(f'Error: file `{fpath}` does not exist!')
+        sys.exit(1)
+    # end if
+    # Check if cmsearch executable is actually executable
+    if not os.access(fpath, os.X_OK):
+        print(f'Error: file `{fpath}` is not executable!')
+        sys.exit(1)
+    # end if
+# end for 
+
+# Check existance of file rfam_family_fpath --rfam-family-cm
+if not os.path.exists(rfam_family_fpath):
+    print(f'Error: file `{rfam_family_fpath}` does not exist!')
+    sys.exit(1)
+# end if
+
 
 # Header of cmsearch's .tblout output files
 tblout_header = 'target_name\taccession\tquery_name\taccession\tmdl\tmdl_from\tmdl_to\tseq_from\tseq_to\tstrand\ttrunc\tpass\tgc\tbias\tscore\tEvalue\tinc\tdescription_of_target'
-
 
 # Header of statistics file
 stats_header = [
@@ -190,8 +289,8 @@ def run_cmsearch(fasta_fpath: str):
 
     tblout_fpath = 'tmpXXX_tblout.tsv'
     out_fpath = 'tmpXXX_cmsearch_out.txt'
-    cmd = f'{cmsearch} --noali -o {out_fpath} --tblout {tblout_fpath} --cpu 6 {rfam_12_0_fpath} {fasta_fpath}'
-    # cmd = f'{cmsearch} -o {out_fpath} --tblout {tblout_fpath} --cpu 6 {rfam_12_0_fpath} {fasta_fpath}'
+    cmd = f'{cmsearch_fpath} --noali -o {out_fpath} --tblout {tblout_fpath} --cpu 6 {rfam_family_fpath} {fasta_fpath}'
+    # cmd = f'{cmsearch_fpath} -o {out_fpath} --tblout {tblout_fpath} --cpu 6 {rfam_family_fpath} {fasta_fpath}'
 
     exit_code = os.system(cmd)
     if exit_code != 0:
@@ -350,11 +449,11 @@ def calc_gene_stats(extracted_genes: List[List[str, str]]):
 # Read input data
 
 acc_df = pd.read_csv(
-    in_acc_fpath,
+    assm_acc_fpath,
     sep='\t'
 )
 
-n_accs = acc_df.shape[0]
+n_accs = acc_df.shape[0] # number of ACCESSION.VESRION's to process
 
 
 # == Proceed ==
@@ -426,14 +525,14 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, open(outstats_fpath, 'wt') as 
 
 
 # Some genes may be duplicated because of appending sequence's start to it's end
-# THerefore, we need to dereplicate sequences by name (seqkit rmdup -n)
+# Therefore, we need to dereplicate sequences by name (seqkit rmdup -n)
 print('\nRunning seqkit rmdup...')
 tmpfasta = os.path.join(
     os.path.dirname(fasta_outfpath),
     'tmp_ALL_GENES.fasta'
 )
-os.system(f'cat {fasta_outfpath} | seqkit rmdup -n > {tmpfasta}')
-os.system(f'cat {tmpfasta} | seqkit seq -u > {fasta_outfpath}')
+os.system(f'cat {fasta_outfpath} | {seqkit_fpath} rmdup -n > {tmpfasta}')
+os.system(f'cat {tmpfasta} | {seqkit_fpath} seq -u > {fasta_outfpath}')
 os.unlink(tmpfasta)
 print('Done\n')
 

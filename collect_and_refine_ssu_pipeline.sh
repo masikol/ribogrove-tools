@@ -3,9 +3,11 @@ set -e
 
 source corner_config.conf
 
-if [[ ! -d "${LOGS_DIR}" ]]; then
-  mkdir -p "${LOGS_DIR}"
-fi
+for some_dir in "${WORKDIR}" "${LOGS_DIR}" "${GENOMES_GBK_DIR}"; do
+  if [[ ! -d "${some_dir}" ]]; then
+    mkdir -p "${some_dir}"
+  fi
+done
 
 
 # == Translate Assembly UIDs to RefSeq GI numbers ==
@@ -43,3 +45,18 @@ ASS_ACC_MERGED_FPATH="${WORKDIR}/archaea_refseq_accs_merged.tsv"
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --outdir "${GENOMES_GBK_DIR}" \
   --log-file "${LOGS_DIR}/archaea_genome_download_log.log"
+
+
+# == Extract 16S genes from downloaded genomes ==
+
+ALL_GENES_FASTA="${WORKDIR}/gene_seqs/all_collected.fasta"
+ALL_GENES_STATS="${WORKDIR}/gene_seqs/all_collected_stats.tsv"
+
+./collect_16S/collect_16S.py \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --gbk-dir "${GENOMES_GBK_DIR}" \
+  --out-fasta "${ALL_GENES_FASTA}" \
+  --out-stats "${ALL_GENES_STATS}" \
+  --cmsearch "${CMSEARCH_FOR_COLLECT_16S}" \
+  --rfam-family-cm "${RFAM_FOR_COLLECT_16S}" \
+  --seqkit "${SEQKIT}"
