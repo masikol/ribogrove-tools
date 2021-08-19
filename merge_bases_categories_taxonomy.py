@@ -17,7 +17,8 @@ bases_df = pd.read_csv(bases_fpath, sep='\t')
 categories_df = pd.read_csv(categories_fpath, sep='\t')
 
 # seqID   ass_id  accs    taxID   tax_name        genus   family  order   class   phylum  superkingdom
-taxonomy_df = pd.read_csv(taxonomy_fpath, sep='\t')
+taxonomy_df = pd.read_csv(taxonomy_fpath, sep='\t') \
+    .drop(['accs'], axis=1)
 
 
 print('Merging...')

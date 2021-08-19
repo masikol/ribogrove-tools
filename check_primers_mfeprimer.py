@@ -97,7 +97,7 @@ primer_pairs = [
 
 
 mfeprimer = '/home/cager/Misc_soft/mfeprimer'
-fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs_annotated.fasta'
+fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/nr.pure_genes_seqs_annotated.fasta'
 categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_16S_genes_categories.tsv'
 
 outdpath = '/mnt/1.5_drive_0/16S_scrubbling/check_primers/mfeprimer_results'

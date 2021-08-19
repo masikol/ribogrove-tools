@@ -9,14 +9,48 @@
 import os
 import sys
 import time
+import argparse
+
 
 from Bio import Entrez
 Entrez.email = 'maximdeynonih@gmail.com'
 
 
-assm_id_fpath = '/mnt/1.5_drive_0/16S_scrubbling/assembly_UIDs.txt'
+parser = argparse.ArgumentParser()
 
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq.tsv'
+parser.add_argument(
+    '-i',
+    '--assm-id-fpath',
+    help='file with Assembly IDs, one per line',
+    required=True
+)
+
+parser.add_argument(
+    '-o',
+    '--outfpath',
+    help='file mapping Assembly IDs to RefSeq GI numbers',
+    required=True
+)
+
+args = parser.parse_args()
+
+if not os.path.exists(args.assm_id_fpath):
+    print(f'Error: file `{args.assm_id_fpath}` does not exist!')
+    sys.exit(1)
+# end if
+
+if not os.path.isdir(os.path.dirname(args.outfpath)):
+    try:
+        os.makedirs(os.path.dirname(args.outfpath))
+    except OSError as err:
+        print(f'Error: cannot create directory `{os.path.dirname(args.outfpath)}`')
+        sys.exit(1)
+    # end try
+# end if
+
+
+assm_id_fpath = args.assm_id_fpath
+outfpath = args.outfpath
 
 
 # Read assembly IDs
