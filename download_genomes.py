@@ -5,7 +5,7 @@
 # Output files will be all gziped.
 # The script downloads records using efetch utility (https://www.ncbi.nlm.nih.gov/books/NBK25497/)
 
-# Input file (`acc_fpath`) is output of script merge_assID2acc_and_remove_WGS.py.
+# Input file (-i/--assm-acc-file) is output of script merge_assID2acc_and_remove_WGS.py.
 
 # Output files are:
 # 1. `.gbk.gz` files in directory `outdir`
@@ -18,17 +18,67 @@ import sys
 import time
 import http
 import gzip
+import argparse
 from functools import partial
 
 import pandas as pd
 from Bio import Entrez
 
 
-Entrez.email = "maximdeynonih@gmail.com"
+Entrez.email = 'maximdeynonih@gmail.com'
 
-acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
-outdir = '/mnt/1.5_drive_0/16S_scrubbling/genomes-data/gbk'
-log_fpath = '/mnt/1.5_drive_0/16S_scrubbling/logs/genomes-download.0.log'
+
+# == Parse arguments ==
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument(
+    '-i',
+    '--assm-acc-file',
+    help="""TSV file (with header) with
+  Assembly IDs, GI numbers, ACCESSION.VERSION's and titles separated by tabs""",
+    required=True
+)
+
+parser.add_argument(
+    '-o',
+    '--outdir',
+    help='output directory that will contain downlaoded gbk.gz files',
+    required=True
+)
+
+parser.add_argument(
+    '-l',
+    '--log-file',
+    help='log file to track if all genomes are successfully downloaded',
+    required=True
+)
+
+
+args = parser.parse_args()
+
+
+assm_acc_fpath = os.path.realpath(args.assm_acc_file)
+outdir = os.path.realpath(args.outdir)
+log_fpath = os.path.realpath(args.log_file)
+
+
+# Check existance of input file -c/--gi-2-acc-fpath
+if not os.path.exists(assm_acc_fpath):
+    print(f'Error: file `{assm_acc_fpath}` does not exist!')
+    sys.exit(1)
+# end if
+
+for some_dir in (outdir, os.path.dirname(log_fpath)):
+    if not os.path.isdir(some_dir):
+        try:
+            os.makedirs(some_dir)
+        except OSError as err:
+            print(f'Error: cannot create directory `{some_dir}`')
+            sys.exit(1)
+        # end try
+    # end if
+# end for
 
 
 def write_to_file(text: str, log_fpath: str):
@@ -51,7 +101,7 @@ with open(log_fpath, 'w') as _:
 # Read input
 accs = tuple(
     pd.read_csv(
-        acc_fpath,
+        assm_acc_fpath,
         sep='\t'
     )['acc']
 )
@@ -127,3 +177,5 @@ for i, acc in enumerate(accs):
 
 print('\n\nCompleted!')
 print(f'Number of actually downloaded genomes = {downloaded}')
+print(outdir)
+print(log_fpath)
