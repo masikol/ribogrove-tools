@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
 
 # Script extracts sequences of 16S genes from downloaded genomes in GenBank format.
 
@@ -19,10 +18,11 @@
 
 
 import os
+import sys
 import gzip
 import argparse
 import statistics as sts
-from typing import List
+from typing import List, Tuple
 
 import pandas as pd
 from Bio import SeqIO
@@ -129,7 +129,7 @@ for fpath in (cmsearch_fpath, seqkit_fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
     # end if
-    # Check if cmsearch executable is actually executable
+    # Check if an executable is actually executable
     if not os.access(fpath, os.X_OK):
         print(f'Error: file `{fpath}` is not executable!')
         sys.exit(1)
@@ -406,10 +406,10 @@ def extract_reannotated_genes(gbrecord: SeqRecord, topology: str):
 
         # Add extracted gene to the list
         genes.append(
-            [
+            (
                 seq_header,
                 seq
-            ]
+            )
         )
     # end for
 
@@ -417,14 +417,14 @@ def extract_reannotated_genes(gbrecord: SeqRecord, topology: str):
 # end def extract_reannotated_genes
 
 
-def get_seq_lengths(extracted_genes: List[List[str, str]]):
+def get_seq_lengths(extracted_genes: List[Tuple[str, str]]):
     # Function returns lengths of genes passed to it.
     # `extracted_genes` is an object retuned by `extract_reannotated_genes`
     lengths = [len(gene[1]) for gene in extracted_genes]
     return lengths
 # end def get_seq_lengths
 
-def calc_gene_stats(extracted_genes: List[List[str, str]]):
+def calc_gene_stats(extracted_genes: List[Tuple[str, str]]):
     # Function calculates statistics for gene set passed to it:
     #  number of genes
     #  min length

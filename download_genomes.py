@@ -10,7 +10,7 @@
 # Output files are:
 # 1. `.gbk.gz` files in directory `outdir`
 # 2. log file `log_fpath`, which will contain information about errors.
-#    If reocrd is successfully downloaded, the script writes "ok" to correcponding line of log file.
+#    If record is successfully downloaded, the script writes "ok" to correcponding line of log file.
 
 
 import os

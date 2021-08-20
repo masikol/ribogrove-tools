@@ -3,9 +3,14 @@ set -e
 
 source corner_config.conf
 
-for some_dir in "${WORKDIR}" "${LOGS_DIR}" "${GENOMES_GBK_DIR}"; do
+# Directories for different sorts of data
+LOGS_DIR="${WORKDIR}/logs"
+CATEGORIES_DIR="${WORKDIR}/categories"
+TAXONOMY_DIR="${WORKDIR}/taxonomy"
+
+for some_dir in "${WORKDIR}" "${LOGS_DIR}" "${CATEGORIES_DIR}" "${TAXONOMY_DIR}" "${GENOMES_GBK_DIR}"; do
   if [[ ! -d "${some_dir}" ]]; then
-    mkdir -p "${some_dir}"
+    mkdir -pv "${some_dir}"
   fi
 done
 
@@ -41,10 +46,10 @@ ASS_ACC_MERGED_FPATH="${WORKDIR}/archaea_refseq_accs_merged.tsv"
 
 # == Download genomes ==
 
-./download_genomes.py \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --outdir "${GENOMES_GBK_DIR}" \
-  --log-file "${LOGS_DIR}/archaea_genome_download_log.log"
+# ./download_genomes.py \
+#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+#   --outdir "${GENOMES_GBK_DIR}" \
+#   --log-file "${LOGS_DIR}/archaea_genome_download_log.log"
 
 
 # == Extract 16S genes from downloaded genomes ==
@@ -52,11 +57,54 @@ ASS_ACC_MERGED_FPATH="${WORKDIR}/archaea_refseq_accs_merged.tsv"
 ALL_GENES_FASTA="${WORKDIR}/gene_seqs/all_collected.fasta"
 ALL_GENES_STATS="${WORKDIR}/gene_seqs/all_collected_stats.tsv"
 
-./collect_16S/collect_16S.py \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --gbk-dir "${GENOMES_GBK_DIR}" \
-  --out-fasta "${ALL_GENES_FASTA}" \
-  --out-stats "${ALL_GENES_STATS}" \
-  --cmsearch "${CMSEARCH_FOR_COLLECT_16S}" \
-  --rfam-family-cm "${RFAM_FOR_COLLECT_16S}" \
+# ./collect_16S/collect_16S.py \
+#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+#   --gbk-dir "${GENOMES_GBK_DIR}" \
+#   --out-fasta "${ALL_GENES_FASTA}" \
+#   --out-stats "${ALL_GENES_STATS}" \
+#   --cmsearch "${CMSEARCH_FOR_COLLECT_16S}" \
+#   --rfam-family-cm "${RFAM_FOR_COLLECT_16S}" \
+#   --seqkit "${SEQKIT}"
+
+
+# == Assign categories to downloaded genomes ==
+
+PER_GENOME_CAT_FPATH="${CATEGORIES_DIR}/archaea_per_genome_categories.tsv"
+PER_GENE_CAT_FPATH="${CATEGORIES_DIR}/archaea_per_gene_categories.tsv"
+SEQTECH_LOGFILE="${LOGS_DIR}/archaea_seqtech_log.log"
+
+# ./assign_genome_categories/assign_genome_categories.py \
+#   --all-fasta-file "${ALL_GENES_FASTA}" \
+#   --all-stats-file "${ALL_GENES_STATS}" \
+#   --gbk-dir "${GENOMES_GBK_DIR}" \
+#   --per-genome-outfile "${PER_GENOME_CAT_FPATH}" \
+#   --per-gene-outfile "${PER_GENE_CAT_FPATH}" \
+#   --seqtech-logfile "${SEQTECH_LOGFILE}" \
+#   --seqkit "${SEQKIT}"
+
+
+# == Get taxIDs for our genomes ==
+
+PER_GENOME_TAXID_FPATH="${TAXONOMY_DIR}/archaea_per_genome_taxIDs.tsv"
+PER_GENE_TAXID_FPATH="${TAXONOMY_DIR}/archaea_per_gene_taxIDs.tsv"
+
+# ./get_taxIDs.py \
+#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+#   --all-fasta-file "${ALL_GENES_FASTA}" \
+#   --per-genome-outfile "${PER_GENOME_TAXID_FPATH}" \
+#   --per-gene-outfile "${PER_GENE_TAXID_FPATH}" \
+#   --seqkit "${SEQKIT}"
+
+
+# == Map our Aseembly IDs (and seqIDs) to full taxonomy using our taxIDs ==
+
+PER_GENOME_TAXONOMY_FPATH="${TAXONOMY_DIR}/archaea_per_genome_taxonomy.tsv"
+PER_GENE_TAXONOMY_FPATH="${TAXONOMY_DIR}/archaea_per_gene_taxonomy.tsv"
+
+./add_taxonomy_names.py \
+  --per-genome-taxid-file "${PER_GENOME_TAXID_FPATH}" \
+  --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
+  --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
+  --per-genome-outfile "${PER_GENOME_TAXONOMY_FPATH}" \
+  --per-gene-outfile "${PER_GENE_TAXONOMY_FPATH}" \
   --seqkit "${SEQKIT}"
