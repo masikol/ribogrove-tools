@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
 
+# Script takes both output files of script `get_taxIDs.py` (--per-genome-taxid-file, --per-gene-taxid-file)
+#   and uses them to map Assemblty IDs and seqIDs to taxonomy from file rankedlineage.dmp (--ranked-lineage).
+
+# Input files:
+# 1. TSV file mapping Assembly IDs to taxIDs (--per-genome-taxid-file)
+# 2. TSV file mapping genes seqIDs to taxIDs (--per-gene-taxid-file)
+# 3. File `rankedlineage.tsv` from NCBI's new_taxdump archive
+#   see https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz
+
+# Output files:
+# 1. TSV file mapping Assembly IDs to taxonomy (--per-genome-outfile)
+# 2. TSV file mapping genes seqIDs to taxonomy (--per-gene-outfile)
+
+# Dependencies:
+# 1. Path to seqkit exetutable (--seqkit)
+
+
 import os
 import sys
 import argparse

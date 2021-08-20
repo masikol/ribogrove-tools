@@ -7,8 +7,10 @@ source corner_config.conf
 LOGS_DIR="${WORKDIR}/logs"
 CATEGORIES_DIR="${WORKDIR}/categories"
 TAXONOMY_DIR="${WORKDIR}/taxonomy"
+GENES_DIR="${WORKDIR}/gene_seqs"
 
-for some_dir in "${WORKDIR}" "${LOGS_DIR}" "${CATEGORIES_DIR}" "${TAXONOMY_DIR}" "${GENOMES_GBK_DIR}"; do
+for some_dir in "${WORKDIR}" "${LOGS_DIR}" "${CATEGORIES_DIR}" \
+                "${TAXONOMY_DIR}" "${GENOMES_GBK_DIR}" "${GENES_DIR}"; do
   if [[ ! -d "${some_dir}" ]]; then
     mkdir -pv "${some_dir}"
   fi
@@ -54,8 +56,8 @@ ASS_ACC_MERGED_FPATH="${WORKDIR}/archaea_refseq_accs_merged.tsv"
 
 # == Extract 16S genes from downloaded genomes ==
 
-ALL_GENES_FASTA="${WORKDIR}/gene_seqs/all_collected.fasta"
-ALL_GENES_STATS="${WORKDIR}/gene_seqs/all_collected_stats.tsv"
+ALL_GENES_FASTA="${GENES_DIR}/all_collected.fasta"
+ALL_GENES_STATS="${GENES_DIR}/all_collected_stats.tsv"
 
 # ./collect_16S/collect_16S.py \
 #   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
@@ -101,10 +103,24 @@ PER_GENE_TAXID_FPATH="${TAXONOMY_DIR}/archaea_per_gene_taxIDs.tsv"
 PER_GENOME_TAXONOMY_FPATH="${TAXONOMY_DIR}/archaea_per_genome_taxonomy.tsv"
 PER_GENE_TAXONOMY_FPATH="${TAXONOMY_DIR}/archaea_per_gene_taxonomy.tsv"
 
-./add_taxonomy_names.py \
-  --per-genome-taxid-file "${PER_GENOME_TAXID_FPATH}" \
-  --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
-  --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
-  --per-genome-outfile "${PER_GENOME_TAXONOMY_FPATH}" \
-  --per-gene-outfile "${PER_GENE_TAXONOMY_FPATH}" \
-  --seqkit "${SEQKIT}"
+# ./add_taxonomy_names.py \
+#   --per-genome-taxid-file "${PER_GENOME_TAXID_FPATH}" \
+#   --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
+#   --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
+#   --per-genome-outfile "${PER_GENOME_TAXONOMY_FPATH}" \
+#   --per-gene-outfile "${PER_GENE_TAXONOMY_FPATH}" \
+#   --seqkit "${SEQKIT}"
+
+
+# == Drop genes containing at leats 2 N's in a row ==
+
+NO_NN_FASTA_FPATH="${GENES_DIR}/gene_seqs_no_NN.fasta"
+NO_NN_STATS_FPATH="${GENES_DIR}/gene_stats_no_NN.tsv"
+NN_FASTA_FPATH="${GENES_DIR}/NN_gene_seqs.fasta"
+
+./drop_NN.py \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --all-fasta-file "${ALL_GENES_FASTA}" \
+  --out-fasta-file "${NO_NN_FASTA_FPATH}" \
+  --out-stats-file "${NO_NN_STATS_FPATH}" \
+  --NN-outfile "${NN_FASTA_FPATH}"
