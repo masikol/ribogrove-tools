@@ -75,7 +75,7 @@ out_stats_fpath = os.path.abspath(args.out_stats_file)
 nn_seqs_fpath = os.path.abspath(args.NN_outfile)
 
 
-# Check existance of all input files and dependencies
+# Check existance of all input files
 for fpath in (assm_acc_fpath, seqs_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')

@@ -8,9 +8,12 @@ LOGS_DIR="${WORKDIR}/logs"
 CATEGORIES_DIR="${WORKDIR}/categories"
 TAXONOMY_DIR="${WORKDIR}/taxonomy"
 GENES_DIR="${WORKDIR}/gene_seqs"
+ABERRATIONS_AND_HETEROGENEITY_DIR="${WORKDIR}/aberrations_and_heterogeneity"
 
 for some_dir in "${WORKDIR}" "${LOGS_DIR}" "${CATEGORIES_DIR}" \
-                "${TAXONOMY_DIR}" "${GENOMES_GBK_DIR}" "${GENES_DIR}"; do
+                "${TAXONOMY_DIR}" "${GENOMES_GBK_DIR}" "${GENES_DIR}" \
+                "${ABERRATIONS_AND_HETEROGENEITY_DIR}";
+do
   if [[ ! -d "${some_dir}" ]]; then
     mkdir -pv "${some_dir}"
   fi
@@ -118,9 +121,18 @@ NO_NN_FASTA_FPATH="${GENES_DIR}/gene_seqs_no_NN.fasta"
 NO_NN_STATS_FPATH="${GENES_DIR}/gene_stats_no_NN.tsv"
 NN_FASTA_FPATH="${GENES_DIR}/NN_gene_seqs.fasta"
 
-./drop_NN.py \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --all-fasta-file "${ALL_GENES_FASTA}" \
-  --out-fasta-file "${NO_NN_FASTA_FPATH}" \
-  --out-stats-file "${NO_NN_STATS_FPATH}" \
-  --NN-outfile "${NN_FASTA_FPATH}"
+# ./drop_NN.py \
+#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+#   --all-fasta-file "${ALL_GENES_FASTA}" \
+#   --out-fasta-file "${NO_NN_FASTA_FPATH}" \
+#   --out-stats-file "${NO_NN_STATS_FPATH}" \
+#   --NN-outfile "${NN_FASTA_FPATH}"
+
+# == Find repeats in genes sequences ==
+
+REPEATS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/repeats.tsv"
+
+./find_repeats.py \
+  --no-NN-fasta-file "${NO_NN_FASTA_FPATH}" \
+  --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
+  --outfile "${REPEATS_FPATH}"
