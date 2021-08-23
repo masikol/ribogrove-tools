@@ -144,12 +144,25 @@ REPEATS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/repeats.tsv"
 
 PIVOTAL_GENES_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/pivotal_genes.tsv"
 
-./find_pivotal_genes.py \
+# ./find_pivotal_genes.py \
+#   --fasta-seqs-file "${NO_NN_FASTA_FPATH}" \
+#   --genes-stats-file "${NO_NN_STATS_FPATH}" \
+#   --outfile "${PIVOTAL_GENES_FPATH}" \
+#   --tblout-dir "${TBLOUT_DIR}" \
+#   --cmscan "${CMSCAN_FOR_PIVOTAL_GENES}" \
+#   --cmpress "${CMPRESS_FOR_PIVOTAL_GENES}" \
+#   --rfam-family-cm "${RFAM_FOR_PIVOTAL_GENES}" \
+#   --lendiff-threshold 5
+
+
+
+# == Find aberrant genes and record long indels ==
+
+./find_aberrant_genes.py \
   --fasta-seqs-file "${NO_NN_FASTA_FPATH}" \
   --genes-stats-file "${NO_NN_STATS_FPATH}" \
-  --outfile "${PIVOTAL_GENES_FPATH}" \
-  --tblout-dir "${TBLOUT_DIR}" \
-  --cmscan "${CMSCAN_FOR_PIVOTAL_GENES}" \
-  --cmpress "${CMPRESS_FOR_PIVOTAL_GENES}" \
-  --rfam-family-cm "${RFAM_FOR_PIVOTAL_GENES}" \
-  --lendiff-threshold 5
+  --pivotal-genes-file "${PIVOTAL_GENES_FPATH}" \
+  --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
+  --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
+  --muscle "${MUSCLE}" \
+  --indel-len-threshold 10
