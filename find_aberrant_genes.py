@@ -49,7 +49,6 @@ from Bio import SeqUtils
 from Bio.SeqRecord import SeqRecord
 
 
-
 # == Parse arguments ==
 
 parser = argparse.ArgumentParser()

@@ -158,11 +158,27 @@ PIVOTAL_GENES_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/pivotal_genes.tsv"
 
 # == Find aberrant genes and record long indels ==
 
-./find_aberrant_genes.py \
-  --fasta-seqs-file "${NO_NN_FASTA_FPATH}" \
-  --genes-stats-file "${NO_NN_STATS_FPATH}" \
-  --pivotal-genes-file "${PIVOTAL_GENES_FPATH}" \
-  --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
-  --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
-  --muscle "${MUSCLE}" \
-  --indel-len-threshold 10
+# ./find_aberrant_genes.py \
+#   --fasta-seqs-file "${NO_NN_FASTA_FPATH}" \
+#   --genes-stats-file "${NO_NN_STATS_FPATH}" \
+#   --pivotal-genes-file "${PIVOTAL_GENES_FPATH}" \
+#   --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
+#   --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
+#   --muscle "${MUSCLE}" \
+#   --indel-len-threshold 10
+
+
+# == Drop aberarant genes ==
+
+ABERRANT_SEQIDS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/aberrant_seqIDs.txt"
+NON_ABERRANT_GENES_FASTA="${GENES_DIR}/non_aberrant_gene_seqs.fasta"
+NON_ABERRANT_GENES_STATS="${GENES_DIR}/non_aberrant_genes_stats.tsv"
+
+./drop_aberrant_genes.py \
+--input-fasta-file "${NO_NN_FASTA_FPATH}" \
+--aberrant-genes-file "${ABERRANT_SEQIDS_FPATH}" \
+--assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+--categories-file "${PER_GENE_CAT_FPATH}" \
+--output-fasta "${NON_ABERRANT_GENES_FASTA}" \
+--output-stats "${NON_ABERRANT_GENES_STATS}" \
+--seqkit "${SEQKIT}"
