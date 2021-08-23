@@ -128,11 +128,29 @@ NN_FASTA_FPATH="${GENES_DIR}/NN_gene_seqs.fasta"
 #   --out-stats-file "${NO_NN_STATS_FPATH}" \
 #   --NN-outfile "${NN_FASTA_FPATH}"
 
+
 # == Find repeats in genes sequences ==
 
 REPEATS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/repeats.tsv"
 
-./find_repeats.py \
-  --no-NN-fasta-file "${NO_NN_FASTA_FPATH}" \
-  --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
-  --outfile "${REPEATS_FPATH}"
+# ./find_repeats.py \
+#   --no-NN-fasta-file "${NO_NN_FASTA_FPATH}" \
+#   --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
+#   --outfile "${REPEATS_FPATH}"
+
+
+# == Find pivotal genes ==
+
+TBLOUT_DIR="${WORKDIR}/cmscan_tblout"
+PIVOTAL_GENES_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/pivotal_genes.tsv"
+
+./find_pivotal_genes.py \
+  --fasta-seqs-file "${NO_NN_FASTA_FPATH}" \
+  --genes-stats-file "${NO_NN_STATS_FPATH}" \
+  --outfile "${PIVOTAL_GENES_FPATH}" \
+  --tblout-dir "${TBLOUT_DIR}" \
+  --cmscan "${CMSCAN_FOR_PIVOTAL_GENES}" \
+  --cmpress "${CMPRESS_FOR_PIVOTAL_GENES}" \
+  --rfam-family-cm "${RFAM_FOR_PIVOTAL_GENES}" \
+  --lendiff-threshold 5
+
