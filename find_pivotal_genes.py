@@ -11,6 +11,7 @@
 # Output files:
 # 1. TSV file reporting pivotal genes for each genome, in which maximum length difference
 #    between SSU genes is greater than `lendiff_threshold`.
+# 2. Directory for storing .tblout files -- output files pf cmscan (-t/--tblout-dir).
 
 # Dependencies:
 # 1. cmscan from Infernal: http://eddylab.org/infernal/ (--cmscan)
@@ -161,33 +162,11 @@ for some_dir in (tblout_dpath, os.path.dirname(outfpath)):
 # end for
 
 
-print(fasta_seqs_fpath)
-print(genes_stats_fpath)
-print(outfpath)
-print(cmscan_fpath)
-print(cmpress_fpath)
-print(rfam_fpath)
-print(lendiff_threshold)
-
-
-sys.exit(0)
-
-
-genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_stats_no_NN.tsv'
-fasta_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
-
-rfam_fpath = '/mnt/1.5_drive_0/16S_scrubbling/rfam/RF00177.14.6.cm'
-cmscan_fpath = '/home/cager/Misc_soft/infernal/infernal-1.1.4/bin/cmscan'
+# Heder for reformatted .tblout files
 tblout_header = 'target_name\taccession\tquery_name\taccession\tmdl\tmdl_from\tmdl_to\tseq_from\tseq_to\tstrand\ttrunc\tpass\tgc\tbias\tscore\tEvalue\tinc\tdescription_of_target'
 
+# Temporary fasta file for storing queries for cmscan
 query_fasta_fpath = 'tmpQUERY.fasta'
-tblout_dpath = '/mnt/1.5_drive_0/16S_scrubbling/tblout'
-
-# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/test_pivotal_genes.tsv'
-
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/pivotal_genes.tsv'
-
-lendiff_threshold = 5
 
 
 def run_cmpress(cmpress_fpath: str, rfam_fpath: str) -> None:
@@ -206,13 +185,15 @@ def run_cmpress(cmpress_fpath: str, rfam_fpath: str) -> None:
 
         # If `error_msg` contains `already_exists_msg_pattern` -- it's ok --
         #   index files exist.
-        already_exists_msg_pattern = r'SSI index file /home/deynonih/cager/new_16S_scrubbling/rfam/RF00177_14\.6\.cm\..+ already exists'
+        already_exists_msg_pattern = r'.+ file ({}.+) already exists'.format(rfam_fpath)
         already_exists_obj = re.search(already_exists_msg_pattern, error_msg)
         just_already_exists = not already_exists_obj is None
 
         if just_already_exists:
-            print('This .cm file is already cmpress\'ed.')
-            print('Proceeding...')
+            print(error_msg)
+            print(f'Removing {already_exists_obj.group(1)}')
+            os.unlink(already_exists_obj.group(1))
+            run_cmpress(cmpress_fpath, rfam_fpath)
         else:
             # If `error_msg` does not contain `already_exists_msg_pattern` -- oh, we must terminate
             print('Error: cannot cmpress .cm file')
@@ -312,6 +293,7 @@ def reformat_tblout(tblout_fpath: str, tblout_header: str) -> None:
     # Remove spaces in important fields with underscores
     for i in range(len(lines)):
         lines[i] = lines[i].replace('Bacterial small subunit ribosomal RNA', 'Bacterial_small_subunit_ribosomal_RNA')
+        lines[i] = lines[i].replace('Archaeal small subunit ribosomal RNA', 'Archaeal_small_subunit_ribosomal_RNA')
     # end for
 
     # Replace spaces with tabs
@@ -389,6 +371,11 @@ stats_df = pd.read_csv(genes_stats_fpath, sep='\t')
 grpd_df = stats_df.groupby('ass_id').agg({'min_len': 'min', 'max_len': 'max'}).reset_index()
 grpd_df['lendiff'] = grpd_df['max_len'] - grpd_df['min_len']
 
+# Index file with covariance model
+run_cmpress(cmpress_fpath, rfam_fpath)
+
+
+print('Searching for pivotal genes...')
 
 # Assembly IDs
 ass_ids = set(stats_df['ass_id'])

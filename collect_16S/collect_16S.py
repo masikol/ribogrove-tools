@@ -326,6 +326,7 @@ def reformat_tblout(tblout_fpath: str):
     # Replace spaces in some vulnerable column values with underscores
     for i in range(len(lines)):
         lines[i] = lines[i].replace('Bacterial small subunit ribosomal RNA', 'Bacterial_small_subunit_ribosomal_RNA')
+        lines[i] = lines[i].replace('Archaeal small subunit ribosomal RNA', 'Archaeal_small_subunit_ribosomal_RNA')
     # end for
 
     # Replace spaces with tabs

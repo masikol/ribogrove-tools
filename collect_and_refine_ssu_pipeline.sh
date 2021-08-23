@@ -9,10 +9,11 @@ CATEGORIES_DIR="${WORKDIR}/categories"
 TAXONOMY_DIR="${WORKDIR}/taxonomy"
 GENES_DIR="${WORKDIR}/gene_seqs"
 ABERRATIONS_AND_HETEROGENEITY_DIR="${WORKDIR}/aberrations_and_heterogeneity"
+TBLOUT_DIR="${WORKDIR}/cmscan_tblout"
 
 for some_dir in "${WORKDIR}" "${LOGS_DIR}" "${CATEGORIES_DIR}" \
                 "${TAXONOMY_DIR}" "${GENOMES_GBK_DIR}" "${GENES_DIR}" \
-                "${ABERRATIONS_AND_HETEROGENEITY_DIR}";
+                "${ABERRATIONS_AND_HETEROGENEITY_DIR}" "${TBLOUT_DIR}";
 do
   if [[ ! -d "${some_dir}" ]]; then
     mkdir -pv "${some_dir}"
@@ -141,7 +142,6 @@ REPEATS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/repeats.tsv"
 
 # == Find pivotal genes ==
 
-TBLOUT_DIR="${WORKDIR}/cmscan_tblout"
 PIVOTAL_GENES_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/pivotal_genes.tsv"
 
 ./find_pivotal_genes.py \
@@ -153,4 +153,3 @@ PIVOTAL_GENES_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/pivotal_genes.tsv"
   --cmpress "${CMPRESS_FOR_PIVOTAL_GENES}" \
   --rfam-family-cm "${RFAM_FOR_PIVOTAL_GENES}" \
   --lendiff-threshold 5
-
