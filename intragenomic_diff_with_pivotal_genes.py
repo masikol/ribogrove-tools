@@ -1,28 +1,201 @@
 #!/usr/bin/env python3
 
+# Script does multiple things:
+# 1. It finds aberrant genes: truncated genes and genes, which diffre from pivotal genes greatly.
+# 2. It records all heterogeneity (indels, per-base intragenomic entropy, percents of identity)
+
+# Input files:
+# 1. Fasta file of genes sequences (-f/--fasta-seqs-file).
+# 2. TSV file if per-replicon genes statistics (-s/--genes-stats-file).
+# 3. TSV file TSV file (with header) info about pivotal genes
+#    (it is output file of script `find_pivotal_gens.py`).
+# 4. Fasta file of NR conserved regions from work
+#    "How conserved are the conserved 16S-rRNA regions?"
+#    (table 5, https://peerj.com/articles/3036/)
+#    -c/--conserved-regions-fasta
+
+# Output files (they all will be stored in output directory):
+# 1. pident_pivotal_genes.tsv -- TSV file containing pidents (and some other statistics)
+#    of pairwise alignments of pivotal genes vs non-pivotal genes.
+# 2. insertions.tsv -- TSV file containing information about discovered insertions
+#    longer than `--indel-len-threshold`.
+# 3. deletions.tsv -- TSV file containing information about discovered deletions
+#    longer than `--indel-len-threshold`.
+# 4. entropy.tsv -- TSV file containing per-position intragenomic entropy,
+#    excluding aberrant genes.
+# 5. aberrant_seqIDs.txt -- seqIDs of aberrant genes, one per line.
+
+# Dependencies:
+# 1. MUSCLE aligner (--muscle).
+
+# Parameters:
+# 1. Threshold value for length of an indel (--indel-len-threshold).
+#    If indel has length higher than this value, gene having this indel
+#    is regarded as an aberrant gene.
+
+
 import os
 import re
 import sys
 import math
+import argparse
 import operator
 from io import StringIO
 import subprocess as sp
 from array import array
 from operator import add
 from functools import reduce
+from typing import Sequence, Dict, Tuple, List, TextIO
 
 import numpy as np
 import pandas as pd
 from Bio import SeqIO
 from Bio import SeqUtils
+from Bio.SeqRecord import SeqRecord
+
+
+
+# == Parse arguments ==
+
+parser = argparse.ArgumentParser()
+
+# Input files
+
+parser.add_argument(
+    '-f',
+    '--fasta-seqs-file',
+    help='fasta file of SSU gene sequences',
+    required=True
+)
+
+parser.add_argument(
+    '-s',
+    '--genes-stats-file',
+    help='TSV file (with header) containing per-replicons SSU gene statistics',
+    required=True
+)
+
+parser.add_argument(
+    '-p',
+    '--pivotal-genes-file',
+    help="""TSV file (with header) info about pivotal genes
+    (it is output file of script `find_pivotal_gens.py`)""",
+    required=True
+)
+
+parser.add_argument(
+    '-c',
+    '--conserved-regions-fasta',
+    help="""fasta file of NR conserved regions from work
+    "How conserved are the conserved 16S-rRNA regions?" (table 5, https://peerj.com/articles/3036/)""",
+    required=True
+)
+
+# Output files
+
+parser.add_argument(
+    '-o',
+    '--outdir',
+    help='output directory',
+    required=True
+)
+
+
+# Dependencies
+
+parser.add_argument(
+    '--muscle',
+    help='muscle executable',
+    required=True
+)
+
+
+# Heuristic's params
+
+parser.add_argument(
+    '--indel-len-threshold',
+    help="""  """,
+    required=True
+)
+
+
+args = parser.parse_args()
+
+
+# For convenience
+fasta_seqs_fpath = os.path.abspath(args.fasta_seqs_file)
+genes_stats_fpath = os.path.abspath(args.genes_stats_file)
+pivotal_genes_fpath = os.path.abspath(args.pivotal_genes_file)
+conserved_regions_fpath = os.path.abspath(args.conserved_regions_fasta)
+muscle_fpath = os.path.abspath(args.muscle)
+outdpath = os.path.abspath(args.outdir)
+
+
+# Check (and assign) value of `--indel-len-threshold`
+try:
+    indel_len_threshold = int(args.indel_len_threshold)
+    if indel_len_threshold < 0:
+        raise ValueError
+    # end if
+except ValueError:
+    print('Error: you entered and invalid `--indel-len-threshold` value.')
+    print(f'Your value: `{args.indel_len_threshold}`')
+    print('It must be integer number >= 0')
+    sys.exit(1)
+# end try
+
+
+# Check existance of all input files and dependencies
+for fpath in (fasta_seqs_fpath, genes_stats_fpath, pivotal_genes_fpath, conserved_regions_fpath, muscle_fpath):
+    if not os.path.exists(fpath):
+        print(f'Error: file `{fpath}` does not exist!')
+        sys.exit(1)
+    # end if
+# enb for
+
+# Check if executables are actually executable
+if not os.access(muscle_fpath, os.X_OK):
+    print(f'Error: file `{muscle_fpath}` is not executable!')
+    sys.exit(1)
+# end if
+
+# Create output directory if needed
+if not os.path.isdir(outdpath):
+    try:
+        os.makedirs(outdpath)
+    except OSError as err:
+        print(f'Error: cannot create directory `{outdpath}`')
+        sys.exit(1)
+    # end try
+# end if
+
+
+print(fasta_seqs_fpath)
+print(genes_stats_fpath)
+print(pivotal_genes_fpath)
+print(conserved_regions_fpath)
+print(muscle_fpath)
+print(outdpath)
+print(indel_len_threshold)
+
+# Output files
+pident_outfpath = os.path.join(outdpath, 'pident_pivotal_genes.tsv')
+insertions_outfpath = os.path.join(outdpath, 'insertions.tsv')
+deletions_outfpath = os.path.join(outdpath, 'deletions.tsv')
+entropy_outfpath = os.path.join(outdpath, 'entropy.tsv')
+aberrant_seqIDs_fpath = os.path.join(outdpath, 'aberrant_seqIDs.txt')
+
+
+
+sys.exit(1)
 
 
 pivotal_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/pivotal_genes.tsv'
-stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_stats_no_NN.tsv'
-gene_seqs_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
+genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_stats_no_NN.tsv'
+fasta_seqs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
 conserved_regions_fpath = '/mnt/1.5_drive_0/16S_scrubbling/consensus_seqs/conserved_regions_NR.fasta'
 
-muscle = '/home/cager/Misc_soft/muscle3.8.31'
+muscle_fpath = '/home/cager/Misc_soft/muscle3.8.31'
 
 pident_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/pident_pivotal_genes.tsv'
 insertions_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/insertions.tsv'
@@ -30,17 +203,15 @@ deletions_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogene
 entropy_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/entropy.tsv'
 aberrant_seqIDs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/aberrant_seqIDs.txt'
 
-# pident_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/test_pident_pivotal_genes.tsv'
-# insertions_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/test_insertions.tsv'
-# deletions_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/test_deletions.tsv'
-# entropy_outfpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/test_entropy.tsv'
-# aberrant_seqIDs_fpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/test_aberrant_seqIDs.txt'
 
+def select_gene_seqs(ass_id: str,
+    seq_records: Sequence[str],
+    stats_df: pd.DataFrame) -> Dict[str, SeqRecord]:
 
-def select_gene_seqs(ass_id, seq_records, stats_df):
-
+    # Get ACCESSION.VERSION's for current assembly
     accs = set(stats_df[stats_df['ass_id'] == ass_id]['acc'])
 
+    # Filter genes from current genome
     selected_seq_records = tuple(
         filter(
             lambda r: r.id.partition(':')[0] in accs,
@@ -48,17 +219,31 @@ def select_gene_seqs(ass_id, seq_records, stats_df):
         )
     )
 
+    # Make result dictionary and return it
     return {r.id: r for r in selected_seq_records}
 # end def select_gene_seqs
 
 
-def pairwise_align(pivotal_seq_record, seq_record, muscle):
+def pairwise_align(
+    pivotal_seq_record: SeqRecord,
+    seq_record: SeqRecord,
+    muscle_fpath: str) -> Tuple[SeqRecord, SeqRecord]:
+    # Function performs pairwise global alignment of a pivotal gene (pivotal_seq_record)
+    #    and some another gene (seq_record).
+    # It does pairwise with MUSCLE. It's quite weird, but we'll do it
+    #    for the sake of uniformity.
 
-    cmd = f'{muscle} -diags -quiet'
+    # Configure command
+    cmd = f'{muscle_fpath} -diags -quiet'
     pipe = sp.Popen(cmd, shell=True, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
 
+    # Configure input fasta string
     fasta_str = f'>{pivotal_seq_record.id}\n{str(pivotal_seq_record.seq)}\n>{seq_record.id}\n{str(seq_record.seq)}\n'
+
+    # Write fasta string to stdin
     pipe.stdin.write(fasta_str.encode('ascii'))
+
+    # Run command
     stdout_stderr = pipe.communicate()
 
     if pipe.returncode != 0:
@@ -69,17 +254,16 @@ def pairwise_align(pivotal_seq_record, seq_record, muscle):
         print(f'\t{cmd}')
         sys.exit(1)
     else:
+        # Obtain result alignment
         aln_str = stdout_stderr[0].decode('utf-8')
     # end if
 
-    # print(aln_str)
-
+    # Parse result alignment
     aln_io = StringIO(aln_str)
     aln_records = list(SeqIO.parse(aln_io, 'fasta'))
     aln_io.close()
 
-    # print(aln_records)
-
+    # Extract aligned strings of pivotal gene and another gene alone
     pivotal_aln_record = next(filter(lambda r: r.id == pivotal_seq_record.id, aln_records))
     aln_record = next(filter(lambda r: r.id != pivotal_seq_record.id, aln_records))
 
@@ -87,15 +271,20 @@ def pairwise_align(pivotal_seq_record, seq_record, muscle):
 # end def pairwise_align
 
 
-def bases_identical(b1, b2):
+def bases_identical(b1: str, b2: str) -> bool:
+    # Function checks if two bases are identical
     return 1 if b1 == b2 else 0
 # end def bases_identical
 
 
-def pairwise_percent_identity(aln_record_1, aln_record_2):
+def pairwise_percent_identity(aln_record_1: SeqRecord, aln_record_2: SeqRecord) -> float:
+    # Function calculates percent of identity of a pairwise alignment (pident).
+
+    # Extract aligned sequences as type `str`
     seq_1 = str(aln_record_1.seq)
     seq_2 = str(aln_record_2.seq)
 
+    # Find length of the shortest sequence
     min_len = min(
         map(
             lambda x: len(x),
@@ -106,27 +295,35 @@ def pairwise_percent_identity(aln_record_1, aln_record_2):
         )
     )
 
+    # Calculate and return pident
     return sum( (bases_identical(b1, b2) for b1, b2 in zip(seq_1, seq_2)) ) \
            / min_len
 # end def pairwise_percent_identity
 
 
-def count_gaps(seq_record):
+def count_gaps(seq_record: SeqRecord) -> int:
+    # Function counts gaps in an anigned sequence
     return str(seq_record.seq).count('-')
 # end def count_gaps
 
 
-def do_msa(seq_records, muscle):
+def do_msa(seq_records: Sequence[SeqRecord], muscle_fpath: str) -> List[SeqRecord]:
+    # Function does Multiple Sequence Alignment
 
-    cmd = f'{muscle} -quiet -diags'
+    # Configure command
+    cmd = f'{muscle_fpath} -quiet -diags'
 
+    # Configure input fasta string for MSA
     fasta_str = '\n'.join(
         (f'>{r.id}\n{str(r.seq)}' for r in seq_records)
     ) + '\n'
 
+    # Create pipe
     pipe = sp.Popen(cmd, shell=True, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
+    # Write inpit fasta record to stdin
     pipe.stdin.write(fasta_str.encode('ascii'))
 
+    # Run command
     stdout_stderr = pipe.communicate()
 
     if pipe.returncode != 0:
@@ -135,9 +332,11 @@ def do_msa(seq_records, muscle):
         print(' '.join( [r.id for r in seq_records] ))
         print(stdout_stderr[1].decode('utf-8'))
     else:
+        # Get StringIO of result alignment
         msa_io = StringIO(stdout_stderr[0].decode('utf-8'))
     # end if
 
+    # Parse alignment
     msa_records = list(SeqIO.parse(msa_io, 'fasta'))
     msa_io.close()
 
@@ -145,29 +344,32 @@ def do_msa(seq_records, muscle):
 # end def do_msa
 
 
-def get_aln_column(i, seqs):
+def get_aln_column(i: int, seqs: Sequence[str]) -> Sequence[str]:
+    # Function extracts single column from multiple sequence alignment
     return tuple(map(lambda s: s[i], seqs))
 # end
 
 
-def calc_entropy(msa_records):
+def calc_entropy(msa_records: Sequence[SeqRecord]) -> array[float]:
+    # Function calculates intragenomic per-base entropy.
 
     n_seqs = len(msa_records)
 
+    # Extract aligned sequences as type `str`
     seqs = tuple(map(lambda x: str(x.seq), msa_records))
-    seq_length = len(seqs[0])
+    seq_length = len(seqs[0]) # they are aligned and have the same length
 
+    # Init entropy array
     entropy_arr = array('d', np.repeat(np.nan, seq_length))
     aln_pos = 0
 
+    # Iterate over positions in alignment
     for i in range(seq_length):
 
+        # Extract alignment column of index i
         aln_column = get_aln_column(i, seqs)
 
-        if aln_column.count('-') / n_seqs > 0.50:
-            continue
-        # end if
-
+        # Count frequences aof all bases at this position
         freqs_arr = tuple(
             map(
                 lambda base: aln_column.count(base) / n_seqs,
@@ -175,6 +377,7 @@ def calc_entropy(msa_records):
             )
         )
 
+        # Calculate entropy
         # abs instead of minus in order not to allow "-0.0" values
         entropy_arr[aln_pos] = abs(
             reduce(
@@ -189,14 +392,23 @@ def calc_entropy(msa_records):
 # end def calc_entropy
 
 
-def calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id):
+def calc_and_write_entropy(
+    seq_records_for_msa: Sequence[SeqRecord],
+    muscle_fpath: str,
+    entropy_outfile: TextIO,
+    ass_id) -> None:
+    # Function-wrapper for calculating intragenomic per-position entropy:
+    #   it performs MSA and calculates entropy.
 
     if len(seq_records_for_msa) > 1:
 
-        msa_records = do_msa(seq_records_for_msa, muscle)
+        # Perform MSA
+        msa_records = do_msa(seq_records_for_msa, muscle_fpath)
 
+        # Calculate entropy
         entropy_arr = calc_entropy(msa_records)
 
+        # Write per-base entropy
         for i, entropy in enumerate(entropy_arr):
             entropy_outfile.write(f'{ass_id}\t{i}\t{entropy}\n')
         # end for
@@ -204,10 +416,13 @@ def calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id)
 # end def get_entropy_array
 
 
-def find_insertions_and_deletions(pivotal_aln_record, aln_record):
+def find_insertions_and_deletions(
+    pivotal_aln_record: SeqRecord,
+    aln_record: SeqRecord,
+    indel_len_threshold: int) -> Tuple[Tuple[int, int, seq], Tuple[int, int]]:
+    # Function find long insertions and deletions
 
-    min_indel_len = 10
-    indel_pattern = r'[-]{%d,}' % int(min_indel_len+1)
+    indel_pattern = r'[-]{%d,}' % int(indel_len_threshold+1)
 
     # = Find insertions =
 
@@ -259,7 +474,7 @@ conserved_seq_records = tuple(SeqIO.parse(conserved_regions_fpath, 'fasta'))
 
 
 pivotal_genes_df = pd.read_csv(pivotal_genes_fpath, sep='\t')
-stats_df = pd.read_csv(stats_fpath, sep='\t')
+stats_df = pd.read_csv(genes_stats_fpath, sep='\t')
 
 
 ass_ids = tuple(set(stats_df['ass_id']))
@@ -278,7 +493,7 @@ ass_ids = tuple(set(stats_df['ass_id']))
     # 9924121,
 # ]
 
-seq_records = tuple(SeqIO.parse(gene_seqs_fasta_fpath, 'fasta'))
+seq_records = tuple(SeqIO.parse(fasta_seqs_fpath, 'fasta'))
 
 
 with open(pident_outfpath, 'wt') as pident_outfile, \
@@ -325,7 +540,7 @@ with open(pident_outfpath, 'wt') as pident_outfile, \
                 for seqID in seqIDs - {pivotal_seqID}:
 
                     seq_record = selected_seq_records[seqID]
-                    pivotal_aln_record, aln_record = pairwise_align(pivotal_seq_record, seq_record, muscle)
+                    pivotal_aln_record, aln_record = pairwise_align(pivotal_seq_record, seq_record, muscle_fpath)
 
                     pident = pairwise_percent_identity(pivotal_aln_record, aln_record)
                     n_insert_bases = count_gaps(pivotal_aln_record)
@@ -375,7 +590,7 @@ with open(pident_outfpath, 'wt') as pident_outfile, \
 
             seqIDs_for_msa = seqIDs - aberrant_seqIDs
             seq_records_for_msa = [selected_seq_records[seqID] for seqID in seqIDs_for_msa]
-            calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id)
+            calc_and_write_entropy(seq_records_for_msa, muscle_fpath, entropy_outfile, ass_id)
         else:
             if tuple(curr_pivotal_df['all_truncated'])[0] == 1:
                 aberrant_seqIDs = set(selected_seq_records.keys())
@@ -384,7 +599,7 @@ with open(pident_outfpath, 'wt') as pident_outfile, \
                 # end for
             else:
                 seq_records_for_msa = selected_seq_records.values()
-                calc_and_write_entropy(seq_records_for_msa, muscle, entropy_outfile, ass_id)
+                calc_and_write_entropy(seq_records_for_msa, muscle_fpath, entropy_outfile, ass_id)
             # end if
         # end if
     # end for
