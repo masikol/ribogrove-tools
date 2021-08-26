@@ -120,6 +120,7 @@ ass_acc_df = ass_acc_df.merge(
 )
 
 seq_records = tuple(SeqIO.parse(fasta_seqs_fpath, 'fasta'))
+
 ass_ids = set(ass_acc_df['ass_id'])
 
 
@@ -131,7 +132,7 @@ with open(per_gene_outfpath, 'wt') as per_gene_outfile:
         print(f'\rDoing {i+1}/{len(ass_ids)}: {ass_id}', end=' '*10)
 
         taxID = next(iter(
-            set(ass_acc_df[ass_acc_df['ass_id'] == ass_id])
+            set(ass_acc_df[ass_acc_df['ass_id'] == ass_id]['taxID'])
         ))
 
         curr_seqIDs = select_gene_seqIDs(ass_id, seq_records, ass_acc_df)
