@@ -13,7 +13,7 @@ from Bio import SeqIO
 in_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs.fasta'
 
 tax_fpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxonomy.tsv'
-cat_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_16S_genes_categories.tsv'
+cat_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_per_gene_categories.tsv'
 
 # outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/TEST_gene_seqs_no_NN_annotated.fasta'
 outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs_annotated.fasta'

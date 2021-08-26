@@ -150,6 +150,18 @@ def amend_Cyanophyceae(row: pd.core.series.Series) -> pd.core.series.Series:
 # end def amend_Cyanophyceae
 
 
+def fill_empty_species_name(row: pd.core.series.Series) -> pd.core.series.Series:
+    # If taxID points to a species, (like 1642), it's taxonomy contains no 'species' fiels.
+    # Well, then we will copy it from 'tax_name' field.
+
+    if pd.isnull(row['species']):
+        row['species'] = row['tax_name']
+    # end if
+
+    return row
+# end def fill_empty_species_name
+
+
 # == Proceed ==
 
 # Reformat rankedlineage file
@@ -182,7 +194,7 @@ rankedlineage_df = pd.read_csv(
 )
 
 # Remove columns of no interest
-rankedlineage_df = rankedlineage_df.drop(columns=['species', 'kingdom'], axis=1)
+rankedlineage_df = rankedlineage_df.drop(columns=['kingdom'], axis=1)
 
 
 # Make per-genome taxonomy file
@@ -204,6 +216,8 @@ taxid_df = pd.read_csv(
 per_genome_taxonomy_df = taxid_df.merge(rankedlineage_df, on='taxID', how='left')
 # Amend class for Cyanobacteria
 per_genome_taxonomy_df = per_genome_taxonomy_df.apply(amend_Cyanophyceae, axis=1)
+# Amend species names
+per_genome_taxonomy_df = per_genome_taxonomy_df.apply(fill_empty_species_name, axis=1)
 
 # Write output per-genome file
 per_genome_taxonomy_df.to_csv(
@@ -236,6 +250,8 @@ per_gene_taxid_df = pd.read_csv(
 per_gene_taxonomy_df = per_gene_taxid_df.merge(rankedlineage_df, on='taxID', how='left')
 # Amend class for Cyanobacteria
 per_gene_taxonomy_df = per_gene_taxonomy_df.apply(amend_Cyanophyceae, axis=1)
+# Amend species names
+per_gene_taxonomy_df = per_gene_taxonomy_df.apply(fill_empty_species_name, axis=1)
 
 # Write output per-gene file
 per_gene_taxonomy_df.to_csv(

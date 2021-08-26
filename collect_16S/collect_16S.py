@@ -24,8 +24,10 @@ import argparse
 import statistics as sts
 from typing import List, Tuple
 
+import numpy as np
 import pandas as pd
 from Bio import SeqIO
+from Bio.Seq import Seq
 from Bio.SeqFeature import SeqFeature
 from Bio.SeqRecord import SeqRecord
 
@@ -342,30 +344,127 @@ def reformat_tblout(tblout_fpath: str):
 # end def reformat_tblout
 
 
+def amend_coordinates_on_extended_seq(tblout_df: pd.DataFrame, original_len: int) -> pd.DataFrame:
+    # Function amends coordinates of SSU genes if there are any on extended tail
+
+    def amend_length(row):
+        # Amend coordinates of fixed copies of genes truncated by sequence start
+        #   in order to replace coordinates greater than `original_len`
+        if row['seq_from'] > original_len:
+            row['seq_from'] -= original_len
+        # end if
+        if row['seq_to'] > original_len:
+            row['seq_to'] -= original_len
+        # end if
+        return row
+    # end def amend_length
+
+    tblout_df = tblout_df.apply(amend_length, axis=1)
+    return tblout_df
+# end def amend_coordinates_on_extended_seq
+
+
+def remove_sestart_truncated_gene(tblout_df: pd.DataFrame) -> pd.DataFrame:
+    # Function removes from `tblout_df` genes truncated by sequence start if fixed variant
+    #   of this gene exists, thanks to extended tail.
+
+    def set_remove_flag(row):
+        if row['strand'] == '+':
+            if row['seq_from'] == 1: # if gene may be truncated by sequence start
+                fixed_copy_exists = tblout_df[tblout_df['seq_to'] == row['seq_to']].shape[0] > 1
+                if fixed_copy_exists: # if fixed copy of this gene exists in `tblout_df`
+                    row['remove'] = 1
+                # end if
+            # end if
+        else:
+            if row['seq_to'] == 1: # if gene may be truncated by sequence start
+                fixed_copy_exists = tblout_df[tblout_df['seq_from'] == row['seq_from']].shape[0] > 1
+                if fixed_copy_exists: # if fixed copy of this gene exists in `tblout_df`
+                    row['remove'] = 1
+                # end if
+            # end if
+        # end if
+        return row
+    # end def set_remove_flag
+
+    # Set flag `remove` to 1 on those genes, which should be removed
+    tblout_df['remove'] = np.repeat(0, tblout_df.shape[0])
+    tblout_df = tblout_df.apply(set_remove_flag, axis=1)
+
+    # Remove truncated genes
+    tblout_df = tblout_df[tblout_df['remove'] == 0]
+    # tblout_df.drop(['remove'], axis=1, inplace=True)
+
+    return tblout_df
+# end def remove_sestart_truncated_gene
+
+
+def extract_gene_seq_after_cmsearch(
+    gbrecord: SeqRecord,
+    seq_start: int,
+    seq_end: int,
+    topology: str) -> Seq:
+    # Function extracts gene sequence from `gbrecord`.
+    # `seq_start` and `seq_end` are 1-based, left-closed, right-closed.
+    # Function performs well even if `seq_start` > `seq_end`: it may occur if
+    #   gene is truncated by sequence start.
+
+    if seq_start < seq_end:
+        seq = gbrecord.seq[seq_start-1 : seq_end]
+    elif seq_start > seq_end and topology == 'circular':
+        seq = gbrecord.seq[seq_start-1 :] + gbrecord.seq[: seq_end]
+    else:
+        print('\nError 2!')
+        print('After cmsearch, seq_start > seq_end and topology is not "circular"')
+        print('Please, contact the developer: he thought, this case is impossible.')
+        print(f"""Debug info:
+    ACC: {gbrecord.id};
+    seq_start={seq_start};
+    seq_end={seq_end};
+    topology=`{topology}`""")
+        sys.exit(2)
+    # end if
+
+    return seq
+# end def extract_gene_seq_1based_coords
+
+
 def extract_reannotated_genes(gbrecord: SeqRecord, topology: str):
     # Function reannotates 16S rRNA genes in `gbrecord` with cmsearch
     #   and extracts sequences of discovered genes from it.
 
     # Save original length of sequence
     original_len = len(gbrecord.seq)
+    len_circ_tail = min(original_len, 2000)
 
     # Make circular sequence a bit longer in order to annotate properly
     #   genes truncated by sequecne start
     if topology == 'circular':
-        gbrecord.seq = gbrecord.seq + gbrecord.seq[:2000]
+        gbrecord.seq = gbrecord.seq + gbrecord.seq[: len_circ_tail]
     # end if
 
     # Perform reannotations
-    tmp_fasta = 'tmpXXX.fasta'
+    tmp_fasta = f'tmp{os.getpid()}.fasta'
     with open(tmp_fasta, 'w') as tmpf:
         tmpf.write(f'>{gbrecord.id}\n{str(gbrecord.seq)}\n')
     # end with
     tblout_fpath = run_cmsearch(tmp_fasta)
     reformat_tblout(tblout_fpath)
+    os.unlink(tmp_fasta)
 
     # Now we have `tblout_fpath` and cam extract genes sequences from `gbrecord`
 
     tblout_df = pd.read_csv(tblout_fpath, sep='\t')
+
+    if topology == 'circular':
+        tblout_df = amend_coordinates_on_extended_seq(
+            tblout_df,
+            original_len
+        )
+        tblout_df = remove_sestart_truncated_gene(tblout_df)
+        gbrecord.seq = gbrecord.seq[: -len_circ_tail]
+    # end if
+
 
     genes = list()
 
@@ -376,31 +475,24 @@ def extract_reannotated_genes(gbrecord: SeqRecord, topology: str):
         seq_strand = row['strand']
 
         if seq_strand == '+':
-            seq = gbrecord.seq[seq_start-1 : seq_end]
+            seq = extract_gene_seq_after_cmsearch(gbrecord, seq_start, seq_end, topology)
         else:
             seq_start, seq_end = seq_end, seq_start
-            seq = gbrecord.seq[seq_start-1 : seq_end].reverse_complement()
+            seq = extract_gene_seq_after_cmsearch(gbrecord, seq_start, seq_end, topology)
+            seq = seq.reverse_complement()
         # end if
 
         strand_str = 'plus' if seq_strand == '+' else 'minus'
 
-        # Amend coordinated of genes truncated by sequence start
-        #   in order to replace coordinates greater than `original_len`
         seq_start_for_header = seq_start
-        if seq_start_for_header > original_len:
-            seq_start_for_header -= original_len
-        # end if
         seq_end_for_header = seq_end
-        if seq_end_for_header > original_len:
-            seq_end_for_header -= original_len
-        # end if
 
         # Configure sequence header
         seq_header = '{}:{}-{}_{} {}'\
             .format(
                 gbrecord.id,
-                seq_start_for_header,
-                seq_end_for_header,
+                seq_start,
+                seq_end,
                 strand_str,
                 gbrecord.description
             )
@@ -424,6 +516,7 @@ def get_seq_lengths(extracted_genes: List[Tuple[str, str]]):
     lengths = [len(gene[1]) for gene in extracted_genes]
     return lengths
 # end def get_seq_lengths
+
 
 def calc_gene_stats(extracted_genes: List[Tuple[str, str]]):
     # Function calculates statistics for gene set passed to it:
@@ -454,7 +547,16 @@ acc_df = pd.read_csv(
     sep='\t'
 )
 
+
+accs_select = {
+    'NZ_CP013210.1',
+    'NZ_CP008696.1',
+    # 'NZ_CP050525.1',
+}
+acc_df = acc_df.query('acc in @accs_select')
+
 n_accs = acc_df.shape[0] # number of ACCESSION.VESRION's to process
+
 
 
 # == Proceed ==

@@ -4,7 +4,7 @@
 
 from Bio import SeqIO
 
-infpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs.fasta'
+infpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs_annotated.fasta'
 outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bases_count.tsv'
 
 
@@ -13,8 +13,6 @@ with open(infpath, 'rt') as infile, open(outfpath, 'w') as outfile:
     outfile.write(f'seqID\ta\tt\tg\tc\tlen\n')
 
     for i, record in enumerate(SeqIO.parse(infile, 'fasta')):
-
-        print(f'\rDoing #{i+1}', end=' '*10)
 
         seq = str(record.seq).upper()
 

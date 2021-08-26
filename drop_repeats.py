@@ -9,12 +9,12 @@ from Bio import SeqIO
 from gene_seqs_2_stats import gene_seqs_2_stats
 
 
-no_aberrant_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/non_aberrant_genes.fasta'
+no_aberrant_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/non_aberrant_gene_seqs.fasta'
 non_aberrant_genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/non_aberrant_genes_stats.tsv'
 
 ass_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria_ass_refseq_accs_merged.tsv'
-repeats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/repeats_no_NN.tsv'
-cat_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_genome_categories.tsv'
+repeats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/aberrations_and_heterogeneity/repeats.tsv'
+cat_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_per_genome_categories.tsv'
 
 # pure_genes_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_pure_genes_seqs.fasta'
 # pure_genes_stats_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/test_pure_genes_stats.tsv'
@@ -58,8 +58,6 @@ def read_repeats_df(repeats_fpath):
     return repeats_df
 # end def read_repeats_df
 
-
-os.system(f'seqkit stats -a {no_aberrant_genes_fpath}')
 
 
 ass_acc_df = pd.read_csv(ass_acc_fpath, sep='\t')
@@ -124,9 +122,13 @@ repeat_len_threshold -= 1
 print(f'repeat_len_threshold = {repeat_len_threshold}')
 
 
+print(repeats_df[repeats_df['rep_len'] <= repeat_len_threshold].head(15))
+
+
 # Read repets dataframe again
 repeats_df = read_repeats_df(repeats_fpath)
 repeats_df = repeats_df[repeats_df['cons_reg_count'] != 0]
+
 
 seqIDs_with_large_repeats = set(
     repeats_df[repeats_df['rep_len'] > repeat_len_threshold]['seqID']
@@ -150,7 +152,6 @@ with open(pure_genes_fpath, 'wt') as fasta_outfile:
 
 
 print()
-os.system(f'seqkit stats -a {pure_genes_fpath}')
 
 print('Calculating statistics')
 gene_seqs_2_stats(pure_genes_fpath, ass_acc_fpath, pure_genes_stats_fpath)
