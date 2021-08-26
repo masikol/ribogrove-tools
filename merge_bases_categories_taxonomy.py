@@ -12,8 +12,8 @@ import pandas as pd
 # Archaea
 bases_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bases_count.tsv'
 categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_per_gene_categories.tsv'
-taxonomy_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/taxonomy/archaea_per_gene_taxonomy.tsv'
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/non_aberrant_genes_per_gene_stats.tsv'
+taxonomy_fpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxIDs.tsv'
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/pure_genes_per_gene_stats.tsv'
 
 
 # seqID   a       t       g       c       len

@@ -9,7 +9,6 @@
 
 # Output files:
 # 1. --per-genome-outfile -- output file mapping Assembly IDs to taxIDs
-# 2. --per-gene-outfile -- output file mapping seqIDs to taxIDs
 
 # Dependencies:
 # 1. --seqkit seqkit executable
@@ -56,12 +55,6 @@ parser.add_argument(
     required=True
 )
 
-parser.add_argument(
-    '--per-gene-outfile',
-    help='output file mapping genes seqIDs to taxIDs',
-    required=True
-)
-
 # Dependencies
 
 parser.add_argument(
@@ -77,7 +70,6 @@ args = parser.parse_args()
 assm_acc_fpath = os.path.abspath(args.assm_acc_file)
 fasta_seqs_fpath = os.path.abspath(args.all_fasta_file)
 per_genome_outfpath = os.path.abspath(args.per_genome_outfile)
-per_gene_outfpath = os.path.abspath(args.per_gene_outfile)
 seqkit_fpath = os.path.abspath(args.seqkit)
 
 
@@ -96,15 +88,13 @@ if not os.access(seqkit_fpath, os.X_OK):
 # end if
 
 # Create output directories if needed
-for some_dir in map(os.path.dirname, [per_genome_outfpath, per_gene_outfpath]):
-    if not os.path.isdir(some_dir):
-        try:
-            os.makedirs(some_dir)
-        except OSError as err:
-            print(f'Error: cannot create directory `{some_dir}`')
-            sys.exit(1)
-        # end try
-    # end if
+if not os.path.isdir(os.path.dirname(per_genome_outfpath)):
+    try:
+        os.makedirs(os.path.dirname(per_genome_outfpath))
+    except OSError as err:
+        print(f'Error: cannot create directory `{os.path.dirname(per_genome_outfpath)}`')
+        sys.exit(1)
+    # end try
 # end if
 
 
@@ -183,12 +173,10 @@ ass_ids = tuple(
 
 # == Proceed ==
 
-with open(per_genome_outfpath, 'wt') as per_genome_outfile, \
-     open(per_gene_outfpath, 'wt') as per_gene_outfile:
+with open(per_genome_outfpath, 'wt') as per_genome_outfile:
 
     # Write headers to output files
     per_genome_outfile.write(f'ass_id\taccs\ttaxID\n')
-    per_gene_outfile.write(f'seqID\tass_id\taccs\ttaxID\n')
 
     # Iterate over Assembly IDs
     for i, ass_id in enumerate(ass_ids):
@@ -234,17 +222,6 @@ with open(per_genome_outfpath, 'wt') as per_genome_outfile, \
         # Write to per-genome output file
         per_genome_outfile.write(f'{ass_id}\t{";".join(accs)}\t{taxID}\n')
 
-        # Write to per-gene output file
-        for acc in accs:
-            try:
-                for seqID in acc_seqIDs_dict[acc]:
-                    per_gene_outfile.write(f'{seqID}\t{ass_id}\t{";".join(accs)}\t{taxID}\n')
-                # end for
-            except KeyError:
-                pass
-            # end try
-        # end for
-
         # Wait a bit: we don't want NCBI to ban us :)
         time.sleep(0.4)
     # end for
@@ -252,4 +229,3 @@ with open(per_genome_outfpath, 'wt') as per_genome_outfile, \
 
 print('\nCompleted!')
 print(per_genome_outfpath)
-print(per_gene_outfpath)

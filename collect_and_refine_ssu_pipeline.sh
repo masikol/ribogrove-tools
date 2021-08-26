@@ -98,16 +98,25 @@ SEQTECH_LOGFILE="${LOGS_DIR}/bacteria_seqtech_log.log"
 # == Get taxIDs for our genomes ==
 
 # PER_GENOME_TAXID_FPATH="${TAXONOMY_DIR}/archaea_per_genome_taxIDs.tsv"
-# PER_GENE_TAXID_FPATH="${TAXONOMY_DIR}/archaea_per_gene_taxIDs.tsv"
 PER_GENOME_TAXID_FPATH="${TAXONOMY_DIR}/bacteria_per_genome_taxIDs.tsv"
-PER_GENE_TAXID_FPATH="${TAXONOMY_DIR}/bacteria_per_gene_taxIDs.tsv"
 
 # ./get_taxIDs.py \
 #   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
 #   --all-fasta-file "${ALL_GENES_FASTA}" \
 #   --per-genome-outfile "${PER_GENOME_TAXID_FPATH}" \
-#   --per-gene-outfile "${PER_GENE_TAXID_FPATH}" \
 #   --seqkit "${SEQKIT}"
+
+
+# == Map seqIDs to taxIDs ==
+
+# PER_GENE_TAXID_FPATH="${TAXONOMY_DIR}/archaea_per_gene_taxIDs.tsv"
+PER_GENE_TAXID_FPATH="${TAXONOMY_DIR}/bacteria_per_gene_taxIDs.tsv"
+
+./pergenome_2_pergene_taxIDs.py \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --all-fasta-file "${ALL_GENES_FASTA}" \
+  --per-genome-taxID-file "${PER_GENOME_TAXID_FPATH}" \
+  --per-gene-outfile "${PER_GENE_TAXID_FPATH}" \
 
 
 # == Map our Aseembly IDs (and seqIDs) to full taxonomy using our taxIDs ==
