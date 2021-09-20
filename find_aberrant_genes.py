@@ -65,7 +65,7 @@ parser.add_argument(
 parser.add_argument(
     '-s',
     '--genes-stats-file',
-    help='TSV file (with header) containing per-replicons SSU gene statistics',
+    help='TSV file (with header) containing per-replicon SSU gene statistics',
     required=True
 )
 
