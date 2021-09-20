@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
 
 import os
 import glob
@@ -8,6 +7,8 @@ import json
 from Bio import SeqIO
 import pandas as pd
 
+
+# Bacteria
 
 primers = {
     '27F': 'AGAGTTTGATCMTGGCTCAG',
@@ -32,7 +33,7 @@ primers = {
     '1100R': 'AGGGTTGCGCTCGTTG',
     '1114F': 'GCAACGAGCGCAACCC',
     '1193R': 'ACGTCATCCCCACCTTCC',
-    '1237F': 'GGGCTACACACGYGCWAC',
+    # '1237F': 'GGGCTACACACGYGCWAC',
     '1391R': 'GACGGGCGGTGTGTRCA',
     '1492Rl': 'GGTTACCTTGTTACGACTT',
 }
@@ -97,12 +98,12 @@ primer_pairs = [
 
 
 mfeprimer = '/home/cager/Misc_soft/mfeprimer'
-fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/nr.pure_genes_seqs_annotated.fasta'
-categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_16S_genes_categories.tsv'
+fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/gene_seqs/nr.pure_genes_seqs_annotated.fasta'
+categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/categories/bacteria_per_gene_categories.tsv'
 
-outdpath = '/mnt/1.5_drive_0/16S_scrubbling/check_primers/mfeprimer_results'
+outdpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/check_primers/mfeprimer_results'
 
-tmp_dir = '/mnt/1.5_drive_0/16S_scrubbling/check_primers/mfeprimer_results/tmp'
+tmp_dir = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/check_primers/mfeprimer_results/tmp'
 tmp_fasta = os.path.join(tmp_dir, 'tmpQ.fasta')
 tmp_primers = os.path.join(tmp_dir, 'tmpP.fasta')
 tmp_out_base = os.path.join(tmp_dir, 'tmpOUT')

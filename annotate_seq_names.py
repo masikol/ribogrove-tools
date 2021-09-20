@@ -10,13 +10,13 @@ from Bio import SeqIO
 
 
 # in_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
-in_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs.fasta'
+in_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/gene_seqs/pure_genes_seqs.fasta'
 
-tax_fpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxonomy.tsv'
-cat_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_per_gene_categories.tsv'
+tax_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/taxonomy/archaea_per_gene_taxonomy.tsv'
+cat_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/categories/archaea_per_gene_categories.tsv'
 
 # outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/TEST_gene_seqs_no_NN_annotated.fasta'
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/pure_genes_seqs_annotated.fasta'
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/gene_seqs/pure_genes_seqs_annotated.fasta'
 
 tax_sep = ';'
 
@@ -66,7 +66,7 @@ with open(outfpath, 'wt') as outfile:
 
         taxonomy = tax_sep.join(
             (
-                'Bateria',
+                'NA' if pd.isnull(curr_tax_record['phylum']) else curr_tax_record['superkingdom'],
                 'NA' if pd.isnull(curr_tax_record['phylum']) else curr_tax_record['phylum'],
                 'NA' if pd.isnull(curr_tax_record['class']) else curr_tax_record['class'],
                 'NA' if pd.isnull(curr_tax_record['order']) else curr_tax_record['order'],

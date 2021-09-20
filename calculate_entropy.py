@@ -52,6 +52,13 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '-c',
+    '--per-genome-categories-file',
+    help='TSV file (with header) containing per-replicons SSU gene statistics',
+    required=True
+)
+
 
 # Output files
 
@@ -79,12 +86,13 @@ args = parser.parse_args()
 # For convenience
 fasta_seqs_fpath = os.path.abspath(args.fasta_seqs_file)
 genes_stats_fpath = os.path.abspath(args.genes_stats_file)
+categories_fpath = os.path.abspath(args.per_genome_categories_file)
 muscle_fpath = os.path.abspath(args.muscle)
 outfpath = os.path.abspath(args.outfile)
 
 
 # Check existance of all input files and dependencies
-for fpath in (fasta_seqs_fpath, genes_stats_fpath, muscle_fpath):
+for fpath in (fasta_seqs_fpath, genes_stats_fpath, muscle_fpath, categories_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
@@ -219,8 +227,11 @@ def calc_entropy(msa_records: Sequence[SeqRecord]) -> Sequence[float]:
 # Read statistics file
 stats_df = pd.read_csv(genes_stats_fpath, sep='\t')
 
-# Get Assembly IDs
-ass_ids = tuple(set(stats_df['ass_id']))
+# Read categories file
+categories_df = pd.read_csv(categories_fpath, sep='\t')
+
+# Get Assembly IDs of 1 category
+ass_ids = tuple(set(categories_df[categories_df['category'] == 1]['ass_id']))
 
 # Read genes sequnces
 seq_records = tuple(SeqIO.parse(fasta_seqs_fpath, 'fasta'))

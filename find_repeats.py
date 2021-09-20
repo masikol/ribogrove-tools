@@ -109,7 +109,7 @@ def get_repeat_len(repeat_out: Tuple[int, int, int, int]):
 with open(outfpath, 'wt') as outfile:
 
     # Write header
-    outfile.write('seqID\tr1_start\tr1_end\tr2_start\tr2_end\trep_len\trep_seq\t')
+    outfile.write('seqID\tgene_len\tr1_start\tr1_end\tr2_start\tr2_end\trep_len\trep_seq\t')
     outfile.write('\t'.join(
         [f'conserv_{r.id}' for r in conserved_seq_records]
         ) + '\n'
@@ -147,7 +147,7 @@ with open(outfpath, 'wt') as outfile:
             rep_len = get_repeat_len(r) # get length of repeat
 
             # Write output line
-            outfile.write(f'{record.id}\t{r[0]}\t{r[1]}\t{r[2]}\t{r[3]}\t{rep_len}\t{rep_seq}\t')
+            outfile.write(f'{record.id}\t{len(record.seq)}\t{r[0]}\t{r[1]}\t{r[2]}\t{r[3]}\t{rep_len}\t{rep_seq}\t')
             outfile.write('{}\n'.format('\t'.join(conserv_list)))
         # end for
     # end for

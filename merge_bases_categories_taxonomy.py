@@ -4,16 +4,16 @@
 import pandas as pd
 
 # Bacteria
-# bases_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bases_count.tsv'
-# categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_16S_genes_categories.tsv'
-# taxonomy_fpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxonomy.tsv'
-# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/pure_genes_per_gene_stats.tsv'
-
-# Archaea
 bases_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bases_count.tsv'
 categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_per_gene_categories.tsv'
-taxonomy_fpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxIDs.tsv'
+taxonomy_fpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxonomy.tsv'
 outfpath = '/mnt/1.5_drive_0/16S_scrubbling/pure_genes_per_gene_stats.tsv'
+
+# Archaea
+# bases_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bases_count.tsv'
+# categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/categories/archaea_per_gene_categories.tsv'
+# taxonomy_fpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxIDs.tsv'
+# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/pure_genes_per_gene_stats.tsv'
 
 
 # seqID   a       t       g       c       len
@@ -23,8 +23,7 @@ bases_df = pd.read_csv(bases_fpath, sep='\t')
 categories_df = pd.read_csv(categories_fpath, sep='\t')
 
 # seqID   ass_id  accs    taxID   tax_name        genus   family  order   class   phylum  superkingdom
-taxonomy_df = pd.read_csv(taxonomy_fpath, sep='\t') \
-    .drop(['accs'], axis=1)
+taxonomy_df = pd.read_csv(taxonomy_fpath, sep='\t')
 
 
 print('Merging...')
