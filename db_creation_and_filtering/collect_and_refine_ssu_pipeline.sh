@@ -22,7 +22,7 @@ do
 done
 
 
-# == Configure all paths to intermediate and result files ==
+# |=== Configure all paths to intermediate and result files ===|
 
 ASS_ID_TO_GI_FPATH="${WORKDIR}/${PREFIX}_assembly_2_refseq.tsv"
 
@@ -60,6 +60,9 @@ PURE_GENES_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs.fasta"
 PURE_GENES_STATS="${GENES_DIR}/${PREFIX}_pure_gene_stats.tsv"
 
 
+# |=== Proceed ===|
+
+
 # == Translate Assembly UIDs to RefSeq GI numbers ==
 
 ./assembly2refseq_id.py \
@@ -93,7 +96,7 @@ PURE_GENES_STATS="${GENES_DIR}/${PREFIX}_pure_gene_stats.tsv"
 
 # == Extract 16S genes from downloaded genomes ==
 
-./collect_16S/collect_16S.py \
+./collect_16S.py \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --gbk-dir "${GENOMES_GBK_DIR}" \
   --out-fasta "${ALL_GENES_FASTA}" \
