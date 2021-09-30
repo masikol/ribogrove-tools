@@ -10,11 +10,11 @@ from Bio import SeqIO
 
 gbk_dir_path = '/mnt/1.5_drive_0/16S_scrubbling/genomes-data/gbk'
 
-# ass_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/bacteria_ass_refseq_accs_merged.tsv'
-# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/bases_count_whole_genomes.tsv'
+ass_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/bacteria_refseq_accs_merged.tsv'
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/bases_count_whole_genomes.tsv'
 
-ass_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/archaea_refseq_accs_merged.tsv'
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/bases_count_whole_genomes.tsv'
+# ass_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/archaea_refseq_accs_merged.tsv'
+# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/bases_count_whole_genomes.tsv'
 
 
 DEGEN_BASES = ('R', 'Y', 'W', 'S', 'K', 'M', 'H', 'V', 'B', 'D', 'N')
@@ -48,7 +48,7 @@ def remove_degen_bases(seq):
 
 with open(outfpath, 'w') as outfile:
 
-    outfile.write(f'ass_id\ta\tt\tg\tc\ts\tlen\tlen_no_degen\n')
+    outfile.write(f'ass_id\ta\tt\tg\tc\tr\ty\tw\ts\tk\tm\th\tv\tb\td\tn\tlen\tlen_no_degen\n')
 
     for i, ass_id in enumerate(ass_ids):
 
@@ -65,18 +65,27 @@ with open(outfpath, 'w') as outfile:
 
         init_len = len(seq)
 
-        seq = remove_degen_bases(seq)
-
-        s = seq.count('S')
-
-        len_no_degen = len(seq)
 
         a = seq.count('A')
         t = seq.count('T')
         g = seq.count('G')
         c = seq.count('C')
+        r = seq.count('R')
+        y = seq.count('Y')
+        w = seq.count('W')
+        s = seq.count('S')
+        k = seq.count('K')
+        m = seq.count('M')
+        h = seq.count('H')
+        v = seq.count('V')
+        b = seq.count('B')
+        d = seq.count('D')
+        n = seq.count('N')
 
-        outfile.write(f'{ass_id}\t{a}\t{t}\t{g}\t{c}\t{s}\t{init_len}\t{len_no_degen}\n')
+        seq = remove_degen_bases(seq)
+        len_no_degen = len(seq)
+
+        outfile.write(f'{ass_id}\t{a}\t{t}\t{g}\t{c}\t{r}\t{y}\t{w}\t{s}\t{k}\t{m}\t{h}\t{v}\t{b}\t{d}\t{n}\t{init_len}\t{len_no_degen}\n')
     # end for
 # end with
 

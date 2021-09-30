@@ -401,7 +401,7 @@ with open(per_genome_outfpath, 'wt') as per_genome_outfile, \
 
      # Write headers
     per_genome_outfile.write('ass_id\taccs\tseqtech\tcontains_NNN\tdegenerate_in_16S\tunlocalized_16S\tcategory\n')
-    per_gene_outfile.write('ass_id\tseqID\tcategory\n')
+    per_gene_outfile.write('ass_id\tseqID\tcontains_NNN\tdegenerate_in_16S\tunlocalized_16S\tcategory\n')
 
     # Get all Assembly IDs
     assembly_IDs = tuple(set(stats_df['ass_id']))
@@ -485,7 +485,9 @@ with open(per_genome_outfpath, 'wt') as per_genome_outfile, \
         for acc in accs:
             try:
                 for seqID in acc_seqIDs_dict[acc]:
-                    per_gene_outfile.write(f'{ass_id}\t{seqID}\t{category}\n')
+                    per_gene_outfile.write(f'{ass_id}\t{seqID}\t')
+                    per_gene_outfile.write(f'{1 if contains_NNN else 0}\t{1 if degenerate_in_16S else 0}\t')
+                    per_genome_outfile.write(f'{1 if unlocalized_16S else 0}\t{category}\n')
                 # end for
             except KeyError:
                 pass

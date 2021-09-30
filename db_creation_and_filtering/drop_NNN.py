@@ -18,6 +18,7 @@ import re
 import sys
 import argparse
 
+import pandas as pd
 from Bio import SeqIO
 
 from gene_seqs_2_stats import gene_seqs_2_stats
@@ -44,6 +45,13 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '-c',
+    '--categories-file',
+    help='TSV file of per-gene genome cagetories',
+    required=True
+)
+
 # Output files
 
 parser.add_argument(
@@ -59,7 +67,7 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '--NN-outfile',
+    '--NNN-outfile',
     help='output fasta file containing genes sequences with NN\'s',
     required=True
 )
@@ -70,13 +78,14 @@ args = parser.parse_args()
 
 assm_acc_fpath = os.path.abspath(args.assm_acc_file)
 seqs_fpath = os.path.abspath(args.all_fasta_file)
+per_gene_category_fpath = os.path.abspath(args.categories_file)
 out_fasta_fpath = os.path.abspath(args.out_fasta_file)
 out_stats_fpath = os.path.abspath(args.out_stats_file)
-nn_seqs_fpath = os.path.abspath(args.NN_outfile)
+nnn_seqs_fpath = os.path.abspath(args.NNN_outfile)
 
 
 # Check existance of all input files
-for fpath in (assm_acc_fpath, seqs_fpath):
+for fpath in (assm_acc_fpath, seqs_fpath, per_gene_category_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
@@ -84,7 +93,7 @@ for fpath in (assm_acc_fpath, seqs_fpath):
 # enb for
 
 # Create output directories if needed
-for some_dir in map(os.path.dirname, [out_fasta_fpath, nn_seqs_fpath, out_stats_fpath]):
+for some_dir in map(os.path.dirname, [out_fasta_fpath, nnn_seqs_fpath, out_stats_fpath]):
     if not os.path.isdir(some_dir):
         try:
             os.makedirs(some_dir)
@@ -96,7 +105,7 @@ for some_dir in map(os.path.dirname, [out_fasta_fpath, nn_seqs_fpath, out_stats_
 # end if
 
 
-nn_pattern = r'NN' # pattern for searching NN
+# nn_pattern = r'NN' # pattern for searching NN
 nn_count = 0
 
 next_report = 499
@@ -109,8 +118,18 @@ seq_records = SeqIO.parse(seqs_fpath, 'fasta') # read sequences
 
 # == Proceed ==
 
+category_df = pd.read_csv(
+    per_gene_category_fpath,
+    sep='\t'
+)
+
+NNN_seqIDs = set(
+    category_df[category_df['contains_NNN'] == 1]['seqID']
+)
+
+
 with open(out_fasta_fpath, 'wt') as out_fasta_file, \
-     open(nn_seqs_fpath, 'wt') as outfile_nn:
+     open(nnn_seqs_fpath, 'wt') as outfile_nnn:
 
     # Iterate over genes sequences
     for i, record in enumerate(seq_records):
@@ -121,21 +140,22 @@ with open(out_fasta_fpath, 'wt') as out_fasta_file, \
             next_report += inc
         # end if
 
-        if re.search(nn_pattern, str(record.seq)) is None:
+        # if re.search(nn_pattern, str(record.seq)) is None:
+        if not record.id in NNN_seqIDs:
             # Write no "no NN" file
             out_fasta_file.write(f'>{record.description}\n{str(record.seq)}\n')
         else:
             # Write no "NN" file
             nn_count += 1
-            outfile_nn.write(f'>{record.description}\n{str(record.seq)}\n')
+            outfile_nnn.write(f'>{record.description}\n{str(record.seq)}\n')
         # end if
     # end for
 # end with
 
 print(f'\r{i+1}/{num_seqs}\n')
-print(f'{nn_count} NN-sequences found')
+print(f'{nn_count} genes from genomes with NNN found')
 print(out_fasta_fpath)
-print(nn_seqs_fpath)
+print(nnn_seqs_fpath)
 
 # Calculate statistics
 print('Calculating statistics')
