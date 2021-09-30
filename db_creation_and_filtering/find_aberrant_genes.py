@@ -167,10 +167,10 @@ if not os.path.isdir(outdpath):
 
 
 # Output files
-pident_outfpath = os.path.join(outdpath, 'pident_pivotal_genes.tsv')
-insertions_outfpath = os.path.join(outdpath, 'insertions.tsv')
-deletions_outfpath = os.path.join(outdpath, 'deletions.tsv')
-aberrant_seqIDs_fpath = os.path.join(outdpath, 'aberrant_seqIDs.txt')
+pident_outfpath = os.path.join(outdpath, 'bacteria_pident_pivotal_genes.tsv')
+insertions_outfpath = os.path.join(outdpath, 'bacteria_insertions.tsv')
+deletions_outfpath = os.path.join(outdpath, 'bacteria_deletions.tsv')
+aberrant_seqIDs_fpath = os.path.join(outdpath, 'bacteria_aberrant_seqIDs.txt')
 
 
 def select_gene_seqs(ass_id: str,
@@ -383,6 +383,10 @@ with open(pident_outfpath, 'wt') as pident_outfile, \
         # Select SSU genes from current genome
         selected_seq_records = select_gene_seqs(ass_id, seq_records, stats_df)
 
+        if len(selected_seq_records) == 0:
+            continue
+        # end if
+
         if pivotal_gene_num != 0:
             # If there are at least one pivotal gene, we need to check if some genes are aberrant
 
@@ -462,7 +466,8 @@ with open(pident_outfpath, 'wt') as pident_outfile, \
 
                     # If there are long indels or some conserved regions are missing, current gene
                     #   is aberrant in comparison to current pivotal gene
-                    if len(insertions) != 0 or len(deletions) != 0 or missing_conserved_regions:
+                    # if len(insertions) != 0 or len(deletions) != 0 or missing_conserved_regions:
+                    if len(deletions) != 0 or missing_conserved_regions:
                         curr_aberrant_seqIDs.add(seqID)
                     # end if
                 # end for

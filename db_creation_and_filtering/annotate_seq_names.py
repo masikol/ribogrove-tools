@@ -10,13 +10,17 @@ from Bio import SeqIO
 
 
 # in_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/gene_seqs_no_NN.fasta'
-in_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/gene_seqs/pure_genes_seqs.fasta'
+# in_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/gene_seqs/pure_genes_seqs.fasta'
+in_fasta_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/gene_seqs/bacteria_pure_gene_seqs.fasta'
 
-tax_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/taxonomy/archaea_per_gene_taxonomy.tsv'
-cat_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/categories/archaea_per_gene_categories.tsv'
+# tax_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/taxonomy/archaea_per_gene_taxonomy.tsv'
+tax_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/taxonomy/bacteria_per_gene_taxonomy.tsv'
 
-# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/gene_seqs/TEST_gene_seqs_no_NN_annotated.fasta'
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/gene_seqs/pure_genes_seqs_annotated.fasta'
+# cat_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/categories/archaea_per_gene_categories.tsv'
+cat_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/categories/bacteria_per_gene_categories.tsv'
+
+# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/gene_seqs/pure_genes_seqs_annotated.fasta'
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/gene_seqs/TEST_bacteria_pure_genes_seqs_annotated.fasta'
 
 tax_sep = ';'
 

@@ -25,12 +25,20 @@ from Bio.SeqFeature import CompoundLocation, SeqFeature, FeatureLocation
 # outfpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/antiSD/alt_SD_check/upstream_seqs_CDSs.tsv'
 
 # Test
-ass_id_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/antiSD/alt_SD_check/TEST_no_antiSD_ass_IDs.txt'
+# ass_id_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/antiSD/alt_SD_check/TEST_no_antiSD_ass_IDs.txt'
+# ass_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/bacteria_ass_refseq_accs_merged.tsv'
+# tax_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/taxonomy/bacteria_per_genome_taxonomy.tsv'
+# gbk_dpath = '/mnt/1.5_drive_0/16S_scrubbling/genomes-data/gbk'
+
+# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/antiSD/alt_SD_check/TEST_upstream_seqs_CDSs.tsv'
+
+# Test Bacillus subtilis (BACTEST)
+ass_id_fpath = '/mnt/1.5_drive_0/16S_scrubbling/antiSD/bacteria/alt_SD_check/BACTEST_no_antiSD_ass_IDs.txt'
 ass_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/bacteria_ass_refseq_accs_merged.tsv'
 tax_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/taxonomy/bacteria_per_genome_taxonomy.tsv'
 gbk_dpath = '/mnt/1.5_drive_0/16S_scrubbling/genomes-data/gbk'
 
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/antiSD/alt_SD_check/TEST_upstream_seqs_CDSs.tsv'
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/antiSD/bacteria/alt_SD_check/BACTEST_upstream_seqs_CDSs.tsv'
 
 
 max_spacer_size = 15

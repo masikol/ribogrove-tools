@@ -1,8 +1,8 @@
 
 set -e
 
-source archaea_config.conf
-# source bacteria_config.conf
+# source archaea_config.conf
+source bacteria_config.conf
 
 # Directories for different sorts of data
 LOGS_DIR="${WORKDIR}/logs"
@@ -65,117 +65,117 @@ PURE_GENES_STATS="${GENES_DIR}/${PREFIX}_pure_gene_stats.tsv"
 
 # == Translate Assembly UIDs to RefSeq GI numbers ==
 
-./assembly2refseq_id.py \
-  --assm-id-file "${ASSEMBLY_IDS_FPATH}" \
-  --outfile "${ASS_ID_TO_GI_FPATH}"
+# ./assembly2refseq_id.py \
+#   --assm-id-file "${ASSEMBLY_IDS_FPATH}" \
+#   --outfile "${ASS_ID_TO_GI_FPATH}"
 
 
 # == Translate RefSeq GI numbers to corresponding ACCESSION.VERSION's and titles ==
 
-./gis_to_accs.py \
-  --gi-file "${ASS_ID_TO_GI_FPATH}" \
-  --outfile "${GI_ACC_TITLES_FPATH}"
+# ./gis_to_accs.py \
+#   --gi-file "${ASS_ID_TO_GI_FPATH}" \
+#   --outfile "${GI_ACC_TITLES_FPATH}"
 
 
 # == Merge Assembly IDs to ACCESSION.VERSION's and titles ==
 # Moreover, this will remove "whole genome shotgun" sequences
 
-./merge_assID2acc_and_remove_WGS.py \
-  --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
-  --gi-2-acc-file "${GI_ACC_TITLES_FPATH}" \
-  --outfile "${ASS_ACC_MERGED_FPATH}"
+# ./merge_assID2acc_and_remove_WGS.py \
+#   --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
+#   --gi-2-acc-file "${GI_ACC_TITLES_FPATH}" \
+#   --outfile "${ASS_ACC_MERGED_FPATH}"
 
 
 # == Download genomes ==
 
-./download_genomes.py \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --outdir "${GENOMES_GBK_DIR}" \
-  --log-file "${LOGS_DIR}/archaea_genome_download_log.log"
+# ./download_genomes.py \
+#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+#   --outdir "${GENOMES_GBK_DIR}" \
+#   --log-file "${LOGS_DIR}/archaea_genome_download_log.log"
 
 
 # == Extract 16S genes from downloaded genomes ==
 
-./collect_16S.py \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --gbk-dir "${GENOMES_GBK_DIR}" \
-  --out-fasta "${ALL_GENES_FASTA}" \
-  --out-stats "${ALL_GENES_STATS}" \
-  --cmsearch "${CMSEARCH_FOR_COLLECT_16S}" \
-  --rfam-family-cm "${RFAM_FOR_COLLECT_16S}" \
-  --seqkit "${SEQKIT}"
+# ./collect_16S.py \
+#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+#   --gbk-dir "${GENOMES_GBK_DIR}" \
+#   --out-fasta "${ALL_GENES_FASTA}" \
+#   --out-stats "${ALL_GENES_STATS}" \
+#   --cmsearch "${CMSEARCH_FOR_COLLECT_16S}" \
+#   --rfam-family-cm "${RFAM_FOR_COLLECT_16S}" \
+#   --seqkit "${SEQKIT}"
 
 
 # == Assign categories to downloaded genomes ==
 
-./assign_genome_categories/assign_genome_categories.py \
-  --all-fasta-file "${ALL_GENES_FASTA}" \
-  --all-stats-file "${ALL_GENES_STATS}" \
-  --gbk-dir "${GENOMES_GBK_DIR}" \
-  --per-genome-outfile "${PER_GENOME_CAT_FPATH}" \
-  --per-gene-outfile "${PER_GENE_CAT_FPATH}" \
-  --seqtech-logfile "${SEQTECH_LOGFILE}" \
-  --seqkit "${SEQKIT}"
+# ./assign_genome_categories/assign_genome_categories.py \
+#   --all-fasta-file "${ALL_GENES_FASTA}" \
+#   --all-stats-file "${ALL_GENES_STATS}" \
+#   --gbk-dir "${GENOMES_GBK_DIR}" \
+#   --per-genome-outfile "${PER_GENOME_CAT_FPATH}" \
+#   --per-gene-outfile "${PER_GENE_CAT_FPATH}" \
+#   --seqtech-logfile "${SEQTECH_LOGFILE}" \
+#   --seqkit "${SEQKIT}"
 
 
 # == Get taxIDs for our genomes ==
 
-./get_taxIDs.py \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --all-fasta-file "${ALL_GENES_FASTA}" \
-  --per-genome-outfile "${PER_GENOME_TAXID_FPATH}" \
-  --seqkit "${SEQKIT}"
+# ./get_taxIDs.py \
+#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+#   --all-fasta-file "${ALL_GENES_FASTA}" \
+#   --per-genome-outfile "${PER_GENOME_TAXID_FPATH}" \
+#   --seqkit "${SEQKIT}"
 
 
 # == Map seqIDs to taxIDs ==
 
-./pergenome_2_pergene_taxIDs.py \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --all-fasta-file "${ALL_GENES_FASTA}" \
-  --per-genome-taxID-file "${PER_GENOME_TAXID_FPATH}" \
-  --per-gene-outfile "${PER_GENE_TAXID_FPATH}" \
+# ./pergenome_2_pergene_taxIDs.py \
+#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+#   --all-fasta-file "${ALL_GENES_FASTA}" \
+#   --per-genome-taxID-file "${PER_GENOME_TAXID_FPATH}" \
+#   --per-gene-outfile "${PER_GENE_TAXID_FPATH}" \
 
 
 # == Map our Aseembly IDs (and seqIDs) to full taxonomy using our taxIDs ==
 
-./add_taxonomy_names.py \
-  --per-genome-taxid-file "${PER_GENOME_TAXID_FPATH}" \
-  --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
-  --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
-  --per-genome-outfile "${PER_GENOME_TAXONOMY_FPATH}" \
-  --per-gene-outfile "${PER_GENE_TAXONOMY_FPATH}" \
-  --seqkit "${SEQKIT}"
+# ./add_taxonomy_names.py \
+#   --per-genome-taxid-file "${PER_GENOME_TAXID_FPATH}" \
+#   --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
+#   --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
+#   --per-genome-outfile "${PER_GENOME_TAXONOMY_FPATH}" \
+#   --per-gene-outfile "${PER_GENE_TAXONOMY_FPATH}" \
+#   --seqkit "${SEQKIT}"
 
 
-# == Drop genes containing at leats 2 N's in a row ==
+# == Drop genes containing at least 2 N's in a row ==
 
-./drop_NN.py \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --all-fasta-file "${ALL_GENES_FASTA}" \
-  --out-fasta-file "${NO_NN_FASTA_FPATH}" \
-  --out-stats-file "${NO_NN_STATS_FPATH}" \
-  --NN-outfile "${NN_FASTA_FPATH}"
+# ./drop_NN.py \
+#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+#   --all-fasta-file "${ALL_GENES_FASTA}" \
+#   --out-fasta-file "${NO_NN_FASTA_FPATH}" \
+#   --out-stats-file "${NO_NN_STATS_FPATH}" \
+#   --NN-outfile "${NN_FASTA_FPATH}"
 
 
 # == Find repeats in genes sequences ==
 
-./find_repeats.py \
-  --no-NN-fasta-file "${NO_NN_FASTA_FPATH}" \
-  --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
-  --outfile "${REPEATS_FPATH}"
+# ./find_repeats.py \
+#   --no-NN-fasta-file "${NO_NN_FASTA_FPATH}" \
+#   --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
+#   --outfile "${REPEATS_FPATH}"
 
 
 # == Find pivotal genes ==
 
-./find_pivotal_genes.py \
-  --fasta-seqs-file "${NO_NN_FASTA_FPATH}" \
-  --genes-stats-file "${NO_NN_STATS_FPATH}" \
-  --outfile "${PIVOTAL_GENES_FPATH}" \
-  --tblout-dir "${TBLOUT_DIR}" \
-  --cmscan "${CMSCAN_FOR_PIVOTAL_GENES}" \
-  --cmpress "${CMPRESS_FOR_PIVOTAL_GENES}" \
-  --rfam-family-cm "${RFAM_FOR_PIVOTAL_GENES}" \
-  --lendiff-threshold 5
+# ./find_pivotal_genes.py \
+#   --fasta-seqs-file "${NO_NN_FASTA_FPATH}" \
+#   --genes-stats-file "${NO_NN_STATS_FPATH}" \
+#   --outfile "${PIVOTAL_GENES_FPATH}" \
+#   --tblout-dir "${TBLOUT_DIR}" \
+#   --cmscan "${CMSCAN_FOR_PIVOTAL_GENES}" \
+#   --cmpress "${CMPRESS_FOR_PIVOTAL_GENES}" \
+#   --rfam-family-cm "${RFAM_FOR_PIVOTAL_GENES}" \
+#   --lendiff-threshold 5
 
 
 # == Find aberrant genes and record long indels ==
@@ -204,11 +204,11 @@ PURE_GENES_STATS="${GENES_DIR}/${PREFIX}_pure_gene_stats.tsv"
 
 # == Drop long repeats ==
 
-./drop_repeats.py \
-  --input-fasta-file "${NON_ABERRANT_GENES_FASTA}" \
-  --genes-stats-file "${NON_ABERRANT_GENES_STATS}" \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --repeats-file "${REPEATS_FPATH}" \
-  --categories-file "${PER_GENE_CAT_FPATH}" \
-  --out-fasta "${PURE_GENES_FASTA}" \
-  --out-stats "${PURE_GENES_STATS}"
+# ./drop_repeats.py \
+#   --input-fasta-file "${NON_ABERRANT_GENES_FASTA}" \
+#   --genes-stats-file "${NON_ABERRANT_GENES_STATS}" \
+#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+#   --repeats-file "${REPEATS_FPATH}" \
+#   --categories-file "${PER_GENE_CAT_FPATH}" \
+#   --out-fasta "${PURE_GENES_FASTA}" \
+#   --out-stats "${PURE_GENES_STATS}"

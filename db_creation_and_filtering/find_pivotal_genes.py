@@ -362,14 +362,27 @@ def extract_pivotal_gene_lengths(query_fasta_fpath: str, best_gene_seqIDs: Seque
 # end def extract_pivotal_genes
 
 
+# !! KASTYL !!!
+per_genome_cat_df = pd.read_csv(
+    '/mnt/1.5_drive_0/16S_scrubbling/bacteria/categories/bacteria_per_genome_categories.tsv',
+    sep='\t'
+)
+
+
 # == Proceed ==
 
 # Read statistics
 stats_df = pd.read_csv(genes_stats_fpath, sep='\t')
 
 # Transform per-replicon statistics to per-genome statistics
-grpd_df = stats_df.groupby('ass_id').agg({'min_len': 'min', 'max_len': 'max'}).reset_index()
+grpd_df = stats_df.groupby('ass_id', as_index=False).agg({'min_len': 'min', 'max_len': 'max', 'num_genes': 'sum'})
 grpd_df['lendiff'] = grpd_df['max_len'] - grpd_df['min_len']
+
+grpd_df = grpd_df.merge(
+    per_genome_cat_df[['ass_id', 'category']],
+    on='ass_id',
+    how='left'
+)
 
 # Index file with covariance model
 run_cmpress(cmpress_fpath, rfam_fpath)
@@ -396,8 +409,14 @@ with open(outfpath, 'wt') as outfile:
         min_len = curr_grpd_df['min_len'].values[0]
         max_len = curr_grpd_df['max_len'].values[0]
         lendiff = curr_grpd_df['lendiff'].values[0]
+        category = curr_grpd_df['category'].values[0]
+        num_genes = curr_grpd_df['num_genes'].values[0]
 
-        if lendiff > lendiff_threshold:
+        if num_genes == 0:
+            continue
+        # end if
+
+        if lendiff > lendiff_threshold or category == 3:
             # It genes differ in length greatly (> lendiff_threshold),
             #   we will search for pivotal genes (launch cmscan)
 
