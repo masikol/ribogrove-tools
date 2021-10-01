@@ -487,7 +487,7 @@ with open(per_genome_outfpath, 'wt') as per_genome_outfile, \
                 for seqID in acc_seqIDs_dict[acc]:
                     per_gene_outfile.write(f'{ass_id}\t{seqID}\t')
                     per_gene_outfile.write(f'{1 if contains_NNN else 0}\t{1 if degenerate_in_16S else 0}\t')
-                    per_genome_outfile.write(f'{1 if unlocalized_16S else 0}\t{category}\n')
+                    per_gene_outfile.write(f'{1 if unlocalized_16S else 0}\t{category}\n')
                 # end for
             except KeyError:
                 pass

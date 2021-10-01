@@ -1,8 +1,8 @@
 
 set -e
 
-# source archaea_config.conf
-source bacteria_config.conf
+source archaea_config.conf
+# source bacteria_config.conf
 
 # Directories for different sorts of data
 LOGS_DIR="${WORKDIR}/logs"
@@ -108,14 +108,14 @@ PURE_GENES_STATS="${GENES_DIR}/${PREFIX}_pure_gene_stats.tsv"
 
 # == Assign categories to downloaded genomes ==
 
-# ./assign_genome_categories/assign_genome_categories.py \
-#   --all-fasta-file "${ALL_GENES_FASTA}" \
-#   --all-stats-file "${ALL_GENES_STATS}" \
-#   --gbk-dir "${GENOMES_GBK_DIR}" \
-#   --per-genome-outfile "${PER_GENOME_CAT_FPATH}" \
-#   --per-gene-outfile "${PER_GENE_CAT_FPATH}" \
-#   --seqtech-logfile "${SEQTECH_LOGFILE}" \
-#   --seqkit "${SEQKIT}"
+./assign_genome_categories/assign_genome_categories.py \
+  --all-fasta-file "${ALL_GENES_FASTA}" \
+  --all-stats-file "${ALL_GENES_STATS}" \
+  --gbk-dir "${GENOMES_GBK_DIR}" \
+  --per-genome-outfile "${PER_GENOME_CAT_FPATH}" \
+  --per-gene-outfile "${PER_GENE_CAT_FPATH}" \
+  --seqtech-logfile "${SEQTECH_LOGFILE}" \
+  --seqkit "${SEQKIT}"
 
 
 # == Get taxIDs for our genomes ==
@@ -149,58 +149,58 @@ PURE_GENES_STATS="${GENES_DIR}/${PREFIX}_pure_gene_stats.tsv"
 
 # == Drop genes containing at least 2 N's in a row ==
 
-# ./drop_NNN.py \
-#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-#   --all-fasta-file "${ALL_GENES_FASTA}" \
-#   --categories-file "${PER_GENE_CAT_FPATH}" \
-#   --out-fasta-file "${NO_NNN_FASTA_FPATH}" \
-#   --out-stats-file "${NO_NNN_STATS_FPATH}" \
-#   --NNN-outfile "${NNN_FASTA_FPATH}"
+./drop_NNN.py \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --all-fasta-file "${ALL_GENES_FASTA}" \
+  --categories-file "${PER_GENE_CAT_FPATH}" \
+  --out-fasta-file "${NO_NNN_FASTA_FPATH}" \
+  --out-stats-file "${NO_NNN_STATS_FPATH}" \
+  --NNN-outfile "${NNN_FASTA_FPATH}"
 
 
 # == Find repeats in genes sequences ==
 
 # ./find_repeats.py \
-#   --no-NNN-fasta-file "${NO_NNN_FASTA_FPATH}" \
+#   --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
 #   --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
 #   --outfile "${REPEATS_FPATH}"
 
 
 # == Find pivotal genes ==
 
-./find_pivotal_genes.py \
-  --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
-  --genes-stats-file "${NO_NNN_STATS_FPATH}" \
-  --outfile "${PIVOTAL_GENES_FPATH}" \
-  --tblout-dir "${TBLOUT_DIR}" \
-  --cmscan "${CMSCAN_FOR_PIVOTAL_GENES}" \
-  --cmpress "${CMPRESS_FOR_PIVOTAL_GENES}" \
-  --rfam-family-cm "${RFAM_FOR_PIVOTAL_GENES}" \
-  --lendiff-threshold 5
+# ./find_pivotal_genes.py \
+#   --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
+#   --genes-stats-file "${NO_NNN_STATS_FPATH}" \
+#   --outfile "${PIVOTAL_GENES_FPATH}" \
+#   --tblout-dir "${TBLOUT_DIR}" \
+#   --cmscan "${CMSCAN_FOR_PIVOTAL_GENES}" \
+#   --cmpress "${CMPRESS_FOR_PIVOTAL_GENES}" \
+#   --rfam-family-cm "${RFAM_FOR_PIVOTAL_GENES}" \
+#   --lendiff-threshold 5
 
 
 # == Find aberrant genes and record long indels ==
 
-./find_aberrant_genes.py \
-  --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
-  --genes-stats-file "${NO_NNN_STATS_FPATH}" \
-  --pivotal-genes-file "${PIVOTAL_GENES_FPATH}" \
-  --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
-  --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
-  --muscle "${MUSCLE}" \
-  --indel-len-threshold 10
+# ./find_aberrant_genes.py \
+#   --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
+#   --genes-stats-file "${NO_NNN_STATS_FPATH}" \
+#   --pivotal-genes-file "${PIVOTAL_GENES_FPATH}" \
+#   --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
+#   --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
+#   --muscle "${MUSCLE}" \
+#   --indel-len-threshold 10
 
 
 # == Drop aberarant genes ==
 
-./drop_aberrant_genes.py \
-  --input-fasta-file "${NO_NNN_FASTA_FPATH}" \
-  --aberrant-genes-file "${ABERRANT_SEQIDS_FPATH}" \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --categories-file "${PER_GENE_CAT_FPATH}" \
-  --output-fasta "${NON_ABERRANT_GENES_FASTA}" \
-  --output-stats "${NON_ABERRANT_GENES_STATS}" \
-  --seqkit "${SEQKIT}"
+# ./drop_aberrant_genes.py \
+#   --input-fasta-file "${NO_NNN_FASTA_FPATH}" \
+#   --aberrant-genes-file "${ABERRANT_SEQIDS_FPATH}" \
+#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+#   --categories-file "${PER_GENE_CAT_FPATH}" \
+#   --output-fasta "${NON_ABERRANT_GENES_FASTA}" \
+#   --output-stats "${NON_ABERRANT_GENES_STATS}" \
+#   --seqkit "${SEQKIT}"
 
 
 # == Drop long repeats ==

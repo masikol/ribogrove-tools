@@ -42,8 +42,8 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument(
     '-f',
-    '--no-NN-fasta-file',
-    help='fasta file of SSU gene sequences containing no NN',
+    '--in-fasta-file',
+    help='input fasta file',
     required=True
 )
 
@@ -66,7 +66,7 @@ args = parser.parse_args()
 
 
 # For convenience
-seqs_fpath = os.path.abspath(args.no_NN_fasta_file)
+seqs_fpath = os.path.abspath(args.in_fasta_file)
 conserved_regions_fpath = os.path.abspath(args.conserved_regions_fasta)
 outfpath = os.path.abspath(args.outfile)
 
