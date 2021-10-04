@@ -17,13 +17,6 @@ parser.add_argument(
     required=True
 )
 
-parser.add_argument(
-    '-r',
-    '--rfam',
-    help='fasta file of SSU gene sequences',
-    required=True
-)
-
 # Output files
 
 parser.add_argument(
@@ -40,29 +33,45 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '--cmpress',
+    help='cmpress executable',
+    required=True
+)
+
+parser.add_argument(
+    '-r',
+    '--rfam-family-cm',
+    help='fasta file of SSU gene sequences',
+    required=True
+)
+
 
 args = parser.parse_args()
 
 # For convenience
 fasta_seqs_fpath = os.path.abspath(args.in_fasta_file)
-rfam_fpath = os.path.abspath(args.rfam)
+rfam_fpath = os.path.abspath(args.rfam_family_cm)
 outdpath = os.path.abspath(args.outdir)
 cmscan_fpath = os.path.abspath(args.cmscan)
+cmpress_fpath = os.path.abspath(args.cmpress)
 
 
 # Check existance of all input files and dependencies
-for fpath in (fasta_seqs_fpath, rfam_fpath, cmscan_fpath):
+for fpath in (fasta_seqs_fpath, rfam_fpath, cmscan_fpath, cmpress_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
     # end if
 # enb for
 
-# Check if seqkit executable is actually executable
-if not os.access(cmscan_fpath, os.X_OK):
-    print(f'Error: file `{cmscan_fpath}` is not executable!')
-    sys.exit(1)
-# end if
+# Check if executables are actually executable
+for exec_fpath in (cmscan_fpath, cmpress_fpath):
+    if not os.access(exec_fpath, os.X_OK):
+        print(f'Error: file `{exec_fpath}` is not executable!')
+        sys.exit(1)
+    # end if
+# end for
 
 # Create output directory if needed
 if not os.path.isdir(outdpath):
@@ -128,6 +137,50 @@ def reformat_tblout(tblout_fpath: str, tblout_header: str) -> None:
         tblout_file.write('\n'.join(lines) + '\n')
     # end with
 # end def reformat_tblout
+
+
+def run_cmpress(cmpress_fpath: str, rfam_fpath: str) -> None:
+    # Function runs cmpress on rfam .cm file.
+    # It is required to run cmscan.
+
+    # Actually run cmpress
+    print('Running `cmpress`...')
+    cmd = f'{cmpress_fpath} {rfam_fpath}'
+    pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
+    stdout_stderr = pipe.communicate()
+
+    if pipe.returncode != 0:
+        # It something goes wrong -- check the error message
+        error_msg = stdout_stderr[1].decode('utf-8')
+
+        # If `error_msg` contains `already_exists_msg_pattern` -- it's ok --
+        #   index files exist.
+        already_exists_msg_pattern = r'.+ file ({}.+) already exists'.format(rfam_fpath)
+        already_exists_obj = re.search(already_exists_msg_pattern, error_msg)
+        just_already_exists = not already_exists_obj is None
+
+        if just_already_exists:
+            print(error_msg)
+            print(f'Removing {already_exists_obj.group(1)}')
+            os.unlink(already_exists_obj.group(1))
+            run_cmpress(cmpress_fpath, rfam_fpath)
+        else:
+            # If `error_msg` does not contain `already_exists_msg_pattern` -- oh, we must terminate
+            print('Error: cannot cmpress .cm file')
+            print(error_msg)
+            sys.exit(1)
+        # end if
+    else:
+        # Print piped stdout
+        print(stdout_stderr[0].decode('utf-8'))
+    # end if
+# end def run_cmpress
+
+
+# == Proceed ==
+
+# Index file with covariance model
+run_cmpress(cmpress_fpath, rfam_fpath)
 
 
 output_file = os.path.join(outdpath, 'cmscan_output.txt')
