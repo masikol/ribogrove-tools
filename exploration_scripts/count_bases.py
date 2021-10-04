@@ -1,11 +1,59 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
+import os
+import sys
+import argparse
 
 from Bio import SeqIO
 
-infpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/gene_seqs/bacteria_pure_gene_seqs_annotated.fasta'
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bases_count.tsv'
+# == Parse arguments ==
+
+parser = argparse.ArgumentParser()
+
+# Input files
+
+parser.add_argument(
+    '-i',
+    '--input-fasta',
+    help='input fasta file',
+    required=True
+)
+
+# Output files
+
+parser.add_argument(
+    '-o',
+    '--outfile',
+    help='output TSV file',
+    required=True
+)
+
+args = parser.parse_args()
+
+# For convenience
+infpath = os.path.abspath(args.input_fasta)
+outfpath = os.path.abspath(args.outfile)
+
+# Check arguments
+if not os.path.exists(infpath):
+    print(f'Error: file `{fpath}` does not exist.')
+    sys.exit(1)
+# end if
+
+if not os.path.isdir(os.path.dirname(outfpath)):
+    try:
+        os.makedirs(os.path.dirname(outfpath))
+    except OSError as err:
+        print(f'Error: cannot create output directory `{os.path.dirname(outfpath)}`')
+        print(str(err))
+    # end try
+# end if
+
+print(infpath)
+print()
+# infpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/gene_seqs/bacteria_pure_gene_seqs_annotated.fasta'
+# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/bases_count.tsv'
 
 
 with open(infpath, 'rt') as infile, open(outfpath, 'w') as outfile:
