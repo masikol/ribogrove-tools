@@ -35,14 +35,14 @@ parser.add_argument(
 
 parser.add_argument(
     '-t',
-    '--taxonomy-file',
+    '--per-gene-taxonomy-file',
     help='TSV file (with header) containing per-gene taxonomy',
     required=True
 )
 
 parser.add_argument(
     '-c',
-    '--categories-file',
+    '--per-gene-categories-file',
     help='TSV file (with header) containing per-gene categories',
     required=True
 )
@@ -61,8 +61,8 @@ args = parser.parse_args()
 
 # For convenience
 in_fasta_fpath = os.path.abspath(args.fasta_seqs_file)
-tax_fpath = os.path.abspath(args.taxonomy_file)
-cat_fpath = os.path.abspath(args.categories_file)
+tax_fpath = os.path.abspath(args.per_gene_taxonomy_file)
+cat_fpath = os.path.abspath(args.per_gene_categories_file)
 outfpath = os.path.abspath(args.outfile)
 
 

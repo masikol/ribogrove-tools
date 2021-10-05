@@ -61,7 +61,7 @@ parser.add_argument(
     '--exception-seqIDs',
     help="""Text file with seqIDs (one per line) of sequences, which are exceptions:
 exceptions contain repeats, but they should not be removed""",
-    required=True
+    required=False
 )
 
 
@@ -100,10 +100,20 @@ args = parser.parse_args()
 in_fasta_fpath = os.path.abspath(args.input_fasta_file)
 assm_acc_fpath = os.path.abspath(args.assm_acc_file)
 repeats_fpath = os.path.abspath(args.repeats_file)
-exception_seqIDs_fpath = ps.path.abspath(args.exception_seqIDs)
 output_genes_fpath = os.path.abspath(args.out_fasta_file)
 seqs_with_repeats_fpath = os.path.abspath(args.seqs_with_repeats)
 output_genes_stats_fpath = os.path.abspath(args.out_stats_file)
+
+exception_seqIDs_fpath = None
+try:
+    exception_seqIDs_fpath = os.path.abspath(args.exception_seqIDs)
+    if not os.path.exists(exception_seqIDs_fpath):
+        print(f'Error: file `{exception_seqIDs_fpath}` does not exist!')
+        sys.exit(1)
+    # end if
+except TypeError:
+    pass
+# end if
 
 
 # Validate repeat_len_threshold
@@ -120,7 +130,7 @@ except ValueError:
 
 
 # Check existance of all input files
-for fpath in (in_fasta_fpath, assm_acc_fpath, repeats_fpath, exception_seqIDs_fpath):
+for fpath in (in_fasta_fpath, assm_acc_fpath, repeats_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
@@ -139,12 +149,16 @@ for some_dir in map(os.path.dirname, [output_genes_fpath, seqs_with_repeats_fpat
     # end if
 # end if
 
-exception_seqIDs = set(
-    map(
-        str.strip,
-        open(exception_seqIDs_fpath, 'rt').readlines()
+if exception_seqIDs_fpath is None:
+    exception_seqIDs = set()
+else:
+    exception_seqIDs = set(
+        map(
+            str.strip,
+            open(exception_seqIDs_fpath, 'rt').readlines()
+        )
     )
-)
+# end if
 
 print(in_fasta_fpath)
 print(assm_acc_fpath)
