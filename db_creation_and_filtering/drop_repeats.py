@@ -56,6 +56,14 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '-e',
+    '--exception-seqIDs',
+    help="""Text file with seqIDs (one per line) of sequences, which are exceptions:
+exceptions contain repeats, but they should not be removed""",
+    required=True
+)
+
 
 # Output files
 
@@ -92,6 +100,7 @@ args = parser.parse_args()
 in_fasta_fpath = os.path.abspath(args.input_fasta_file)
 assm_acc_fpath = os.path.abspath(args.assm_acc_file)
 repeats_fpath = os.path.abspath(args.repeats_file)
+exception_seqIDs_fpath = ps.path.abspath(args.exception_seqIDs)
 output_genes_fpath = os.path.abspath(args.out_fasta_file)
 seqs_with_repeats_fpath = os.path.abspath(args.seqs_with_repeats)
 output_genes_stats_fpath = os.path.abspath(args.out_stats_file)
@@ -111,7 +120,7 @@ except ValueError:
 
 
 # Check existance of all input files
-for fpath in (in_fasta_fpath, assm_acc_fpath, repeats_fpath):
+for fpath in (in_fasta_fpath, assm_acc_fpath, repeats_fpath, exception_seqIDs_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
@@ -130,6 +139,13 @@ for some_dir in map(os.path.dirname, [output_genes_fpath, seqs_with_repeats_fpat
     # end if
 # end if
 
+exception_seqIDs = set(
+    map(
+        str.strip,
+        open(exception_seqIDs_fpath, 'rt').readlines()
+    )
+)
+
 print(in_fasta_fpath)
 print(assm_acc_fpath)
 print(repeats_fpath)
@@ -145,10 +161,11 @@ seq_records = tuple(SeqIO.parse(in_fasta_fpath, 'fasta'))
 # Read repets dataframe
 repeats_df = pd.read_csv(repeats_fpath, sep='\t')
 
-# Select seqIDs with long repeats
+# Select seqIDs with long repeats.
+# And "substact" exception from them.
 seqIDs_with_large_repeats = set(
     repeats_df[repeats_df['rep_len'] > repeat_len_threshold]['seqID']
-)
+) - exception_seqIDs
 
 print(f'Found {len(seqIDs_with_large_repeats)} sequences with repeats longer than {repeat_len_threshold} bp')
 print(f'{len(seq_records) - len(seqIDs_with_large_repeats)} sequences remain')
