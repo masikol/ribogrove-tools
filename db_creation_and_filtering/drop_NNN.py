@@ -48,7 +48,7 @@ parser.add_argument(
 parser.add_argument(
     '-c',
     '--categories-file',
-    help='TSV file of per-gene genome cagetories',
+    help='TSV file of info of genome categories',
     required=True
 )
 
@@ -78,14 +78,14 @@ args = parser.parse_args()
 
 assm_acc_fpath = os.path.abspath(args.assm_acc_file)
 seqs_fpath = os.path.abspath(args.all_fasta_file)
-per_gene_category_fpath = os.path.abspath(args.categories_file)
+category_fpath = os.path.abspath(args.categories_file)
 out_fasta_fpath = os.path.abspath(args.out_fasta_file)
 out_stats_fpath = os.path.abspath(args.out_stats_file)
 nnn_seqs_fpath = os.path.abspath(args.NNN_outfile)
 
 
 # Check existance of all input files
-for fpath in (assm_acc_fpath, seqs_fpath, per_gene_category_fpath):
+for fpath in (assm_acc_fpath, seqs_fpath, category_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
@@ -119,7 +119,7 @@ seq_records = SeqIO.parse(seqs_fpath, 'fasta') # read sequences
 # == Proceed ==
 
 category_df = pd.read_csv(
-    per_gene_category_fpath,
+    category_fpath,
     sep='\t'
 )
 

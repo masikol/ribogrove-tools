@@ -33,12 +33,11 @@ ASS_ACC_MERGED_FPATH="${WORKDIR}/${PREFIX}_refseq_accs_merged.tsv"
 ALL_GENES_FASTA="${GENES_DIR}/${PREFIX}_all_collected.fasta"
 ALL_GENES_STATS="${GENES_DIR}/${PREFIX}_all_collected_stats.tsv"
 
-PER_GENOME_CAT_FPATH="${CATEGORIES_DIR}/${PREFIX}_per_genome_categories.tsv"
-PER_GENE_CAT_FPATH="${CATEGORIES_DIR}/${PREFIX}_per_gene_categories.tsv"
+# PER_GENOME_CAT_FPATH="${CATEGORIES_DIR}/${PREFIX}_per_genome_categories.tsv"
+CATEGORIES_FPATH="${CATEGORIES_DIR}/${PREFIX}_categories.tsv"
 SEQTECH_LOGFILE="${LOGS_DIR}/${PREFIX}_seqtech_log.log"
 
 PER_GENOME_TAXID_FPATH="${TAXONOMY_DIR}/${PREFIX}_per_genome_taxIDs.tsv"
-
 PER_GENE_TAXID_FPATH="${TAXONOMY_DIR}/${PREFIX}_per_gene_taxIDs.tsv"
 
 PER_GENOME_TAXONOMY_FPATH="${TAXONOMY_DIR}/${PREFIX}_per_genome_taxonomy.tsv"
@@ -119,8 +118,8 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
   --all-fasta-file "${ALL_GENES_FASTA}" \
   --all-stats-file "${ALL_GENES_STATS}" \
   --gbk-dir "${GENOMES_GBK_DIR}" \
-  --per-genome-outfile "${PER_GENOME_CAT_FPATH}" \
-  --per-gene-outfile "${PER_GENE_CAT_FPATH}" \
+  # --per-genome-outfile "${PER_GENOME_CAT_FPATH}" \
+  --outfile "${CATEGORIES_FPATH}" \
   --seqtech-logfile "${SEQTECH_LOGFILE}" \
   --seqkit "${SEQKIT}"
 
@@ -130,7 +129,7 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 ./drop_NNN.py \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --all-fasta-file "${ALL_GENES_FASTA}" \
-  --categories-file "${PER_GENE_CAT_FPATH}" \
+  --categories-file "${CATEGORIES_FPATH}" \
   --out-fasta-file "${NO_NNN_FASTA_FPATH}" \
   --out-stats-file "${NO_NNN_STATS_FPATH}" \
   --NNN-outfile "${NNN_FASTA_FPATH}"
@@ -164,7 +163,7 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
   --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
   --genes-stats-file "${NO_NNN_STATS_FPATH}" \
   --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
-  --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}"
+  --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
   --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
   --muscle "${MUSCLE}" \
   --indel-len-threshold 10
@@ -177,7 +176,7 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --non-aberrant-seqIDs "${ABERRANT_SEQIDS_FPATH}" \
   --aberrant-seqIDs "${NON_ABERRANT_SEQIDS_FPATH}" \
-  --categories-file "${PER_GENE_CAT_FPATH}" \
+  --categories-file "${CATEGORIES_FPATH}" \
   --non-aberrant-fasta-file "${NON_ABERRANT_GENES_FASTA}" \
   --out-stats-file "${NON_ABERRANT_GENES_STATS}" \
   --aberrant-fasta-file "${ABERRANT_GENES_FASTA}"
@@ -198,7 +197,7 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 #   --genes-stats-file "${NON_ABERRANT_GENES_STATS}" \
 #   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
 #   --repeats-file "${REPEATS_FPATH}" \
-#   --categories-file "${PER_GENE_CAT_FPATH}" \
+#   --categories-file "${CATEGORIES_FPATH}" \
 #   --out-fasta "${PURE_GENES_FASTA}" \
 
 
@@ -240,7 +239,7 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 # ./annotate_seq_names.py \
 #   --fasta-seqs-file "${PURE_GENES_FASTA}" \
 #   --per-gene-taxonomy-file "${PER_GENE_TAXONOMY_FPATH}" \
-#   --per-gene-categories-file "${PER_GENE_CAT_FPATH}" \
+#   --per-gene-categories-file "${CATEGORIES_FPATH}" \
 #   --outfile "${ANNOTATED_RESULT_FASTA}"
 
 

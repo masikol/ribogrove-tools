@@ -70,15 +70,21 @@ parser.add_argument(
 
 # Output files
 
-parser.add_argument(
-    '--per-genome-outfile',
-    help='output file mapping Assembly IDs to categories',
-    required=True
-)
+# parser.add_argument(
+#     '--per-genome-outfile',
+#     help='output file mapping Assembly IDs to categories',
+#     required=True
+# )
+
+# parser.add_argument(
+#     '--per-gene-outfile',
+#     help='output file mapping genes seqIDs to categories',
+#     required=True
+# )
 
 parser.add_argument(
-    '--per-gene-outfile',
-    help='output file mapping genes seqIDs to categories',
+    '--outfile',
+    help='output file mapping genes seqIDs and Assembly IDs to categories',
     required=True
 )
 
@@ -105,8 +111,9 @@ args = parser.parse_args()
 fasta_seqs_fpath = os.path.abspath(args.all_fasta_file)
 in_stats_fpath = os.path.abspath(args.all_stats_file)
 gbk_dpath = os.path.abspath(args.gbk_dir)
-per_genome_outfpath = os.path.abspath(args.per_genome_outfile)
-per_gene_outfpath = os.path.abspath(args.per_gene_outfile)
+# per_genome_outfpath = os.path.abspath(args.per_genome_outfile)
+# per_gene_outfpath = os.path.abspath(args.per_gene_outfile)
+outfpath = os.path.abspath(args.per_gene_outfile)
 seqtech_logfpath = os.path.abspath(args.seqtech_logfile)
 seqkit_fpath = os.path.abspath(args.seqkit)
 
@@ -132,7 +139,7 @@ if not os.access(seqkit_fpath, os.X_OK):
 # end if
 
 # Create output directories if needed
-for some_dir in map(os.path.dirname, [per_genome_outfpath, per_gene_outfpath, seqtech_logfpath]):
+for some_dir in map(os.path.dirname, [outfpath, seqtech_logfpath]):
     if not os.path.isdir(some_dir):
         try:
             os.makedirs(some_dir)
@@ -395,13 +402,12 @@ print('`acc_seqIDs_dict` is built')
 
 # == Proceed ==
 
-with open(per_genome_outfpath, 'wt') as per_genome_outfile, \
-     open(per_gene_outfpath, 'wt') as per_gene_outfile, \
+with open(outfpath, 'wt') as outfile, \
      open(seqtech_logfpath, 'wt') as logfile:
 
      # Write headers
-    per_genome_outfile.write('ass_id\taccs\tseqtech\tcontains_NNN\tdegenerate_in_16S\tunlocalized_16S\tcategory\n')
-    per_gene_outfile.write('ass_id\tseqID\tcontains_NNN\tdegenerate_in_16S\tunlocalized_16S\tcategory\n')
+    # per_genome_outfile.write('ass_id\taccs\tseqtech\tcontains_NNN\tdegenerate_in_16S\tunlocalized_16S\tcategory\n')
+    outfile.write('ass_id\tseqID\tseqtech\tcontains_NNN\tdegenerate_in_16S\tunlocalized_16S\tcategory\n')
 
     # Get all Assembly IDs
     assembly_IDs = tuple(set(stats_df['ass_id']))
@@ -476,16 +482,16 @@ with open(per_genome_outfpath, 'wt') as per_genome_outfile, \
         accs = tuple(ass_df['acc'])
 
         # Write ouput to per-genome file
-        per_genome_outfile.write(f'{ass_id}\t{";".join(accs)}\t')
-        per_genome_outfile.write(f'{seqtech}\t{1 if contains_NNN else 0}\t')
-        per_genome_outfile.write(f'{1 if degenerate_in_16S else 0}\t{1 if unlocalized_16S else 0}\t')
-        per_genome_outfile.write(f'{category}\n')
+        # per_genome_outfile.write(f'{ass_id}\t{";".join(accs)}\t')
+        # per_genome_outfile.write(f'{seqtech}\t{1 if contains_NNN else 0}\t')
+        # per_genome_outfile.write(f'{1 if degenerate_in_16S else 0}\t{1 if unlocalized_16S else 0}\t')
+        # per_genome_outfile.write(f'{category}\n')
 
         # Write ouput to per-gene file
         for acc in accs:
             try:
                 for seqID in acc_seqIDs_dict[acc]:
-                    per_gene_outfile.write(f'{ass_id}\t{seqID}\t')
+                    per_gene_outfile.write(f'{ass_id}\t{seqID}\t{seqtech}\t')
                     per_gene_outfile.write(f'{1 if contains_NNN else 0}\t{1 if degenerate_in_16S else 0}\t')
                     per_gene_outfile.write(f'{1 if unlocalized_16S else 0}\t{category}\n')
                 # end for
@@ -497,6 +503,5 @@ with open(per_genome_outfpath, 'wt') as per_genome_outfile, \
 # end with
 
 print('\nCompleted!')
-print(per_genome_outfpath)
-print(per_gene_outfpath)
+print(outfpath)
 print(seqtech_logfpath)
