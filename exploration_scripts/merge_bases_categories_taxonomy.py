@@ -4,16 +4,16 @@
 import pandas as pd
 
 # Bacteria
-bases_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bases_count.tsv'
-categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/categories/bacteria_per_gene_categories.tsv'
-taxonomy_fpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxonomy.tsv'
-outfpath = '/mnt/1.5_drive_0/16S_scrubbling/pure_genes_per_gene_stats.tsv'
+bases_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/bases_count.tsv'
+categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/categories/bacteria_categories.tsv'
+taxonomy_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/taxonomy/bacteria_per_gene_taxonomy.tsv'
+outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/pure_genes_per_gene_stats.tsv'
 
 # Archaea
-# bases_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bases_count.tsv'
-# categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/categories/archaea_per_gene_categories.tsv'
-# taxonomy_fpath = '/mnt/1.5_drive_0/16S_scrubbling/taxonomy/per_gene_taxIDs.tsv'
-# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/pure_genes_per_gene_stats.tsv'
+# bases_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/bases_count.tsv'
+# categories_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/categories/archaea_categories.tsv'
+# taxonomy_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/taxonomy/archaea_per_gene_taxonomy.tsv'
+# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/pure_genes_per_gene_stats.tsv'
 
 
 # seqID   a       t       g       c       len
@@ -28,8 +28,11 @@ taxonomy_df = pd.read_csv(taxonomy_fpath, sep='\t')
 
 print('Merging...')
 merged_df = bases_df \
-    .merge(categories_df, on='seqID', how='left') \
-    .merge(taxonomy_df.drop(['ass_id'], axis=1), on='seqID', how='left')
+    .merge(categories_df[['seqID', 'category', 'ass_id']], on='seqID', how='left') \
+    .merge(taxonomy_df[['seqID', 'taxID', 'tax_name', 'species', 'genus', 'family', 'order', 'class', 'phylum', 'superkingdom']],
+        on='seqID',
+        how='left'
+    )
 print('  done!\n')
 
 print('Merged dataframe:')

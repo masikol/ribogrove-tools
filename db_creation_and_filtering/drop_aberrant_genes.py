@@ -109,8 +109,8 @@ for some_dir in map(os.path.dirname, [non_aberrant_fasta_fpath, out_stats_fpath,
 # end for
 
 print(fasta_seqs_fpath)
-print(aberrant_fasta_fpath)
 print(non_aberrant_seqIDs_fpath)
+print(aberrant_seqIDs_fpath)
 # print(tblout_fpath)
 print(assm_acc_fpath)
 print()

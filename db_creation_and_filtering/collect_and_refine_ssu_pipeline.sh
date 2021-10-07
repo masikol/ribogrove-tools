@@ -58,6 +58,7 @@ NON_ABERRANT_SEQIDS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/non_aberrant_seq
 NON_ABERRANT_GENES_FASTA="${GENES_DIR}/${PREFIX}_non_aberrant_gene_seqs.fasta"
 ABERRANT_GENES_FASTA="${GENES_DIR}/${PREFIX}_aberrant_gene_seqs.fasta"
 NON_ABERRANT_GENES_STATS="${GENES_DIR}/${PREFIX}_non_aberrant_gene_stats.tsv"
+EXCEPTIONS_FOR_REPEAT_REMOVAL="${ABERRATIONS_AND_HETEROGENEITY_DIR}/exception_seqIDs.txt"
 
 PURE_GENES_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs.fasta"
 PURE_GENES_STATS="${GENES_DIR}/${PREFIX}_pure_gene_stats.tsv"
@@ -114,35 +115,35 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 
 # == Assign categories to downloaded genomes ==
 
-./assign_genome_categories/assign_genome_categories.py \
-  --all-fasta-file "${ALL_GENES_FASTA}" \
-  --all-stats-file "${ALL_GENES_STATS}" \
-  --gbk-dir "${GENOMES_GBK_DIR}" \
-  # --per-genome-outfile "${PER_GENOME_CAT_FPATH}" \
-  --outfile "${CATEGORIES_FPATH}" \
-  --seqtech-logfile "${SEQTECH_LOGFILE}" \
-  --seqkit "${SEQKIT}"
+# ./assign_genome_categories/assign_genome_categories.py \
+#   --all-fasta-file "${ALL_GENES_FASTA}" \
+#   --all-stats-file "${ALL_GENES_STATS}" \
+#   --gbk-dir "${GENOMES_GBK_DIR}" \
+#   # --per-genome-outfile "${PER_GENOME_CAT_FPATH}" \
+#   --outfile "${CATEGORIES_FPATH}" \
+#   --seqtech-logfile "${SEQTECH_LOGFILE}" \
+#   --seqkit "${SEQKIT}"
 
 
 # == Drop genes from genomes containing at least 3 N's in a row ==
 
-./drop_NNN.py \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --all-fasta-file "${ALL_GENES_FASTA}" \
-  --categories-file "${CATEGORIES_FPATH}" \
-  --out-fasta-file "${NO_NNN_FASTA_FPATH}" \
-  --out-stats-file "${NO_NNN_STATS_FPATH}" \
-  --NNN-outfile "${NNN_FASTA_FPATH}"
+# ./drop_NNN.py \
+#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+#   --all-fasta-file "${ALL_GENES_FASTA}" \
+#   --categories-file "${CATEGORIES_FPATH}" \
+#   --out-fasta-file "${NO_NNN_FASTA_FPATH}" \
+#   --out-stats-file "${NO_NNN_STATS_FPATH}" \
+#   --NNN-outfile "${NNN_FASTA_FPATH}"
 
 
 # == Compare all remainig genes to Rfam covariance model (cm) ==
 
-./compare_all_seqs_to_cm.py \
-  --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
-  --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
-  --cmscan "${CMSCAN_FOR_FILTERING}" \
-  --cmpress "${CMPRESS_FOR_FILTERING}" \
-  --rfam-family-cm "${CMPRESS_FOR_FILTERING}"
+# ./compare_all_seqs_to_cm.py \
+#   --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
+#   --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
+#   --cmscan "${CMSCAN_FOR_FILTERING}" \
+#   --cmpress "${CMPRESS_FOR_FILTERING}" \
+#   --rfam-family-cm "${CMPRESS_FOR_FILTERING}"
 
 # ~~~~~~~~ TRASH ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ./find_pivotal_genes.py \
@@ -158,15 +159,24 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 
 
 # == Find aberrant genes and record long indels ==
-
-./find_aberrant_genes.py \
-  --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
-  --genes-stats-file "${NO_NNN_STATS_FPATH}" \
-  --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
-  --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
-  --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
-  --muscle "${MUSCLE}" \
-  --indel-len-threshold 10
+if [[ "${FIND_CONSERV_REGIONS}" == 1 ]]; then
+  ./find_aberrant_genes.py \
+    --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
+    --genes-stats-file "${NO_NNN_STATS_FPATH}" \
+    --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
+    --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
+    --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
+    --muscle "${MUSCLE}" \
+    --indel-len-threshold 10
+else
+  ./find_aberrant_genes.py \
+    --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
+    --genes-stats-file "${NO_NNN_STATS_FPATH}" \
+    --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
+    --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
+    --muscle "${MUSCLE}" \
+    --indel-len-threshold 10
+fi
 
 
 # == Drop aberarant genes ==
@@ -174,9 +184,8 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 ./drop_aberrant_genes.py \
   --input-fasta-file "${NO_NNN_FASTA_FPATH}" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --non-aberrant-seqIDs "${ABERRANT_SEQIDS_FPATH}" \
-  --aberrant-seqIDs "${NON_ABERRANT_SEQIDS_FPATH}" \
-  --categories-file "${CATEGORIES_FPATH}" \
+  --non-aberrant-seqIDs "${NON_ABERRANT_SEQIDS_FPATH}" \
+  --aberrant-seqIDs "${ABERRANT_SEQIDS_FPATH}" \
   --non-aberrant-fasta-file "${NON_ABERRANT_GENES_FASTA}" \
   --out-stats-file "${NON_ABERRANT_GENES_STATS}" \
   --aberrant-fasta-file "${ABERRANT_GENES_FASTA}"
@@ -185,20 +194,22 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 
 # == Find repeats in genes sequences ==
 
-# ./find_repeats.py \
-#   --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
-#   --outfile "${REPEATS_FPATH}"
+./find_repeats.py \
+  --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
+  --outfile "${REPEATS_FPATH}"
 
 
 # == Drop long repeats ==
 
-# ./drop_repeats.py \
-#   --input-fasta-file "${NON_ABERRANT_GENES_FASTA}" \
-#   --genes-stats-file "${NON_ABERRANT_GENES_STATS}" \
-#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-#   --repeats-file "${REPEATS_FPATH}" \
-#   --categories-file "${CATEGORIES_FPATH}" \
-#   --out-fasta "${PURE_GENES_FASTA}" \
+./drop_repeats.py \
+  --input-fasta-file "${NON_ABERRANT_GENES_FASTA}" \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --repeats-file "${REPEATS_FPATH}" \
+  --exception-seqIDs "${EXCEPTIONS_FOR_REPEAT_REMOVAL}" \
+  --out-fasta-file "${PURE_GENES_FASTA}" \
+  --seqs-with-repeats "${SEQS_WITH_REPEATS_FASTA}" \
+  --out-stats-file "${PURE_GENES_STATS}" \
+  --repeat-len-threshold 25
 
 
 # === Taxonomy section ===
@@ -236,15 +247,15 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 
 
 # == Annotate sequences: add taxonomy and categories to their headers ==
-# ./annotate_seq_names.py \
-#   --fasta-seqs-file "${PURE_GENES_FASTA}" \
-#   --per-gene-taxonomy-file "${PER_GENE_TAXONOMY_FPATH}" \
-#   --per-gene-categories-file "${CATEGORIES_FPATH}" \
-#   --outfile "${ANNOTATED_RESULT_FASTA}"
+./annotate_seq_names.py \
+  --fasta-seqs-file "${PURE_GENES_FASTA}" \
+  --per-gene-taxonomy-file "${PER_GENE_TAXONOMY_FPATH}" \
+  --categories-file "${CATEGORIES_FPATH}" \
+  --outfile "${ANNOTATED_RESULT_FASTA}"
 
 
-# Make result sequences pretty: 60 bp per line
-# tmp_fasta='/tmp/tmp.fasta'
-# cat "${ANNOTATED_RESULT_FASTA}" | "${SEQKIT}" seq -uw 60 > "${tmp_fasta}"
-# cat "${tmp_fasta}" > "${ANNOTATED_RESULT_FASTA}"
-# rm "${tmp_fasta}"
+# == Make result sequences pretty: 60 bp per line ==
+tmp_fasta='/tmp/tmp.fasta'
+cat "${ANNOTATED_RESULT_FASTA}" | "${SEQKIT}" seq -uw 60 > "${tmp_fasta}"
+cat "${tmp_fasta}" > "${ANNOTATED_RESULT_FASTA}"
+rm "${tmp_fasta}"

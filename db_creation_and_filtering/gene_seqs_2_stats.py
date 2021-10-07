@@ -16,18 +16,18 @@ from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
 
-def _select_seqs(acc: str, seq_records: Sequence[SeqRecord]) -> Sequence[SeqRecord]:
-    # Function selects SeqRecords of given ACCESSION.VERSION (`acc`).
+# def _select_seqs(acc: str, seq_record_dict: Sequence[SeqRecord]) -> Sequence[SeqRecord]:
+#     # Function selects SeqRecords of given ACCESSION.VERSION (`acc`).
 
-    selected_seq_records = tuple(
-        filter(
-            lambda r: acc in r.id,
-            seq_records
-        )
-    )
+#     selected_seq_records = tuple(
+#         filter(
+#             lambda r: acc in r.id,
+#             seq_records
+#         )
+#     )
 
-    return selected_seq_records
-# end def _select_seqs
+#     return selected_seq_records
+# # end def _select_seqs
 
 
 def _get_len(record: SeqRecord):
@@ -48,13 +48,31 @@ def gene_seqs_2_stats(seqs_fasta_fpath: str, ass_acc_fpath: str, stats_outfpath:
     ass_acc_df = pd.read_csv(ass_acc_fpath, sep='\t')
 
     # Read seq_reords from input fasta file
-    seq_records = tuple(SeqIO.parse(seqs_fasta_fpath, 'fasta'))
+    seq_records = SeqIO.parse(seqs_fasta_fpath, 'fasta')
+
+    print('Creating auxiliary data structures...')
+    seq_record_dict = dict()
+    for seq_record in seq_records:
+        acc = seq_record.id.partition(':')[0]
+        try:
+            seq_record_dict[acc].append(seq_record)
+        except KeyError:
+            seq_record_dict[acc] = [seq_record]
+        # end try
+    # end for
+    print('Done')
 
     # == Proceed ==
+
+    print(f'0/{ass_acc_df.shape[0]} replicons processed', end=' '*10)
+
     with open(stats_outfpath, 'wt') as stats_outfile:
 
         # Write header
         stats_outfile.write('ass_id\trefseq_id\tacc\ttitle\tnum_genes\tmin_len\tmax_len\tmean_len\tmedian_len\n')
+
+        status_bar_step = 500
+        next_update = 500
 
         # Iterate over row of Assembly-ACCESSION.VERSION dataframe
         for i, row in ass_acc_df.iterrows():
@@ -64,13 +82,18 @@ def gene_seqs_2_stats(seqs_fasta_fpath: str, ass_acc_fpath: str, stats_outfpath:
             acc = row['acc']
             title = row['title']
 
-            print(f'\rDoing {i+1}/{ass_acc_df.shape[0]}: {acc}', end=' '*10)
-
             # Select SeqRecords for current replicon
-            selected_seq_records = _select_seqs(acc, seq_records)
+            # selected_seq_records = _select_seqs(acc, seq_records)
+            try:
+                selected_seq_records = seq_record_dict[acc]
+            except KeyError:
+                num_genes = 0 # no genes for this replicon
+            else:
+                # Tally selected genes
+                num_genes = len(selected_seq_records)
+                del seq_record_dict[acc]
+            # end if
 
-            # Tally selected genes
-            num_genes = len(selected_seq_records)
 
             # Calculate statistics if at least one gene of current replicon
             #   is in `seq_records`
@@ -90,6 +113,13 @@ def gene_seqs_2_stats(seqs_fasta_fpath: str, ass_acc_fpath: str, stats_outfpath:
             # Write result line to output file
             stats_outfile.write(f'{ass_id}\t{refseq_id}\t{acc}\t{title}\t{num_genes}\t')
             stats_outfile.write(f'{min_len}\t{max_len}\t{mean_len}\t{median_len}\n')
+
+            if i + 1 > next_update:
+                print(f'\r{i+1}/{ass_acc_df.shape[0]} replicons processed', end=' '*10)
+                next_update += status_bar_step
+            # end if
+
         # end for
+        print(f'\r{ass_acc_df.shape[0]}/{ass_acc_df.shape[0]} replicons processed')
     # end with
 # end def gene_seqs_2_stats

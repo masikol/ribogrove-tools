@@ -81,7 +81,7 @@ parser.add_argument(
     '--conserved-regions-fasta',
     help="""fasta file of NR conserved regions from work
     "How conserved are the conserved 16S-rRNA regions?" (table 5, https://peerj.com/articles/3036/)""",
-    required=True
+    required=False
 )
 
 # Output files
@@ -129,9 +129,20 @@ fasta_seqs_fpath = os.path.abspath(args.fasta_seqs_file)
 genes_stats_fpath = os.path.abspath(args.genes_stats_file)
 tblout_fpath = os.path.abspath(args.cmscan_tblout)
 # pivotal_genes_fpath = os.path.abspath(args.pivotal_genes_file)
-conserved_regions_fpath = os.path.abspath(args.conserved_regions_fasta)
 muscle_fpath = os.path.abspath(args.muscle)
 outdpath = os.path.abspath(args.outdir)
+
+
+try:
+    conserved_regions_fpath = os.path.abspath(args.conserved_regions_fasta)
+except TypeError:
+    conserved_regions_fpath = None
+else:
+    if not os.path.exists(conserved_regions_fpath):
+        print(f'Error: file `{conserved_regions_fpath}` does not exist!')
+        sys.exit(1)
+    # end if
+# end try
 
 
 # Check (and assign) value of `--indel-len-threshold`
@@ -149,7 +160,7 @@ except ValueError:
 
 
 # Check existance of all input files and dependencies
-for fpath in (fasta_seqs_fpath, genes_stats_fpath, tblout_fpath, muscle_fpath, conserved_regions_fpath):
+for fpath in (fasta_seqs_fpath, genes_stats_fpath, tblout_fpath, muscle_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
@@ -329,30 +340,33 @@ def set_acc(row):
 # end def set_acc
 
 
-def find_conserved_regions(seq_record: SeqRecord, conserved_seq_records: Sequence[SeqRecord]) -> None:
-    # Function returns seqIDs of those conserved regions, which are present in
-    #   sequence of record `seq_record.
+if not conserved_regions_fpath is None:
 
-    # Case sequence to type `str`
-    seq = str(seq_record.seq)
+    def find_conserved_regions(seq_record: SeqRecord, conserved_seq_records: Sequence[SeqRecord]) -> None:
+        # Function returns seqIDs of those conserved regions, which are present in
+        #   sequence of record `seq_record.
 
-    # Find conserved regions, which are present in `seq`
-    present_conserved_regions = filter(
-        # Coordinates of conserved region's occurence(s) are stored in
-        #   list returned by SeqUtils.nt_search. If there is no occurence,
-        #   this list contain single element -- template sequence (`seq`).
-        lambda cons_rec: len(SeqUtils.nt_search(seq, str(cons_rec.seq))) > 1,
-        conserved_seq_records
-    )
+        # Case sequence to type `str`
+        seq = str(seq_record.seq)
 
-    # Return seqIDs of present conserved regions
-    return set(
-        map(
-            lambda cons_rec: cons_rec.id,
-            present_conserved_regions
+        # Find conserved regions, which are present in `seq`
+        present_conserved_regions = filter(
+            # Coordinates of conserved region's occurence(s) are stored in
+            #   list returned by SeqUtils.nt_search. If there is no occurence,
+            #   this list contain single element -- template sequence (`seq`).
+            lambda cons_rec: len(SeqUtils.nt_search(seq, str(cons_rec.seq))) > 1,
+            conserved_seq_records
         )
-    )
-# end def find_conserved_regions
+
+        # Return seqIDs of present conserved regions
+        return set(
+            map(
+                lambda cons_rec: cons_rec.id,
+                present_conserved_regions
+            )
+        )
+    # end def find_conserved_regions
+# end if
 
 
 # Output files
@@ -368,7 +382,9 @@ non_aberrant_seqIDs_fpath = os.path.join(outdpath, 'non_aberrant_seqIDs.txt')
 # == Proceed ==
 
 # Read conserved regions' sequences
-conserved_seq_records = tuple(SeqIO.parse(conserved_regions_fpath, 'fasta'))
+if not conserved_regions_fpath is None:
+    conserved_seq_records = tuple(SeqIO.parse(conserved_regions_fpath, 'fasta'))
+# end if
 
 # Read pivotal genes' dataframe
 # pivotal_genes_df = pd.read_csv(pivotal_genes_fpath, sep='\t')
@@ -463,10 +479,12 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
             curr_aberrant_seqIDs = set()
 
             # Save conserved regions present in current pivotal gene
-            conserv_IDs_in_pivotal_gene = find_conserved_regions(
-                pivotal_seq_record,
-                conserved_seq_records
-            )
+            if not conserved_regions_fpath is None:
+                conserv_IDs_in_pivotal_gene = find_conserved_regions(
+                    pivotal_seq_record,
+                    conserved_seq_records
+                )
+            # end if
 
             # Iterate over all genes i nthe genome, except for current pivotal gene
             for seqID in seqIDs - {pivotal_seqID}:
@@ -508,19 +526,24 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
                 # end for
 
                 # Save conserved regions present in current gene
-                conserv_IDs_in_curr_gene = find_conserved_regions(
-                    seq_record,
-                    conserved_seq_records
-                )
+                if not conserved_regions_fpath is None:
+                    conserv_IDs_in_curr_gene = find_conserved_regions(
+                        seq_record,
+                        conserved_seq_records
+                    )
 
-                # If this flag is True, some conserved regions are missing, in comparison to
-                #   current pivotal gene
-                missing_conserved_regions = len(conserv_IDs_in_curr_gene) < len(conserv_IDs_in_pivotal_gene)
+                    # If this flag is True, some conserved regions are missing, in comparison to
+                    #   current pivotal gene
+                    missing_conserved_regions = len(conserv_IDs_in_curr_gene) < len(conserv_IDs_in_pivotal_gene)
+                else:
+                    missing_conserved_regions = False
+                # end if
 
                 # If there are long indels or some conserved regions are missing, current gene
                 #   is aberrant in comparison to current pivotal gene
                 # if len(insertions) != 0 or len(deletions) != 0 or missing_conserved_regions:
                 # if len(deletions) != 0:
+                # if missing_conserved_regions:
                 if len(deletions) != 0 or missing_conserved_regions:
                     curr_aberrant_seqIDs.add(seqID)
                 # end if
