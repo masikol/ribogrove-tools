@@ -50,6 +50,7 @@ def _calc_information(col_bases, base_vocabulary):
     max_information = math.log(len(base_vocabulary), 2)
 
     freq_dict = {base: aln_column.count(base) / n_seqs for base in base_vocabulary}
+    print(freq_dict)
 
     # Calculate information
     # abs instead of minus in order not to allow "-0.0" values
@@ -65,6 +66,8 @@ def _calc_information(col_bases, base_vocabulary):
             )
         )
     )
+    # print(max_information)
+    # print(information)
 
     information_dict = {base: 0.0 for base in base_vocabulary}
 
@@ -80,8 +83,29 @@ def _calc_information(col_bases, base_vocabulary):
         # end if
     # end for
 
-    return information_dict
+    coverage = n_seqs
+
+    # print(information_dict)
+
+    return information_dict, coverage
 # end def _calc_information
+
+
+def _calc_frequencies(col_bases, base_vocabulary):
+
+    aln_column = list(
+        ''.join(col_bases).replace('-', '')
+    )
+
+    n_seqs = len(aln_column)
+
+    freq_dict = {base: aln_column.count(base) / n_seqs for base in base_vocabulary}
+    # print(freq_dict)
+
+    coverage = n_seqs
+
+    return freq_dict, coverage
+# end def _calc_frequencies
 
 
 def create_matrix(fasta_fpath):
@@ -98,13 +122,16 @@ def create_matrix(fasta_fpath):
     logo_length = _check_lengths(seq_records)
 
     matrix_columns = {base: np.repeat(np.nan, logo_length) for base in base_vocabulary}
+    coverages = [None] * logo_length
     # matrix_columns['pos'] = np.array(range(logo_length))
 
     # print(matrix_columns)
 
     for pos in range(logo_length):
         col_bases = _extract_column(seqs, pos)
-        information_dict = _calc_information(col_bases, base_vocabulary)
+        information_dict, coverage = _calc_frequencies(col_bases, base_vocabulary)
+
+        coverages[pos] = coverage
 
         for base in base_vocabulary:
             matrix_columns[base][pos] = information_dict[base]
@@ -120,6 +147,6 @@ def create_matrix(fasta_fpath):
 
     # print('ok')
 
-    return final_matrix
+    return final_matrix, coverages
 # end def create_matrix
 
