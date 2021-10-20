@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
-# The Script takes IDs (IDs of database NCBI Assembly) from file `-i/--assm-id-file` (one per line)
+# The script takes IDs (IDs of database NCBI Assembly) from file `-i/--assm-id-file` (one per line)
 #   and translates them to RefSeq GI numbers using elink utility (https://www.ncbi.nlm.nih.gov/books/NBK25497/).
 # The script writes result to TSV file `-o/--outfile` of 2 columns (ass_ID, refseq_id)
+
+# Input files:
+# 1. -i/--assm-id-file -- input file of Assembly IDs (one per line).
+
+# Output files:
+# 1. -o/--outfile -- output TSV file mapping Assembly IDs to RefSeq GI numbers.
 
 
 import os

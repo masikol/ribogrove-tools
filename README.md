@@ -14,3 +14,7 @@ RybaSom is a genome-based database of full-length sequences of prokaryotic 16S r
 2. Scripts in direcory `exploration_scripts/` are used for primer coverage calculation, calculation of intragenomic variability of 16S rRNA genes etc.
 3. (scripts in directory `_trash/` are deprecated)
 
+## Python version
+
+All Python scripts in this repo are written for Python 3 (version 3.6 or later).
+

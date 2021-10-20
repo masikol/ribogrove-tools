@@ -88,14 +88,14 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 
 # == Translate Assembly UIDs to RefSeq GI numbers ==
 
-# ./assembly2refseq_id.py \
+# python3 assembly2refseq_id.py \
 #   --assm-id-file "${ASSEMBLY_IDS_FPATH}" \
 #   --outfile "${ASS_ID_TO_GI_FPATH}"
 
 
 # == Translate RefSeq GI numbers to corresponding ACCESSION.VERSION's and titles ==
 
-# ./gis_to_accs.py \
+# python3 gis_to_accs.py \
 #   --gi-file "${ASS_ID_TO_GI_FPATH}" \
 #   --outfile "${GI_ACC_TITLES_FPATH}"
 
@@ -103,7 +103,7 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 # == Merge Assembly IDs to ACCESSION.VERSION's and titles ==
 # Moreover, this will remove "whole genome shotgun" sequences
 
-# ./merge_assID2acc_and_remove_WGS.py \
+# python3 merge_assID2acc_and_remove_WGS.py \
 #   --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
 #   --gi-2-acc-file "${GI_ACC_TITLES_FPATH}" \
 #   --outfile "${ASS_ACC_MERGED_FPATH}"
@@ -111,7 +111,7 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 
 # == Download genomes ==
 
-# ./download_genomes.py \
+# python3 download_genomes.py \
 #   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
 #   --outdir "${GENOMES_GBK_DIR}" \
 #   --log-file "${LOGS_DIR}/archaea_genome_download_log.log"
@@ -129,7 +129,7 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 
 # == Extract 16S genes from downloaded genomes ==
 
-# ./extract_16S.py \
+# python3 extract_16S.py \
 #   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
 #   --gbk-dir "${GENOMES_GBK_DIR}" \
 #   --out-fasta "${ALL_GENES_FASTA}" \
@@ -141,7 +141,7 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 
 # == Assign categories to downloaded genomes ==
 
-# ./assign_genome_categories/assign_genome_categories.py \
+# python3 assign_genome_categories/assign_genome_categories.py \
 #   --all-fasta-file "${ALL_GENES_FASTA}" \
 #   --all-stats-file "${ALL_GENES_STATS}" \
 #   --gbk-dir "${GENOMES_GBK_DIR}" \
@@ -152,7 +152,7 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 
 # == Drop genes from genomes containing at least 3 N's in a row ==
 
-# ./drop_NNN.py \
+# python3 drop_NNN.py \
 #   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
 #   --all-fasta-file "${ALL_GENES_FASTA}" \
 #   --categories-file "${CATEGORIES_FPATH}" \
@@ -173,7 +173,7 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 
 # == Compare all remainig genes to Rfam covariance model (cm) ==
 
-# ./compare_all_seqs_to_cm.py \
+# python3 compare_all_seqs_to_cm.py \
 #   --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
 #   --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
 #   --cmscan "${CMSCAN_FOR_FILTERING}" \
@@ -183,7 +183,7 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 
 # == Find aberrant genes and record long indels ==
 if [[ "${CHECK_CONSERV_REGIONS}" == 1 ]]; then
-  ./find_aberrant_genes.py \
+  python3 find_aberrant_genes.py \
     --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
     --genes-stats-file "${NO_NNN_STATS_FPATH}" \
     --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
@@ -192,7 +192,7 @@ if [[ "${CHECK_CONSERV_REGIONS}" == 1 ]]; then
     --muscle "${MUSCLE}" \
     --indel-len-threshold 10
 else
-  ./find_aberrant_genes.py \
+  python3 find_aberrant_genes.py \
     --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
     --genes-stats-file "${NO_NNN_STATS_FPATH}" \
     --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
@@ -204,7 +204,7 @@ fi
 
 # == Drop aberarant genes ==
 
-./drop_aberrant_genes.py \
+python3 drop_aberrant_genes.py \
   --input-fasta-file "${NO_NNN_FASTA_FPATH}" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --non-aberrant-seqIDs "${NON_ABERRANT_SEQIDS_FPATH}" \
@@ -217,14 +217,14 @@ fi
 
 # == Find repeats in genes sequences ==
 
-./find_repeats.py \
+python3 find_repeats.py \
   --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
   --outfile "${REPEATS_FPATH}"
 
 
 # == Drop long repeats ==
 
-./drop_repeats.py \
+python3 drop_repeats.py \
   --input-fasta-file "${NON_ABERRANT_GENES_FASTA}" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --repeats-file "${REPEATS_FPATH}" \
@@ -239,7 +239,7 @@ fi
 
 # == Get taxIDs for our genomes ==
 
-# ./get_taxIDs.py \
+# python3 get_taxIDs.py \
 #   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
 #   --all-fasta-file "${ALL_GENES_FASTA}" \
 #   --per-genome-outfile "${PER_GENOME_TAXID_FPATH}" \
@@ -248,7 +248,7 @@ fi
 
 # == Map seqIDs to taxIDs ==
 
-# ./pergenome_2_pergene_taxIDs.py \
+# python3 pergenome_2_pergene_taxIDs.py \
 #   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
 #   --all-fasta-file "${ALL_GENES_FASTA}" \
 #   --per-genome-taxID-file "${PER_GENOME_TAXID_FPATH}" \
@@ -257,7 +257,7 @@ fi
 
 # == Map our Aseembly IDs (and seqIDs) to full taxonomy using our taxIDs ==
 
-# ./add_taxonomy_names.py \
+# python3 add_taxonomy_names.py \
 #   --per-genome-taxid-file "${PER_GENOME_TAXID_FPATH}" \
 #   --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
 #   --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
@@ -270,7 +270,7 @@ fi
 
 
 # == Annotate sequences: add taxonomy and categories to their headers ==
-./annotate_seq_names.py \
+python3 annotate_seq_names.py \
   --fasta-seqs-file "${PURE_GENES_FASTA}" \
   --per-gene-taxonomy-file "${PER_GENE_TAXONOMY_FPATH}" \
   --categories-file "${CATEGORIES_FPATH}" \
