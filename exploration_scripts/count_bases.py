@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
+
+# The script counts all IUPAC bases in sequences in a fasta file.
+
+# Input files:
+# 1. -i/--input-fasta -- input fasta file.
+
+# Output files:
+# 1. -o/--outfile -- output TSV file.
+
+
 
 import os
 import sys
 import argparse
 
 from Bio import SeqIO
+
 
 # == Parse arguments ==
 
@@ -52,8 +62,6 @@ if not os.path.isdir(os.path.dirname(outfpath)):
 
 print(infpath)
 print()
-# infpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/gene_seqs/bacteria_pure_gene_seqs_annotated.fasta'
-# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/bases_count.tsv'
 
 
 with open(infpath, 'rt') as infile, open(outfpath, 'w') as outfile:

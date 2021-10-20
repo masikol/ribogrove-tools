@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
-# Script takes fasta file with sequences and checks if hardcoded primers
+# The script takes fasta file with sequences and checks if hardcoded primers
 #   can produce some product with input sequences as templates.
-# Script processes only sequences of category 1.
+# The script processes only sequences of category 1.
 #
 # Input files:
 # 1. Input fasta file of template sequences (-f/--fasta-seqs-file)
 # 2. Per-gene categories file (-c/--categories-file)
 #
 # Output files:
-# TSV files for each primer pair in directory -o/--outdir
+# 1. TSV files for each primer pair in directory -o/--outdir
 #
 # Dependencies:
-# 1. MFEprimer executable (https://www.mfeprimer.com/)
+# 1. --mfeprimer -- MFEprimer executable (https://www.mfeprimer.com/)
 
 import os
 import sys

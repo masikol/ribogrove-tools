@@ -5,6 +5,7 @@
 # Input files:
 # 1. Fasta file of genes sequences (-f/--fasta-seqs-file).
 # 2. TSV file if per-replicon genes statistics (-s/--genes-stats-file).
+# 3. TSV file of categories info (-c/--categories-file)
 
 # Output files:
 # 1. TSV file containing per-position intragenomic entropy (-o/--outfile).
@@ -54,7 +55,7 @@ parser.add_argument(
 
 parser.add_argument(
     '-c',
-    '--per-genome-categories-file',
+    '--categories-file',
     help='TSV file (with header) containing per-replicons SSU gene statistics',
     required=True
 )
@@ -77,7 +78,6 @@ parser.add_argument(
     help='muscle executable',
     required=True
 )
-
 
 
 args = parser.parse_args()
@@ -114,6 +114,13 @@ if not os.path.isdir(os.path.dirname(outfpath)):
         sys.exit(1)
     # end try
 # end if
+
+
+print(fasta_seqs_fpath)
+print(genes_stats_fpath)
+print(categories_fpath)
+print(muscle_fpath)
+print()
 
 
 def select_gene_seqs(ass_id: str,

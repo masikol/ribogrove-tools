@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
+
+# The script counts all IUPAC bases in genome sequences in .gbk files.
+
+# Input files:
+# 1. -a/--ass-acc-file -- input fasta file.
+# 2. -g/--gbk-dir -- directory where .gbk files are stored
+
+# Output files:
+# 1. -o/--outfile -- output TSV file.
+
 
 import os
 import sys
@@ -46,15 +55,6 @@ gbk_dir_path = os.path.abspath(args.gbk_dir)
 outfpath = os.path.abspath(args.outfile)
 
 
-# gbk_dir_path = '/mnt/1.5_drive_0/16S_scrubbling/genomes-data/gbk'
-
-# ass_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/bacteria_refseq_accs_merged.tsv'
-# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/bacteria/bases_count_whole_genomes.tsv'
-
-# ass_acc_fpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/archaea_refseq_accs_merged.tsv'
-# outfpath = '/mnt/1.5_drive_0/16S_scrubbling/archaea/bases_count_whole_genomes.tsv'
-
-
 if not os.path.exists(ass_acc_fpath):
     print(f'Error: input file `{ass_acc_fpath}` does not exist.')
     sys.exit(1)
@@ -75,8 +75,9 @@ if not os.path.isdir(os.path.dirname(outfpath)):
     # end try
 # end if
 
-
-# DEGEN_BASES = ('R', 'Y', 'W', 'S', 'K', 'M', 'H', 'V', 'B', 'D', 'N')
+print(ass_acc_fpath)
+print(gbk_dir_path)
+print()
 
 
 ass_acc_df = pd.read_csv(ass_acc_fpath, sep='\t')
@@ -92,17 +93,6 @@ def retrieve_seq(acc):
 
     return str(gbk_record.seq).upper()
 # end def retrieve_seq
-
-
-# def remove_degen_bases(seq):
-#     global DEGEN_BASES
-
-#     for b in DEGEN_BASES:
-#         seq = seq.replace(b, '')
-#     # end for
-
-#     return seq
-# # end def remove_degen_bases
 
 
 with open(outfpath, 'w') as outfile:
@@ -140,10 +130,6 @@ with open(outfpath, 'w') as outfile:
         d = seq.count('D')
         n = seq.count('N')
 
-        # seq = remove_degen_bases(seq)
-        # len_no_degen = len(seq)
-
-        # outfile.write(f'{ass_id}\t{a}\t{t}\t{g}\t{c}\t{r}\t{y}\t{w}\t{s}\t{k}\t{m}\t{h}\t{v}\t{b}\t{d}\t{n}\t{init_len}\t{len_no_degen}\n')
         outfile.write(f'{ass_id}\t{a}\t{t}\t{g}\t{c}\t{r}\t{y}\t{w}\t{s}\t{k}\t{m}\t{h}\t{v}\t{b}\t{d}\t{n}\t{init_len}\n')
     # end for
 # end with

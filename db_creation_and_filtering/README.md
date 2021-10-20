@@ -97,5 +97,5 @@ Data:
 
 1. File `rankedlineage.dmp` from https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump
 
-2. Rfam database. Versions: [12.0](ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz) (for re-annotation of genomic sequences), [14.6](ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.6/Rfam.cm.gz) (for filtering).
+2. Rfam database. Versions: 12.0 (ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz) for re-annotation of genomic sequences; 14.6 (ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.6/Rfam.cm.gz) for filtering.
 
