@@ -1,7 +1,16 @@
 
 set -e
 
-source archaea_config.conf
+# Load configuration file
+CONF_FILE="$1"
+if [[ -f "${CONF_FILE}" ]]; then
+  echo -e "\nError: file ${CONF_FILE} does not exist!"
+  exit 1
+fi
+
+source "${CONF_FILE}"
+
+# source archaea_config.conf
 # source bacteria_config.conf
 
 # Directories for different sorts of data
@@ -66,6 +75,13 @@ SEQS_WITH_REPEATS_FASTA="${GENES_DIR}/${PREFIX}_gene_seqs_with_repeats.fasta"
 
 ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 
+RFAM_DIR_FOR_EXTRACT_16S=`dirname "${RFAM_FOR_EXTRACT_16S}"`
+RFAM_FAMILY_FOR_EXTRACT_16S="${RFAM_DIR_FOR_EXTRACT_16S}/${RFAM_FAMILY_ID}_for_extract_16S.cm"
+
+RFAM_DIR_FOR_FILTERING=`dirname "${RFAM_FOR_EXTRACT_16S}"`
+RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filtering.cm"
+
+
 
 # |=== Proceed ===|
 
@@ -101,15 +117,25 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 #   --log-file "${LOGS_DIR}/archaea_genome_download_log.log"
 
 
+# == Extract Rfam covariance model for 16S rRNA genes exttaction ==
+
+# "${CMFETCH}" "${RFAM_FOR_EXTRACT_16S}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_EXTRACT_16S}"
+# if [[ $? != 0 ]]; then
+#   echo 'Error!'
+#   echo "Cannot extract model for family ${RFAM_FAMILY_ID} from file ${RFAM_FOR_EXTRACT_16S}"
+#   exit 1
+# fi
+
+
 # == Extract 16S genes from downloaded genomes ==
 
-# ./collect_16S.py \
+# ./extract_16S.py \
 #   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
 #   --gbk-dir "${GENOMES_GBK_DIR}" \
 #   --out-fasta "${ALL_GENES_FASTA}" \
 #   --out-stats "${ALL_GENES_STATS}" \
-#   --cmsearch "${CMSEARCH_FOR_COLLECT_16S}" \
-#   --rfam-family-cm "${RFAM_FOR_COLLECT_16S}" \
+#   --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
+#   --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
 #   --seqkit "${SEQKIT}"
 
 
@@ -136,6 +162,16 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 #   --NNN-outfile "${NNN_FASTA_FPATH}"
 
 
+# == Extract Rfam covariance model for 16S rRNA genes exttaction ==
+
+# "${CMFETCH}" "${RFAM_FOR_FILTERING}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_FILTERING}"
+# if [[ $? != 0 ]]; then
+#   echo 'Error!'
+#   echo "Cannot extract model for family ${RFAM_FAMILY_ID} from file ${RFAM_FOR_FILTERING}"
+#   exit 1
+# fi
+
+
 # == Compare all remainig genes to Rfam covariance model (cm) ==
 
 # ./compare_all_seqs_to_cm.py \
@@ -143,7 +179,7 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 #   --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
 #   --cmscan "${CMSCAN_FOR_FILTERING}" \
 #   --cmpress "${CMPRESS_FOR_FILTERING}" \
-#   --rfam-family-cm "${CMPRESS_FOR_FILTERING}"
+#   --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}"
 
 # ~~~~~~~~ TRASH ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # ./find_pivotal_genes.py \
@@ -153,13 +189,13 @@ ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
 #   --tblout-dir "${TBLOUT_DIR}" \
 #   --cmscan "${CMSCAN_FOR_FILTERING}" \
 #   --cmpress "${CMPRESS_FOR_FILTERING}" \
-#   --rfam-family-cm "${CMPRESS_FOR_FILTERING}" \
+#   --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}" \
 #   --lendiff-threshold 5
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 # == Find aberrant genes and record long indels ==
-if [[ "${FIND_CONSERV_REGIONS}" == 1 ]]; then
+if [[ "${CHECK_CONSERV_REGIONS}" == 1 ]]; then
   ./find_aberrant_genes.py \
     --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
     --genes-stats-file "${NO_NNN_STATS_FPATH}" \

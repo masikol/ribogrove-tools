@@ -13,7 +13,7 @@
 # Input files:
 # 1. -f/--all-fasta-file -- fasta file of SSU gene sequences
 # 2. -s/--all-stats-file -- TSV file (with header) containing per-replicons SSU gene statistics
-#    reported by collect_16S.py
+#    reported by extract_16S.py
 # 3. -g/--gbk-dir -- directory that contains downloaded gbk.gz files
 
 # Output files:
@@ -57,7 +57,7 @@ parser.add_argument(
     '-s',
     '--all-stats-file',
     help="""TSV file (with header) containing per-replicons SSU gene statistics
-    reported by collect_16S.py""",
+    reported by extract_16S.py""",
     required=True
 )
 
