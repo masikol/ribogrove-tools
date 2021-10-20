@@ -36,7 +36,7 @@ bash collect_and_filter_ssu_pipeline.sh config/bacteria_config.conf
 
 #### Configuragion file
 
-In configuragion file, input data, working directory and dependencies should be defined by initializing bash environment variables. The following variables are **input-output** veriables:
+In a configuragion file, 1)input data, 2)working directory and 3)dependencies etc. should be specified. Bash environment variables are used for this purpose. The following variables are **input-output** veriables:
 
 1. `PREFIX` -- prefix for output files.
 
@@ -73,7 +73,7 @@ And one variable influences the **behaviour** of the pipeline:
 
 1. `CHECK_CONSERV_REGIONS` -- (accepted values: `0`, `1`). `1` -- check the 16S rDNA conserved regions while finding aberrant genes. `0` -- do not check the conserved regions; detect aberrant genes only by deletions instead.
 
-### Dependencies
+### Dependencies for the pipeline
 
 Python packages:
 
