@@ -145,7 +145,6 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 #   --all-fasta-file "${ALL_GENES_FASTA}" \
 #   --all-stats-file "${ALL_GENES_STATS}" \
 #   --gbk-dir "${GENOMES_GBK_DIR}" \
-#   # --per-genome-outfile "${PER_GENOME_CAT_FPATH}" \
 #   --outfile "${CATEGORIES_FPATH}" \
 #   --seqtech-logfile "${SEQTECH_LOGFILE}" \
 #   --seqkit "${SEQKIT}"
@@ -180,18 +179,6 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 #   --cmscan "${CMSCAN_FOR_FILTERING}" \
 #   --cmpress "${CMPRESS_FOR_FILTERING}" \
 #   --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}"
-
-# ~~~~~~~~ TRASH ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# ./find_pivotal_genes.py \
-#   --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
-#   --genes-stats-file "${NO_NNN_STATS_FPATH}" \
-#   --outfile "${PIVOTAL_GENES_FPATH}" \
-#   --tblout-dir "${TBLOUT_DIR}" \
-#   --cmscan "${CMSCAN_FOR_FILTERING}" \
-#   --cmpress "${CMPRESS_FOR_FILTERING}" \
-#   --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}" \
-#   --lendiff-threshold 5
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 # == Find aberrant genes and record long indels ==

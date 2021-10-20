@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
-# Script downloads genomes in GenBank format, and saves them all to local directory.
+# The script downloads genomes in GenBank format, and saves them all to local directory.
 # Output files will be all gziped.
 # The script downloads records using efetch utility (https://www.ncbi.nlm.nih.gov/books/NBK25497/)
 
-# Input file (-i/--assm-acc-file) is output of script merge_assID2acc_and_remove_WGS.py.
+# Input file (-i/--assm-acc-file) is output of the script merge_assID2acc_and_remove_WGS.py.
 
 # Output files are:
-# 1. `.gbk.gz` files in directory `outdir`
-# 2. log file `log_fpath`, which will contain information about errors.
-#    If record is successfully downloaded, the script writes "ok" to correcponding line of log file.
+# 1. `.gbk.gz` files in directory `-o/--outdir`
+# 2. log file -l/--log-file, which will contain information about errors.
+#    If record is successfully downloaded, the the script writes "ok" to correcponding line of log file.
 
 
 import os
@@ -79,6 +79,9 @@ for some_dir in (outdir, os.path.dirname(log_fpath)):
         # end try
     # end if
 # end for
+
+print(assm_acc_fpath)
+print()
 
 
 def write_to_file(text: str, log_fpath: str):

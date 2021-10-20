@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
-# Scripts merges TSV file, which is output of script assembly2refseq_id.py (-s/--assm-2-gi-file)
-#   and TSV file, which is output of script gis_to_accs.py (-c/--gi-2-acc-file) on column `refseq_id`.
+# The script merges TSV file, which is output of the script assembly2refseq_id.py (-s/--assm-2-gi-file)
+#   and TSV file, which is output of the script gis_to_accs.py (-c/--gi-2-acc-file) on column `refseq_id`.
 # Output (file -o/--outfile) is a TSV file of 4 columns (ass_id, refseq_id, acc, title).
 
+# Input files
+# 1. -s/--assm-2-gi-file -- input TSV file mapping Assembly IDs to RefSeq GI numbers.
+# 2. -c/--gi-2-acc-file -- input TSV file mapping RefSeq GI numbers to RefSeq ACCESSION.VERSIONs.
+
+# Output files
+# 1. -o/--outfile -- output TSV files where Assembly IDs are mapped to ACCESSION.VERSIONs and RefSeq Titles.
+
+
 import os
+import sys
 import argparse
 
 import numpy as np
@@ -67,6 +76,10 @@ if not os.path.isdir(os.path.dirname(outfpath)):
     # end try
 # end if
 
+print(assm_2_gi_fpath)
+print(gi_2_acc_fpath)
+print()
+
 
 # Read input
 ass_2_gi_df = pd.read_csv(
@@ -88,7 +101,7 @@ print(gi_2_acc_df.head())
 
 
 def set_is_WGS(row):
-    # Function sets `is_WGS` of a row to True if it's field `title` contains 
+    # Function sets `is_WGS` of a row to True if it's field `title` contains
     #    "WHOLE GENOME SHOTGUN SEQUENCE". Otherwise sets it to False
     row['is_WGS'] = 'WHOLE GENOME SHOTGUN SEQUENCE' in row['title'].upper()
     return row

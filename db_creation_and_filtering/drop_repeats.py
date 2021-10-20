@@ -1,28 +1,32 @@
 #!/usr/bin/env python3
 
-# Script removes gene sequences, which contain large repeats.
-# Threshold (repeat length) for distinguishing "large" and "not large" repeats
-#   is automatically defined.
+# The script removes gene sequences, which contain large repeats.
+# The script requires a threshold (repeat length) for distinguishing "large" and "not large" repeats,
 
 # Input files:
-# 1. `-i/--assm-acc-file` is output of script merge_assID2acc_and_remove_WGS.py.
+# 1. -f/--input-fasta-file -- input fasta file.
+# 2. -i/--assm-acc-file is output of the script merge_assID2acc_and_remove_WGS.py.
 #   It has 4 columns: ass_id, refseq_id, acc, title. `refseq_id` is GI number.
-# 2. Fasta file with all extracted genes sequences (-f/--all-fasta-file).
+# 3. -r/--repeats-file -- TSV file, which is the output of the script `find_repeats.py`
+# 4. -e/--exception-seqIDs -- file of seqIDs (one per line), which should NOT be discarder,
+#   despite they do contain intragenis repeat(s).
 
 # Output files:
 # 1. Fasta file containing no sequences with NN (--out-fasta-file).
-# 2. `--out-stats-file` is a TSV file containing per-replicon statisticsw for `--out-fasta-file`.
-# 3. Fasta file containing sequences with NN (--NN-outfile).
+# 2. --out-stats-file is a TSV file containing per-replicon statistics for the output fasta file.
+# 3. Fasta file containing sequences with repeats (--seqs-with-repeats).
+
+# Parameter:
+# 1. --repeat-len-threshold -- repeat length threshold. Sequences having repeats longer than
+#    this value will be discarded
+
 
 import os
 import sys
 import argparse
-from typing import Sequence, Dict
 
-import numpy as np
 import pandas as pd
 from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
 
 from gene_seqs_2_stats import gene_seqs_2_stats
 
@@ -36,7 +40,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     '-f',
     '--input-fasta-file',
-    help='fasta file of SSU gene sequences',
+    help='input fasta file of SSU gene sequences',
     required=True
 )
 
@@ -60,7 +64,7 @@ parser.add_argument(
     '-e',
     '--exception-seqIDs',
     help="""Text file with seqIDs (one per line) of sequences, which are exceptions:
-exceptions contain repeats, but they should not be removed""",
+exceptions contain repeats, but these sequences should not be discarded""",
     required=False
 )
 
@@ -89,7 +93,8 @@ parser.add_argument(
 
 parser.add_argument(
     '--repeat-len-threshold',
-    help='repeat length threshold (int > 0). Sequences with repeats longer than this threshold will be removed',
+    help="""repeat length threshold (int > 0). Sequences with repeats longer than
+  this threshold will be discarded""",
     required=True
 )
 
@@ -104,6 +109,8 @@ output_genes_fpath = os.path.abspath(args.out_fasta_file)
 seqs_with_repeats_fpath = os.path.abspath(args.seqs_with_repeats)
 output_genes_stats_fpath = os.path.abspath(args.out_stats_file)
 
+
+# Check exceptions fpath
 exception_seqIDs_fpath = None
 try:
     exception_seqIDs_fpath = os.path.abspath(args.exception_seqIDs)
@@ -149,6 +156,8 @@ for some_dir in map(os.path.dirname, [output_genes_fpath, seqs_with_repeats_fpat
     # end if
 # end if
 
+
+# Read the exceptions file
 if exception_seqIDs_fpath is None:
     exception_seqIDs = set()
 else:

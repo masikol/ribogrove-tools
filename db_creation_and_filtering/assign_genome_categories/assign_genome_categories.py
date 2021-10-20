@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Script assigns categories to assembled genomes.
+# The script assigns categories to assembled genomes.
 # Categories:
 #   1. Genome is not of 3'rd category, and it is sequenced using PacBio or ONT+Illumina.
 #   2. Genome is not of 3'rd category, and it is sequenced neither using PacBio nor ONT+Illumina.
@@ -11,21 +11,20 @@
 #         and contains an SSU gene (or it's part).
 
 # Input files:
-# 1. -f/--all-fasta-file -- fasta file of SSU gene sequences
+# 1. -f/--all-fasta-file -- fasta file of all collected SSU gene sequences
 # 2. -s/--all-stats-file -- TSV file (with header) containing per-replicons SSU gene statistics
 #    reported by extract_16S.py
 # 3. -g/--gbk-dir -- directory that contains downloaded gbk.gz files
 
-# Output files:
-# 1. --per-genome-outfile -- output file mapping Assembly IDs to categories
-# 2. --per-gene-outfile -- output file mapping seqIDs to categories
-# 3. -l/--seqtech-logfile -- log file to track if sequence technology is successfully extracted
+# Output file:
+# 1. -o/--outfile -- output file mapping seqIDs to categories
+# 2. -l/--seqtech-logfile -- log file to track if sequence technology is successfully extracted
 #    from all genomes where it is specified
+# "seqtech" means SEQuencing TECHnology
 
 # Dependencies:
 # 1. --seqkit seqkit executable
 
-# seqtech means SEQuencing TECHnology
 
 
 import os
@@ -70,19 +69,8 @@ parser.add_argument(
 
 # Output files
 
-# parser.add_argument(
-#     '--per-genome-outfile',
-#     help='output file mapping Assembly IDs to categories',
-#     required=True
-# )
-
-# parser.add_argument(
-#     '--per-gene-outfile',
-#     help='output file mapping genes seqIDs to categories',
-#     required=True
-# )
-
 parser.add_argument(
+    '-o',
     '--outfile',
     help='output file mapping genes seqIDs and Assembly IDs to categories',
     required=True
@@ -111,8 +99,6 @@ args = parser.parse_args()
 fasta_seqs_fpath = os.path.abspath(args.all_fasta_file)
 in_stats_fpath = os.path.abspath(args.all_stats_file)
 gbk_dpath = os.path.abspath(args.gbk_dir)
-# per_genome_outfpath = os.path.abspath(args.per_genome_outfile)
-# per_gene_outfpath = os.path.abspath(args.per_gene_outfile)
 outfpath = os.path.abspath(args.per_gene_outfile)
 seqtech_logfpath = os.path.abspath(args.seqtech_logfile)
 seqkit_fpath = os.path.abspath(args.seqkit)
@@ -149,6 +135,13 @@ for some_dir in map(os.path.dirname, [outfpath, seqtech_logfpath]):
         # end try
     # end if
 # end if
+
+print(fasta_seqs_fpath)
+print(in_stats_fpath)
+print(gbk_dpath)
+print(seqtech_logfpath)
+print(seqkit_fpath)
+print()
 
 
 # Paths to files containing merker words fow identifying sequencing technologies
@@ -406,7 +399,6 @@ with open(outfpath, 'wt') as outfile, \
      open(seqtech_logfpath, 'wt') as logfile:
 
      # Write headers
-    # per_genome_outfile.write('ass_id\taccs\tseqtech\tcontains_NNN\tdegenerate_in_16S\tunlocalized_16S\tcategory\n')
     outfile.write('ass_id\tseqID\tseqtech\tcontains_NNN\tdegenerate_in_16S\tunlocalized_16S\tcategory\n')
 
     # Get all Assembly IDs
@@ -481,19 +473,13 @@ with open(outfpath, 'wt') as outfile, \
         # Get all ACCESSION.VERSION's of current genome
         accs = tuple(ass_df['acc'])
 
-        # Write ouput to per-genome file
-        # per_genome_outfile.write(f'{ass_id}\t{";".join(accs)}\t')
-        # per_genome_outfile.write(f'{seqtech}\t{1 if contains_NNN else 0}\t')
-        # per_genome_outfile.write(f'{1 if degenerate_in_16S else 0}\t{1 if unlocalized_16S else 0}\t')
-        # per_genome_outfile.write(f'{category}\n')
-
-        # Write ouput to per-gene file
+        # Write ouput to output file
         for acc in accs:
             try:
                 for seqID in acc_seqIDs_dict[acc]:
-                    per_gene_outfile.write(f'{ass_id}\t{seqID}\t{seqtech}\t')
-                    per_gene_outfile.write(f'{1 if contains_NNN else 0}\t{1 if degenerate_in_16S else 0}\t')
-                    per_gene_outfile.write(f'{1 if unlocalized_16S else 0}\t{category}\n')
+                    outfile.write(f'{ass_id}\t{seqID}\t{seqtech}\t')
+                    outfile.write(f'{1 if contains_NNN else 0}\t{1 if degenerate_in_16S else 0}\t')
+                    outfile.write(f'{1 if unlocalized_16S else 0}\t{category}\n')
                 # end for
             except KeyError:
                 pass

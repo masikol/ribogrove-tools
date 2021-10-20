@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
-# Script takes IDs (IDs of database NCBI Assembly) from file `-i/--assm-id-file` (one per line)
+# The Script takes IDs (IDs of database NCBI Assembly) from file `-i/--assm-id-file` (one per line)
 #   and translates them to RefSeq GI numbers using elink utility (https://www.ncbi.nlm.nih.gov/books/NBK25497/).
 # The script writes result to TSV file `-o/--outfile` of 2 columns (ass_ID, refseq_id)
 
@@ -71,7 +71,7 @@ ass_ids = tuple(
 with open(outfpath, 'wt') as outfile:
 
     # Write header
-    outfile.write(f'ass_id\trefseq_id\n')
+    outfile.write('ass_id\trefseq_id\n')
 
     # Iterate over assembly IDs
     for i, ass_id in enumerate(ass_ids):

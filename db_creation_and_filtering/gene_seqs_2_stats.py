@@ -5,29 +5,11 @@
 # See it's descrition below (Ctrl+F "def gene_seqs_2_stats").
 
 
-import os
-import sys
-from io import StringIO
 import statistics as sts
-from typing import List, Sequence
 
 import pandas as pd
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
-
-
-# def _select_seqs(acc: str, seq_record_dict: Sequence[SeqRecord]) -> Sequence[SeqRecord]:
-#     # Function selects SeqRecords of given ACCESSION.VERSION (`acc`).
-
-#     selected_seq_records = tuple(
-#         filter(
-#             lambda r: acc in r.id,
-#             seq_records
-#         )
-#     )
-
-#     return selected_seq_records
-# # end def _select_seqs
 
 
 def _get_len(record: SeqRecord):

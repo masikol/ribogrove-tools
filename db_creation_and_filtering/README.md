@@ -72,3 +72,30 @@ The following variables define **dependencies**:
 And one variable influences the **behaviour** of the pipeline:
 
 1. `CHECK_CONSERV_REGIONS` -- (accepted values: `0`, `1`). `1` -- check the 16S rDNA conserved regions while finding aberrant genes. `0` -- do not check the conserved regions; detect aberrant genes only by deletions instead.
+
+### Dependencies
+
+Python packages:
+
+1. numpy. Installation: `pip3 install numpy`. Tested on version 1.19.2.
+
+2. pandas. Installation: `pip3 install pandas`. Tested on version 1.1.3.
+
+3. Biopython. Installation: `pip3 install biopython`. Tested on version 1.78.
+
+4. repeatfinder ([repo](https://github.com/deprekate/RepeatFinder)). Installation: `pip install repeatfinder`. Tested on version 1.5.
+
+Standalone programs:
+
+1. Seqkit: [https://github.com/shenwei356/seqkit](https://github.com/shenwei356/seqkit). Tested on veersion 0.16.1.
+
+2. MUSCLE: [https://www.drive5.com/muscle/](https://www.drive5.com/muscle/). Tested on version 3.8.31.
+
+3. Infernal [http://eddylab.org/infernal/](http://eddylab.org/infernal/). Tested on version 1.1.1 (for re-annotation of genomic sequences) and 1.1.4 (for filtering).
+
+Data:
+
+1. File `rankedlineage.dmp` from https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump
+
+2. Rfam database. Versions: [12.0](ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz) (for re-annotation of genomic sequences), [14.6](ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.6/Rfam.cm.gz) (for filtering).
+

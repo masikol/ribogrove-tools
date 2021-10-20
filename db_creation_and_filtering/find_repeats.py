@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 
-# Script finds repeats in SSU genes sequences using RepeatFinder.
+# The script finds repeats in SSU genes sequences using RepeatFinder.
 
 # Input files:
-# 1. Fasta file of genes sequences containing no NN (-f/--no-NN-fasta-file).
-# 2. Fasta file of NR conserved regions from work
-#    "How conserved are the conserved 16S-rRNA regions?"
-#    (table 5, https://peerj.com/articles/3036/)
-#    -c/--conserved-regions-fasta
+# 1. Fasta file of genes sequences containing no NN (-f/--in-fasta-file).
 
 # Output files:
 # 1. TSV file (-o/--outfile) of following columns:
@@ -15,23 +11,18 @@
 #   r1_start, r1_end, r2_start, r2_end -- repeats' cordinates;
 #   rep_len -- length of a repeat;
 #   rep_seq -- sequence of a repeat;
-#   conserv_<REGION_ID> -- columns indicating if repeat contains corresponding
-#     conserved region from file -c/--conserved-regions-fasta.
-#     1 (one) if contains, otherwise 0 (zero).
 
 # Dependencies:
 # 1. RepeatFinder must be installed. See https://github.com/deprekate/RepeatFinder
 
 
 import os
-import re
 import sys
 import argparse
 from typing import Tuple
 
 import repeatfinder as rf # https://github.com/deprekate/RepeatFinder
 from Bio import SeqIO
-from Bio import SeqUtils
 
 
 # == Parse arguments ==
@@ -47,13 +38,7 @@ parser.add_argument(
     required=True
 )
 
-# parser.add_argument(
-#     '-c',
-#     '--conserved-regions-fasta',
-#     help="""fasta file of NR conserved regions from work
-#     "How conserved are the conserved 16S-rRNA regions?" (table 5, https://peerj.com/articles/3036/)""",
-#     required=True
-# )
+# Output files
 
 parser.add_argument(
     '-o',
@@ -70,13 +55,7 @@ seqs_fpath = os.path.abspath(args.in_fasta_file)
 # conserved_regions_fpath = os.path.abspath(args.conserved_regions_fasta)
 outfpath = os.path.abspath(args.outfile)
 
-# Check existance of all input files
-# for fpath in (seqs_fpath, conserved_regions_fpath):
-#     if not os.path.exists(fpath):
-#         print(f'Error: file `{fpath}` does not exist!')
-#         sys.exit(1)
-#     # end if
-# # enb for
+
 if not os.path.exists(seqs_fpath):
     print(f'Error: file `{seqs_fpath}` does not exist!')
     sys.exit(1)
@@ -92,8 +71,9 @@ if not os.path.isdir(os.path.dirname(outfpath)):
     # end try
 # end if
 
+print(seqs_fpath)
+print()
 
-# conserved_seq_records = tuple(SeqIO.parse(conserved_regions_fpath, 'fasta'))
 
 # Some values for status messages
 next_report = 499
@@ -108,16 +88,14 @@ def get_repeat_len(repeat_out: Tuple[int, int, int, int]):
     return repeat_out[1] - repeat_out[0] + 1
 # end def get_repeat_len
 
+
 # == Proceed ==
 
 with open(outfpath, 'wt') as outfile:
 
     # Write header
     outfile.write('seqID\tgene_len\tr1_start\tr1_end\tr2_start\tr2_end\trep_len\trep_seq\n')
-    # outfile.write('\t'.join(
-    #     [f'conserv_{r.id}' for r in conserved_seq_records]
-    #     ) + '\n'
-    # )
+
 
     # Iterate over input seq records
     for i, record in enumerate(seq_records):
@@ -134,25 +112,13 @@ with open(outfpath, 'wt') as outfile:
         # Record repeats
         for r in repeats:
 
-            # We assume that repeat contains no conserved regions
-            # conserv_list = ['0'] * len(conserved_seq_records)
-
             # Get repeat sequence
             rep_seq = str(record.seq)[r[0]-1 : r[1]]
-
-            # Check if repeat contains conserved regions
-            # for i, conserv_record in enumerate(conserved_seq_records):
-            #     search_list = SeqUtils.nt_search(rep_seq, str(conserv_record.seq))
-            #     if len(search_list) > 1:
-            #         conserv_list[i] = '1'
-            #     # end if
-            # # end for
 
             rep_len = get_repeat_len(r) # get length of repeat
 
             # Write output line
             outfile.write(f'{record.id}\t{len(record.seq)}\t{r[0]}\t{r[1]}\t{r[2]}\t{r[3]}\t{rep_len}\t{rep_seq}\n')
-            # outfile.write('{}\n'.format('\t'.join(conserv_list)))
         # end for
     # end for
 # end with

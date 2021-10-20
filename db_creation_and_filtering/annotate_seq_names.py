@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-# Script annotates gene sequences -- adds taxonomy and category info.
+# The script annotates gene sequences -- adds taxonomy and category info.
 #
 # Input files:
 # 1. Input fasta file (-f/--fasta-seqs-file).
-# 2. TSV file mapping genes seqIDs to taxonomy (-t/--taxonomy-file)
+# 2. TSV file mapping genes seqIDs to taxonomy (-t/--per-gene-taxonomy-file)
 # 3. TSV file mapping genes seqIDs to categories (-c/--categories-file)
 #
 # Output files:
@@ -13,8 +13,6 @@
 import os
 import sys
 import argparse
-import subprocess as sp
-from io import StringIO
 
 import pandas as pd
 from Bio import SeqIO

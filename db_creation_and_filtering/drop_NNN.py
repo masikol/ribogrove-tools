@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 
-# Script removes gene sequences, which containt at least 2 N's in theirs sequences
+# The script discards gene sequences, which contains at least 3 N's in theirs sequences
 
 # Input files:
 # 1. `-i/--assm-acc-file` is output of script merge_assID2acc_and_remove_WGS.py.
 #   It has 4 columns: ass_id, refseq_id, acc, title. `refseq_id` is GI number.
 # 2. Fasta file with all extracted genes sequences (-f/--all-fasta-file).
+# 3. `-c/--categories-file` -- TSV file with genome categories.
 
 # Output files:
-# 1. Fasta file containing no sequences with NN (--out-fasta-file).
-# 2. `--out-stats-file` is a TSV file containing per-replicon statisticsw for `--out-fasta-file`.
-# 3. Fasta file containing sequences with NN (--NN-outfile).
+# 1. Fasta file containing no sequences with NNN (--out-fasta-file).
+# 2. `--out-stats-file` is a TSV file containing per-replicon statisticsw for output fasta file.
+# 3. Fasta file containing sequences with NNN (--NNN-outfile).
 
 
 import os
-import re
 import sys
 import argparse
 
@@ -48,7 +48,7 @@ parser.add_argument(
 parser.add_argument(
     '-c',
     '--categories-file',
-    help='TSV file of info of genome categories',
+    help='TSV file of genome categories info',
     required=True
 )
 
@@ -56,19 +56,19 @@ parser.add_argument(
 
 parser.add_argument(
     '--out-fasta-file',
-    help='output fasta file containing genes sequences without NN\'s',
+    help='output fasta file containing genes sequences without NNNs',
     required=True
 )
 
 parser.add_argument(
     '--out-stats-file',
-    help='output per-replicon statistics file',
+    help='output per-replicon statistics file of sequences without NNNs',
     required=True
 )
 
 parser.add_argument(
     '--NNN-outfile',
-    help='output fasta file containing genes sequences with NN\'s',
+    help='output fasta file containing genes sequences with NNNs',
     required=True
 )
 
@@ -105,8 +105,7 @@ for some_dir in map(os.path.dirname, [out_fasta_fpath, nnn_seqs_fpath, out_stats
 # end if
 
 
-# nn_pattern = r'NN' # pattern for searching NN
-nn_count = 0
+nnn_count = 0
 
 next_report = 499
 inc = 500
@@ -140,20 +139,19 @@ with open(out_fasta_fpath, 'wt') as out_fasta_file, \
             next_report += inc
         # end if
 
-        # if re.search(nn_pattern, str(record.seq)) is None:
         if not record.id in NNN_seqIDs:
-            # Write no "no NN" file
+            # Write no "no NNN" file
             out_fasta_file.write(f'>{record.description}\n{str(record.seq)}\n')
         else:
-            # Write no "NN" file
-            nn_count += 1
+            # Write no "NNN" file
+            nnn_count += 1
             outfile_nnn.write(f'>{record.description}\n{str(record.seq)}\n')
         # end if
     # end for
 # end with
 
 print(f'\r{i+1}/{num_seqs}\n')
-print(f'{nn_count} genes from genomes with NNN found')
+print(f'{nnn_count} genes from genomes with NNN found')
 print(out_fasta_fpath)
 print(nnn_seqs_fpath)
 

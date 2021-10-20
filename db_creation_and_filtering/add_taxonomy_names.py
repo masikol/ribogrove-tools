@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-# Script takes both output files of script `get_taxIDs.py` (--per-genome-taxid-file, --per-gene-taxid-file)
+# The script takes both output files of the script `get_taxIDs.py` (--per-genome-taxid-file, --per-gene-taxid-file)
 #   and uses them to map Assemblty IDs and seqIDs to taxonomy from file rankedlineage.dmp (--ranked-lineage).
 
 # Input files:
 # 1. TSV file mapping Assembly IDs to taxIDs (--per-genome-taxid-file)
 # 2. TSV file mapping genes seqIDs to taxIDs (--per-gene-taxid-file)
 # 3. File `rankedlineage.tsv` from NCBI's new_taxdump archive
-#   see https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz
+#   Option --ranked-lineage.
+#   See https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/
 
 # Output files:
 # 1. TSV file mapping Assembly IDs to taxonomy (--per-genome-outfile)
@@ -21,7 +22,6 @@ import os
 import sys
 import argparse
 
-import numpy as np
 import pandas as pd
 
 
@@ -41,7 +41,7 @@ parser.add_argument(
 parser.add_argument(
     '--per-gene-taxid-file',
     help="""TSV file (with header) mapping genes SeqIDs to taxIDs.
-    It should have 3 columns (seqID, ass_id, accs, taxID).""",
+    It should have 4 columns (seqID, ass_id, accs, taxID).""",
     required=True
 )
 
@@ -111,6 +111,12 @@ for some_dir in map(os.path.dirname, [per_genome_outfpath, per_gene_outfpath]):
         # end try
     # end if
 # end if
+
+print(per_genome_taxid_fpath)
+print(per_gene_taxid_fpath)
+print(rankedlineage_path)
+print(seqkit_fpath)
+print()
 
 
 def reformat_rankedlineaage_file(rankedlineage_path: str) -> str:

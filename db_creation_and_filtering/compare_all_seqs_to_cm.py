@@ -1,8 +1,27 @@
 #!/usr/bin/env python3
 
+# The script compares gene sequences to specific Rfam covariance model to detect truncated genes.
+
+# Input files:
+# 1. -f/--in-fasta-file -- input fasta file of SSU gene sequences
+
+# Output file:
+# 1. -o/--outdir -- output directory for output files:
+#   1) file `cmscan_output_table.tblout` -- TSV file of comparison statistics
+#   2) file `cmscan_output.txt` -- txt file, contains complete output of cmscan.
+
+# Dependencies:
+# 1. --cmscan -- cmscan executable
+# 2. --cmpress -- cmpress executable
+# 3. -r/--rfam-family-cm -- Rfam covariane model (.cm) file to compare sequences to
+
+
 import os
+import re
 import sys
 import argparse
+import subprocess as sp
+
 
 # == Parse arguments ==
 
@@ -13,7 +32,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     '-f',
     '--in-fasta-file',
-    help='fasta file of SSU gene sequences',
+    help='input fasta file of SSU gene sequences',
     required=True
 )
 
@@ -21,7 +40,7 @@ parser.add_argument(
 
 parser.add_argument(
     '--outdir',
-    help='output file for cmscan',
+    help='output directory',
     required=True
 )
 
@@ -42,7 +61,8 @@ parser.add_argument(
 parser.add_argument(
     '-r',
     '--rfam-family-cm',
-    help='fasta file of SSU gene sequences',
+    help=""".cm file containing covariance model of target gene family
+  (RF00177 for bacterial ribosomal SSU, RF01959 for archaeal ribosomal SSU)""",
     required=True
 )
 
@@ -84,12 +104,13 @@ if not os.path.isdir(outdpath):
 # end if
 
 print(fasta_seqs_fpath)
-print(rfam_fpath)
 print(cmscan_fpath)
+print(cmpress_fpath)
+print(rfam_fpath)
 print()
 
 
-# Heder for reformatted .tblout files
+# Header for reformatted .tblout files
 tblout_header = 'target_name\taccession\tquery_name\taccession\tmdl\tmdl_from\tmdl_to\tseq_from\tseq_to\tstrand\ttrunc\tpass\tgc\tbias\tscore\tEvalue\tinc\tdescription_of_target'
 
 
@@ -183,9 +204,11 @@ def run_cmpress(cmpress_fpath: str, rfam_fpath: str) -> None:
 run_cmpress(cmpress_fpath, rfam_fpath)
 
 
+# Configure paths to output files
 output_file = os.path.join(outdpath, 'cmscan_output.txt')
 tblout_fpath = os.path.join(outdpath, 'cmscan_output_table.tblout')
 
+# Configure command for cmscan
 command = ' '.join([
     cmscan_fpath,
     f'--tblout {tblout_fpath}',
@@ -195,6 +218,9 @@ command = ' '.join([
     f'> {output_file}',
     f'2> {output_file}'
 ])
+
+
+# == Proceed ==
 
 
 print('Running cmscan command:')
@@ -208,19 +234,12 @@ if exit_code != 0:
     print('Error!')
 # end if
 
+
+# Reformat output .tblout table
 print(f'Reformatting output file `{tblout_fpath}`...')
 reformat_tblout(tblout_fpath, tblout_header)
 print('Done')
 
-
-
-# /home/cager/Misc_soft/infernal/infernal-1.1.4/bin/cmscan \
-#   --tblout /mnt/1.5_drive_0/16S_scrubbling/archaea/cmscan_tblout/archaea_all_no_NNN_cmscan.tblout \
-#   --toponly --cpu 4 --acc \
-#   /mnt/1.5_drive_0/16S_scrubbling/rfam/RF01959.14.6.cm \
-#   /mnt/1.5_drive_0/16S_scrubbling/archaea/gene_seqs/archaea_gene_seqs_no_NNN.fasta \
-#   > /mnt/1.5_drive_0/16S_scrubbling/archaea/cmscan_tblout/archaea_all_no_NNN_cmscan.txt \
-#   2> /mnt/1.5_drive_0/16S_scrubbling/archaea/cmscan_tblout/archaea_all_no_NNN_cmscan.txt
 
 print('\nCompleted!')
 print(output_file)

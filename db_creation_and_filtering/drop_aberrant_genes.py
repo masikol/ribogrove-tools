@@ -1,10 +1,23 @@
 #!/usr/bin/env python3
 
+# The script discards aberrant gene sequences.
+
+# Input files:
+# 1. -f/--input-fasta-file -- input fasta file of SSU gene sequences
+# 2. -a/--assm-acc-file -- is output of the script merge_assID2acc_and_remove_WGS.py.
+# 3. --non-aberrant-seqIDs -- file of non-aberrant seqIDs (one per line).
+# 4. --aberrant-seqIDs -- file of aberrant seqIDs (one per line).
+
+# Output files:
+# 1. --non-aberrant-fasta-file -- output fasta file of non-aberrant sequences
+# 2. --aberrant-fasta-file -- output fasta file of aberrant sequences
+# 3. --out-stats-file -- output TSV file of per-replicon statistivs of non-aberrant sequences
+
+
 import os
 import sys
 import argparse
 
-import pandas as pd
 from Bio import SeqIO
 
 from gene_seqs_2_stats import gene_seqs_2_stats
@@ -22,13 +35,6 @@ parser.add_argument(
     help='fasta file of SSU gene sequences',
     required=True
 )
-
-# parser.add_argument(
-#     '-t',
-#     '--tblout',
-#     help='output .tblout file of cmscan',
-#     required=True
-# )
 
 parser.add_argument(
     '-a',
@@ -56,7 +62,7 @@ parser.add_argument(
 
 parser.add_argument(
     '--non-aberrant-fasta-file',
-    help='output fasta file',
+    help='output fasta file for non-aberrant sequences',
     required=True
 )
 
@@ -68,7 +74,7 @@ parser.add_argument(
 
 parser.add_argument(
     '--out-stats-file',
-    help='output per-replicon statistics file',
+    help='output per-replicon statistics file for non-aberrant sequences',
     required=True
 )
 
@@ -78,7 +84,6 @@ args = parser.parse_args()
 
 # For convenience
 fasta_seqs_fpath = os.path.abspath(args.input_fasta_file)
-# tblout_fpath = os.path.abspath(args.tblout)
 assm_acc_fpath = os.path.abspath(args.assm_acc_file)
 non_aberrant_seqIDs_fpath = os.path.abspath(args.non_aberrant_seqIDs)
 aberrant_seqIDs_fpath = os.path.abspath(args.aberrant_seqIDs)
@@ -111,18 +116,17 @@ for some_dir in map(os.path.dirname, [non_aberrant_fasta_fpath, out_stats_fpath,
 print(fasta_seqs_fpath)
 print(non_aberrant_seqIDs_fpath)
 print(aberrant_seqIDs_fpath)
-# print(tblout_fpath)
 print(assm_acc_fpath)
 print()
 
-# tblout_df = pd.read_csv(
-#     tblout_fpath,
-#     sep='\t'
-# )
+
+# == Proceed ==
 
 
+# Read input fasta records
 input_seq_records = tuple(SeqIO.parse(fasta_seqs_fpath, 'fasta'))
 
+# Read non-aberrant seqIDs
 non_aberrant_seqIDs = set(
     map(
         str.strip,
@@ -130,6 +134,7 @@ non_aberrant_seqIDs = set(
     )
 )
 
+# Read aberrant seqIDs
 aberrant_seqIDs = set(
     map(
         str.strip,
@@ -137,7 +142,6 @@ aberrant_seqIDs = set(
     )
 )
 
-# seqIDs_to_keep = set(tblout_df[tblout_df['trunc'] == 'no']['query_name'])
 
 print(f'{len(aberrant_seqIDs)} sequences are considered as aberrant')
 print(f'{len(non_aberrant_seqIDs)} sequences remain non-aberrant')
@@ -145,7 +149,10 @@ print(f'Writing non-aberrant sequences to file `{non_aberrant_fasta_fpath}`...')
 print(f'Writing aberrant sequences to trash file `{aberrant_fasta_fpath}`...')
 
 
-with open(non_aberrant_fasta_fpath, 'wt') as non_aberrant_fasta_file, open(aberrant_fasta_fpath, 'wt') as aberrant_fasta_file:
+# Write aberrant sequences to `aberrant_fasta_file`,
+#   and non-aberrant -- to `aberrant_fasta_file`
+with open(non_aberrant_fasta_fpath, 'wt') as non_aberrant_fasta_file, \
+     open(aberrant_fasta_fpath, 'wt') as aberrant_fasta_file:
     for seq_record in input_seq_records:
         if seq_record.id in non_aberrant_seqIDs:
             non_aberrant_fasta_file.write(f'>{seq_record.description}\n{seq_record.seq}\n')

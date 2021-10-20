@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Script maps Assembly IDs to TaxIDs using elink utility (https://www.ncbi.nlm.nih.gov/books/NBK25497/)
+# The script maps Assembly IDs to TaxIDs using elink utility (https://www.ncbi.nlm.nih.gov/books/NBK25497/)
 
 # Input files:
 # 1. -i/--assm-acc-file -- is output of script merge_assID2acc_and_remove_WGS.py.
@@ -43,7 +43,7 @@ parser.add_argument(
 parser.add_argument(
     '-f',
     '--all-fasta-file',
-    help='fasta file of SSU gene sequences',
+    help='input fasta file of SSU gene sequences',
     required=True
 )
 
@@ -96,6 +96,12 @@ if not os.path.isdir(os.path.dirname(per_genome_outfpath)):
         sys.exit(1)
     # end try
 # end if
+
+
+print(assm_acc_fpath)
+print(fasta_seqs_fpath)
+print(seqkit_fpath)
+print()
 
 
 def get_genes_seqIDs(fasta_seqs_fpath: str, seqkit_fpath: str) -> List[str]:
@@ -176,7 +182,7 @@ ass_ids = tuple(
 with open(per_genome_outfpath, 'wt') as per_genome_outfile:
 
     # Write headers to output files
-    per_genome_outfile.write(f'ass_id\taccs\ttaxID\n')
+    per_genome_outfile.write('ass_id\taccs\ttaxID\n')
 
     # Iterate over Assembly IDs
     for i, ass_id in enumerate(ass_ids):
@@ -200,7 +206,7 @@ with open(per_genome_outfpath, 'wt') as per_genome_outfile:
                 )
                 records = Entrez.read(handle)
                 handle.close()
-            except:
+            except OSError:
                 n_errors =+ 1
                 if n_errors == 3:
                     records = list()
@@ -215,7 +221,7 @@ with open(per_genome_outfpath, 'wt') as per_genome_outfile:
         try:
             taxID = records[0]['LinkSetDb'][0]['Link'][0]['Id']
         except IndexError as err:
-            print(f'Error on {acc}: {err}')
+            print(f'Error on {accs}: {err}')
             taxID = 'NA'
         # end try
 

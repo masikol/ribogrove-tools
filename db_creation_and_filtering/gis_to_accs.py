@@ -56,6 +56,9 @@ if not os.path.isdir(os.path.dirname(outfpath)):
     # end try
 # end if
 
+print(gi_fpath)
+print()
+
 
 # Read input
 gi_df = pd.read_csv(
@@ -74,7 +77,7 @@ print('\r0/{}'.format(gi_df.shape[0]), end=' ')
 with open(outfpath, 'wt') as outfile:
 
     # Write header
-    outfile.write(f'refseq_id\tacc\ttitle\n')
+    outfile.write('refseq_id\tacc\ttitle\n')
 
     # Iterate over chunks of RefSeq IDs and get their "accession.version"s and titles
     for i in range(0, gi_df.shape[0], chunk_size):
@@ -98,7 +101,7 @@ with open(outfpath, 'wt') as outfile:
                 )
                 records = Entrez.read(handle)
                 handle.close()
-            except:
+            except OSError:
                 n_errors += 1
                 if n_errors == 3:
                     raise OSError("Cannot request esummary")

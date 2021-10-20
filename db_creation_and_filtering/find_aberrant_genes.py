@@ -1,34 +1,33 @@
 #!/usr/bin/env python3
 
-# Script does multiple things:
-# 1. It finds aberrant genes: truncated genes and genes, which diffre from pivotal genes greatly.
-# 2. It records all heterogeneity (indels, , percents of identity)
+# The script does multiple things:
+# 1. It finds aberrant genes: truncated genes and genes with large deletions.
+# 2. It records all heterogeneity (indels, percents of identity).
 
 # Input files:
 # 1. Fasta file of genes sequences (-f/--fasta-seqs-file).
 # 2. TSV file if per-replicon genes statistics (-s/--genes-stats-file).
-# 3. TSV file TSV file (with header) info about pivotal genes
-#    (it is output file of script `find_pivotal_gens.py`).
-# 4. Fasta file of NR conserved regions from work
+# 3. TSV file `.tblout` outputed by the script `compare_all_seqs_to_cm.py` (-t/--cmscan-tblout).
+# 4. (optional) Fasta file of NR conserved regions from work
 #    "How conserved are the conserved 16S-rRNA regions?"
 #    (table 5, https://peerj.com/articles/3036/)
 #    -c/--conserved-regions-fasta
 
-# Output files (they all will be stored in output directory):
+# Output files (they all will be stored in output directory --outdir):
 # 1. pident_pivotal_genes.tsv -- TSV file containing pidents (and some other statistics)
 #    of pairwise alignments of pivotal genes vs non-pivotal genes.
 # 2. insertions.tsv -- TSV file containing information about discovered insertions
-#    longer than `--indel-len-threshold`.
+#    longer than `--deletion-len-threshold`.
 # 3. deletions.tsv -- TSV file containing information about discovered deletions
-#    longer than `--indel-len-threshold`.
+#    longer than `--deletion-len-threshold`.
 # 4. aberrant_seqIDs.txt -- seqIDs of aberrant genes, one per line.
 
 # Dependencies:
-# 1. MUSCLE aligner (--muscle).
+# 1. MUSCLE aligner executable (--muscle).
 
 # Parameters:
-# 1. Threshold value for length of an indel (--indel-len-threshold).
-#    If indel has length higher than this value, gene having this indel
+# 1. Threshold value for length of an deletion (--deletion-len-threshold).
+#    If deletion has length higher than this value, gene having this deletion
 #    is regarded as an aberrant gene.
 
 
@@ -72,7 +71,7 @@ parser.add_argument(
 parser.add_argument(
     '-t',
     '--cmscan-tblout',
-    help='TSV file (with header) containing per-replicon SSU gene statistics',
+    help='TSV file (.tblout) outputed by the script `compare_all_seqs_to_cm.py`',
     required=True
 )
 
@@ -92,20 +91,13 @@ parser.add_argument(
     help='output directory',
     required=True
 )
-# parser.add_argument(
-#     '-p',
-#     '--pivotal-genes-file',
-#     help="""TSV file (with header) info about pivotal genes
-#     (it is output file of script `find_pivotal_gens.py`)""",
-#     required=True
-# )
 
 
 # Dependencies
 
 parser.add_argument(
     '--muscle',
-    help='muscle executable',
+    help='MUSCLE aligner executable',
     required=True
 )
 
@@ -113,9 +105,9 @@ parser.add_argument(
 # Heuristic's params
 
 parser.add_argument(
-    '--indel-len-threshold',
-    help="""Threshold value for length of an indel.
-    If indel has length higher than this value, gene having this indel
+    '--deletion-len-threshold',
+    help="""Threshold value for length of an deletion.
+    If deletion has length higher than this value, gene having this deletion
     is regarded as an aberrant gene.""",
     required=True
 )
@@ -145,15 +137,15 @@ else:
 # end try
 
 
-# Check (and assign) value of `--indel-len-threshold`
+# Check (and assign) value of `--deletion-len-threshold`
 try:
-    indel_len_threshold = int(args.indel_len_threshold)
-    if indel_len_threshold < 0:
+    deletion_len_threshold = int(args.deletion_len_threshold)
+    if deletion_len_threshold < 0:
         raise ValueError
     # end if
 except ValueError:
-    print('Error: you entered and invalid `--indel-len-threshold` value.')
-    print(f'Your value: `{args.indel_len_threshold}`')
+    print('Error: you entered and invalid `--deletion-len-threshold` value.')
+    print(f'Your value: `{args.deletion_len_threshold}`')
     print('It must be integer number >= 0')
     sys.exit(1)
 # end try
@@ -298,11 +290,11 @@ def count_gaps(seq_record: SeqRecord) -> int:
 def find_insertions_and_deletions(
     pivotal_aln_record: SeqRecord,
     aln_record: SeqRecord,
-    indel_len_threshold: int) -> Tuple[Tuple[int, int, str], Tuple[int, int]]:
+    deletion_len_threshold: int) -> Tuple[Tuple[int, int, str], Tuple[int, int]]:
     # Function find long insertions and deletions
 
-    # `indel_len_threshold` minuses in a row
-    indel_pattern = r'[-]{%d,}' % int(indel_len_threshold+1)
+    # `deletion_len_threshold` minuses in a row
+    indel_pattern = r'[-]{%d,}' % int(deletion_len_threshold+1)
 
     # = Find insertions =
 
@@ -508,7 +500,7 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
                 insertions, deletions = find_insertions_and_deletions(
                     pivotal_aln_record,
                     aln_record,
-                    indel_len_threshold
+                    deletion_len_threshold
                 )
 
                 # Record insertions
@@ -570,115 +562,6 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
         for seqID in non_aberrant_seqIDs:
             non_aberrant_seqIDs_outfile.write(f'{seqID}\n')
         # end for
-
-
-
-        # if pivotal_gene_num != 0:
-        #     # If there are at least one pivotal gene, we need to check if some genes are aberrant
-
-        #     # Get all seqIDs of genes from current genome
-        #     seqIDs = set(selected_seq_records.keys())
-
-        #     # Get seqIDs of pivotal genes
-        #     pivotal_seqIDs = tuple(curr_ass_df['pivotal_gene_seqID'])
-
-        #     # Here sets of seqIDs of aberrant genes will be stored, in comparison to
-        #     #   each pivotal gene
-        #     aberrant_seqIDs_setlist = list()
-
-        #     # Iterate over ivotal genes
-        #     for pivotal_seqID in pivotal_seqIDs:
-
-        #         pivotal_seq_record = selected_seq_records[pivotal_seqID]
-
-        #         # Here seqIDs of aberrant genes will be stored, but only in comparison to
-        #         #   current pivotal gene
-        #         curr_aberrant_seqIDs = set()
-
-        #         # Save conserved regions present in current pivotal gene
-        #         conserv_IDs_in_pivotal_gene = find_conserved_regions(
-        #             pivotal_seq_record,
-        #             conserved_seq_records
-        #         )
-
-        #         # Iterate over all genes i nthe genome, except for current pivotal gene
-        #         for seqID in seqIDs - {pivotal_seqID}:
-
-        #             seq_record = selected_seq_records[seqID]
-
-        #             # Perform pairwise alignment of current gene and current pivotal gene
-        #             pivotal_aln_record, aln_record = pairwise_align(pivotal_seq_record, seq_record, muscle_fpath)
-
-        #             # Save some statistics of performaed alignment
-        #             pident = pairwise_percent_identity(pivotal_aln_record, aln_record)
-        #             n_insert_bases = count_gaps(pivotal_aln_record)
-        #             n_delet_bases = count_gaps(aln_record)
-        #             seqID_is_also_pivotal = seqID in pivotal_seqIDs
-
-        #             # Write these statistics of pairwise alignment
-        #             pident_outfile.write(f'{ass_id}\t{pivotal_seqID}\t{seqID}\t{pident}\t')
-        #             pident_outfile.write(f'{n_insert_bases}\t{n_delet_bases}\t{1 if seqID_is_also_pivotal else 0}\n')
-
-        #             # Find long insertions and deletions
-        #             insertions, deletions = find_insertions_and_deletions(
-        #                 pivotal_aln_record,
-        #                 aln_record,
-        #                 indel_len_threshold
-        #             )
-
-        #             # Record insertions
-        #             for insertion in insertions:
-        #                 insertions_outfile.write(f'{ass_id}\t{pivotal_seqID}\t{seqID}\t')
-        #                 insertions_outfile.write(f'{len(pivotal_seq_record.seq)}\t{len(seq_record.seq)}\t')
-        #                 insertions_outfile.write(f'{insertion[0]}\t{insertion[1]}\t{insertion[2]}\n')
-        #             # end for
-
-        #             # Record deletions
-        #             for deletion in deletions:
-        #                 deletions_outfile.write(f'{ass_id}\t{pivotal_seqID}\t{seqID}\t')
-        #                 deletions_outfile.write(f'{len(pivotal_seq_record.seq)}\t{len(seq_record.seq)}\t')
-        #                 deletions_outfile.write(f'{deletion[0]}\t{deletion[1]}\n')
-        #             # end for
-
-        #             # Save conserved regions present in current gene
-        #             conserv_IDs_in_curr_gene = find_conserved_regions(
-        #                 seq_record,
-        #                 conserved_seq_records
-        #             )
-
-        #             # If this flag is True, some conserved regions are missing, in comparison to
-        #             #   current pivotal gene
-        #             missing_conserved_regions = len(conserv_IDs_in_curr_gene) < len(conserv_IDs_in_pivotal_gene)
-
-        #             # If there are long indels or some conserved regions are missing, current gene
-        #             #   is aberrant in comparison to current pivotal gene
-        #             # if len(insertions) != 0 or len(deletions) != 0 or missing_conserved_regions:
-        #             if len(deletions) != 0 or missing_conserved_regions:
-        #                 curr_aberrant_seqIDs.add(seqID)
-        #             # end if
-        #         # end for
-
-        #         # Add set of current aberrant genes to our list
-        #         aberrant_seqIDs_setlist.append(curr_aberrant_seqIDs)
-        #     # end for
-
-        #     # Aberrant genes will be those genes, which are aberrant in comparison to
-        #     #   all pivotal genes
-        #     aberrant_seqIDs = reduce(operator.and_, aberrant_seqIDs_setlist)
-
-        #     # Record seqIDs of aberrant genes
-        #     for seqID in aberrant_seqIDs:
-        #         aberrant_seqIDs_outfile.write(f'{seqID}\n')
-        #     # end for
-        # else:
-        #     if tuple(curr_ass_df['all_truncated'])[0] == 1:
-        #         # If all genes are truncated, they all are aberrant
-        #         aberrant_seqIDs = set(selected_seq_records.keys())
-        #         for seqID in aberrant_seqIDs:
-        #             aberrant_seqIDs_outfile.write(f'{seqID}\n')
-        #         # end for
-        #     # end if
-        # # end if
     # end for
 # end with
 

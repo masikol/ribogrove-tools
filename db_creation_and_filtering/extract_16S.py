@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-# Script extracts sequences of 16S genes from downloaded genomes in GenBank format.
+# The script extracts sequences of 16S genes from downloaded genomes in GenBank format.
 
 # Input files:
-# 1. `-i/--assm-acc-file` is output of script merge_assID2acc_and_remove_WGS.py.
-# 2. RefSeq records downloaded by script download_genomes.py (in directory -g/--gbk-dir)
+# 1. `-i/--assm-acc-file` is output of the script merge_assID2acc_and_remove_WGS.py.
+# 2. `-g/--gbk-dir` -- RefSeq records downloaded by the script download_genomes.py
 
 # Output files:
 # 1. `-o/--out-fasta`: fasta file containing sequences of collected genes
@@ -12,7 +12,7 @@
 
 # Dependencies:
 # 1. cmsearch executable (--cmsearch)
-# 2. .cm file containing covariance model of target gene family (--rfam-family-cm)
+# 2. .cm file containing covariance model of target gene family (-r/--rfam-family-cm)
 #   (RF00177 for bacterial ribosomal SSU, RF01959 for archaeal ribosomal SSU)
 # 3. seqkit executable (--seqkit)
 
@@ -75,6 +75,7 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    '-r',
     '--rfam-family-cm',
     help=""".cm file containing covariance model of target gene family
   (RF00177 for bacterial ribosomal SSU, RF01959 for archaeal ribosomal SSU)""",
@@ -136,13 +137,21 @@ for fpath in (cmsearch_fpath, seqkit_fpath):
         print(f'Error: file `{fpath}` is not executable!')
         sys.exit(1)
     # end if
-# end for 
+# end for
 
 # Check existance of file rfam_family_fpath --rfam-family-cm
 if not os.path.exists(rfam_family_fpath):
     print(f'Error: file `{rfam_family_fpath}` does not exist!')
     sys.exit(1)
 # end if
+
+
+print(assm_acc_fpath)
+print(gbk_dpath)
+print(cmsearch_fpath)
+print(rfam_family_fpath)
+print(seqkit_fpath)
+print()
 
 
 # Header of cmsearch's .tblout output files
@@ -207,7 +216,7 @@ def is_annotated_with_pgap(gbrecord: SeqRecord):
     # Find structured comment
     try:
         struct_comment = gbrecord.annotations['structured_comment']
-    except KeyError as err:
+    except KeyError:
         return False
     # end try
 
@@ -285,12 +294,12 @@ def extract_gene_as_is(feature: SeqFeature, gbrecord: SeqRecord):
 
 
 def run_cmsearch(fasta_fpath: str):
-    # Function runs cmsearch searching for 16S rRNA genes in sequence 
+    # Function runs cmsearch searching for 16S rRNA genes in sequence
     #   stored in file `fasta_fpath`
     # Returns path to result .tblout file
 
-    tblout_fpath = 'tmpXXX_tblout.tsv'
-    out_fpath = 'tmpXXX_cmsearch_out.txt'
+    tblout_fpath = '/tmp/tmpXXX_tblout.tsv'
+    out_fpath = '/tmp/tmpXXX_cmsearch_out.txt'
     cmd = f'{cmsearch_fpath} --noali -o {out_fpath} --tblout {tblout_fpath} --cpu 6 {rfam_family_fpath} {fasta_fpath}'
     # cmd = f'{cmsearch_fpath} -o {out_fpath} --tblout {tblout_fpath} --cpu 6 {rfam_family_fpath} {fasta_fpath}'
 
@@ -469,7 +478,7 @@ def extract_reannotated_genes(gbrecord: SeqRecord, topology: str):
     genes = list()
 
     # Iterate over rows of tblout_df and extract sequences of annotated genes
-    for i, row in tblout_df.iterrows():
+    for _, row in tblout_df.iterrows():
         seq_start = row['seq_from']
         seq_end = row['seq_to']
         seq_strand = row['strand']
@@ -491,8 +500,8 @@ def extract_reannotated_genes(gbrecord: SeqRecord, topology: str):
         seq_header = '{}:{}-{}_{} {}'\
             .format(
                 gbrecord.id,
-                seq_start,
-                seq_end,
+                seq_start_for_header,
+                seq_end_for_header,
                 strand_str,
                 gbrecord.description
             )
@@ -548,12 +557,12 @@ acc_df = pd.read_csv(
 )
 
 
-accs_select = {
-    'NZ_CP013210.1',
-    'NZ_CP008696.1',
-    # 'NZ_CP050525.1',
-}
-acc_df = acc_df.query('acc in @accs_select')
+# accs_select = {
+#     'NZ_CP013210.1',
+#     'NZ_CP008696.1',
+#     # 'NZ_CP050525.1',
+# }
+# acc_df = acc_df.query('acc in @accs_select')
 
 n_accs = acc_df.shape[0] # number of ACCESSION.VESRION's to process
 

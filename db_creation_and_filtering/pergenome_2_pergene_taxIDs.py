@@ -15,12 +15,11 @@
 import os
 import sys
 import argparse
-from typing import Sequence, Dict
+from typing import Sequence
 
 
 import pandas as pd
 from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
 
 
 # == Parse arguments ==
@@ -40,7 +39,7 @@ parser.add_argument(
 parser.add_argument(
     '-f',
     '--all-fasta-file',
-    help='fasta file of SSU gene sequences',
+    help='input fasta file of SSU gene sequences',
     required=True
 )
 
