@@ -111,15 +111,15 @@ output_genes_stats_fpath = os.path.abspath(args.out_stats_file)
 
 
 # Check exceptions fpath
-exception_seqIDs_fpath = None
 try:
     exception_seqIDs_fpath = os.path.abspath(args.exception_seqIDs)
     if not os.path.exists(exception_seqIDs_fpath):
-        print(f'Error: file `{exception_seqIDs_fpath}` does not exist!')
-        sys.exit(1)
+        print(f'File `{exception_seqIDs_fpath}` does not exist!')
+        print('Assuming that there are not exception seqIDs')
+        raise FileNotFoundError
     # end if
-except TypeError:
-    pass
+except (TypeError, FileNotFoundError):
+    exception_seqIDs_fpath = None
 # end if
 
 
@@ -158,7 +158,7 @@ for some_dir in map(os.path.dirname, [output_genes_fpath, seqs_with_repeats_fpat
 
 
 # Read the exceptions file
-if exception_seqIDs_fpath is None:
+if exception_seqIDs_fpath is None or not os.path.exists:
     exception_seqIDs = set()
 else:
     exception_seqIDs = set(

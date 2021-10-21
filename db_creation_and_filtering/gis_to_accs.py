@@ -43,7 +43,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 # For convenience
-gi_fpath = os.path.realpath(args.gi_ffile)
+gi_fpath = os.path.realpath(args.gi_file)
 outfpath = os.path.realpath(args.outfile)
 
 
@@ -129,6 +129,8 @@ with open(outfpath, 'wt') as outfile:
         print('\r{}/{}'.format(n_done_ids, gi_df.shape[0]), end=' ')
     # end for
 # end with
+
+print('\r{}/{}   '.format(min(n_done_ids, gi_df.shape[0]), gi_df.shape[0]))
 
 print('\nCompleted!')
 print(outfpath)

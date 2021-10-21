@@ -99,7 +99,7 @@ args = parser.parse_args()
 fasta_seqs_fpath = os.path.abspath(args.all_fasta_file)
 in_stats_fpath = os.path.abspath(args.all_stats_file)
 gbk_dpath = os.path.abspath(args.gbk_dir)
-outfpath = os.path.abspath(args.per_gene_outfile)
+outfpath = os.path.abspath(args.outfile)
 seqtech_logfpath = os.path.abspath(args.seqtech_logfile)
 seqkit_fpath = os.path.abspath(args.seqkit)
 

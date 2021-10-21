@@ -3,7 +3,7 @@ set -e
 
 # Load configuration file
 CONF_FILE="$1"
-if [[ -f "${CONF_FILE}" ]]; then
+if [[ ! -f "${CONF_FILE}" ]]; then
   echo -e "\nError: file ${CONF_FILE} does not exist!"
   exit 1
 fi
@@ -88,97 +88,97 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 
 # == Translate Assembly UIDs to RefSeq GI numbers ==
 
-# python3 assembly2refseq_id.py \
-#   --assm-id-file "${ASSEMBLY_IDS_FPATH}" \
-#   --outfile "${ASS_ID_TO_GI_FPATH}"
+python3 assembly2refseq_id.py \
+  --assm-id-file "${ASSEMBLY_IDS_FPATH}" \
+  --outfile "${ASS_ID_TO_GI_FPATH}"
 
 
 # == Translate RefSeq GI numbers to corresponding ACCESSION.VERSION's and titles ==
 
-# python3 gis_to_accs.py \
-#   --gi-file "${ASS_ID_TO_GI_FPATH}" \
-#   --outfile "${GI_ACC_TITLES_FPATH}"
+python3 gis_to_accs.py \
+  --gi-file "${ASS_ID_TO_GI_FPATH}" \
+  --outfile "${GI_ACC_TITLES_FPATH}"
 
 
 # == Merge Assembly IDs to ACCESSION.VERSION's and titles ==
 # Moreover, this will remove "whole genome shotgun" sequences
 
-# python3 merge_assID2acc_and_remove_WGS.py \
-#   --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
-#   --gi-2-acc-file "${GI_ACC_TITLES_FPATH}" \
-#   --outfile "${ASS_ACC_MERGED_FPATH}"
+python3 merge_assID2acc_and_remove_WGS.py \
+  --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
+  --gi-2-acc-file "${GI_ACC_TITLES_FPATH}" \
+  --outfile "${ASS_ACC_MERGED_FPATH}"
 
 
 # == Download genomes ==
 
-# python3 download_genomes.py \
-#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-#   --outdir "${GENOMES_GBK_DIR}" \
-#   --log-file "${LOGS_DIR}/archaea_genome_download_log.log"
+python3 download_genomes.py \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --outdir "${GENOMES_GBK_DIR}" \
+  --log-file "${LOGS_DIR}/archaea_genome_download_log.log"
 
 
 # == Extract Rfam covariance model for 16S rRNA genes exttaction ==
 
-# "${CMFETCH}" "${RFAM_FOR_EXTRACT_16S}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_EXTRACT_16S}"
-# if [[ $? != 0 ]]; then
-#   echo 'Error!'
-#   echo "Cannot extract model for family ${RFAM_FAMILY_ID} from file ${RFAM_FOR_EXTRACT_16S}"
-#   exit 1
-# fi
+"${CMFETCH}" "${RFAM_FOR_EXTRACT_16S}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_EXTRACT_16S}"
+if [[ $? != 0 ]]; then
+  echo 'Error!'
+  echo "Cannot extract model for family ${RFAM_FAMILY_ID} from file ${RFAM_FOR_EXTRACT_16S}"
+  exit 1
+fi
 
 
 # == Extract 16S genes from downloaded genomes ==
 
-# python3 extract_16S.py \
-#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-#   --gbk-dir "${GENOMES_GBK_DIR}" \
-#   --out-fasta "${ALL_GENES_FASTA}" \
-#   --out-stats "${ALL_GENES_STATS}" \
-#   --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
-#   --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
-#   --seqkit "${SEQKIT}"
+python3 extract_16S.py \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --gbk-dir "${GENOMES_GBK_DIR}" \
+  --out-fasta "${ALL_GENES_FASTA}" \
+  --out-stats "${ALL_GENES_STATS}" \
+  --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
+  --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
+  --seqkit "${SEQKIT}"
 
 
 # == Assign categories to downloaded genomes ==
 
-# python3 assign_genome_categories/assign_genome_categories.py \
-#   --all-fasta-file "${ALL_GENES_FASTA}" \
-#   --all-stats-file "${ALL_GENES_STATS}" \
-#   --gbk-dir "${GENOMES_GBK_DIR}" \
-#   --outfile "${CATEGORIES_FPATH}" \
-#   --seqtech-logfile "${SEQTECH_LOGFILE}" \
-#   --seqkit "${SEQKIT}"
+python3 assign_genome_categories/assign_genome_categories.py \
+  --all-fasta-file "${ALL_GENES_FASTA}" \
+  --all-stats-file "${ALL_GENES_STATS}" \
+  --gbk-dir "${GENOMES_GBK_DIR}" \
+  --outfile "${CATEGORIES_FPATH}" \
+  --seqtech-logfile "${SEQTECH_LOGFILE}" \
+  --seqkit "${SEQKIT}"
 
 
 # == Drop genes from genomes containing at least 3 N's in a row ==
 
-# python3 drop_NNN.py \
-#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-#   --all-fasta-file "${ALL_GENES_FASTA}" \
-#   --categories-file "${CATEGORIES_FPATH}" \
-#   --out-fasta-file "${NO_NNN_FASTA_FPATH}" \
-#   --out-stats-file "${NO_NNN_STATS_FPATH}" \
-#   --NNN-outfile "${NNN_FASTA_FPATH}"
+python3 drop_NNN.py \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --all-fasta-file "${ALL_GENES_FASTA}" \
+  --categories-file "${CATEGORIES_FPATH}" \
+  --out-fasta-file "${NO_NNN_FASTA_FPATH}" \
+  --out-stats-file "${NO_NNN_STATS_FPATH}" \
+  --NNN-outfile "${NNN_FASTA_FPATH}"
 
 
 # == Extract Rfam covariance model for 16S rRNA genes exttaction ==
 
-# "${CMFETCH}" "${RFAM_FOR_FILTERING}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_FILTERING}"
-# if [[ $? != 0 ]]; then
-#   echo 'Error!'
-#   echo "Cannot extract model for family ${RFAM_FAMILY_ID} from file ${RFAM_FOR_FILTERING}"
-#   exit 1
-# fi
+"${CMFETCH}" "${RFAM_FOR_FILTERING}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_FILTERING}"
+if [[ $? != 0 ]]; then
+  echo 'Error!'
+  echo "Cannot extract model for family ${RFAM_FAMILY_ID} from file ${RFAM_FOR_FILTERING}"
+  exit 1
+fi
 
 
 # == Compare all remainig genes to Rfam covariance model (cm) ==
 
-# python3 compare_all_seqs_to_cm.py \
-#   --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
-#   --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
-#   --cmscan "${CMSCAN_FOR_FILTERING}" \
-#   --cmpress "${CMPRESS_FOR_FILTERING}" \
-#   --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}"
+python3 compare_all_seqs_to_cm.py \
+  --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
+  --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
+  --cmscan "${CMSCAN_FOR_FILTERING}" \
+  --cmpress "${CMPRESS_FOR_FILTERING}" \
+  --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}"
 
 
 # == Find aberrant genes and record long indels ==
@@ -190,7 +190,7 @@ if [[ "${CHECK_CONSERV_REGIONS}" == 1 ]]; then
     --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
     --muscle "${MUSCLE}" \
-    --indel-len-threshold 10
+    --deletion-len-threshold 10
 else
   python3 find_aberrant_genes.py \
     --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
@@ -198,7 +198,7 @@ else
     --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
     --muscle "${MUSCLE}" \
-    --indel-len-threshold 10
+    --deletion-len-threshold 10
 fi
 
 
@@ -239,32 +239,31 @@ python3 drop_repeats.py \
 
 # == Get taxIDs for our genomes ==
 
-# python3 get_taxIDs.py \
-#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-#   --all-fasta-file "${ALL_GENES_FASTA}" \
-#   --per-genome-outfile "${PER_GENOME_TAXID_FPATH}" \
-#   --seqkit "${SEQKIT}"
+python3 get_taxIDs.py \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --all-fasta-file "${ALL_GENES_FASTA}" \
+  --per-genome-outfile "${PER_GENOME_TAXID_FPATH}" \
+  --seqkit "${SEQKIT}"
 
 
 # == Map seqIDs to taxIDs ==
 
-# python3 pergenome_2_pergene_taxIDs.py \
-#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-#   --all-fasta-file "${ALL_GENES_FASTA}" \
-#   --per-genome-taxID-file "${PER_GENOME_TAXID_FPATH}" \
-#   --per-gene-outfile "${PER_GENE_TAXID_FPATH}" \
+python3 pergenome_2_pergene_taxIDs.py \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --all-fasta-file "${ALL_GENES_FASTA}" \
+  --per-genome-taxID-file "${PER_GENOME_TAXID_FPATH}" \
+  --per-gene-outfile "${PER_GENE_TAXID_FPATH}" \
 
 
 # == Map our Aseembly IDs (and seqIDs) to full taxonomy using our taxIDs ==
 
-# python3 add_taxonomy_names.py \
-#   --per-genome-taxid-file "${PER_GENOME_TAXID_FPATH}" \
-#   --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
-#   --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
-#   --per-genome-outfile "${PER_GENOME_TAXONOMY_FPATH}" \
-#   --per-gene-outfile "${PER_GENE_TAXONOMY_FPATH}" \
-#   --seqkit "${SEQKIT}"
-#   --out-stats "${PURE_GENES_STATS}"
+python3 add_taxonomy_names.py \
+  --per-genome-taxid-file "${PER_GENOME_TAXID_FPATH}" \
+  --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
+  --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
+  --per-genome-outfile "${PER_GENOME_TAXONOMY_FPATH}" \
+  --per-gene-outfile "${PER_GENE_TAXONOMY_FPATH}" \
+  --seqkit "${SEQKIT}"
 
 # ========================
 
