@@ -73,7 +73,7 @@ And one variable influences the **behaviour** of the pipeline:
 
 1. `CHECK_CONSERV_REGIONS` -- (accepted values: `0`, `1`). `1` -- check the 16S rDNA conserved regions while finding aberrant genes. `0` -- do not check the conserved regions; detect aberrant genes only by deletions instead.
 
-### Dependencies for the pipeline
+## Dependencies for the pipeline
 
 Python packages:
 
@@ -83,11 +83,11 @@ Python packages:
 
 3. Biopython. Installation: `pip3 install biopython`. Tested on version 1.78.
 
-4. repeatfinder ([repo](https://github.com/deprekate/RepeatFinder)). Installation: `pip install repeatfinder`. Tested on version 1.5.
+4. repeatfinder ([repo](https://github.com/deprekate/RepeatFinder)). Installation: `pip3 install repeatfinder`. Tested on version 1.5.
 
 Standalone programs:
 
-1. Seqkit: [https://github.com/shenwei356/seqkit](https://github.com/shenwei356/seqkit). Tested on veersion 0.16.1.
+1. Seqkit: [https://github.com/shenwei356/seqkit](https://github.com/shenwei356/seqkit). Tested on version 0.16.1.
 
 2. MUSCLE: [https://www.drive5.com/muscle/](https://www.drive5.com/muscle/). Tested on version 3.8.31.
 

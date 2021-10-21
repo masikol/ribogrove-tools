@@ -6,6 +6,12 @@
 #   and translates them to "accession.version"s and titles.
 # Output (file `-o/--outfile`) is a TSV file of 3 columns (refseq_id, acc, title).
 
+# Input files:
+# 1. -i/--gi-file -- input TSV file mapping Assembly IDs to RefSeq GI numbers
+
+# Output files:
+# 1. -o/--outfile -- output TSV file
+
 
 import os
 import sys
