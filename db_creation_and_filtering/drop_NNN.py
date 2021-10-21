@@ -4,7 +4,7 @@
 
 # Input files:
 # 1. `-i/--assm-acc-file` is output of script merge_assID2acc_and_remove_WGS.py.
-#   It has 4 columns: ass_id, refseq_id, acc, title. `refseq_id` is GI number.
+#   It has 4 columns: ass_id, gi_number, acc, title.
 # 2. Fasta file with all extracted genes sequences (-f/--all-fasta-file).
 # 3. `-c/--categories-file` -- TSV file with genome categories.
 

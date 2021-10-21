@@ -6,7 +6,7 @@
 # Input files:
 # 1. -f/--input-fasta-file -- input fasta file.
 # 2. -i/--assm-acc-file is output of the script merge_assID2acc_and_remove_WGS.py.
-#   It has 4 columns: ass_id, refseq_id, acc, title. `refseq_id` is GI number.
+#   It has 4 columns: ass_id, gi_number, acc, title.
 # 3. -r/--repeats-file -- TSV file, which is the output of the script `find_repeats.py`
 # 4. -e/--exception-seqIDs -- file of seqIDs (one per line), which should NOT be discarder,
 #   despite they do contain intragenis repeat(s).

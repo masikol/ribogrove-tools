@@ -21,7 +21,7 @@ def _get_len(record: SeqRecord):
 def gene_seqs_2_stats(seqs_fasta_fpath: str, ass_acc_fpath: str, stats_outfpath: str) -> None:
     # Function creates per-replicon statistics from given fasta file containing gene sequences.
     # :param seqs_fasta_fpath: path to input fasta file;
-    # :param ass_acc_fpath: path to file containing columns (ass_id, refseq_id, acc, title);
+    # :param ass_acc_fpath: path to file containing columns (ass_id, gi_number, acc, title);
     #   (it is output of script merge_assID2acc_and_remove_WGS.py)
     # :param stats_outfpath: path to output per-replicon statistics file;
 
@@ -51,7 +51,7 @@ def gene_seqs_2_stats(seqs_fasta_fpath: str, ass_acc_fpath: str, stats_outfpath:
     with open(stats_outfpath, 'wt') as stats_outfile:
 
         # Write header
-        stats_outfile.write('ass_id\trefseq_id\tacc\ttitle\tnum_genes\tmin_len\tmax_len\tmean_len\tmedian_len\n')
+        stats_outfile.write('ass_id\tgi_number\tacc\ttitle\tnum_genes\tmin_len\tmax_len\tmean_len\tmedian_len\n')
 
         status_bar_step = 500
         next_update = 500
@@ -60,7 +60,7 @@ def gene_seqs_2_stats(seqs_fasta_fpath: str, ass_acc_fpath: str, stats_outfpath:
         for i, row in ass_acc_df.iterrows():
 
             ass_id = row['ass_id']
-            refseq_id = row['refseq_id']
+            gi_number = row['gi_number']
             acc = row['acc']
             title = row['title']
 
@@ -93,7 +93,7 @@ def gene_seqs_2_stats(seqs_fasta_fpath: str, ass_acc_fpath: str, stats_outfpath:
             # end if
 
             # Write result line to output file
-            stats_outfile.write(f'{ass_id}\t{refseq_id}\t{acc}\t{title}\t{num_genes}\t')
+            stats_outfile.write(f'{ass_id}\t{gi_number}\t{acc}\t{title}\t{num_genes}\t')
             stats_outfile.write(f'{min_len}\t{max_len}\t{mean_len}\t{median_len}\n')
 
             if i + 1 > next_update:

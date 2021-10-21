@@ -162,7 +162,7 @@ tblout_header = 'target_name\taccession\tquery_name\taccession\tmdl\tmdl_from\tm
 
 # Header of statistics file
 stats_header = [
-    'ass_id', 'refseq_id', 'acc', 'title',
+    'ass_id', 'gi_number', 'acc', 'title',
     'seq_start_truncation', 'improper_16S_annotation', 'topology',
     'num_genes', 'min_len', 'max_len', 'mean_len', 'median_len',
 ]
@@ -582,7 +582,7 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, open(outstats_fpath, 'wt') as 
     for i, row in acc_df.iterrows():
 
         ass_id = row['ass_id']
-        refseq_id = row['refseq_id']
+        gi_number = row['gi_number']
         acc = row['acc']
         title = row['title']
 
@@ -630,7 +630,7 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, open(outstats_fpath, 'wt') as 
         # end if
 
         # Write statistics to stats file
-        stats_outfile.write(f'{ass_id}\t{refseq_id}\t{acc}\t{title}\t')
+        stats_outfile.write(f'{ass_id}\t{gi_number}\t{acc}\t{title}\t')
         stats_outfile.write(f'{1 if seq_start_truncation else 0}\t{1 if improper_16S_annotation else 0}\t{topology}\t')
 
         num_genes, min_len, max_len, mean_len, median_len = calc_gene_stats(extracted_genes)

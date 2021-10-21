@@ -88,7 +88,7 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 
 # == Translate Assembly UIDs to RefSeq GI numbers ==
 
-python3 "${SCRIPT_DIR}/assembly2refseq_id.py" \
+python3 "${SCRIPT_DIR}/assembly2gi_numbers.py" \
   --assm-id-file "${ASSEMBLY_IDS_FPATH}" \
   --outfile "${ASS_ID_TO_GI_FPATH}"
 

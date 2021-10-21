@@ -3,7 +3,7 @@
 
 # The script takes IDs (IDs of database NCBI Assembly) from file `-i/--assm-id-file` (one per line)
 #   and translates them to RefSeq GI numbers using elink utility (https://www.ncbi.nlm.nih.gov/books/NBK25497/).
-# The script writes result to TSV file `-o/--outfile` of 2 columns (ass_ID, refseq_id)
+# The script writes result to TSV file `-o/--outfile` of 2 columns (ass_ID, gi_number)
 
 # Input files:
 # 1. -i/--assm-id-file -- input file of Assembly IDs (one per line).
@@ -79,7 +79,7 @@ ass_ids = tuple(
 with open(outfpath, 'wt') as outfile:
 
     # Write header
-    outfile.write('ass_id\trefseq_id\n')
+    outfile.write('ass_id\tgi_number\n')
 
     # Iterate over assembly IDs
     for i, ass_id in enumerate(ass_ids):
@@ -119,13 +119,13 @@ with open(outfpath, 'wt') as outfile:
 
         # Extract RefSeq GI number
         try:
-            refseq_ids = [link['Id'] for link in record[0]['LinkSetDb'][0]['Link']]
+            gi_numbers = [link['Id'] for link in record[0]['LinkSetDb'][0]['Link']]
         except IndexError:
             pass
         else:
             # Write output
-            for refseq_id in refseq_ids:
-                outfile.write(f'{ass_id}\t{refseq_id}\n')
+            for gi_number in gi_numbers:
+                outfile.write(f'{ass_id}\t{gi_number}\n')
             # end for
         # end try
 

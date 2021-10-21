@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
-# The script merges TSV file, which is output of the script assembly2refseq_id.py (-s/--assm-2-gi-file)
-#   and TSV file, which is output of the script gis_to_accs.py (-c/--gi-2-acc-file) on column `refseq_id`.
-# Output (file -o/--outfile) is a TSV file of 4 columns (ass_id, refseq_id, acc, title).
+# The script merges TSV file, which is output of the script assembly2gi_numbers.py (-s/--assm-2-gi-file)
+#   and TSV file, which is output of the script gis_to_accs.py (-c/--gi-2-acc-file) on column `gi_number`.
+# Output (file -o/--outfile) is a TSV file of 4 columns (ass_id, gi_number, acc, title).
 
 # Input files
 # 1. -s/--assm-2-gi-file -- input TSV file mapping Assembly IDs to RefSeq GI numbers.
@@ -123,7 +123,7 @@ print(f'number of rows after rm WGS = {gi_2_acc_df.shape[0]}')
 
 # == Merge Assembly IDs with RefSeq ACCESSION.VERSION ==
 
-merged_df = ass_2_gi_df.merge(gi_2_acc_df, on='refseq_id', how='right')
+merged_df = ass_2_gi_df.merge(gi_2_acc_df, on='gi_number', how='right')
 
 print('MERGED: DATAFRAME')
 print(merged_df.shape)
@@ -137,7 +137,7 @@ merged_df.to_csv(
     header=True,
     na_rep='NA',
     encoding='utf-8',
-    columns=['ass_id', 'refseq_id', 'acc', 'title',]
+    columns=['ass_id', 'gi_number', 'acc', 'title',]
 )
 
 print('\nCompleted!')

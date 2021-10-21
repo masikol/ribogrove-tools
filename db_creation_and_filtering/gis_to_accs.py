@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 
-# The script takes output of script assembly2refseq_id.py (RefSeq GI numbers) as input
+# The script takes output of script assembly2gi_numbers.py (RefSeq GI numbers) as input
 #   (file `-i/--gi-file`)
 #   and translates them to "accession.version"s and titles.
-# Output (file `-o/--outfile`) is a TSV file of 3 columns (refseq_id, acc, title).
+# Output (file `-o/--outfile`) is a TSV file of 3 columns (gi_number, acc, title).
 
 # Input files:
 # 1. -i/--gi-file -- input TSV file mapping Assembly IDs to RefSeq GI numbers
@@ -85,7 +85,7 @@ print('\r0/{}'.format(gi_df.shape[0]), end=' ')
 with open(outfpath, 'wt') as outfile:
 
     # Write header
-    outfile.write('refseq_id\tacc\ttitle\n')
+    outfile.write('gi_number\tacc\ttitle\n')
 
     # Iterate over chunks of RefSeq IDs and get their "accession.version"s and titles
     for i in range(0, gi_df.shape[0], chunk_size):
@@ -93,7 +93,7 @@ with open(outfpath, 'wt') as outfile:
         curr_gis = tuple(
             map(
                 str,
-                tuple(gi_df.iloc[i : i + chunk_size,]['refseq_id'])
+                tuple(gi_df.iloc[i : i + chunk_size,]['gi_number'])
             )
         )
 
