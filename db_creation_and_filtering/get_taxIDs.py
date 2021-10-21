@@ -13,6 +13,8 @@
 # Dependencies:
 # 1. --seqkit seqkit executable
 
+print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
+
 
 import os
 import sys
@@ -235,3 +237,4 @@ with open(per_genome_outfpath, 'wt') as per_genome_outfile:
 
 print('\nCompleted!')
 print(per_genome_outfpath)
+print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')

@@ -13,6 +13,8 @@
 # 2. --aberrant-fasta-file -- output fasta file of aberrant sequences
 # 3. --out-stats-file -- output TSV file of per-replicon statistivs of non-aberrant sequences
 
+print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
+
 
 import os
 import sys
@@ -177,3 +179,4 @@ print()
 print(out_stats_fpath)
 
 print('Completed!')
+print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')

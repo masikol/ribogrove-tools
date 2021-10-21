@@ -30,6 +30,8 @@
 #    If deletion has length higher than this value, gene having this deletion
 #    is regarded as an aberrant gene.
 
+print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
+
 
 import os
 import re
@@ -572,3 +574,5 @@ print(insertions_outfpath)
 print(deletions_outfpath)
 print(aberrant_seqIDs_fpath)
 print(non_aberrant_seqIDs_fpath)
+
+print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')

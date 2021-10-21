@@ -18,6 +18,9 @@
 # 1. Path to seqkit exetutable (--seqkit)
 
 
+print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
+
+
 import os
 import sys
 import argparse
@@ -272,3 +275,4 @@ per_gene_taxonomy_df.to_csv(
 print('Completed!')
 print(per_genome_outfpath)
 print(per_gene_outfpath)
+print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')

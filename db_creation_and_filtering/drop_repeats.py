@@ -20,6 +20,8 @@
 # 1. --repeat-len-threshold -- repeat length threshold. Sequences having repeats longer than
 #    this value will be discarded
 
+print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
+
 
 import os
 import sys
@@ -221,3 +223,4 @@ print()
 
 print('\nCompleted!')
 print(output_genes_stats_fpath)
+print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')

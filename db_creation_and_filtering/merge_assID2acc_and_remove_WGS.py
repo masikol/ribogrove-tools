@@ -12,6 +12,8 @@
 # Output files
 # 1. -o/--outfile -- output TSV files where Assembly IDs are mapped to ACCESSION.VERSIONs and RefSeq Titles.
 
+print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
+
 
 import os
 import sys
@@ -140,3 +142,4 @@ merged_df.to_csv(
 
 print('\nCompleted!')
 print(outfpath)
+print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')

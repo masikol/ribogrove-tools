@@ -10,8 +10,10 @@ fi
 
 source "${CONF_FILE}"
 
-# source archaea_config.conf
-# source bacteria_config.conf
+# Get directory where scripts are located
+SCRIPT_ABSPATH=`realpath $0`
+SCRIPT_DIR=`dirname "${SCRIPT_ABSPATH}"`
+
 
 # Directories for different sorts of data
 LOGS_DIR="${WORKDIR}/logs"
@@ -19,11 +21,10 @@ CATEGORIES_DIR="${WORKDIR}/categories"
 TAXONOMY_DIR="${WORKDIR}/taxonomy"
 GENES_DIR="${WORKDIR}/gene_seqs"
 ABERRATIONS_AND_HETEROGENEITY_DIR="${WORKDIR}/aberrations_and_heterogeneity"
-TBLOUT_DIR="${WORKDIR}/cmscan_tblout"
 
 for some_dir in "${WORKDIR}" "${LOGS_DIR}" "${CATEGORIES_DIR}" \
                 "${TAXONOMY_DIR}" "${GENOMES_GBK_DIR}" "${GENES_DIR}" \
-                "${ABERRATIONS_AND_HETEROGENEITY_DIR}" "${TBLOUT_DIR}";
+                "${ABERRATIONS_AND_HETEROGENEITY_DIR}";
 do
   if [[ ! -d "${some_dir}" ]]; then
     mkdir -pv "${some_dir}"
@@ -60,7 +61,6 @@ REPEATS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_repeats.tsv"
 
 PIVOTAL_GENES_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_pivotal_genes.tsv"
 CMSCAN_TBLOUT_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/cmscan_output_table.tblout"
-# CMSCAN_TBLOUT_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_cmscan_output.txt"
 
 ABERRANT_SEQIDS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/aberrant_seqIDs.txt"
 NON_ABERRANT_SEQIDS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/non_aberrant_seqIDs.txt"
@@ -69,11 +69,11 @@ ABERRANT_GENES_FASTA="${GENES_DIR}/${PREFIX}_aberrant_gene_seqs.fasta"
 NON_ABERRANT_GENES_STATS="${GENES_DIR}/${PREFIX}_non_aberrant_gene_stats.tsv"
 EXCEPTIONS_FOR_REPEAT_REMOVAL="${ABERRATIONS_AND_HETEROGENEITY_DIR}/exception_seqIDs.txt"
 
-PURE_GENES_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs.fasta"
-PURE_GENES_STATS="${GENES_DIR}/${PREFIX}_pure_gene_stats.tsv"
+FINAL_GENES_FASTA="${GENES_DIR}/${PREFIX}_final_gene_seqs.fasta"
+FINAL_GENES_STATS="${GENES_DIR}/${PREFIX}_final_gene_stats.tsv"
 SEQS_WITH_REPEATS_FASTA="${GENES_DIR}/${PREFIX}_gene_seqs_with_repeats.fasta"
 
-ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_pure_gene_seqs_annotated.fasta"
+ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_final_gene_seqs_annotated.fasta"
 
 RFAM_DIR_FOR_EXTRACT_16S=`dirname "${RFAM_FOR_EXTRACT_16S}"`
 RFAM_FAMILY_FOR_EXTRACT_16S="${RFAM_DIR_FOR_EXTRACT_16S}/${RFAM_FAMILY_ID}_for_extract_16S.cm"
@@ -88,14 +88,14 @@ RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filte
 
 # == Translate Assembly UIDs to RefSeq GI numbers ==
 
-python3 assembly2refseq_id.py \
+python3 "${SCRIPT_DIR}/assembly2refseq_id.py" \
   --assm-id-file "${ASSEMBLY_IDS_FPATH}" \
   --outfile "${ASS_ID_TO_GI_FPATH}"
 
 
 # == Translate RefSeq GI numbers to corresponding ACCESSION.VERSION's and titles ==
 
-python3 gis_to_accs.py \
+python3 "${SCRIPT_DIR}/gis_to_accs.py" \
   --gi-file "${ASS_ID_TO_GI_FPATH}" \
   --outfile "${GI_ACC_TITLES_FPATH}"
 
@@ -103,7 +103,7 @@ python3 gis_to_accs.py \
 # == Merge Assembly IDs to ACCESSION.VERSION's and titles ==
 # Moreover, this will remove "whole genome shotgun" sequences
 
-python3 merge_assID2acc_and_remove_WGS.py \
+python3 "${SCRIPT_DIR}/merge_assID2acc_and_remove_WGS.py" \
   --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
   --gi-2-acc-file "${GI_ACC_TITLES_FPATH}" \
   --outfile "${ASS_ACC_MERGED_FPATH}"
@@ -111,7 +111,7 @@ python3 merge_assID2acc_and_remove_WGS.py \
 
 # == Download genomes ==
 
-python3 download_genomes.py \
+python3 "${SCRIPT_DIR}/download_genomes.py" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --outdir "${GENOMES_GBK_DIR}" \
   --log-file "${LOGS_DIR}/archaea_genome_download_log.log"
@@ -129,7 +129,7 @@ fi
 
 # == Extract 16S genes from downloaded genomes ==
 
-python3 extract_16S.py \
+python3 "${SCRIPT_DIR}/extract_16S.py" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --gbk-dir "${GENOMES_GBK_DIR}" \
   --out-fasta "${ALL_GENES_FASTA}" \
@@ -141,7 +141,7 @@ python3 extract_16S.py \
 
 # == Assign categories to downloaded genomes ==
 
-python3 assign_genome_categories/assign_genome_categories.py \
+python3 "${SCRIPT_DIR}/assign_genome_categories/assign_genome_categories.py" \
   --all-fasta-file "${ALL_GENES_FASTA}" \
   --all-stats-file "${ALL_GENES_STATS}" \
   --gbk-dir "${GENOMES_GBK_DIR}" \
@@ -152,7 +152,7 @@ python3 assign_genome_categories/assign_genome_categories.py \
 
 # == Drop genes from genomes containing at least 3 N's in a row ==
 
-python3 drop_NNN.py \
+python3 "${SCRIPT_DIR}/drop_NNN.py" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --all-fasta-file "${ALL_GENES_FASTA}" \
   --categories-file "${CATEGORIES_FPATH}" \
@@ -173,7 +173,7 @@ fi
 
 # == Compare all remainig genes to Rfam covariance model (cm) ==
 
-python3 compare_all_seqs_to_cm.py \
+python3 "${SCRIPT_DIR}/compare_all_seqs_to_cm.py" \
   --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
   --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
   --cmscan "${CMSCAN_FOR_FILTERING}" \
@@ -183,7 +183,7 @@ python3 compare_all_seqs_to_cm.py \
 
 # == Find aberrant genes and record long indels ==
 if [[ "${CHECK_CONSERV_REGIONS}" == 1 ]]; then
-  python3 find_aberrant_genes.py \
+  python3 "${SCRIPT_DIR}/find_aberrant_genes.py" \
     --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
     --genes-stats-file "${NO_NNN_STATS_FPATH}" \
     --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
@@ -192,7 +192,7 @@ if [[ "${CHECK_CONSERV_REGIONS}" == 1 ]]; then
     --muscle "${MUSCLE}" \
     --deletion-len-threshold 10
 else
-  python3 find_aberrant_genes.py \
+  python3 "${SCRIPT_DIR}/find_aberrant_genes.py" \
     --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
     --genes-stats-file "${NO_NNN_STATS_FPATH}" \
     --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
@@ -204,7 +204,7 @@ fi
 
 # == Drop aberarant genes ==
 
-python3 drop_aberrant_genes.py \
+python3 "${SCRIPT_DIR}/drop_aberrant_genes.py" \
   --input-fasta-file "${NO_NNN_FASTA_FPATH}" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --non-aberrant-seqIDs "${NON_ABERRANT_SEQIDS_FPATH}" \
@@ -217,21 +217,21 @@ python3 drop_aberrant_genes.py \
 
 # == Find repeats in genes sequences ==
 
-python3 find_repeats.py \
+python3 "${SCRIPT_DIR}/find_repeats.py" \
   --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
   --outfile "${REPEATS_FPATH}"
 
 
 # == Drop long repeats ==
 
-python3 drop_repeats.py \
+python3 "${SCRIPT_DIR}/drop_repeats.py" \
   --input-fasta-file "${NON_ABERRANT_GENES_FASTA}" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --repeats-file "${REPEATS_FPATH}" \
   --exception-seqIDs "${EXCEPTIONS_FOR_REPEAT_REMOVAL}" \
-  --out-fasta-file "${PURE_GENES_FASTA}" \
+  --out-fasta-file "${FINAL_GENES_FASTA}" \
   --seqs-with-repeats "${SEQS_WITH_REPEATS_FASTA}" \
-  --out-stats-file "${PURE_GENES_STATS}" \
+  --out-stats-file "${FINAL_GENES_STATS}" \
   --repeat-len-threshold 25
 
 
@@ -239,7 +239,7 @@ python3 drop_repeats.py \
 
 # == Get taxIDs for our genomes ==
 
-python3 get_taxIDs.py \
+python3 "${SCRIPT_DIR}/get_taxIDs.py" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --all-fasta-file "${ALL_GENES_FASTA}" \
   --per-genome-outfile "${PER_GENOME_TAXID_FPATH}" \
@@ -248,7 +248,7 @@ python3 get_taxIDs.py \
 
 # == Map seqIDs to taxIDs ==
 
-python3 pergenome_2_pergene_taxIDs.py \
+python3 "${SCRIPT_DIR}/pergenome_2_pergene_taxIDs.py" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --all-fasta-file "${ALL_GENES_FASTA}" \
   --per-genome-taxID-file "${PER_GENOME_TAXID_FPATH}" \
@@ -257,7 +257,7 @@ python3 pergenome_2_pergene_taxIDs.py \
 
 # == Map our Aseembly IDs (and seqIDs) to full taxonomy using our taxIDs ==
 
-python3 add_taxonomy_names.py \
+python3 "${SCRIPT_DIR}/add_taxonomy_names.py" \
   --per-genome-taxid-file "${PER_GENOME_TAXID_FPATH}" \
   --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
   --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
@@ -265,12 +265,13 @@ python3 add_taxonomy_names.py \
   --per-gene-outfile "${PER_GENE_TAXONOMY_FPATH}" \
   --seqkit "${SEQKIT}"
 
-# ========================
+#  End of the taxonomy section
+# =========================
 
 
 # == Annotate sequences: add taxonomy and categories to their headers ==
-python3 annotate_seq_names.py \
-  --fasta-seqs-file "${PURE_GENES_FASTA}" \
+python3 "${SCRIPT_DIR}/annotate_seq_names.py" \
+  --fasta-seqs-file "${FINAL_GENES_FASTA}" \
   --per-gene-taxonomy-file "${PER_GENE_TAXONOMY_FPATH}" \
   --categories-file "${CATEGORIES_FPATH}" \
   --outfile "${ANNOTATED_RESULT_FASTA}"

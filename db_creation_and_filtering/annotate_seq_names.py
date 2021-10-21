@@ -10,6 +10,9 @@
 # Output files:
 # 1. Annotated fasta file (-o/--outfile)
 
+print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
+
+
 import os
 import sys
 import argparse
@@ -172,3 +175,4 @@ with open(outfpath, 'wt') as outfile:
 
 print('\nCompleted!')
 print(outfpath)
+print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')

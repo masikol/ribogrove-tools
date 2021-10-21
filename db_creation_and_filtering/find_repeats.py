@@ -15,6 +15,8 @@
 # Dependencies:
 # 1. RepeatFinder must be installed. See https://github.com/deprekate/RepeatFinder
 
+print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
+
 
 import os
 import sys
@@ -126,3 +128,4 @@ with open(outfpath, 'wt') as outfile:
 print(f'\r{i+1}/{num_seqs}')
 print('Completed!')
 print(outfpath)
+print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')

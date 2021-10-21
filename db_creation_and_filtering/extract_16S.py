@@ -17,6 +17,9 @@
 # 3. seqkit executable (--seqkit)
 
 
+print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
+
+
 import os
 import sys
 import gzip
@@ -651,3 +654,4 @@ print('Done\n')
 print('\nCompleted!')
 print(fasta_outfpath)
 print(outstats_fpath)
+print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')
