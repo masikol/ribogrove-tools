@@ -11,10 +11,11 @@
 # Output files:
 # 1. -o/--outfile -- output TSV file mapping Assembly IDs to RefSeq GI numbers.
 
-print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
-
-
 import os
+
+print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+
+
 import sys
 import time
 import argparse
@@ -136,4 +137,4 @@ with open(outfpath, 'wt') as outfile:
 
 print('\nCompleted!')
 print(outfpath)
-print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')
+print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')

@@ -13,10 +13,11 @@
 # Dependencies:
 # 1. --seqkit seqkit executable
 
-print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
-
-
 import os
+
+print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+
+
 import sys
 import time
 import argparse
@@ -237,4 +238,4 @@ with open(per_genome_outfpath, 'wt') as per_genome_outfile:
 
 print('\nCompleted!')
 print(per_genome_outfpath)
-print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')
+print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')

@@ -15,10 +15,11 @@
 # 2. --cmpress -- cmpress executable
 # 3. -r/--rfam-family-cm -- Rfam covariane model (.cm) file to compare sequences to
 
-print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
-
-
 import os
+
+print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+
+
 import re
 import sys
 import argparse
@@ -246,4 +247,4 @@ print('Done')
 print('\nCompleted!')
 print(output_file)
 print(tblout_fpath)
-print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')
+print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')

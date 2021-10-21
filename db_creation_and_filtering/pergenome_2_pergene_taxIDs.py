@@ -11,11 +11,11 @@
 # Output files:
 # 2. --per-gene-outfile -- output file mapping seqIDs to taxIDs
 
-print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
-
-
-
 import os
+
+print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+
+
 import sys
 import argparse
 from typing import Sequence
@@ -149,4 +149,4 @@ with open(per_gene_outfpath, 'wt') as per_gene_outfile:
 
 print('\nCompleted!')
 print(per_gene_outfpath)
-print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')
+print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')

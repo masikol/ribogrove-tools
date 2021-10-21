@@ -12,10 +12,11 @@
 # 2. log file -l/--log-file, which will contain information about errors.
 #    If record is successfully downloaded, the the script writes "ok" to correcponding line of log file.
 
-print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
-
-
 import os
+
+print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+
+
 import sys
 import time
 import http
@@ -184,4 +185,4 @@ print('\n\nCompleted!')
 print(f'Number of actually downloaded genomes = {downloaded}')
 print(outdir)
 print(log_fpath)
-print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')
+print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')

@@ -13,10 +13,11 @@
 # 2. `--out-stats-file` is a TSV file containing per-replicon statisticsw for output fasta file.
 # 3. Fasta file containing sequences with NNN (--NNN-outfile).
 
-print(f'\n|=== STARTING SCRIPT `{__file__}` ===|\n')
-
-
 import os
+
+print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+
+
 import sys
 import argparse
 
@@ -164,4 +165,4 @@ print()
 print(out_stats_fpath)
 
 print('Completed!')
-print(f'\n|=== EXITTING SCRIPT `{__file__}` ===|\n')
+print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
