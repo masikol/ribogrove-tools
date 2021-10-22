@@ -1,17 +1,24 @@
 #!/usr/bin/env python3
 
-# Script calculates per-base intragenomic entropy from non-aberrant genes.
+# The script calculates per-base intragenomic entropy from non-aberrant genes.
+# The script aligns gene sequences with MUSCLE, and then caculates per-base entropy basing
+#   on this multiple sequence alignment. The script calculates variability of the
+#   target genes from the genomes of category 1 harbouring more than 1 target gene.
 
-# Input files:
-# 1. Fasta file of genes sequences (-f/--fasta-seqs-file).
-# 2. TSV file if per-replicon genes statistics (-s/--genes-stats-file).
-# 3. TSV file of categories info (-c/--categories-file)
+## Command line arguments
+### Input files:
+# 1. `-f / --fasta-seqs-file` -- a fasta file of gene sequences to be processed.
+#   This is the file, which is the output of th script `drop_repeats.py`. Mandatory.
+# 2. `-s / --genes-stats-file` -- a TSV file of per-replicon genes statistics.
+#   This is the file, which is the output of th script `drop_repeats.py`. Mandatory.
+# 3. `-c / --categories-file` -- a TSV file of categories info.
+#   This is the file, which is the output of th script `assign_genome_categories.py`. Mandatory.
 
-# Output files:
-# 1. TSV file containing per-position intragenomic entropy (-o/--outfile).
+### Output files:
+# 1. `-o / --outfile` -- a TSV file containing per-position intragenomic entropy. Mandatory.
 
-# Dependencies:
-# 1. MUSCLE aligner (--muscle).
+### Dependencies:
+# 1. `--muscle` -- a [MUSCLE](https://www.drive5.com/muscle/) aligner executable.
 
 
 import os

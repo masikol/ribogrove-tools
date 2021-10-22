@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
 
-# The script merges all info about gene sequences (nucleotide composition, category, taxonomy)
-#   into a single TSV file
+# The script merges all info about the gene sequences (nucleotide composition, category, taxonomy)
+#   into a single TSV file.
 
-# Input files
-# 1. -b/--bases-file -- input TSV file with counted bases ouputed by the script count_bases.py
-# 2. -c/--categories-file -- per-gene TSV file of categories info
-# 3. -t/--taxonomy-file -- per-gene taxonomy file
+## Command line arguments
+### Input files:
+# 1. `-b / --bases-file` -- a input TSV file with counted bases ouputed
+#   by the script `count_bases.py`.
+#   This is the file, which is the output of th script `count_bases.py`. Mandatory.
+# 2. `-c / --categories-file` -- the per-gene TSV file of categories info.
+#   This is the file, which is the output of th script `assign_genome_categories.py`. Mandatory.
+# 3. `-t / --taxonomy-file` -- the per-gene taxonomy file.
+#   This is the file, which is the output of th script `add_taxonomy_names.py`. Mandatory.
 
-# Output files
-# -o/--outfile -- output TSV file
+### Output files:
+# 1. `-o / --outfile` -- an output TSV file. Mandatory.
+
 
 import os
 import sys

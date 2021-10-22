@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
 
 # The script annotates gene sequences -- adds taxonomy and category info.
-#
-# Input files:
-# 1. Input fasta file (-f/--fasta-seqs-file).
-# 2. TSV file mapping genes seqIDs to taxonomy (-t/--per-gene-taxonomy-file)
-# 3. TSV file mapping genes seqIDs to categories (-c/--categories-file)
-#
-# Output files:
-# 1. Annotated fasta file (-o/--outfile)
+
+## Command line arguments
+
+### Input files:
+# 1. `-f/--fasta-seqs-file` -- input fasta file to be annotated.
+#   This file is the output of the script `drop_repeats.py`. Mandatory.
+# 2. `-t / --per-gene-taxonomy-file` -- a TSV file mapping RybaSom seqIDs to taxonomy.
+#   This file is the output of the script `add_taxonomy_names.py`. Mandatory.
+# 3. `-c / --categories-file` -- a TSV file mapping RybaSom seqIDs to categories.
+#   This file is the output of the script `assign_genome_categories.py`. Mandatory.
+
+### Output files:
+# 1. `-o / --outfile` -- an annotated ouput fasta file. Mandatory.
+
 
 import os
 

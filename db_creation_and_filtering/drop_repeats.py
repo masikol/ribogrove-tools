@@ -1,24 +1,32 @@
 #!/usr/bin/env python3
 
 # The script removes gene sequences, which contain large repeats.
-# The script requires a threshold (repeat length) for distinguishing "large" and "not large" repeats.
+#   The script requires a threshold (repeat length, `--repeat-len-threshold`)
+#   for distinguishing "large" and "not large" repeats.
 
-# Input files:
-# 1. -f/--input-fasta-file -- input fasta file.
-# 2. -i/--assm-acc-file is output of the script merge_assID2acc_and_remove_WGS.py.
-#   It has 4 columns: ass_id, gi_number, acc, title.
-# 3. -r/--repeats-file -- TSV file, which is the output of the script `find_repeats.py`
-# 4. -e/--exception-seqIDs -- file of seqIDs (one per line), which should NOT be discarder,
-#   despite they do contain intragenis repeat(s).
+## Command line arguments
+### Input files:
 
-# Output files:
-# 1. Fasta file containing no sequences with NN (--out-fasta-file).
-# 2. --out-stats-file is a TSV file containing per-replicon statistics for the output fasta file.
-# 3. Fasta file containing sequences with repeats (--seqs-with-repeats).
+# 1. `-f / --input-fasta-file` -- an input fasta file of gene sequences.
+#   This file is the output of the script `drop_aberrant_genes.py`. Mandatory.
+# 2. `-i / --assm-acc-file` -- a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).
+#   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
+# 3. `-r / --repeats-file` -- a TSV file, which contains information about what sequences
+#   contain repeats, coordinates of these repeats etc.
+#   This file is the output of the script `find_repeats.py`. Mandatory.
+# 4. `-e / --exception-seqIDs` -- file of seqIDs (one per line), which should **not** be discarder,
+#   despite they do contain intragenis repeat(s). Optional.
 
-# Parameter:
-# 1. --repeat-len-threshold -- repeat length threshold. Sequences having repeats longer than
-#    this value will be discarded
+### Output files:
+# 1. `--out-fasta-file` -- a fasta file containing **no** sequences with long repeats. Mandatory.
+# 2. `--out-stats-file` -- a TSV file containing per-replicon statistics for
+#   the output fasta file containing no sequences with repeats. Mandatory.
+# 3. `--seqs-with-repeats` -- a fasta file containing sequences with long repeats. Mandatory.
+
+### Parameters:
+# 1. `--repeat-len-threshold` -- a repeat length threshold.
+#   Sequences having repeats longer than this value will be discarded. Mandatory.
+
 
 import os
 

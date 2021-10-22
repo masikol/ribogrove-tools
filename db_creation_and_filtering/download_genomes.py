@@ -1,16 +1,22 @@
 #!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
 
-# The script downloads genomes in GenBank format, and saves them all to local directory.
-# Output files will be all gziped.
-# The script downloads records using efetch utility (https://www.ncbi.nlm.nih.gov/books/NBK25497/)
+# The script downloads annotated genome sequences in GenBank format from the GenBank
+#   database and saves them all to a local directory. Output files will be all gziped.
+#   The script downloads RefSeq records using the efetch utility
+#   (https://www.ncbi.nlm.nih.gov/books/NBK25497/).
+# Requires Internet connection.
 
-# Input file (-i/--assm-acc-file) is output of the script merge_assID2acc_and_remove_WGS.py.
+## Command line arguments
 
-# Output files are:
-# 1. `.gbk.gz` files in directory `-o/--outdir`
-# 2. log file -l/--log-file, which will contain information about errors.
-#    If record is successfully downloaded, the the script writes "ok" to correcponding line of log file.
+### Input files:
+# 1. `-i / --assm-acc-file` is a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).
+#   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
+
+### Output files:
+# 1. `-o / --outdir` -- a directory where output `.gbk.gz` will be located. Mandatory.
+# 2. `-l / --log-file` -- a log file, which will contain information about errors.
+#   If a record is successfully downloaded, the the script will write "ok" to the
+#   correcponding line of log file. Mandatory.
 
 import os
 

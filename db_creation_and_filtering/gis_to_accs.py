@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
 
-# The script takes output of script assembly2gi_numbers.py (RefSeq GI numbers) as input
-#   (file `-i/--gi-file`)
-#   and translates them to "accession.version"s and titles.
-# Output (file `-o/--outfile`) is a TSV file of 3 columns (gi_number, acc, title).
+# The script takes RefSeq GI numbers from an input file (outputted by
+#   the script `assembly2gi_numbers.py`) and finds corresponding RefSeq ACCESSION.VERSIONs and titles.
+#   Output file is a TSV file of 3 columns (`gi_number`, `acc`, `title`).
+# Requires Internet connection.
+# For example, the script takes GI number 2075061612 (https://www.ncbi.nlm.nih.gov/nuccore/2075061612)
+#   and finds corresponding ACCESSION.VERSION (NZ_CP063062.1)
+#   and title ("Chlamydia suis strain 111 Ry chromosome, complete genome") for this record.
 
-# Input files:
-# 1. -i/--gi-file -- input TSV file mapping Assembly IDs to RefSeq GI numbers
+## Command line arguments
+### Input files:
+# 1. `-i / --gi-file` -- input TSV file mapping Assembly IDs to RefSeq GI numbers. Mandatory.
 
-# Output files:
-# 1. -o/--outfile -- output TSV file
+### Output files:
+# 1. `-o / --outfile` -- output TSV file. Mandatory.
+
 
 import os
 

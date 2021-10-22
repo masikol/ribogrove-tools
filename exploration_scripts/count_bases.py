@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-# The script counts all IUPAC bases in sequences in a fasta file.
+# The script counts bases in the sequences in a fasta file:
+#   bases `A`, `T`, `G`, `C`, `R`, `Y`, `W`, `S`, `K`, `M`, `H`, `V`, `B`, `D`, `N`.
 
-# Input files:
-# 1. -i/--input-fasta -- input fasta file.
+## Command line arguments
+### Input files:
+# 1. `-i / --input-fasta` -- an input fasta file.
 
-# Output files:
-# 1. -o/--outfile -- output TSV file.
-
+### Output files:
+# 1. `-o / --outfile` -- an output TSV file.
 
 
 import os

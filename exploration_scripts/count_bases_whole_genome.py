@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 
-# The script counts all IUPAC bases in genome sequences in .gbk files.
+# The script counts bases in the genome sequences in `.gbk.gz` files:
+#   bases `A`, `T`, `G`, `C`, `R`, `Y`, `W`, `S`, `K`, `M`, `H`, `V`, `B`, `D`, `N`.
 
-# Input files:
-# 1. -a/--ass-acc-file -- input fasta file.
-# 2. -g/--gbk-dir -- directory where .gbk files are stored
+## Command line arguments
+### Input files:
+# 1. `-a / --ass-acc-file` -- a TSV file of 4 columns:
+#   (`ass_id`, `gi_number`, `acc`, `title`).
+#   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
+# 2. `-g / --gbk-dir` -- a directory where `.gbk.gz` files are stored. Mandatory.
 
-# Output files:
-# 1. -o/--outfile -- output TSV file.
+### Output files:
+# 1. `-o / --outfile` -- an output TSV file.
 
 
 import os

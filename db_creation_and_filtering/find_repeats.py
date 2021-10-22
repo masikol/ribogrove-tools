@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 
-# The script finds repeats in SSU genes sequences using RepeatFinder.
+# The script finds repeats in gene sequences using RepeatFinder
+#   https://github.com/deprekate/RepeatFinder
 
-# Input files:
-# 1. Fasta file of genes sequences containing no NN (-f/--in-fasta-file).
+## Command line arguments
 
-# Output files:
-# 1. TSV file (-o/--outfile) of following columns:
-#   seqID;
-#   r1_start, r1_end, r2_start, r2_end -- repeats' cordinates;
-#   rep_len -- length of a repeat;
-#   rep_seq -- sequence of a repeat;
+### Input files:
+# 1. `-f / --in-fasta-file` -- an input fasta file of gene sequences.
+#   This file is the output of the script `drop_aberrant_genes.py`. Mandatory.
 
-# Dependencies:
+### Output files:
+# 1. `-o / --outfile` -- an output TSV file.
+# The output file contains the following columns:
+# - `seqID` -- RybaSom sequence identifier;
+# - `r1_start`, `r1_end`, `r2_start`, `r2_end` -- cordinates of repeats within RybaSom sequences;
+# - `rep_len` -- repeat length;
+# - `rep_seq` -- repeat sequence;
+
+## Dependencies:
 # 1. RepeatFinder must be installed. See https://github.com/deprekate/RepeatFinder
 
 import os

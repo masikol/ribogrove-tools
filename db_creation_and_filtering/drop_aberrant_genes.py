@@ -1,17 +1,26 @@
 #!/usr/bin/env python3
 
-# The script discards aberrant gene sequences.
+# The script discards aberrant gene sequences basing on results of the 
+#   script `find_aberrant_genes.py`. The script produces a fasta file of non-aberrant gene sequences.
 
-# Input files:
-# 1. -f/--input-fasta-file -- input fasta file of SSU gene sequences
-# 2. -a/--assm-acc-file -- is output of the script merge_assID2acc_and_remove_WGS.py.
-# 3. --non-aberrant-seqIDs -- file of non-aberrant seqIDs (one per line).
-# 4. --aberrant-seqIDs -- file of aberrant seqIDs (one per line).
+## Command line arguments
 
-# Output files:
-# 1. --non-aberrant-fasta-file -- output fasta file of non-aberrant sequences
-# 2. --aberrant-fasta-file -- output fasta file of aberrant sequences
-# 3. --out-stats-file -- output TSV file of per-replicon statistivs of non-aberrant sequences
+### Input files:
+# 1. `-f / --input-fasta-file` -- an input fasta file of SSU gene sequences.
+#   This file is the output of the script `drop_NNN.py`. Mandatory.
+# 2. `-a / --assm-acc-file` -- a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).
+#   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
+# 3. `--non-aberrant-seqIDs` -- a file of seqIDs of non-aberrant genes (one per line).
+#   This file is the output of the script `find_aberrant_genes.py`. Mandatory.
+# 4. `--aberrant-seqIDs` -- a file of seqIDs of aberrant genes (one per line).
+#   This file is the output of the script `find_aberrant_genes.py`. Mandatory.
+
+### Output files:
+# 1. `--non-aberrant-fasta-file` -- the output fasta file of non-aberrant gene sequences. Mandatory.
+# 2. `--aberrant-fasta-file` -- the output fasta file of aberrant gene sequences. Mandatory.
+# 3. `--out-stats-file` -- the output TSV file of per-replicon statistics of non-aberrant sequences.
+#   Mandatory.
+
 
 import os
 

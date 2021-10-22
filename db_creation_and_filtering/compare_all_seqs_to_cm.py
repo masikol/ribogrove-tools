@@ -1,19 +1,30 @@
 #!/usr/bin/env python3
 
-# The script compares gene sequences to specific Rfam covariance model to detect truncated genes.
+# The script compares gene sequences to a specific Rfam covariance model to detect truncated genes
+#   and to detect pivotal genes.
+# The following Rfam families were used: `RF00177` for bacteria, and `RF01959` for archaea.
 
-# Input files:
-# 1. -f/--in-fasta-file -- input fasta file of SSU gene sequences
+## Command line arguments
 
-# Output file:
-# 1. -o/--outdir -- output directory for output files:
-#   1) file `cmscan_output_table.tblout` -- TSV file of comparison statistics
-#   2) file `cmscan_output.txt` -- txt file, contains complete output of cmscan.
+### Input files:
+# 1. `-f / --in-fasta-file` -- an input fasta file of SSU gene sequences.
+#   This file is the output of the script `drop_NNN.py`. Mandatory.
 
-# Dependencies:
-# 1. --cmscan -- cmscan executable
-# 2. --cmpress -- cmpress executable
-# 3. -r/--rfam-family-cm -- Rfam covariane model (.cm) file to compare sequences to
+### Output files:
+# 1. `-o / --outdir` -- the output directory for the output files (mandatory argument):
+   # - the file `cmscan_output_table.tblout`. It is a TSV file of comparison statistics:
+   #   similariry score, dlignment coordinates etc.
+   # - the file `cmscan_output.txt` -- a txt file, which contains complete output of `cmscan`.
+
+### Dependencies:
+# 1. `--cmscan` -- a `cmscan` executable from Infernal (http://eddylab.org/infernal/).
+#   We prefer to use the latest version of Infernal here (version 1.1.4). Mandatory.
+# 2. `--cmpress` -- a `cmpress` executable from Infernal (http://eddylab.org/infernal/).
+#   We prefer to use the latest version of Infernal here (version 1.1.4). Mandatory.
+# 3. `-r / --rfam-family-cm` -- an (uncompressed) `.cm` file containing a Rfam's (version 14.6)
+#   covariance models: ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.6/Rfam.cm.gz.
+#   Here, we prefer to use the latest verison of Rfam (version 14.6). Mandatory.
+
 
 import os
 

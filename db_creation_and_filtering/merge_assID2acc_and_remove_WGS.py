@@ -1,16 +1,24 @@
 #!/usr/bin/env python3
-# -*- encoding: utf-8 -*-
 
-# The script merges TSV file, which is output of the script assembly2gi_numbers.py (-s/--assm-2-gi-file)
-#   and TSV file, which is output of the script gis_to_accs.py (-c/--gi-2-acc-file) on column `gi_number`.
-# Output (file -o/--outfile) is a TSV file of 4 columns (ass_id, gi_number, acc, title).
+# The script merges two files together:
+# 1) a TSV file, which is output of the script `assembly2gi_numbers.py` (`-c` option);
+# 2) a TSV file, which is output of the script `gis_to_accs.py` (`-c` option).
 
-# Input files
-# 1. -s/--assm-2-gi-file -- input TSV file mapping Assembly IDs to RefSeq GI numbers.
-# 2. -c/--gi-2-acc-file -- input TSV file mapping RefSeq GI numbers to RefSeq ACCESSION.VERSIONs.
+# The output file (`-o` option) is a TSV file of 4 columns (`ass_id`, `gi_number`, `acc`, `title`).
+#   In this file, every line corresponds to a single RefSeq record, and the line
+#   contains Assembly ID (`ass_id`), RefSeq GI number (`gi_number`), ACCESSION.VERSION (`acc`),
+#   and the title of the record (`title`).
 
-# Output files
-# 1. -o/--outfile -- output TSV files where Assembly IDs are mapped to ACCESSION.VERSIONs and RefSeq Titles.
+## Command line arguments
+### Input files:
+# 1. `-s / --assm-2-gi-file` -- input TSV file mapping Assembly IDs to RefSeq GI numbers. Mandatory.
+# 2. `-c / --gi-2-acc-file` -- input TSV file mapping RefSeq GI numbers to RefSeq ACCESSION.VERSIONs
+#   and titles. Mandatory.
+
+### Output files:
+# 1. `-o / --outfile` -- output TSV files where Assembly IDs are mapped to ACCESSION.VERSIONs
+#   and RefSeq Titles. Mandatory.
+
 
 import os
 

@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 
-# The script takes fasta file with sequences and checks if hardcoded primers
+# The script takes fasta file with sequences and checks if hardcoded PCR primers
 #   can produce some product with input sequences as templates.
-# The script processes only sequences of category 1.
-#
-# Input files:
-# 1. Input fasta file of template sequences (-f/--fasta-seqs-file)
-# 2. Per-gene categories file (-c/--categories-file)
-#
-# Output files:
-# 1. TSV files for each primer pair in directory -o/--outdir
-#
-# Dependencies:
-# 1. --mfeprimer -- MFEprimer executable (https://www.mfeprimer.com/)
+#   The script uses MFEprimer (https://www.mfeprimer.com/) tool for PCR simulation.
+
+## Command line arguments
+### Input files:
+# 1. `-f / --fasta-seqs-file` -- an input fasta file of template sequences.
+#   This is the file, which is the output of th script `drop_repeats.py`. Mandatory.
+# 2. `-c / --categories-file` -- the per-gene categories file.
+#   This is the file, which is the output of th script `assign_genome_categories.py`. Mandatory.
+
+### Output files:
+# 1. `-o / --outdir` -- an output directory, where output TSV files
+#   for each primer pair will be located.
+
+### Dependencies:
+# 1. --mfeprimer -- an [MFEprimer](https://www.mfeprimer.com/) executable.
+
 
 import os
 import sys

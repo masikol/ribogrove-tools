@@ -1,29 +1,33 @@
 #!/usr/bin/env python3
 
-# The script assigns categories to assembled genomes.
-# Categories:
-#   1. Genome is not of 3'rd category, and it is sequenced using PacBio or ONT+Illumina.
-#   2. Genome is not of 3'rd category, and it is sequenced neither using PacBio nor ONT+Illumina.
-#   3. At leats one of the following is true:
-#    - Genome has 3 or more N's in a row.
-#    - Genome has at least one degenerate base in it's SSU genes.
-#    - At least one of it's sequences contains "map unlocalized" it it's title
-#         and contains an SSU gene (or it's part).
+# The script assigns categories to downlaoded genomes. Categories are assigned according
+#   to the reliability of a genome assembly.
+# The categories are the following:
+# Category 1. A genome is not of category 3, and it was sequenced using PacBio or ONT+Illumina.
+# Category 2. A genome is not of category 3, and it was sequenced neither using PacBio nor ONT+Illumina.
+# Category 3. At least one of the following is true:
+#   - A genome has at least one degenerate base in its SSU gene sequences.
+#   - At least one of the genomic sequences contains phrase "map unlocalized" in it title,
+#     and the sequence contains an SSU gene (or a part of it).
 
-# Input files:
-# 1. -f/--all-fasta-file -- fasta file of all collected SSU gene sequences
-# 2. -s/--all-stats-file -- TSV file (with header) containing per-replicons SSU gene statistics
-#    reported by extract_16S.py
-# 3. -g/--gbk-dir -- directory that contains downloaded gbk.gz files
+## Command line arguments
 
-# Output file:
-# 1. -o/--outfile -- output file mapping seqIDs to categories
-# 2. -l/--seqtech-logfile -- log file to track if sequence technology is successfully extracted
-#    from all genomes where it is specified
-# "seqtech" means SEQuencing TECHnology
+### Input files:
+# 1. `-f / --all-fasta-file` -- a fasta file with all extracted genes sequences.
+#   This file is the output of the script `extract_16S.py`. Mandatory.
+# 2. `-s / --all-stats-file` -- a file with per-replicon statistics of input 16S gene sequences.
+#   This file is the output of the script `extract_16S.py`, too. Mandatory.
+# 3. `-g / --gbk-dir` -- the directory where the downloaded `.gbk.gz` files are located
+#   (see script `download_genomes.py`). Mandatory.
 
-# Dependencies:
-# 1. --seqkit seqkit executable
+### Output files:
+# 1. `-o / --outfile` -- an output file mapping seqIDs (and Assembly IDs) to categories. Mandatory.
+# 2. `-l / --seqtech-logfile` -- a log file to track if sequence technology is successfully
+#   extracted from all genomes where it is specified. "Seqtech" means SEQuencing TECHnology. Mandatory.
+
+### Dependencies:
+# 1. `--seqkit` -- a `seqkit` executable: github.com/shenwei356/seqkit. Mandatory.
+
 
 import os
 

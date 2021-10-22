@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 
-# The script maps Assembly IDs to TaxIDs using elink utility (https://www.ncbi.nlm.nih.gov/books/NBK25497/)
+# The script maps Assembly IDs to Taxonomy IDs using elink utility
+#   (https://www.ncbi.nlm.nih.gov/books/NBK25497/).
+# Requires Internet connection.
 
-# Input files:
-# 1. -i/--assm-acc-file -- is output of script merge_assID2acc_and_remove_WGS.py.
-#   It has 4 columns: ass_id, gi_number, acc, title.
-# 2. -f/--all-fasta-file -- fasta file of SSU gene sequences
+## Command line arguments
+### Input files:
+# 1. `-i / --assm-acc-file` -- a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).
+#   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
+# 2. `-f / --all-fasta-file` -- a fasta file with all extracted genes sequences.
+#   This file is the output of the script `extract_16S.py`. Mandatory.
 
-# Output files:
-# 1. --per-genome-outfile -- output file mapping Assembly IDs to taxIDs
+### Output files:
+# 1. `--per-genome-outfile` -- an output TSV file mapping Assembly IDs to taxIDs.
 
 
 import os

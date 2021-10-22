@@ -2,33 +2,42 @@
 
 # The script does multiple things:
 # 1. It finds aberrant genes: truncated genes and genes with large deletions.
-# 2. It records all heterogeneity (indels, percents of identity).
+# 2. It records all intragenomic gene variability (indels, percents of identity).
 
-# Input files:
-# 1. Fasta file of genes sequences (-f/--fasta-seqs-file).
-# 2. TSV file of per-replicon genes statistics (-s/--genes-stats-file).
-# 3. TSV file `.tblout` outputed by the script `compare_all_seqs_to_cm.py` (-t/--cmscan-tblout).
-# 4. (optional) Fasta file of NR conserved regions from work
-#    "How conserved are the conserved 16S-rRNA regions?"
-#    (table 5, https://peerj.com/articles/3036/)
-#    -c/--conserved-regions-fasta
+## Command line arguments
 
-# Output files (they all will be stored in output directory -o/--outdir):
-# 1. pident_pivotal_genes.tsv -- TSV file containing pidents (and some other statistics)
-#    of pairwise alignments of pivotal genes vs non-pivotal genes.
-# 2. insertions.tsv -- TSV file containing information about discovered insertions
-#    longer than `--deletion-len-threshold`.
-# 3. deletions.tsv -- TSV file containing information about discovered deletions
-#    longer than `--deletion-len-threshold`.
-# 4. aberrant_seqIDs.txt -- seqIDs of aberrant genes, one per line.
+### Input files:
+# 1. `-f / --fasta-seqs-file` -- an input fasta file of SSU gene sequences.
+#   This file is the output of the script `drop_NNN.py`. Mandatory.
+# 2. `-s / --genes-stats-file` -- a TSV file of per-replicon genes statistics.
+#   This file is the output of the script `drop_NNN.py`. Mandatory.
+# 3. `-t / --cmscan-tblout` -- a TSV file (`.tblout`) of comparison statistics.
+#   This file is the output of the script `compare_all_seqs_to_cm.py`. Mandatory.
+# 4. `-c / --conserved-regions-fasta` -- a fasta file of 16S rDNA conserved regions
+#   from work "How conserved are the conserved 16S-rRNA regions? (https://peerj.com/articles/3036/)"
+#   (table 5, "NR" sequences, but flanking Ns should be removed). Optional.
 
-# Dependencies:
-# 1. MUSCLE aligner executable (--muscle).
+### Output files:
+# 1. `-o / --outdir` -- output directory, where all output files will be stored. Mandatory.
+# This directory will contain the following files:
+# - `pivotal_genes.tsv` -- a TSV file, with seqIDs of pivotal genes and corresponding cmscan scores.
+# - `pident_pivotal_genes.tsv` -- a TSV file containing perpents of identity
+#   (and some other statistics) of pairwise alignments of pivotal genes vs non-pivotal genes.
+# - `insertions.tsv` -- a TSV file containing information about discovered insertions
+#   longer than `--deletion-len-threshold`. Quite counterintuitive but anyway.
+# - `deletions.tsv` -- a TSV file containing information about discovered deletions
+#   longer than `--deletion-len-threshold`.
+# - `non_aberrant_seqIDs.txt` -- seqIDs of discovered non-aberrant genes, one per line.
+# - `aberrant_seqIDs.txt` -- seqIDs of discovered aberrant genes, one per line.
 
-# Parameters:
-# 1. Threshold value for length of an deletion (--deletion-len-threshold).
-#    If deletion has length higher than this value, gene having this deletion
-#    is regarded as an aberrant gene.
+### Dependencies:
+# 1. `--muscle` -- [MUSCLE](https://www.drive5.com/muscle/) aligner executable
+#   for multiple sequence alignment. Mandatory.
+
+### Parameters:
+# 1. `--deletion-len-threshold` -- a threshold value for length of an deletion.
+#   If deletion has length higher than this value, gene having this deletion will
+#   be regarded as an aberrant gene. Integer number > 0. Mandatory.
 
 import os
 

@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 
-# The script discards gene sequences, which originate from the genomes
-#   containing at least 3 Ns (undefined bases) in a row in theis sequences.
+# The script discards gene sequences, which originate from the genomes containing at least
+#   3 Ns (undefined bases) in a row in theis sequences.
 
-# Input files:
-# 1. `-i/--assm-acc-file` is output of script merge_assID2acc_and_remove_WGS.py.
-#   It has 4 columns: ass_id, gi_number, acc, title.
-# 2. Fasta file with all extracted genes sequences (-f/--all-fasta-file).
-# 3. `-c/--categories-file` -- TSV file with genome categories.
+## Command line arguments
 
-# Output files:
-# 1. Fasta file containing no sequences with NNN (--out-fasta-file).
-# 2. `--out-stats-file` is a TSV file containing per-replicon statisticsw for output fasta file.
-# 3. Fasta file containing sequences with NNN (--NNN-outfile).
+### Input files:
+# 1. `-i / --assm-acc-file` -- a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).
+#   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
+# 2. `-f / --all-fasta-file` -- a fasta file with all extracted genes sequences.
+#   This file is the output of the script `extract_16S.py`. Mandatory.
+# 3. `-c / --categories-file` -- a TSV file with genome categories.
+#   This file is the output of the script `assign_genome_categories.py`. Mandatory.
+
+### Output files:
+# 1. `--out-fasta-file` -- a fasta file containing no sequences with NNN. Mandatory.
+# 2. `--out-stats-file` -- a TSV file containing per-replicon statistics for
+#   the output fasta file ("no NNN" one). Mandatory.
+# 3. `--NNN-outfile` -- a fasta file containing sequences with NNN. Mandatory.
 
 import os
 

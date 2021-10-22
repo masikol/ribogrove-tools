@@ -1,18 +1,25 @@
 #!/usr/bin/env python3
 
-# The script takes both output files of the script `get_taxIDs.py` (--per-genome-taxid-file, --per-gene-taxid-file)
-#   and uses them to map Assemblty IDs and seqIDs to taxonomy from file rankedlineage.dmp (--ranked-lineage).
+# The script takes output file of the script `get_taxIDs.py` and output of the script
+#   `pergenome_2_pergene_taxIDs.py` and uses them to map Assembly IDs and seqIDs to taxonomy
+#   from file `rankedlineage.dmp` (argument `--ranked-lineage`) from,
+#   see https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump .
+# Taxonomy is taxon names at the following levels:
+#   superkingdom (domain), phylum, class, order, family, genus, species;
+#   also term "taxonomy" here include taxIDs and NCBI taxonomy names.
 
-# Input files:
-# 1. TSV file mapping Assembly IDs to taxIDs (--per-genome-taxid-file)
-# 2. TSV file mapping genes seqIDs to taxIDs (--per-gene-taxid-file)
-# 3. File `rankedlineage.tsv` from NCBI's new_taxdump archive
-#   Option --ranked-lineage.
-#   See https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/
+## Command line arguments
 
-# Output files:
-# 1. TSV file mapping Assembly IDs to taxonomy (--per-genome-outfile)
-# 2. TSV file mapping genes seqIDs to taxonomy (--per-gene-outfile)
+### Input files:
+# 1. `--per-genome-taxid-file` -- a TSV file mapping Assembly IDs to taxIDs.
+#   This file is the output of the script `get_taxIDs.py`. Mandatory.
+# 2. `--per-gene-taxid-file` -- a TSV file mapping genes seqIDs to taxIDs.
+#   This file is the output of the script `pergenome_2_pergene_taxIDs.py`. Mandatory.
+# 3. `--ranked-lineage` -- the file `rankedlineage.tsv` from NCBI's new_taxdump archive. Mandatory.
+
+### Output files:
+# 1. `--per-genome-outfile` -- a TSV file mapping Assembly IDs to taxonomy. Mandatory.
+# 2. `--per-gene-outfile` -- a TSV file mapping RybaSom seqIDs to taxonomy. Mandatory.
 
 
 import os

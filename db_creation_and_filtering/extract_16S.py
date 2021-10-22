@@ -1,20 +1,33 @@
 #!/usr/bin/env python3
 
-# The script extracts sequences of 16S genes from downloaded genomes in GenBank format.
+# The script extracts sequences of 16S genes from the downloaded genomes in GenBank format.
+# If the GenBank file of a genomic sequence does not include the statement that it
+#   was annotated with the PGAP (https://www.ncbi.nlm.nih.gov/genome/annotation_prok/),
+#   the script will re-annotate this sequence with cmsearch (http://eddylab.org/infernal/) 1.1.1
+#   and Rfam (https://rfam.xfam.org/) 12.0, to be fully consistent with the PGAP.
+# If the original 16S rRNA gene annotation of a circular sequence includes the first or
+#   the last base of the sequence, the script appends 2,000 5′‑terminal bases to 3′-end
+#   of this sequence prior to re-annotation, in order not to miss genes interrupted by sequence start.
 
-# Input files:
-# 1. `-i/--assm-acc-file` is output of the script merge_assID2acc_and_remove_WGS.py.
-# 2. `-g/--gbk-dir` -- RefSeq records downloaded by the script download_genomes.py
+## Command line arguments
+### Input files:
+# 1. `-i / --assm-acc-file` -- a TSV file of 4 columns:(`ass_id`, `gi_number`, `acc`, `title`).
+#   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
+# 2. `-g/--gbk-dir` -- the directory where the downloaded `.gbk.gz` files are located
+#   (see script `download_genomes.py`). Mandatory.
 
-# Output files:
-# 1. `-o/--out-fasta`: fasta file containing sequences of collected genes
-# 2. `-s/--out-stats`: file with statistics of collected 16S genes
+### Output files:
+# 1. `-o / --out-fasta` -- a fasta file containing sequences of extracted genes. Mandatory.
+# 2. `-s / --out-stats` -- a file with per-replicon statistics of extracted 16S genes:
+#   how many genes, minimum/maximum length etc. Mandatory.
 
-# Dependencies:
-# 1. cmsearch executable (--cmsearch)
-# 2. .cm file containing covariance model of target gene family (-r/--rfam-family-cm)
-#   (RF00177 for bacterial ribosomal SSU, RF01959 for archaeal ribosomal SSU)
-# 3. seqkit executable (--seqkit)
+### Dependencies:
+# 1. `--cmsearch` -- a `cmsearch` program executable from Infernal (http://eddylab.org/infernal/).
+#   Please, use Infernal 1.1.1 with this script, to be fully consistent with the PGAP. Mandatory.
+# 2. `-r / --rfam-family-cm` -- an (uncompressed) `.cm` file containing a Rfam's (version 12.0)
+#    covariance models: ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz. Mandatory.
+# 3. `--seqkit` -- a `seqkit` executable: github.com/shenwei356/seqkit.
+#   Mandatory.
 
 
 import os
