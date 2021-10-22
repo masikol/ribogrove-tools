@@ -16,4 +16,4 @@ Here, scripts used for exploration of RybaSom data are located.
 
 7. `alt_antiSD_tests.R` -- a script used for testing is a "mixed" 16S rRNA gene set is uniformly distributed accross the bacterial phyla.
 
-
+8. `plots/draw_GC_content_plot.R` and `plots/draw_skew_plot.R` -- scripts used to create plots of GC contents and AT and GC skews, respectively.
