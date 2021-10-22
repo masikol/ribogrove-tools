@@ -1,0 +1,1692 @@
+# cmscan :: search sequence(s) against a CM database
+# INFERNAL 1.1.4 (Dec 2020)
+# Copyright (C) 2020 Howard Hughes Medical Institute.
+# Freely distributed under the BSD open source license.
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# query sequence file:                   /mnt/1.5_drive_0/16S_scrubbling/demo/gene_seqs/demo_bacteria_gene_seqs_no_NNN.fasta
+# target CM database:                    /mnt/1.5_drive_0/16S_scrubbling/rfam/RF00177_for_filtering.cm
+# tabular output of hits:                /mnt/1.5_drive_0/16S_scrubbling/demo/aberrations_and_heterogeneity/cmscan_output_table.tblout
+# prefer accessions over names:          yes
+# search top-strand only:                on
+# number of worker threads:              8
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Query:       NZ_CP063062.1:373574-375122_plus  [L=1549]
+Description: Chlamydia suis strain 111 Ry chromosome, complete genome
+Hit scores:
+ rank     E-value  score  bias  modelname  start    end   mdl trunc   gc  description
+ ----   --------- ------ -----  --------- ------ ------   --- ----- ----  -----------
+  (1) !         0 1527.6   7.9  RF00177        1   1549 +  cm    no 0.52  Bacterial small subunit ribosomal RNA
+
+
+Hit alignments:
+>> RF00177  Bacterial small subunit ribosomal RNA
+ rank     E-value  score  bias mdl mdl from   mdl to       seq from      seq to       acc trunc   gc
+ ----   --------- ------ ----- --- -------- --------    ----------- -----------      ---- ----- ----
+  (1) !         0 1527.6   7.9  cm        1     1533 []           1        1549 + [] 0.98    no 0.52
+
+                                                                                      v                             NC
+                                        ::::::::<<<<<_______>>>>>,{{{{-{{{{{{,{{{{{{{{{----{{{-{{{,,<<<--<<<<<-<<<< CS
+                           RF00177    1 uuuauggAGaGuuUGAUCcUggCuCAGggcGaaCGCuGGCGGcgcGcuUaAcaCAuGCAAGuCGagccccacggg 75  
+                                        +UU+ +GAGA:UUUGAUC UGG:UCAG:::GAACGCUGGCGGCG:G +U A::CAUGCAAGUCGA:C:   ::: 
+  NZ_CP063062.1:373574-375122_plus    1 AUUUCUGAGAAUUUGAUCUUGGUUCAGAUUGAACGCUGGCGGCGUGGAUGAGGCAUGCAAGUCGAACG--GAACG 73  
+                                        ********************************************************************..68899 PP
+
+                                                                                                       v      v     NC
+                                        <<<____>>>>>>>->>->>>>>>,,,,,,[[[,,,,,,((((((((--((---(((((((,<<<<----<<<<< CS
+                           RF00177   76 gccuuaaggccccgagggggcGgCGaAcGGGuGAGUAAcgCGcgggcAAccUacCcccgggugcgGgAUAccccc 150 
+                                        G :UUA : C :::+   :G:GGCG A GGGU:AGUAA+:C:::G::AA::U+ C::::::U: GG+AUA C:::
+  NZ_CP063062.1:373574-375122_plus   74 GUUUUAUAGCUGUUU---AGUGGCGGAAGGGUUAGUAAUGCAUAGAUAAUUUGUCUUUAACUUGGGAAUAACGGU 145 
+                                        999999999999887...********************************************************* PP
+
+                                                    v       v                                                       NC
+                                        <<____>>>>>>>----->>>>,,,,,<<<<<<<.<<<____>>>.>>>>>>>,,,,<<<...........____ CS
+                           RF00177  151 cgGAAAcggggggUAAUACcgcAUaaugccccgg.cccguauggg.ccggggcuAAAGgc...........auuu 212 
+                                        :GGAAAC::::G UAAUACC :AU ++ C C :: :::G+AU::: :: G G UAAAG::              +
+  NZ_CP063062.1:373574-375122_plus  146 UGGAAACGGCCGCUAAUACCGAAUGUGGCGCUAUuUAGGCAUCUAgAUGGUGUUAAAGAAggggaucguagGACC 220 
+                                        **********************************9999****9999********************998765566 PP
+
+                                                                     v                                     v        NC
+                                        _>>>,)))))))--))))))))))<<<--<-<<<--<<<<<<<<_______>>>>>>>>>>>----->>>>,,<< CS
+                           RF00177  213 agcCGcccgggGAugggcccgCGccccAUcAGcuAGuuGGuggGGUAAuGGCccaCCaaggCgAuGAggggUAGc 287 
+                                        +::CG::::::G  ::::C:::G::::AU AGCUAGUUGGU:GGGUAA+GGCC:ACCAAGGCGAUGA :::UAG:
+  NZ_CP063062.1:373574-375122_plus  221 UUUCGGUUAAAGGGGAGUCUAUGUGAUAUCAGCUAGUUGGUGGGGUAAAGGCCUACCAAGGCGAUGACGUCUAGG 295 
+                                        6************************************************************************** PP
+
+                                                                                                              v     NC
+                                        <<<<<<____>>>>--->>>>]]],<<<<<<__________>>>>>>,<<<<____>>>>,,,}}}}}}-},,,, CS
+                           RF00177  288 cGgccuGAGAgggcGauCggCCaCAcuGGgaCUGAGAcACGgcCCagACuCCUACGGGaGGCAGCaGugggGAAU 362 
+                                        CG:::UGAGAG:::G  CG:C:ACACUGGGACUGAGACAC GCCCAGACUCCUACGGGAGGC GCAG::G GAAU
+  NZ_CP063062.1:373574-375122_plus  296 CGGAUUGAGAGAUUGGCCGCCAACACUGGGACUGAGACACUGCCCAGACUCCUACGGGAGGCUGCAGUCGAGAAU 370 
+                                        *************************************************************************** PP
+
+                                                                                                                    NC
+                                        ,<-<<<---<<<<<____>>>>>->>>>,}}-}}}}}},,<<<<------<<<<____>>>>----->>>>,,,< CS
+                           RF00177  363 auUgcgCAAugGgcGaAAgcCugAcgcaGCgAcgCCGCGUGgggGAuGAAggccUUcGggccGUAAAcccCUuUc 437 
+                                         UU:CGCAAUGG:CG AAG:CUGACG:AGC:ACGCCGCGUG:G:GAUGAA::C: U G:G::GUAAA:C:CUUUC
+  NZ_CP063062.1:373574-375122_plus  371 CUUUCGCAAUGGACGGAAGUCUGACGAAGCGACGCCGCGUGUGUGAUGAAGGCUCUAGGGUUGUAAAGCACUUUC 445 
+                                        *************************************************************************** PP
+
+                                                       vvv                  vvv                                     NC
+                                        <<<<<<---<-----<<<___........._~~~~~>>>----->---->>>>>>--->,,<<<<<------<<< CS
+                           RF00177  438 ccggGgGAagAaaaaccgaua.........u*[5]*cgguuuGAcggUAcCccgggAagAAGcccCGGCUAAcuc 503 
+                                         C:: GGAA AA A ++G                     UUUGA  GUAC ::G +AAGAAGC:CCGGCUAACUC
+  NZ_CP063062.1:373574-375122_plus  446 GCCUGGGAAUAAGAGAAGGCGguuaauaccC*[6]*---UUUGAGCGUACUAGGUAAAGAAGCACCGGCUAACUC 518 
+                                        ***********99774444434455443321..2.....359********************************* PP
+
+                                                                                                                    NC
+                                        <<-----<<____>>------->>>>>>>>>>,}}}}}}}}}},,,,,,,,,,{{{-----{,[[[[-[-[[[,< CS
+                           RF00177  504 cGUGCCAGCAGCCGCGGUAAuACggagGgggCaaGCGuugccCGGAaUuAuUGGGcGUAAAGgGcgcGcAgGcGG 578 
+                                        CGUGCCAGCAGC GCGGUAAUACGGAGGG:GC AGCGUU:::CGGA+UUAUUGGGCGUAAAGGGCG:G:AGGCGG
+  NZ_CP063062.1:373574-375122_plus  519 CGUGCCAGCAGCUGCGGUAAUACGGAGGGUGCUAGCGUUAAUCGGAUUUAUUGGGCGUAAAGGGCGUGUAGGCGG 593 
+                                        *************************************************************************** PP
+
+                                                     v        v                 v      v                            NC
+                                        <<<<<<-<<<<<<<<<<<----<<<<<<<_____>>>>>>>-->>>>>>>>>-->>>>>>>>>,,,((((((((( CS
+                           RF00177  579 cccggcAaGucgggcgcgAAAucccgcgGCUcAACcgcgggaucgcgcccgaaACugccgggCUuGaGuccggcc 653 
+                                        :: : :AAGU: G :G::AAAU :CG:GGCUCAACC:CG:  +::C: C :A+ACU: : ::CU+GAG: :: ::
+  NZ_CP063062.1:373574-375122_plus  594 AAGAGUAAGUUGGUUGUCAAAUCUCGGGGCUCAACCCCGAAUCGGCAUCUGAUACUAUUUUUCUAGAGGGUAGAU 668 
+                                        *************************************************************************** PP
+
+                                                                                                  v          v      NC
+                                        --(((((((<<--<<<<<<<<---<<<______>>>------>>>>>>>>-->>,,,,<--<<____>>>))))) CS
+                           RF00177  654 GAgGggggcggAAcucccgguGUAGcgGUGAAAugCGUAGAuaucgggagGAacACCacugGCGAAGGCggcccc 728 
+                                        G :G:::::GGAA:U C::GUGUAGCGGUGAAAUGCGUAGAUAU::G A:GAACACCA UGGCGAAGGC :::::
+  NZ_CP063062.1:373574-375122_plus  669 GGAGAAAAGGGAAUUUCACGUGUAGCGGUGAAAUGCGUAGAUAUGUGGAAGAACACCAGUGGCGAAGGCGCUUUU 743 
+                                        *************************************************************************** PP
+
+                                                                                                                    NC
+                                        ))-))))))-))),,,]]]]--]]]],,,,<<<<<<---<<---<<<<_________>>>>--->>>>>>>>,,, CS
+                           RF00177  729 CuGggccgguaCuGACgCugAggcgCGAAAGCguGGGgAgCaAAcgGGAUUAGAUACCCcgGUAGuCCacGCcgU 803 
+                                        C: :: :: +:CUGACGCU:AG:CGCGAAAGC::GGGGAGCAAAC:GGAUUAGAUACCC:GGUAGUCC::GCCGU
+  NZ_CP063062.1:373574-375122_plus  744 CUAAUUUAUACCUGACGCUAAGGCGCGAAAGCAAGGGGAGCAAACAGGAUUAGAUACCCUGGUAGUCCUUGCCGU 818 
+                                        *************************************************************************** PP
+
+                                                                  v      v                                          NC
+                                        ,,,,,,,((((((,,<<<<<<<<<<<<_____.>>>>>>>>>>>>,,,<<____>>,,,,,))))))}}}},<<< CS
+                           RF00177  804 AAACGAUGggcgCUAGgcgccggggggauuaa.ccccccggcgcCgaAGcuAAcgCauUAAGcgccCCgCCUGgG 877 
+                                        AAACGAUG::::CU G:::::G::GG  U AA  CC::C:::::CG AGCUAACGC+UUAAG::::CCGCCUG:G
+  NZ_CP063062.1:373574-375122_plus  819 AAACGAUGCAUACUUGAUGUGGAUGGUCUCAAcCCCAUCCGUGUCGGAGCUAACGCGUUAAGUAUGCCGCCUGAG 893 
+                                        ***************************999998****************************************** PP
+
+                                                                                                                    NC
+                                        ------<<<<____>>>>---->>>,,,,,,,,{{{{{-{{{{{{{-{{,,{{{{{{{{{{{{{{{{{,,,,<<< CS
+                           RF00177  878 GAgUACggcCGCAAGgcugAAACuCAAAGGAAUuGaCgGgGgCCCGCaCAAGCGguGgagcauGuGGuUUAAuuC 952 
+                                        GAGUAC:::CGCAAG:::GAAAC:CAAA GAAUUGACGGGGGCCCGCACAAGC:GUGGAGCAUGUGGUUUAAUUC
+  NZ_CP063062.1:373574-375122_plus  894 GAGUACACUCGCAAGGGUGAAACUCAAAAGAAUUGACGGGGGCCCGCACAAGCAGUGGAGCAUGUGGUUUAAUUC 968 
+                                        *************************************************************************** PP
+
+                                                                                    v                v              NC
+                                        <________>>>>,,,,,,,,{{{{{{{,,,,,(((.(((((,,<<<<<<<____>>>>>>>,<<<<____>>>> CS
+                           RF00177  953 GAuGcaAcgCGaaGAACCUUACCcgggcUUGAcgug.ccgggaaccccccgGAaAcgggggguccccuuaagggg 1026
+                                        GAUGCAACGCGAAG ACCUUACC:GGG:UUGAC:UG ::::GA  :C: C:GAAA:G :G: U: CC  AAGG :
+  NZ_CP063062.1:373574-375122_plus  969 GAUGCAACGCGAAGGACCUUACCUGGGUUUGACAUGcAUAUGACCGCGGCAGAAAUGUCGUUUU-CCGCAAGG-A 1041
+                                        ************************************999999********************95.77777777.6 PP
+
+                                                                                                                    NC
+                                        )))))-))),[[-[[[[--[[[[[[[[[,,,((((((<<<____>>>,,<<<<______>>>>,,)))))),,,, CS
+                           RF00177 1027 cccggacacAGGUGcugCAuGgcuGuCGUCAGCuCGuguCGUGAGauGUcgGGUUAAGUCCcgcAaCGaGCGCAA 1101
+                                        C:::: CA:AGGUGCUGCAUGGCUGUCGUCAGCUCGUG:CGUGAG:UGU:GGGUUAAGUCCC:CAACGAGCGCAA
+  NZ_CP063062.1:373574-375122_plus 1042 CAUAUGCACAGGUGCUGCAUGGCUGUCGUCAGCUCGUGCCGUGAGGUGUUGGGUUAAGUCCCGCAACGAGCGCAA 1116
+                                        999999********************************************************************* PP
+
+                                                                                                                    NC
+                                        ,((((,<<<<<<<---<<--<<<______>>>>>---->>>>>>>,,<<<<<<<<_____>>>>>>>>,,,,,)) CS
+                           RF00177 1102 CCCccgccccuagUUgCcAucgguuuauuccggGcACUcuaggggGACcgCCggcGauAAgccGGagGAAGGugg 1176
+                                        CCC::+:C::UAGUUGCCA+C:: UUA++::GGG+ACUCUA::G:GAC:GCC:G:G+UAA:C:GGA:GAAGG ::
+  NZ_CP063062.1:373574-375122_plus 1117 CCCUUAUCGUUAGUUGCCAGCAC-UUAGGGUGGGAACUCUAACGAGACUGCCUGGGUUAACCAGGAGGAAGGCGA 1190
+                                        ***********************.78899********************************************** PP
+
+                                                                                                                    NC
+                                        )),,,,]]]]-]]]---]]]]]]]],,,,}}}}}}},,,}}-}}}}}}}}}},,,<<<<<<<-----<<<--<<- CS
+                           RF00177 1177 GGAuGACGuCAaguCauCauggCCCUUAugcccgGGGCuaCACaCgugcuaCAAUGgccggcACAaaggGuaGCa 1251
+                                        GGAUGACGUCAAGUCA CAUGGCCCUUAU:CCC:GGGC ACACACGUGCUACAAUGGCC:G:ACA+A:GGUAGCA
+  NZ_CP063062.1:373574-375122_plus 1191 GGAUGACGUCAAGUCAGCAUGGCCCUUAUGCCCAGGGCGACACACGUGCUACAAUGGCCAGUACAGAAGGUAGCA 1265
+                                        *************************************************************************** PP
+
+                                                                                                                    NC
+                                        --<<<____>>>--->>---->>>----->>>>>>>,,,,,,<---<<<<<<<<________>>>>>>>>--->, CS
+                           RF00177 1252 AagccGcGAggcggAGCuAAUCccauAAAgccggcCucAGUUCGGAcuGgaGgCUGcAAcUCGcCucCagGAAGu 1326
+                                        A ::CG+GAG::GGAGC+AAUCC:+ AAA:C:GGCC+CAGUUCGGA:UG:AG:CUGCAACUCG:CU:CA:GAAGU
+  NZ_CP063062.1:373574-375122_plus 1266 AGAUCGUGAGAUGGAGCAAAUCCUU-AAAGCUGGCCCCAGUUCGGAUUGUAGUCUGCAACUCGACUACAUGAAGU 1339
+                                        ************************8.99*********************************************** PP
+
+                                                             v        v                                             NC
+                                        ,,,,}}}}},,,,,<<<<<<<<_____.__>>>>>>>>,,,,,,}}---}}}}}}}}}}-}},,<-<<-<<---< CS
+                           RF00177 1327 uGGAauCGCUAGUAaucGcggcUCAGc.AugccgCgguGAAUACGuUCcCGGGcCuuGuACaCACCGcCCGUCAc 1400
+                                        +GGAAU:GCUAGUAAU:GCG: UCAGC AU :CGC:GUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCAC
+  NZ_CP063062.1:373574-375122_plus 1340 CGGAAUUGCUAGUAAUGGCGUGUCAGCcAUAACGCCGUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCAC 1414
+                                        *************************************************************************** PP
+
+                                                                  v     v                   v    v                  NC
+                                        <<<<<<<--<<<<<<<<<<<<----<<<<<<-<<<<--<<.____.>>->>>>>>>>>>--->>>>>>>>>>>>- CS
+                           RF00177 1401 gcCacggaAgccggccccgcCcGAAGccgccgcgccAAcc.uuaa.ggaggcgggcggCuAaGgcggggccggcg 1473
+                                        ::CA::G+A::::G:::::CC+ AAG CG :G ::CAACC ++ A GG G:: : CG C AAGG:::::C::::G
+  NZ_CP063062.1:373574-375122_plus 1415 AUCAUGGGAGUUGGUUUUACCUUAAGUCGUUGACUCAACCcGCGAgGGGGAGAGGCGCCCAAGGUGAGGCUGAUG 1489
+                                        *****************************************99999***************************** PP
+
+                                                                                                     NC
+                                        ->>>>>>>>---->>-->>-->,<<<<<<<<<<____>>>>>>>>>>::::::::::::: CS
+                           RF00177 1474 AccggGgcgAAGUCGUAaCAAGGuagCcguaccGGAAggugcgGcugGAUcAccUcCUUu 1533
+                                        AC::GG::GAAGUCGUAACAAGGUAGCC:UACCGGAAGGUG:GGCUGGAUCACCUCCUUU
+  NZ_CP063062.1:373574-375122_plus 1490 ACUAGGAUGAAGUCGUAACAAGGUAGCCCUACCGGAAGGUGGGGCUGGAUCACCUCCUUU 1549
+                                        ************************************************************ PP
+
+
+
+Internal CM pipeline statistics summary:
+----------------------------------------
+Query sequence(s):                                               1  (1549 residues searched)
+Query sequences re-searched for truncated hits:                  1  (4647.0 residues re-searched, avg per model)
+Target model(s):                                                 1  (1533 consensus positions)
+Windows   passing  local HMM SSV           filter:               4  (1); expected (0.35)
+Windows   passing  local HMM Viterbi       filter:                  (off)
+Windows   passing  local HMM Viterbi  bias filter:                  (off)
+Windows   passing  local HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing  local HMM Forward  bias filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward  bias filter:               4  (1); expected (0.02)
+Envelopes passing glocal HMM envelope defn filter:               4  (1); expected (0.02)
+Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
+Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
+
+# CPU time: 3.00u 0.07s 00:00:03.07 Elapsed: 00:00:03.06
+//
+Query:       NZ_CP063062.1:399242-400790_plus  [L=1549]
+Description: Chlamydia suis strain 111 Ry chromosome, complete genome
+Hit scores:
+ rank     E-value  score  bias  modelname  start    end   mdl trunc   gc  description
+ ----   --------- ------ -----  --------- ------ ------   --- ----- ----  -----------
+  (1) !         0 1527.6   7.9  RF00177        1   1549 +  cm    no 0.52  Bacterial small subunit ribosomal RNA
+
+
+Hit alignments:
+>> RF00177  Bacterial small subunit ribosomal RNA
+ rank     E-value  score  bias mdl mdl from   mdl to       seq from      seq to       acc trunc   gc
+ ----   --------- ------ ----- --- -------- --------    ----------- -----------      ---- ----- ----
+  (1) !         0 1527.6   7.9  cm        1     1533 []           1        1549 + [] 0.98    no 0.52
+
+                                                                                      v                             NC
+                                        ::::::::<<<<<_______>>>>>,{{{{-{{{{{{,{{{{{{{{{----{{{-{{{,,<<<--<<<<<-<<<< CS
+                           RF00177    1 uuuauggAGaGuuUGAUCcUggCuCAGggcGaaCGCuGGCGGcgcGcuUaAcaCAuGCAAGuCGagccccacggg 75  
+                                        +UU+ +GAGA:UUUGAUC UGG:UCAG:::GAACGCUGGCGGCG:G +U A::CAUGCAAGUCGA:C:   ::: 
+  NZ_CP063062.1:399242-400790_plus    1 AUUUCUGAGAAUUUGAUCUUGGUUCAGAUUGAACGCUGGCGGCGUGGAUGAGGCAUGCAAGUCGAACG--GAACG 73  
+                                        ********************************************************************..68899 PP
+
+                                                                                                       v      v     NC
+                                        <<<____>>>>>>>->>->>>>>>,,,,,,[[[,,,,,,((((((((--((---(((((((,<<<<----<<<<< CS
+                           RF00177   76 gccuuaaggccccgagggggcGgCGaAcGGGuGAGUAAcgCGcgggcAAccUacCcccgggugcgGgAUAccccc 150 
+                                        G :UUA : C :::+   :G:GGCG A GGGU:AGUAA+:C:::G::AA::U+ C::::::U: GG+AUA C:::
+  NZ_CP063062.1:399242-400790_plus   74 GUUUUAUAGCUGUUU---AGUGGCGGAAGGGUUAGUAAUGCAUAGAUAAUUUGUCUUUAACUUGGGAAUAACGGU 145 
+                                        999999999999887...********************************************************* PP
+
+                                                    v       v                                                       NC
+                                        <<____>>>>>>>----->>>>,,,,,<<<<<<<.<<<____>>>.>>>>>>>,,,,<<<...........____ CS
+                           RF00177  151 cgGAAAcggggggUAAUACcgcAUaaugccccgg.cccguauggg.ccggggcuAAAGgc...........auuu 212 
+                                        :GGAAAC::::G UAAUACC :AU ++ C C :: :::G+AU::: :: G G UAAAG::              +
+  NZ_CP063062.1:399242-400790_plus  146 UGGAAACGGCCGCUAAUACCGAAUGUGGCGCUAUuUAGGCAUCUAgAUGGUGUUAAAGAAggggaucguagGACC 220 
+                                        **********************************9999****9999********************998765566 PP
+
+                                                                     v                                     v        NC
+                                        _>>>,)))))))--))))))))))<<<--<-<<<--<<<<<<<<_______>>>>>>>>>>>----->>>>,,<< CS
+                           RF00177  213 agcCGcccgggGAugggcccgCGccccAUcAGcuAGuuGGuggGGUAAuGGCccaCCaaggCgAuGAggggUAGc 287 
+                                        +::CG::::::G  ::::C:::G::::AU AGCUAGUUGGU:GGGUAA+GGCC:ACCAAGGCGAUGA :::UAG:
+  NZ_CP063062.1:399242-400790_plus  221 UUUCGGUUAAAGGGGAGUCUAUGUGAUAUCAGCUAGUUGGUGGGGUAAAGGCCUACCAAGGCGAUGACGUCUAGG 295 
+                                        6************************************************************************** PP
+
+                                                                                                              v     NC
+                                        <<<<<<____>>>>--->>>>]]],<<<<<<__________>>>>>>,<<<<____>>>>,,,}}}}}}-},,,, CS
+                           RF00177  288 cGgccuGAGAgggcGauCggCCaCAcuGGgaCUGAGAcACGgcCCagACuCCUACGGGaGGCAGCaGugggGAAU 362 
+                                        CG:::UGAGAG:::G  CG:C:ACACUGGGACUGAGACAC GCCCAGACUCCUACGGGAGGC GCAG::G GAAU
+  NZ_CP063062.1:399242-400790_plus  296 CGGAUUGAGAGAUUGGCCGCCAACACUGGGACUGAGACACUGCCCAGACUCCUACGGGAGGCUGCAGUCGAGAAU 370 
+                                        *************************************************************************** PP
+
+                                                                                                                    NC
+                                        ,<-<<<---<<<<<____>>>>>->>>>,}}-}}}}}},,<<<<------<<<<____>>>>----->>>>,,,< CS
+                           RF00177  363 auUgcgCAAugGgcGaAAgcCugAcgcaGCgAcgCCGCGUGgggGAuGAAggccUUcGggccGUAAAcccCUuUc 437 
+                                         UU:CGCAAUGG:CG AAG:CUGACG:AGC:ACGCCGCGUG:G:GAUGAA::C: U G:G::GUAAA:C:CUUUC
+  NZ_CP063062.1:399242-400790_plus  371 CUUUCGCAAUGGACGGAAGUCUGACGAAGCGACGCCGCGUGUGUGAUGAAGGCUCUAGGGUUGUAAAGCACUUUC 445 
+                                        *************************************************************************** PP
+
+                                                       vvv                  vvv                                     NC
+                                        <<<<<<---<-----<<<___........._~~~~~>>>----->---->>>>>>--->,,<<<<<------<<< CS
+                           RF00177  438 ccggGgGAagAaaaaccgaua.........u*[5]*cgguuuGAcggUAcCccgggAagAAGcccCGGCUAAcuc 503 
+                                         C:: GGAA AA A ++G                     UUUGA  GUAC ::G +AAGAAGC:CCGGCUAACUC
+  NZ_CP063062.1:399242-400790_plus  446 GCCUGGGAAUAAGAGAAGGCGguuaauaccC*[6]*---UUUGAGCGUACUAGGUAAAGAAGCACCGGCUAACUC 518 
+                                        ***********99774444434455443321..2.....359********************************* PP
+
+                                                                                                                    NC
+                                        <<-----<<____>>------->>>>>>>>>>,}}}}}}}}}},,,,,,,,,,{{{-----{,[[[[-[-[[[,< CS
+                           RF00177  504 cGUGCCAGCAGCCGCGGUAAuACggagGgggCaaGCGuugccCGGAaUuAuUGGGcGUAAAGgGcgcGcAgGcGG 578 
+                                        CGUGCCAGCAGC GCGGUAAUACGGAGGG:GC AGCGUU:::CGGA+UUAUUGGGCGUAAAGGGCG:G:AGGCGG
+  NZ_CP063062.1:399242-400790_plus  519 CGUGCCAGCAGCUGCGGUAAUACGGAGGGUGCUAGCGUUAAUCGGAUUUAUUGGGCGUAAAGGGCGUGUAGGCGG 593 
+                                        *************************************************************************** PP
+
+                                                     v        v                 v      v                            NC
+                                        <<<<<<-<<<<<<<<<<<----<<<<<<<_____>>>>>>>-->>>>>>>>>-->>>>>>>>>,,,((((((((( CS
+                           RF00177  579 cccggcAaGucgggcgcgAAAucccgcgGCUcAACcgcgggaucgcgcccgaaACugccgggCUuGaGuccggcc 653 
+                                        :: : :AAGU: G :G::AAAU :CG:GGCUCAACC:CG:  +::C: C :A+ACU: : ::CU+GAG: :: ::
+  NZ_CP063062.1:399242-400790_plus  594 AAGAGUAAGUUGGUUGUCAAAUCUCGGGGCUCAACCCCGAAUCGGCAUCUGAUACUAUUUUUCUAGAGGGUAGAU 668 
+                                        *************************************************************************** PP
+
+                                                                                                  v          v      NC
+                                        --(((((((<<--<<<<<<<<---<<<______>>>------>>>>>>>>-->>,,,,<--<<____>>>))))) CS
+                           RF00177  654 GAgGggggcggAAcucccgguGUAGcgGUGAAAugCGUAGAuaucgggagGAacACCacugGCGAAGGCggcccc 728 
+                                        G :G:::::GGAA:U C::GUGUAGCGGUGAAAUGCGUAGAUAU::G A:GAACACCA UGGCGAAGGC :::::
+  NZ_CP063062.1:399242-400790_plus  669 GGAGAAAAGGGAAUUUCACGUGUAGCGGUGAAAUGCGUAGAUAUGUGGAAGAACACCAGUGGCGAAGGCGCUUUU 743 
+                                        *************************************************************************** PP
+
+                                                                                                                    NC
+                                        ))-))))))-))),,,]]]]--]]]],,,,<<<<<<---<<---<<<<_________>>>>--->>>>>>>>,,, CS
+                           RF00177  729 CuGggccgguaCuGACgCugAggcgCGAAAGCguGGGgAgCaAAcgGGAUUAGAUACCCcgGUAGuCCacGCcgU 803 
+                                        C: :: :: +:CUGACGCU:AG:CGCGAAAGC::GGGGAGCAAAC:GGAUUAGAUACCC:GGUAGUCC::GCCGU
+  NZ_CP063062.1:399242-400790_plus  744 CUAAUUUAUACCUGACGCUAAGGCGCGAAAGCAAGGGGAGCAAACAGGAUUAGAUACCCUGGUAGUCCUUGCCGU 818 
+                                        *************************************************************************** PP
+
+                                                                  v      v                                          NC
+                                        ,,,,,,,((((((,,<<<<<<<<<<<<_____.>>>>>>>>>>>>,,,<<____>>,,,,,))))))}}}},<<< CS
+                           RF00177  804 AAACGAUGggcgCUAGgcgccggggggauuaa.ccccccggcgcCgaAGcuAAcgCauUAAGcgccCCgCCUGgG 877 
+                                        AAACGAUG::::CU G:::::G::GG  U AA  CC::C:::::CG AGCUAACGC+UUAAG::::CCGCCUG:G
+  NZ_CP063062.1:399242-400790_plus  819 AAACGAUGCAUACUUGAUGUGGAUGGUCUCAAcCCCAUCCGUGUCGGAGCUAACGCGUUAAGUAUGCCGCCUGAG 893 
+                                        ***************************999998****************************************** PP
+
+                                                                                                                    NC
+                                        ------<<<<____>>>>---->>>,,,,,,,,{{{{{-{{{{{{{-{{,,{{{{{{{{{{{{{{{{{,,,,<<< CS
+                           RF00177  878 GAgUACggcCGCAAGgcugAAACuCAAAGGAAUuGaCgGgGgCCCGCaCAAGCGguGgagcauGuGGuUUAAuuC 952 
+                                        GAGUAC:::CGCAAG:::GAAAC:CAAA GAAUUGACGGGGGCCCGCACAAGC:GUGGAGCAUGUGGUUUAAUUC
+  NZ_CP063062.1:399242-400790_plus  894 GAGUACACUCGCAAGGGUGAAACUCAAAAGAAUUGACGGGGGCCCGCACAAGCAGUGGAGCAUGUGGUUUAAUUC 968 
+                                        *************************************************************************** PP
+
+                                                                                    v                v              NC
+                                        <________>>>>,,,,,,,,{{{{{{{,,,,,(((.(((((,,<<<<<<<____>>>>>>>,<<<<____>>>> CS
+                           RF00177  953 GAuGcaAcgCGaaGAACCUUACCcgggcUUGAcgug.ccgggaaccccccgGAaAcgggggguccccuuaagggg 1026
+                                        GAUGCAACGCGAAG ACCUUACC:GGG:UUGAC:UG ::::GA  :C: C:GAAA:G :G: U: CC  AAGG :
+  NZ_CP063062.1:399242-400790_plus  969 GAUGCAACGCGAAGGACCUUACCUGGGUUUGACAUGcAUAUGACCGCGGCAGAAAUGUCGUUUU-CCGCAAGG-A 1041
+                                        ************************************999999********************95.77777777.6 PP
+
+                                                                                                                    NC
+                                        )))))-))),[[-[[[[--[[[[[[[[[,,,((((((<<<____>>>,,<<<<______>>>>,,)))))),,,, CS
+                           RF00177 1027 cccggacacAGGUGcugCAuGgcuGuCGUCAGCuCGuguCGUGAGauGUcgGGUUAAGUCCcgcAaCGaGCGCAA 1101
+                                        C:::: CA:AGGUGCUGCAUGGCUGUCGUCAGCUCGUG:CGUGAG:UGU:GGGUUAAGUCCC:CAACGAGCGCAA
+  NZ_CP063062.1:399242-400790_plus 1042 CAUAUGCACAGGUGCUGCAUGGCUGUCGUCAGCUCGUGCCGUGAGGUGUUGGGUUAAGUCCCGCAACGAGCGCAA 1116
+                                        999999********************************************************************* PP
+
+                                                                                                                    NC
+                                        ,((((,<<<<<<<---<<--<<<______>>>>>---->>>>>>>,,<<<<<<<<_____>>>>>>>>,,,,,)) CS
+                           RF00177 1102 CCCccgccccuagUUgCcAucgguuuauuccggGcACUcuaggggGACcgCCggcGauAAgccGGagGAAGGugg 1176
+                                        CCC::+:C::UAGUUGCCA+C:: UUA++::GGG+ACUCUA::G:GAC:GCC:G:G+UAA:C:GGA:GAAGG ::
+  NZ_CP063062.1:399242-400790_plus 1117 CCCUUAUCGUUAGUUGCCAGCAC-UUAGGGUGGGAACUCUAACGAGACUGCCUGGGUUAACCAGGAGGAAGGCGA 1190
+                                        ***********************.78899********************************************** PP
+
+                                                                                                                    NC
+                                        )),,,,]]]]-]]]---]]]]]]]],,,,}}}}}}},,,}}-}}}}}}}}}},,,<<<<<<<-----<<<--<<- CS
+                           RF00177 1177 GGAuGACGuCAaguCauCauggCCCUUAugcccgGGGCuaCACaCgugcuaCAAUGgccggcACAaaggGuaGCa 1251
+                                        GGAUGACGUCAAGUCA CAUGGCCCUUAU:CCC:GGGC ACACACGUGCUACAAUGGCC:G:ACA+A:GGUAGCA
+  NZ_CP063062.1:399242-400790_plus 1191 GGAUGACGUCAAGUCAGCAUGGCCCUUAUGCCCAGGGCGACACACGUGCUACAAUGGCCAGUACAGAAGGUAGCA 1265
+                                        *************************************************************************** PP
+
+                                                                                                                    NC
+                                        --<<<____>>>--->>---->>>----->>>>>>>,,,,,,<---<<<<<<<<________>>>>>>>>--->, CS
+                           RF00177 1252 AagccGcGAggcggAGCuAAUCccauAAAgccggcCucAGUUCGGAcuGgaGgCUGcAAcUCGcCucCagGAAGu 1326
+                                        A ::CG+GAG::GGAGC+AAUCC:+ AAA:C:GGCC+CAGUUCGGA:UG:AG:CUGCAACUCG:CU:CA:GAAGU
+  NZ_CP063062.1:399242-400790_plus 1266 AGAUCGUGAGAUGGAGCAAAUCCUU-AAAGCUGGCCCCAGUUCGGAUUGUAGUCUGCAACUCGACUACAUGAAGU 1339
+                                        ************************8.99*********************************************** PP
+
+                                                             v        v                                             NC
+                                        ,,,,}}}}},,,,,<<<<<<<<_____.__>>>>>>>>,,,,,,}}---}}}}}}}}}}-}},,<-<<-<<---< CS
+                           RF00177 1327 uGGAauCGCUAGUAaucGcggcUCAGc.AugccgCgguGAAUACGuUCcCGGGcCuuGuACaCACCGcCCGUCAc 1400
+                                        +GGAAU:GCUAGUAAU:GCG: UCAGC AU :CGC:GUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCAC
+  NZ_CP063062.1:399242-400790_plus 1340 CGGAAUUGCUAGUAAUGGCGUGUCAGCcAUAACGCCGUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCAC 1414
+                                        *************************************************************************** PP
+
+                                                                  v     v                   v    v                  NC
+                                        <<<<<<<--<<<<<<<<<<<<----<<<<<<-<<<<--<<.____.>>->>>>>>>>>>--->>>>>>>>>>>>- CS
+                           RF00177 1401 gcCacggaAgccggccccgcCcGAAGccgccgcgccAAcc.uuaa.ggaggcgggcggCuAaGgcggggccggcg 1473
+                                        ::CA::G+A::::G:::::CC+ AAG CG :G ::CAACC ++ A GG G:: : CG C AAGG:::::C::::G
+  NZ_CP063062.1:399242-400790_plus 1415 AUCAUGGGAGUUGGUUUUACCUUAAGUCGUUGACUCAACCcGCGAgGGGGAGAGGCGCCCAAGGUGAGGCUGAUG 1489
+                                        *****************************************99999***************************** PP
+
+                                                                                                     NC
+                                        ->>>>>>>>---->>-->>-->,<<<<<<<<<<____>>>>>>>>>>::::::::::::: CS
+                           RF00177 1474 AccggGgcgAAGUCGUAaCAAGGuagCcguaccGGAAggugcgGcugGAUcAccUcCUUu 1533
+                                        AC::GG::GAAGUCGUAACAAGGUAGCC:UACCGGAAGGUG:GGCUGGAUCACCUCCUUU
+  NZ_CP063062.1:399242-400790_plus 1490 ACUAGGAUGAAGUCGUAACAAGGUAGCCCUACCGGAAGGUGGGGCUGGAUCACCUCCUUU 1549
+                                        ************************************************************ PP
+
+
+
+Internal CM pipeline statistics summary:
+----------------------------------------
+Query sequence(s):                                               1  (1549 residues searched)
+Query sequences re-searched for truncated hits:                  1  (4647.0 residues re-searched, avg per model)
+Target model(s):                                                 1  (1533 consensus positions)
+Windows   passing  local HMM SSV           filter:               4  (1); expected (0.35)
+Windows   passing  local HMM Viterbi       filter:                  (off)
+Windows   passing  local HMM Viterbi  bias filter:                  (off)
+Windows   passing  local HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing  local HMM Forward  bias filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward  bias filter:               4  (1); expected (0.02)
+Envelopes passing glocal HMM envelope defn filter:               4  (1); expected (0.02)
+Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
+Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
+
+# CPU time: 2.93u 0.06s 00:00:02.99 Elapsed: 00:00:02.99
+//
+Query:       NZ_CP066836.1:2159197-2160738_minus  [L=1542]
+Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
+Hit scores:
+ rank     E-value  score  bias  modelname  start    end   mdl trunc   gc  description
+ ----   --------- ------ -----  --------- ------ ------   --- ----- ----  -----------
+  (1) !         0 1577.3  14.2  RF00177        1   1542 +  cm    no 0.54  Bacterial small subunit ribosomal RNA
+
+
+Hit alignments:
+>> RF00177  Bacterial small subunit ribosomal RNA
+ rank     E-value  score  bias mdl mdl from   mdl to       seq from      seq to       acc trunc   gc
+ ----   --------- ------ ----- --- -------- --------    ----------- -----------      ---- ----- ----
+  (1) !         0 1577.3  14.2  cm        1     1533 []           1        1542 + [] 0.99    no 0.54
+
+                                                                                                                    NC
+                                           ::::::::<<<<<_______>>>>>,{{{{-{{{{{{,{{{{{{{{{----{{{-{{{,,<<<--<<<<<-. CS
+                              RF00177    1 uuuauggAGaGuuUGAUCcUggCuCAGggcGaaCGCuGGCGGcgcGcuUaAcaCAuGCAAGuCGagcccca. 71  
+                                           ++++UG+AGAGUUUGAUC UGGCUCAG:::GAACGCUGGCGGC::GC+UAACACAUGCAAGUCGA:C:::A 
+  NZ_CP066836.1:2159197-2160738_minus    1 AAAUUGAAGAGUUUGAUCAUGGCUCAGAUUGAACGCUGGCGGCAGGCCUAACACAUGCAAGUCGAACGGUAa 72  
+                                           **********************************************************************99 PP
+
+                                                                                                   v                NC
+                                           ...<<<<<<<____>>>>>>>...->>->>>>>>,,,,,,[[[,,,,,,((((((((--((---(((((((, CS
+                              RF00177   72 ...cggggccuuaaggccccg...agggggcGgCGaAcGGGuGAGUAAcgCGcgggcAAccUacCcccgggu 137 
+                                               ::G::: U++:::C::    +::G:G:GGCG ACGGGUGAGUAA+::::GGG  A:CU+CC :::GG+
+  NZ_CP066836.1:2159197-2160738_minus   73 cagGAAGAAGCUUGCUUCUUUgcuGACGAGUGGCGGACGGGUGAGUAAUGUCUGGGA-AACUGCCUGAUGGA 143 
+                                           9999999999999999999999999********************************.9************* PP
+
+                                            v      v                v       v                                       NC
+                                           <<<<----<<<<<<<____>>>>>>>----->>>>,,,,,<<<<<<<<<<____>>>>>>>>>>,,,,<<<. CS
+                              RF00177  138 gcgGgAUAccccccgGAAAcggggggUAAUACcgcAUaaugccccggcccguaugggccggggcuAAAGgc. 208 
+                                           G GGGAUA C::C:GGAAAC:G::G UAAUACC CAUAA        ::CG+A+G::        AAA::: 
+  NZ_CP066836.1:2159197-2160738_minus  144 GGGGGAUAACUACUGGAAACGGUAGCUAAUACCGCAUAAC-------GUCGCAAGAC-------CAAAGAGg 201 
+                                           ****************************************.......9********9.......******99 PP
+
+                                                                         v                                          NC
+                                           .........._____>>>,)))))))--))))))))))<<<--<-<<<--<<<<<<<<_______>>>>>>> CS
+                              RF00177  209 ..........auuuagcCGcccgggGAugggcccgCGccccAUcAGcuAGuuGGuggGGUAAuGGCccaCCa 270 
+                                                        ++:::GCC::: GAUG: CCC:::::::AU:AGCUAGU:GGUG:GGUAA GGC:CACC:
+  NZ_CP066836.1:2159197-2160738_minus  202 gggaccuucgGGCCUCUUGCCAUCGGAUGUGCCCAGAUGGGAUUAGCUAGUAGGUGGGGUAACGGCUCACCU 273 
+                                           ****99877655556********************************************************* PP
+
+                                                                                                                    NC
+                                           >>>>----->>>>,,<<<<<<<<____>>>>--->>>>]]],<<<<<<__________>>>>>>,<<<<___ CS
+                              RF00177  271 aggCgAuGAggggUAGccGgccuGAGAgggcGauCggCCaCAcuGGgaCUGAGAcACGgcCCagACuCCUAC 342 
+                                           AGGCGA+GA::::UAGC:G::CUGAGAGG::GA C:GCCACACUGG:ACUGAGACACGG:CCAGACUCCUAC
+  NZ_CP066836.1:2159197-2160738_minus  274 AGGCGACGAUCCCUAGCUGGUCUGAGAGGAUGACCAGCCACACUGGAACUGAGACACGGUCCAGACUCCUAC 345 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           _>>>>,,,}}}}}}-},,,,,<-<<<---<<<<<____>>>>>->>>>,}}-}}}}}},,<<<<------<< CS
+                              RF00177  343 GGGaGGCAGCaGugggGAAUauUgcgCAAugGgcGaAAgcCugAcgcaGCgAcgCCGCGUGgggGAuGAAgg 414 
+                                           GGGAGGCAGCAGUGGGGAAUAUUGC:CAAUGGGCG AAGCCUGA:GCAGC:A:GCCGCGUG:::GA+GAA::
+  NZ_CP066836.1:2159197-2160738_minus  346 GGGAGGCAGCAGUGGGGAAUAUUGCACAAUGGGCGCAAGCCUGAUGCAGCCAUGCCGCGUGUAUGAAGAAGG 417 
+                                           ************************************************************************ PP
+
+                                                                  v                                                 NC
+                                           <<____>>>>----->>>>,,,<<<<<<<---<-----<<<___........______>>>----->----> CS
+                              RF00177  415 ccUUcGggccGUAAAcccCUuUcccggGgGAagAaaaaccgaua........uuuuaucgguuuGAcggUAc 478 
+                                           CCUUCGGG::GUAAA:::CUUUC ::GGGGA GAA   ::G++A          UU+ C::+UUGACG UAC
+  NZ_CP066836.1:2159197-2160738_minus  418 CCUUCGGGUUGUAAAGUACUUUCAGCGGGGAGGAAG-GGAGUAAaguuaauaCCUUUGCUCAUUGACGUUAC 488 
+                                           *********************************998.7888888899988754445558999********** PP
+
+                                               v                                                                    NC
+                                           >>>>>--->,,<<<<<------<<<<<-----<<____>>------->>>>>>>>>>,}}}}}}}}}},,,, CS
+                              RF00177  479 CccgggAagAAGcccCGGCUAAcuccGUGCCAGCAGCCGCGGUAAuACggagGgggCaaGCGuugccCGGAa 550 
+                                           CC:: GAAGAAGC:CCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGG:GCAAGCGUU:::CGGAA
+  NZ_CP066836.1:2159197-2160738_minus  489 CCGCAGAAGAAGCACCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGGUGCAAGCGUUAAUCGGAA 560 
+                                           ************************************************************************ PP
+
+                                                                v                            v                 v    NC
+                                           ,,,,,,{{{-----{,[[[[-[-[[[,<<<<<<<-<<<<<<<<<<<----<<<<<<<_____>>>>>>>--> CS
+                              RF00177  551 UuAuUGGGcGUAAAGgGcgcGcAgGcGGcccggcAaGucgggcgcgAAAucccgcgGCUcAACcgcgggauc 622 
+                                           UUA+UGGGCGUAAAG GC:CG AGGCGG:::G::AAGUC:G::G::AAAU CC: GGCUCAACC :GG A+:
+  NZ_CP066836.1:2159197-2160738_minus  561 UUACUGGGCGUAAAGCGCACGCAGGCGGUUUGUUAAGUCAGAUGUGAAAUCCCCGGGCUCAACCUGGGAACU 632 
+                                           ************************************************************************ PP
+
+                                                                    v                                               NC
+                                           >>>>>>>>-->>>>>>>>>,,,(((((((((--(((((((<<--<<<<<<<<---<<<______>>>----- CS
+                              RF00177  623 gcgcccgaaACugccgggCUuGaGuccggccGAgGggggcggAAcucccgguGUAGcgGUGAAAugCGUAGA 694 
+                                           :C::C:GA+ACU::C:::CUUGAGU ::G::GAGGGGGG::GAA:UCC:GGUGUAGCGGUGAAAUGCGUAGA
+  NZ_CP066836.1:2159197-2160738_minus  633 GCAUCUGAUACUGGCAAGCUUGAGUCUCGUAGAGGGGGGUAGAAUUCCAGGUGUAGCGGUGAAAUGCGUAGA 704 
+                                           ************************************************************************ PP
+
+                                                            v          v             v          v                   NC
+                                           ->>>>>>>>-->>,,,,<--<<____>>>)))))))-))))))-))),,,]]]]--]]]],,,,<<<<<<-- CS
+                              RF00177  695 uaucgggagGAacACCacugGCGAAGGCggccccCuGggccgguaCuGACgCugAggcgCGAAAGCguGGGg 766 
+                                            AUC:GGA:GAA:ACC+ UGGCGAAGGC :CCCCCUG::C::  ACUGACGCU AGG:GCGAAAGCGUGGGG
+  NZ_CP066836.1:2159197-2160738_minus  705 GAUCUGGAGGAAUACCGGUGGCGAAGGCGGCCCCCUGGACGAAGACUGACGCUCAGGUGCGAAAGCGUGGGG 776 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           -<<---<<<<_________>>>>--->>>>>>>>,,,,,,,,,,((((((,,<<<<<<<<<<<<_____>>> CS
+                              RF00177  767 AgCaAAcgGGAUUAGAUACCCcgGUAGuCCacGCcgUAAACGAUGggcgCUAGgcgccggggggauuaaccc 838 
+                                           AGCAAAC:GGAUUAGAUACCC:GGUAGUCCACGCCGUAAACGAUG::::CU GG:::  : G:: UU A::C
+  NZ_CP066836.1:2159197-2160738_minus  777 AGCAAACAGGAUUAGAUACCCUGGUAGUCCACGCCGUAAACGAUGUCGACUUGGAGGUUGUGCCCUUGAGGC 848 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           >>>>>>>>>,,,<<____>>,,,,,))))))}}}},<<<------<<<<____>>>>---->>>,,,,,,,, CS
+                              RF00177  839 cccggcgcCgaAGcuAAcgCauUAAGcgccCCgCCUGgGGAgUACggcCGCAAGgcugAAACuCAAAGGAAU 910 
+                                            :  :::CCG AGCUAACGC+UUAAG::::CCGCCUGGGGAGUACG:CCGCAAGG:U+AAACUCAAA GAAU
+  NZ_CP066836.1:2159197-2160738_minus  849 GUGGCUUCCGGAGCUAACGCGUUAAGUCGACCGCCUGGGGAGUACGGCCGCAAGGUUAAAACUCAAAUGAAU 920 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           {{{{{-{{{{{{{-{{,,{{{{{{{{{{{{{{{{{,,,,<<<<________>>>>,,,,,,,,{{{{{{{,, CS
+                              RF00177  911 uGaCgGgGgCCCGCaCAAGCGguGgagcauGuGGuUUAAuuCGAuGcaAcgCGaaGAACCUUACCcgggcUU 982 
+                                           UGACGGGGGCCCGCACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACC:GG:CUU
+  NZ_CP066836.1:2159197-2160738_minus  921 UGACGGGGGCCCGCACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACCUGGUCUU 992 
+                                           ************************************************************************ PP
+
+                                                                            v        v                              NC
+                                           ,,,((((((((,,<<<<<<<____>>>>>>>,<<<<____>>>>)))))-))),[[-[[[[--[[[[[[[[[ CS
+                              RF00177  983 GAcgugccgggaaccccccgGAaAcgggggguccccuuaaggggcccggacacAGGUGcugCAuGgcuGuCG 1054
+                                           GAC:U:C::GGAA ::::C:GA A:G:::: +: CCUU +GG :CC::GA:A:AGGUGCUGCAUGGCUGUCG
+  NZ_CP066836.1:2159197-2160738_minus  993 GACAUCCACGGAAGUUUUCAGAGAUGAGAAUGUGCCUUCGGGAACCGUGAGACAGGUGCUGCAUGGCUGUCG 1064
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           ,,,((((((<<<____>>>,,<<<<______>>>>,,)))))),,,,,((((,<<<<<<<---<<--<<<__ CS
+                              RF00177 1055 UCAGCuCGuguCGUGAGauGUcgGGUUAAGUCCcgcAaCGaGCGCAACCCccgccccuagUUgCcAucgguu 1126
+                                           UCAGCUCGUGU:GUGA:AUGU:GGGUUAAGUCCC:CAACGAGCGCAACCC::+:CC:U:GUUGCCA+CGG U
+  NZ_CP066836.1:2159197-2160738_minus 1065 UCAGCUCGUGUUGUGAAAUGUUGGGUUAAGUCCCGCAACGAGCGCAACCCUUAUCCUUUGUUGCCAGCGG-U 1135
+                                           **********************************************************************.8 PP
+
+                                                                                                                    NC
+                                           ____>>>>>---->>>>>>>,,<<<<<<<<_____>>>>>>>>,,,,,)))),,,,]]]]-]]]---]]]]] CS
+                              RF00177 1127 uauuccggGcACUcuaggggGACcgCCggcGauAAgccGGagGAAGGuggGGAuGACGuCAaguCauCaugg 1198
+                                             ++CCGGG+ACUC:A:GG:GAC:GCC:G:GAUAA:C:GGA:GAAGGU::GGAUGACGUCAAGUCAUCAUGG
+  NZ_CP066836.1:2159197-2160738_minus 1136 CCGGCCGGGAACUCAAAGGAGACUGCCAGUGAUAAACUGGAGGAAGGUGGGGAUGACGUCAAGUCAUCAUGG 1207
+                                           8899******************************************************************** PP
+
+                                                                                                                    NC
+                                           ]]],,,,}}}}}}},,,}}-}}}}}}}}}},,,<<<<<<<-----<<<--<<---<<<____>>>--->>-- CS
+                              RF00177 1199 CCCUUAugcccgGGGCuaCACaCgugcuaCAAUGgccggcACAaaggGuaGCaAagccGcGAggcggAGCuA 1270
+                                           CCCUUA+G:CC:GGGCUACACACGUGCUACAAUG:C::::ACAAAG:G+AGC+A ::CGCGAG:: +AGC  
+  NZ_CP066836.1:2159197-2160738_minus 1208 CCCUUACGACCAGGGCUACACACGUGCUACAAUGGCGCAUACAAAGAGAAGCGACCUCGCGAGAGCAAGCGG 1279
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           -->>>----->>>>>>>,,,,,,<---<<<<<<<<________>>>>>>>>--->,,,,,}}}}},,,,,<< CS
+                              RF00177 1271 AUCccauAAAgccggcCucAGUUCGGAcuGgaGgCUGcAAcUCGcCucCagGAAGuuGGAauCGCUAGUAau 1342
+                                           A C:CAUAAA::::G:C +AGU CGGA:UGGAG:CUGCAACUCG:CUCCA:GAAGU+GGAAUCGCUAGUAAU
+  NZ_CP066836.1:2159197-2160738_minus 1280 ACCUCAUAAAGUGCGUCGUAGUCCGGAUUGGAGUCUGCAACUCGACUCCAUGAAGUCGGAAUCGCUAGUAAU 1351
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           <<<<<<_______>>>>>>>>,,,,,,}}---}}}}}}}}}}-}},,<-<<-<<---<<<<<<<<--<<<<< CS
+                              RF00177 1343 cGcggcUCAGcAugccgCgguGAAUACGuUCcCGGGcCuuGuACaCACCGcCCGUCAcgcCacggaAgccgg 1414
+                                           CG:GG:UCAG AU:CC:CGGUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCAC:CCA::G+A:::::
+  NZ_CP066836.1:2159197-2160738_minus 1352 CGUGGAUCAGAAUGCCACGGUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCACACCAUGGGAGUGGG 1423
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           <<<<<<<----<<<<<<-<<<<--<<____>>->>>>>>>>>>--->>>>>>>>>>>>-->>>>>>>>---- CS
+                              RF00177 1415 ccccgcCcGAAGccgccgcgccAAccuuaaggaggcgggcggCuAaGgcggggccggcgAccggGgcgAAGU 1486
+                                           :::C::: GAAG:::::+::::AACCUU  GGA:::::::::C A :::G::::::::GAC::GGG:GAAGU
+  NZ_CP066836.1:2159197-2160738_minus 1424 UUGCAAAAGAAGUAGGUAGCUUAACCUUCGGGAGGGCGCUUACCACUUUGUGAUUCAUGACUGGGGUGAAGU 1495
+                                           ************************************************************************ PP
+
+                                                                                           NC
+                                           >>-->>-->,<<<<<<<<<<____>>>>>>>>>>::::::::::::: CS
+                              RF00177 1487 CGUAaCAAGGuagCcguaccGGAAggugcgGcugGAUcAccUcCUUu 1533
+                                           CGUAACAAGGUA:CCGUA::GGAA::UGCGG:UGGAUCACCUCCUU 
+  NZ_CP066836.1:2159197-2160738_minus 1496 CGUAACAAGGUAACCGUAGGGGAACCUGCGGUUGGAUCACCUCCUUA 1542
+                                           *********************************************** PP
+
+
+
+Internal CM pipeline statistics summary:
+----------------------------------------
+Query sequence(s):                                               1  (1542 residues searched)
+Query sequences re-searched for truncated hits:                  1  (4626.0 residues re-searched, avg per model)
+Target model(s):                                                 1  (1533 consensus positions)
+Windows   passing  local HMM SSV           filter:               4  (1); expected (0.35)
+Windows   passing  local HMM Viterbi       filter:                  (off)
+Windows   passing  local HMM Viterbi  bias filter:                  (off)
+Windows   passing  local HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing  local HMM Forward  bias filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward  bias filter:               4  (1); expected (0.02)
+Envelopes passing glocal HMM envelope defn filter:               4  (1); expected (0.02)
+Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
+Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
+
+# CPU time: 2.98u 0.06s 00:00:03.04 Elapsed: 00:00:03.06
+//
+Query:       NZ_CP066836.1:2975089-2976630_minus  [L=1542]
+Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
+Hit scores:
+ rank     E-value  score  bias  modelname  start    end   mdl trunc   gc  description
+ ----   --------- ------ -----  --------- ------ ------   --- ----- ----  -----------
+  (1) !         0 1577.3  14.2  RF00177        1   1542 +  cm    no 0.54  Bacterial small subunit ribosomal RNA
+
+
+Hit alignments:
+>> RF00177  Bacterial small subunit ribosomal RNA
+ rank     E-value  score  bias mdl mdl from   mdl to       seq from      seq to       acc trunc   gc
+ ----   --------- ------ ----- --- -------- --------    ----------- -----------      ---- ----- ----
+  (1) !         0 1577.3  14.2  cm        1     1533 []           1        1542 + [] 0.99    no 0.54
+
+                                                                                                                    NC
+                                           ::::::::<<<<<_______>>>>>,{{{{-{{{{{{,{{{{{{{{{----{{{-{{{,,<<<--<<<<<-. CS
+                              RF00177    1 uuuauggAGaGuuUGAUCcUggCuCAGggcGaaCGCuGGCGGcgcGcuUaAcaCAuGCAAGuCGagcccca. 71  
+                                           ++++UG+AGAGUUUGAUC UGGCUCAG:::GAACGCUGGCGGC::GC+UAACACAUGCAAGUCGA:C:::A 
+  NZ_CP066836.1:2975089-2976630_minus    1 AAAUUGAAGAGUUUGAUCAUGGCUCAGAUUGAACGCUGGCGGCAGGCCUAACACAUGCAAGUCGAACGGUAa 72  
+                                           **********************************************************************99 PP
+
+                                                                                                   v                NC
+                                           ...<<<<<<<____>>>>>>>...->>->>>>>>,,,,,,[[[,,,,,,((((((((--((---(((((((, CS
+                              RF00177   72 ...cggggccuuaaggccccg...agggggcGgCGaAcGGGuGAGUAAcgCGcgggcAAccUacCcccgggu 137 
+                                               ::G::: U++:::C::    +::G:G:GGCG ACGGGUGAGUAA+::::GGG  A:CU+CC :::GG+
+  NZ_CP066836.1:2975089-2976630_minus   73 cagGAAGAAGCUUGCUUCUUUgcuGACGAGUGGCGGACGGGUGAGUAAUGUCUGGGA-AACUGCCUGAUGGA 143 
+                                           9999999999999999999999999********************************.9************* PP
+
+                                            v      v                v       v                                       NC
+                                           <<<<----<<<<<<<____>>>>>>>----->>>>,,,,,<<<<<<<<<<____>>>>>>>>>>,,,,<<<. CS
+                              RF00177  138 gcgGgAUAccccccgGAAAcggggggUAAUACcgcAUaaugccccggcccguaugggccggggcuAAAGgc. 208 
+                                           G GGGAUA C::C:GGAAAC:G::G UAAUACC CAUAA        ::CG+A+G::        AAA::: 
+  NZ_CP066836.1:2975089-2976630_minus  144 GGGGGAUAACUACUGGAAACGGUAGCUAAUACCGCAUAAC-------GUCGCAAGAC-------CAAAGAGg 201 
+                                           ****************************************.......9********9.......******99 PP
+
+                                                                         v                                          NC
+                                           .........._____>>>,)))))))--))))))))))<<<--<-<<<--<<<<<<<<_______>>>>>>> CS
+                              RF00177  209 ..........auuuagcCGcccgggGAugggcccgCGccccAUcAGcuAGuuGGuggGGUAAuGGCccaCCa 270 
+                                                        ++:::GCC::: GAUG: CCC:::::::AU:AGCUAGU:GGUG:GGUAA GGC:CACC:
+  NZ_CP066836.1:2975089-2976630_minus  202 gggaccuucgGGCCUCUUGCCAUCGGAUGUGCCCAGAUGGGAUUAGCUAGUAGGUGGGGUAACGGCUCACCU 273 
+                                           ****99877655556********************************************************* PP
+
+                                                                                                                    NC
+                                           >>>>----->>>>,,<<<<<<<<____>>>>--->>>>]]],<<<<<<__________>>>>>>,<<<<___ CS
+                              RF00177  271 aggCgAuGAggggUAGccGgccuGAGAgggcGauCggCCaCAcuGGgaCUGAGAcACGgcCCagACuCCUAC 342 
+                                           AGGCGA+GA::::UAGC:G::CUGAGAGG::GA C:GCCACACUGG:ACUGAGACACGG:CCAGACUCCUAC
+  NZ_CP066836.1:2975089-2976630_minus  274 AGGCGACGAUCCCUAGCUGGUCUGAGAGGAUGACCAGCCACACUGGAACUGAGACACGGUCCAGACUCCUAC 345 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           _>>>>,,,}}}}}}-},,,,,<-<<<---<<<<<____>>>>>->>>>,}}-}}}}}},,<<<<------<< CS
+                              RF00177  343 GGGaGGCAGCaGugggGAAUauUgcgCAAugGgcGaAAgcCugAcgcaGCgAcgCCGCGUGgggGAuGAAgg 414 
+                                           GGGAGGCAGCAGUGGGGAAUAUUGC:CAAUGGGCG AAGCCUGA:GCAGC:A:GCCGCGUG:::GA+GAA::
+  NZ_CP066836.1:2975089-2976630_minus  346 GGGAGGCAGCAGUGGGGAAUAUUGCACAAUGGGCGCAAGCCUGAUGCAGCCAUGCCGCGUGUAUGAAGAAGG 417 
+                                           ************************************************************************ PP
+
+                                                                  v                                                 NC
+                                           <<____>>>>----->>>>,,,<<<<<<<---<-----<<<___........______>>>----->----> CS
+                              RF00177  415 ccUUcGggccGUAAAcccCUuUcccggGgGAagAaaaaccgaua........uuuuaucgguuuGAcggUAc 478 
+                                           CCUUCGGG::GUAAA:::CUUUC ::GGGGA GAA   ::G++A          UU+ C::+UUGACG UAC
+  NZ_CP066836.1:2975089-2976630_minus  418 CCUUCGGGUUGUAAAGUACUUUCAGCGGGGAGGAAG-GGAGUAAaguuaauaCCUUUGCUCAUUGACGUUAC 488 
+                                           *********************************998.7888888899988754445558999********** PP
+
+                                               v                                                                    NC
+                                           >>>>>--->,,<<<<<------<<<<<-----<<____>>------->>>>>>>>>>,}}}}}}}}}},,,, CS
+                              RF00177  479 CccgggAagAAGcccCGGCUAAcuccGUGCCAGCAGCCGCGGUAAuACggagGgggCaaGCGuugccCGGAa 550 
+                                           CC:: GAAGAAGC:CCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGG:GCAAGCGUU:::CGGAA
+  NZ_CP066836.1:2975089-2976630_minus  489 CCGCAGAAGAAGCACCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGGUGCAAGCGUUAAUCGGAA 560 
+                                           ************************************************************************ PP
+
+                                                                v                            v                 v    NC
+                                           ,,,,,,{{{-----{,[[[[-[-[[[,<<<<<<<-<<<<<<<<<<<----<<<<<<<_____>>>>>>>--> CS
+                              RF00177  551 UuAuUGGGcGUAAAGgGcgcGcAgGcGGcccggcAaGucgggcgcgAAAucccgcgGCUcAACcgcgggauc 622 
+                                           UUA+UGGGCGUAAAG GC:CG AGGCGG:::G::AAGUC:G::G::AAAU CC: GGCUCAACC :GG A+:
+  NZ_CP066836.1:2975089-2976630_minus  561 UUACUGGGCGUAAAGCGCACGCAGGCGGUUUGUUAAGUCAGAUGUGAAAUCCCCGGGCUCAACCUGGGAACU 632 
+                                           ************************************************************************ PP
+
+                                                                    v                                               NC
+                                           >>>>>>>>-->>>>>>>>>,,,(((((((((--(((((((<<--<<<<<<<<---<<<______>>>----- CS
+                              RF00177  623 gcgcccgaaACugccgggCUuGaGuccggccGAgGggggcggAAcucccgguGUAGcgGUGAAAugCGUAGA 694 
+                                           :C::C:GA+ACU::C:::CUUGAGU ::G::GAGGGGGG::GAA:UCC:GGUGUAGCGGUGAAAUGCGUAGA
+  NZ_CP066836.1:2975089-2976630_minus  633 GCAUCUGAUACUGGCAAGCUUGAGUCUCGUAGAGGGGGGUAGAAUUCCAGGUGUAGCGGUGAAAUGCGUAGA 704 
+                                           ************************************************************************ PP
+
+                                                            v          v             v          v                   NC
+                                           ->>>>>>>>-->>,,,,<--<<____>>>)))))))-))))))-))),,,]]]]--]]]],,,,<<<<<<-- CS
+                              RF00177  695 uaucgggagGAacACCacugGCGAAGGCggccccCuGggccgguaCuGACgCugAggcgCGAAAGCguGGGg 766 
+                                            AUC:GGA:GAA:ACC+ UGGCGAAGGC :CCCCCUG::C::  ACUGACGCU AGG:GCGAAAGCGUGGGG
+  NZ_CP066836.1:2975089-2976630_minus  705 GAUCUGGAGGAAUACCGGUGGCGAAGGCGGCCCCCUGGACGAAGACUGACGCUCAGGUGCGAAAGCGUGGGG 776 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           -<<---<<<<_________>>>>--->>>>>>>>,,,,,,,,,,((((((,,<<<<<<<<<<<<_____>>> CS
+                              RF00177  767 AgCaAAcgGGAUUAGAUACCCcgGUAGuCCacGCcgUAAACGAUGggcgCUAGgcgccggggggauuaaccc 838 
+                                           AGCAAAC:GGAUUAGAUACCC:GGUAGUCCACGCCGUAAACGAUG::::CU GG:::  : G:: UU A::C
+  NZ_CP066836.1:2975089-2976630_minus  777 AGCAAACAGGAUUAGAUACCCUGGUAGUCCACGCCGUAAACGAUGUCGACUUGGAGGUUGUGCCCUUGAGGC 848 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           >>>>>>>>>,,,<<____>>,,,,,))))))}}}},<<<------<<<<____>>>>---->>>,,,,,,,, CS
+                              RF00177  839 cccggcgcCgaAGcuAAcgCauUAAGcgccCCgCCUGgGGAgUACggcCGCAAGgcugAAACuCAAAGGAAU 910 
+                                            :  :::CCG AGCUAACGC+UUAAG::::CCGCCUGGGGAGUACG:CCGCAAGG:U+AAACUCAAA GAAU
+  NZ_CP066836.1:2975089-2976630_minus  849 GUGGCUUCCGGAGCUAACGCGUUAAGUCGACCGCCUGGGGAGUACGGCCGCAAGGUUAAAACUCAAAUGAAU 920 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           {{{{{-{{{{{{{-{{,,{{{{{{{{{{{{{{{{{,,,,<<<<________>>>>,,,,,,,,{{{{{{{,, CS
+                              RF00177  911 uGaCgGgGgCCCGCaCAAGCGguGgagcauGuGGuUUAAuuCGAuGcaAcgCGaaGAACCUUACCcgggcUU 982 
+                                           UGACGGGGGCCCGCACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACC:GG:CUU
+  NZ_CP066836.1:2975089-2976630_minus  921 UGACGGGGGCCCGCACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACCUGGUCUU 992 
+                                           ************************************************************************ PP
+
+                                                                            v        v                              NC
+                                           ,,,((((((((,,<<<<<<<____>>>>>>>,<<<<____>>>>)))))-))),[[-[[[[--[[[[[[[[[ CS
+                              RF00177  983 GAcgugccgggaaccccccgGAaAcgggggguccccuuaaggggcccggacacAGGUGcugCAuGgcuGuCG 1054
+                                           GAC:U:C::GGAA ::::C:GA A:G:::: +: CCUU +GG :CC::GA:A:AGGUGCUGCAUGGCUGUCG
+  NZ_CP066836.1:2975089-2976630_minus  993 GACAUCCACGGAAGUUUUCAGAGAUGAGAAUGUGCCUUCGGGAACCGUGAGACAGGUGCUGCAUGGCUGUCG 1064
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           ,,,((((((<<<____>>>,,<<<<______>>>>,,)))))),,,,,((((,<<<<<<<---<<--<<<__ CS
+                              RF00177 1055 UCAGCuCGuguCGUGAGauGUcgGGUUAAGUCCcgcAaCGaGCGCAACCCccgccccuagUUgCcAucgguu 1126
+                                           UCAGCUCGUGU:GUGA:AUGU:GGGUUAAGUCCC:CAACGAGCGCAACCC::+:CC:U:GUUGCCA+CGG U
+  NZ_CP066836.1:2975089-2976630_minus 1065 UCAGCUCGUGUUGUGAAAUGUUGGGUUAAGUCCCGCAACGAGCGCAACCCUUAUCCUUUGUUGCCAGCGG-U 1135
+                                           **********************************************************************.8 PP
+
+                                                                                                                    NC
+                                           ____>>>>>---->>>>>>>,,<<<<<<<<_____>>>>>>>>,,,,,)))),,,,]]]]-]]]---]]]]] CS
+                              RF00177 1127 uauuccggGcACUcuaggggGACcgCCggcGauAAgccGGagGAAGGuggGGAuGACGuCAaguCauCaugg 1198
+                                             ++CCGGG+ACUC:A:GG:GAC:GCC:G:GAUAA:C:GGA:GAAGGU::GGAUGACGUCAAGUCAUCAUGG
+  NZ_CP066836.1:2975089-2976630_minus 1136 CCGGCCGGGAACUCAAAGGAGACUGCCAGUGAUAAACUGGAGGAAGGUGGGGAUGACGUCAAGUCAUCAUGG 1207
+                                           8899******************************************************************** PP
+
+                                                                                                                    NC
+                                           ]]],,,,}}}}}}},,,}}-}}}}}}}}}},,,<<<<<<<-----<<<--<<---<<<____>>>--->>-- CS
+                              RF00177 1199 CCCUUAugcccgGGGCuaCACaCgugcuaCAAUGgccggcACAaaggGuaGCaAagccGcGAggcggAGCuA 1270
+                                           CCCUUA+G:CC:GGGCUACACACGUGCUACAAUG:C::::ACAAAG:G+AGC+A ::CGCGAG:: +AGC  
+  NZ_CP066836.1:2975089-2976630_minus 1208 CCCUUACGACCAGGGCUACACACGUGCUACAAUGGCGCAUACAAAGAGAAGCGACCUCGCGAGAGCAAGCGG 1279
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           -->>>----->>>>>>>,,,,,,<---<<<<<<<<________>>>>>>>>--->,,,,,}}}}},,,,,<< CS
+                              RF00177 1271 AUCccauAAAgccggcCucAGUUCGGAcuGgaGgCUGcAAcUCGcCucCagGAAGuuGGAauCGCUAGUAau 1342
+                                           A C:CAUAAA::::G:C +AGU CGGA:UGGAG:CUGCAACUCG:CUCCA:GAAGU+GGAAUCGCUAGUAAU
+  NZ_CP066836.1:2975089-2976630_minus 1280 ACCUCAUAAAGUGCGUCGUAGUCCGGAUUGGAGUCUGCAACUCGACUCCAUGAAGUCGGAAUCGCUAGUAAU 1351
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           <<<<<<_______>>>>>>>>,,,,,,}}---}}}}}}}}}}-}},,<-<<-<<---<<<<<<<<--<<<<< CS
+                              RF00177 1343 cGcggcUCAGcAugccgCgguGAAUACGuUCcCGGGcCuuGuACaCACCGcCCGUCAcgcCacggaAgccgg 1414
+                                           CG:GG:UCAG AU:CC:CGGUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCAC:CCA::G+A:::::
+  NZ_CP066836.1:2975089-2976630_minus 1352 CGUGGAUCAGAAUGCCACGGUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCACACCAUGGGAGUGGG 1423
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           <<<<<<<----<<<<<<-<<<<--<<____>>->>>>>>>>>>--->>>>>>>>>>>>-->>>>>>>>---- CS
+                              RF00177 1415 ccccgcCcGAAGccgccgcgccAAccuuaaggaggcgggcggCuAaGgcggggccggcgAccggGgcgAAGU 1486
+                                           :::C::: GAAG:::::+::::AACCUU  GGA:::::::::C A :::G::::::::GAC::GGG:GAAGU
+  NZ_CP066836.1:2975089-2976630_minus 1424 UUGCAAAAGAAGUAGGUAGCUUAACCUUCGGGAGGGCGCUUACCACUUUGUGAUUCAUGACUGGGGUGAAGU 1495
+                                           ************************************************************************ PP
+
+                                                                                           NC
+                                           >>-->>-->,<<<<<<<<<<____>>>>>>>>>>::::::::::::: CS
+                              RF00177 1487 CGUAaCAAGGuagCcguaccGGAAggugcgGcugGAUcAccUcCUUu 1533
+                                           CGUAACAAGGUA:CCGUA::GGAA::UGCGG:UGGAUCACCUCCUU 
+  NZ_CP066836.1:2975089-2976630_minus 1496 CGUAACAAGGUAACCGUAGGGGAACCUGCGGUUGGAUCACCUCCUUA 1542
+                                           *********************************************** PP
+
+
+
+Internal CM pipeline statistics summary:
+----------------------------------------
+Query sequence(s):                                               1  (1542 residues searched)
+Query sequences re-searched for truncated hits:                  1  (4626.0 residues re-searched, avg per model)
+Target model(s):                                                 1  (1533 consensus positions)
+Windows   passing  local HMM SSV           filter:               4  (1); expected (0.35)
+Windows   passing  local HMM Viterbi       filter:                  (off)
+Windows   passing  local HMM Viterbi  bias filter:                  (off)
+Windows   passing  local HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing  local HMM Forward  bias filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward  bias filter:               4  (1); expected (0.02)
+Envelopes passing glocal HMM envelope defn filter:               4  (1); expected (0.02)
+Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
+Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
+
+# CPU time: 2.97u 0.06s 00:00:03.03 Elapsed: 00:00:03.03
+//
+Query:       NZ_CP066836.1:3016181-3017722_minus  [L=1542]
+Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
+Hit scores:
+ rank     E-value  score  bias  modelname  start    end   mdl trunc   gc  description
+ ----   --------- ------ -----  --------- ------ ------   --- ----- ----  -----------
+  (1) !         0 1577.3  14.2  RF00177        1   1542 +  cm    no 0.54  Bacterial small subunit ribosomal RNA
+
+
+Hit alignments:
+>> RF00177  Bacterial small subunit ribosomal RNA
+ rank     E-value  score  bias mdl mdl from   mdl to       seq from      seq to       acc trunc   gc
+ ----   --------- ------ ----- --- -------- --------    ----------- -----------      ---- ----- ----
+  (1) !         0 1577.3  14.2  cm        1     1533 []           1        1542 + [] 0.99    no 0.54
+
+                                                                                                                    NC
+                                           ::::::::<<<<<_______>>>>>,{{{{-{{{{{{,{{{{{{{{{----{{{-{{{,,<<<--<<<<<-. CS
+                              RF00177    1 uuuauggAGaGuuUGAUCcUggCuCAGggcGaaCGCuGGCGGcgcGcuUaAcaCAuGCAAGuCGagcccca. 71  
+                                           ++++UG+AGAGUUUGAUC UGGCUCAG:::GAACGCUGGCGGC::GC+UAACACAUGCAAGUCGA:C:::A 
+  NZ_CP066836.1:3016181-3017722_minus    1 AAAUUGAAGAGUUUGAUCAUGGCUCAGAUUGAACGCUGGCGGCAGGCCUAACACAUGCAAGUCGAACGGUAa 72  
+                                           **********************************************************************99 PP
+
+                                                                                                   v                NC
+                                           ...<<<<<<<____>>>>>>>...->>->>>>>>,,,,,,[[[,,,,,,((((((((--((---(((((((, CS
+                              RF00177   72 ...cggggccuuaaggccccg...agggggcGgCGaAcGGGuGAGUAAcgCGcgggcAAccUacCcccgggu 137 
+                                               ::G::: U++:::C::    +::G:G:GGCG ACGGGUGAGUAA+::::GGG  A:CU+CC :::GG+
+  NZ_CP066836.1:3016181-3017722_minus   73 cagGAAGAAGCUUGCUUCUUUgcuGACGAGUGGCGGACGGGUGAGUAAUGUCUGGGA-AACUGCCUGAUGGA 143 
+                                           9999999999999999999999999********************************.9************* PP
+
+                                            v      v                v       v                                       NC
+                                           <<<<----<<<<<<<____>>>>>>>----->>>>,,,,,<<<<<<<<<<____>>>>>>>>>>,,,,<<<. CS
+                              RF00177  138 gcgGgAUAccccccgGAAAcggggggUAAUACcgcAUaaugccccggcccguaugggccggggcuAAAGgc. 208 
+                                           G GGGAUA C::C:GGAAAC:G::G UAAUACC CAUAA        ::CG+A+G::        AAA::: 
+  NZ_CP066836.1:3016181-3017722_minus  144 GGGGGAUAACUACUGGAAACGGUAGCUAAUACCGCAUAAC-------GUCGCAAGAC-------CAAAGAGg 201 
+                                           ****************************************.......9********9.......******99 PP
+
+                                                                         v                                          NC
+                                           .........._____>>>,)))))))--))))))))))<<<--<-<<<--<<<<<<<<_______>>>>>>> CS
+                              RF00177  209 ..........auuuagcCGcccgggGAugggcccgCGccccAUcAGcuAGuuGGuggGGUAAuGGCccaCCa 270 
+                                                        ++:::GCC::: GAUG: CCC:::::::AU:AGCUAGU:GGUG:GGUAA GGC:CACC:
+  NZ_CP066836.1:3016181-3017722_minus  202 gggaccuucgGGCCUCUUGCCAUCGGAUGUGCCCAGAUGGGAUUAGCUAGUAGGUGGGGUAACGGCUCACCU 273 
+                                           ****99877655556********************************************************* PP
+
+                                                                                                                    NC
+                                           >>>>----->>>>,,<<<<<<<<____>>>>--->>>>]]],<<<<<<__________>>>>>>,<<<<___ CS
+                              RF00177  271 aggCgAuGAggggUAGccGgccuGAGAgggcGauCggCCaCAcuGGgaCUGAGAcACGgcCCagACuCCUAC 342 
+                                           AGGCGA+GA::::UAGC:G::CUGAGAGG::GA C:GCCACACUGG:ACUGAGACACGG:CCAGACUCCUAC
+  NZ_CP066836.1:3016181-3017722_minus  274 AGGCGACGAUCCCUAGCUGGUCUGAGAGGAUGACCAGCCACACUGGAACUGAGACACGGUCCAGACUCCUAC 345 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           _>>>>,,,}}}}}}-},,,,,<-<<<---<<<<<____>>>>>->>>>,}}-}}}}}},,<<<<------<< CS
+                              RF00177  343 GGGaGGCAGCaGugggGAAUauUgcgCAAugGgcGaAAgcCugAcgcaGCgAcgCCGCGUGgggGAuGAAgg 414 
+                                           GGGAGGCAGCAGUGGGGAAUAUUGC:CAAUGGGCG AAGCCUGA:GCAGC:A:GCCGCGUG:::GA+GAA::
+  NZ_CP066836.1:3016181-3017722_minus  346 GGGAGGCAGCAGUGGGGAAUAUUGCACAAUGGGCGCAAGCCUGAUGCAGCCAUGCCGCGUGUAUGAAGAAGG 417 
+                                           ************************************************************************ PP
+
+                                                                  v                                                 NC
+                                           <<____>>>>----->>>>,,,<<<<<<<---<-----<<<___........______>>>----->----> CS
+                              RF00177  415 ccUUcGggccGUAAAcccCUuUcccggGgGAagAaaaaccgaua........uuuuaucgguuuGAcggUAc 478 
+                                           CCUUCGGG::GUAAA:::CUUUC ::GGGGA GAA   ::G++A          UU+ C::+UUGACG UAC
+  NZ_CP066836.1:3016181-3017722_minus  418 CCUUCGGGUUGUAAAGUACUUUCAGCGGGGAGGAAG-GGAGUAAaguuaauaCCUUUGCUCAUUGACGUUAC 488 
+                                           *********************************998.7888888899988754445558999********** PP
+
+                                               v                                                                    NC
+                                           >>>>>--->,,<<<<<------<<<<<-----<<____>>------->>>>>>>>>>,}}}}}}}}}},,,, CS
+                              RF00177  479 CccgggAagAAGcccCGGCUAAcuccGUGCCAGCAGCCGCGGUAAuACggagGgggCaaGCGuugccCGGAa 550 
+                                           CC:: GAAGAAGC:CCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGG:GCAAGCGUU:::CGGAA
+  NZ_CP066836.1:3016181-3017722_minus  489 CCGCAGAAGAAGCACCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGGUGCAAGCGUUAAUCGGAA 560 
+                                           ************************************************************************ PP
+
+                                                                v                            v                 v    NC
+                                           ,,,,,,{{{-----{,[[[[-[-[[[,<<<<<<<-<<<<<<<<<<<----<<<<<<<_____>>>>>>>--> CS
+                              RF00177  551 UuAuUGGGcGUAAAGgGcgcGcAgGcGGcccggcAaGucgggcgcgAAAucccgcgGCUcAACcgcgggauc 622 
+                                           UUA+UGGGCGUAAAG GC:CG AGGCGG:::G::AAGUC:G::G::AAAU CC: GGCUCAACC :GG A+:
+  NZ_CP066836.1:3016181-3017722_minus  561 UUACUGGGCGUAAAGCGCACGCAGGCGGUUUGUUAAGUCAGAUGUGAAAUCCCCGGGCUCAACCUGGGAACU 632 
+                                           ************************************************************************ PP
+
+                                                                    v                                               NC
+                                           >>>>>>>>-->>>>>>>>>,,,(((((((((--(((((((<<--<<<<<<<<---<<<______>>>----- CS
+                              RF00177  623 gcgcccgaaACugccgggCUuGaGuccggccGAgGggggcggAAcucccgguGUAGcgGUGAAAugCGUAGA 694 
+                                           :C::C:GA+ACU::C:::CUUGAGU ::G::GAGGGGGG::GAA:UCC:GGUGUAGCGGUGAAAUGCGUAGA
+  NZ_CP066836.1:3016181-3017722_minus  633 GCAUCUGAUACUGGCAAGCUUGAGUCUCGUAGAGGGGGGUAGAAUUCCAGGUGUAGCGGUGAAAUGCGUAGA 704 
+                                           ************************************************************************ PP
+
+                                                            v          v             v          v                   NC
+                                           ->>>>>>>>-->>,,,,<--<<____>>>)))))))-))))))-))),,,]]]]--]]]],,,,<<<<<<-- CS
+                              RF00177  695 uaucgggagGAacACCacugGCGAAGGCggccccCuGggccgguaCuGACgCugAggcgCGAAAGCguGGGg 766 
+                                            AUC:GGA:GAA:ACC+ UGGCGAAGGC :CCCCCUG::C::  ACUGACGCU AGG:GCGAAAGCGUGGGG
+  NZ_CP066836.1:3016181-3017722_minus  705 GAUCUGGAGGAAUACCGGUGGCGAAGGCGGCCCCCUGGACGAAGACUGACGCUCAGGUGCGAAAGCGUGGGG 776 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           -<<---<<<<_________>>>>--->>>>>>>>,,,,,,,,,,((((((,,<<<<<<<<<<<<_____>>> CS
+                              RF00177  767 AgCaAAcgGGAUUAGAUACCCcgGUAGuCCacGCcgUAAACGAUGggcgCUAGgcgccggggggauuaaccc 838 
+                                           AGCAAAC:GGAUUAGAUACCC:GGUAGUCCACGCCGUAAACGAUG::::CU GG:::  : G:: UU A::C
+  NZ_CP066836.1:3016181-3017722_minus  777 AGCAAACAGGAUUAGAUACCCUGGUAGUCCACGCCGUAAACGAUGUCGACUUGGAGGUUGUGCCCUUGAGGC 848 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           >>>>>>>>>,,,<<____>>,,,,,))))))}}}},<<<------<<<<____>>>>---->>>,,,,,,,, CS
+                              RF00177  839 cccggcgcCgaAGcuAAcgCauUAAGcgccCCgCCUGgGGAgUACggcCGCAAGgcugAAACuCAAAGGAAU 910 
+                                            :  :::CCG AGCUAACGC+UUAAG::::CCGCCUGGGGAGUACG:CCGCAAGG:U+AAACUCAAA GAAU
+  NZ_CP066836.1:3016181-3017722_minus  849 GUGGCUUCCGGAGCUAACGCGUUAAGUCGACCGCCUGGGGAGUACGGCCGCAAGGUUAAAACUCAAAUGAAU 920 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           {{{{{-{{{{{{{-{{,,{{{{{{{{{{{{{{{{{,,,,<<<<________>>>>,,,,,,,,{{{{{{{,, CS
+                              RF00177  911 uGaCgGgGgCCCGCaCAAGCGguGgagcauGuGGuUUAAuuCGAuGcaAcgCGaaGAACCUUACCcgggcUU 982 
+                                           UGACGGGGGCCCGCACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACC:GG:CUU
+  NZ_CP066836.1:3016181-3017722_minus  921 UGACGGGGGCCCGCACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACCUGGUCUU 992 
+                                           ************************************************************************ PP
+
+                                                                            v        v                              NC
+                                           ,,,((((((((,,<<<<<<<____>>>>>>>,<<<<____>>>>)))))-))),[[-[[[[--[[[[[[[[[ CS
+                              RF00177  983 GAcgugccgggaaccccccgGAaAcgggggguccccuuaaggggcccggacacAGGUGcugCAuGgcuGuCG 1054
+                                           GAC:U:C::GGAA ::::C:GA A:G:::: +: CCUU +GG :CC::GA:A:AGGUGCUGCAUGGCUGUCG
+  NZ_CP066836.1:3016181-3017722_minus  993 GACAUCCACGGAAGUUUUCAGAGAUGAGAAUGUGCCUUCGGGAACCGUGAGACAGGUGCUGCAUGGCUGUCG 1064
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           ,,,((((((<<<____>>>,,<<<<______>>>>,,)))))),,,,,((((,<<<<<<<---<<--<<<__ CS
+                              RF00177 1055 UCAGCuCGuguCGUGAGauGUcgGGUUAAGUCCcgcAaCGaGCGCAACCCccgccccuagUUgCcAucgguu 1126
+                                           UCAGCUCGUGU:GUGA:AUGU:GGGUUAAGUCCC:CAACGAGCGCAACCC::+:CC:U:GUUGCCA+CGG U
+  NZ_CP066836.1:3016181-3017722_minus 1065 UCAGCUCGUGUUGUGAAAUGUUGGGUUAAGUCCCGCAACGAGCGCAACCCUUAUCCUUUGUUGCCAGCGG-U 1135
+                                           **********************************************************************.8 PP
+
+                                                                                                                    NC
+                                           ____>>>>>---->>>>>>>,,<<<<<<<<_____>>>>>>>>,,,,,)))),,,,]]]]-]]]---]]]]] CS
+                              RF00177 1127 uauuccggGcACUcuaggggGACcgCCggcGauAAgccGGagGAAGGuggGGAuGACGuCAaguCauCaugg 1198
+                                             ++CCGGG+ACUC:A:GG:GAC:GCC:G:GAUAA:C:GGA:GAAGGU::GGAUGACGUCAAGUCAUCAUGG
+  NZ_CP066836.1:3016181-3017722_minus 1136 CCGGCCGGGAACUCAAAGGAGACUGCCAGUGAUAAACUGGAGGAAGGUGGGGAUGACGUCAAGUCAUCAUGG 1207
+                                           8899******************************************************************** PP
+
+                                                                                                                    NC
+                                           ]]],,,,}}}}}}},,,}}-}}}}}}}}}},,,<<<<<<<-----<<<--<<---<<<____>>>--->>-- CS
+                              RF00177 1199 CCCUUAugcccgGGGCuaCACaCgugcuaCAAUGgccggcACAaaggGuaGCaAagccGcGAggcggAGCuA 1270
+                                           CCCUUA+G:CC:GGGCUACACACGUGCUACAAUG:C::::ACAAAG:G+AGC+A ::CGCGAG:: +AGC  
+  NZ_CP066836.1:3016181-3017722_minus 1208 CCCUUACGACCAGGGCUACACACGUGCUACAAUGGCGCAUACAAAGAGAAGCGACCUCGCGAGAGCAAGCGG 1279
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           -->>>----->>>>>>>,,,,,,<---<<<<<<<<________>>>>>>>>--->,,,,,}}}}},,,,,<< CS
+                              RF00177 1271 AUCccauAAAgccggcCucAGUUCGGAcuGgaGgCUGcAAcUCGcCucCagGAAGuuGGAauCGCUAGUAau 1342
+                                           A C:CAUAAA::::G:C +AGU CGGA:UGGAG:CUGCAACUCG:CUCCA:GAAGU+GGAAUCGCUAGUAAU
+  NZ_CP066836.1:3016181-3017722_minus 1280 ACCUCAUAAAGUGCGUCGUAGUCCGGAUUGGAGUCUGCAACUCGACUCCAUGAAGUCGGAAUCGCUAGUAAU 1351
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           <<<<<<_______>>>>>>>>,,,,,,}}---}}}}}}}}}}-}},,<-<<-<<---<<<<<<<<--<<<<< CS
+                              RF00177 1343 cGcggcUCAGcAugccgCgguGAAUACGuUCcCGGGcCuuGuACaCACCGcCCGUCAcgcCacggaAgccgg 1414
+                                           CG:GG:UCAG AU:CC:CGGUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCAC:CCA::G+A:::::
+  NZ_CP066836.1:3016181-3017722_minus 1352 CGUGGAUCAGAAUGCCACGGUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCACACCAUGGGAGUGGG 1423
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           <<<<<<<----<<<<<<-<<<<--<<____>>->>>>>>>>>>--->>>>>>>>>>>>-->>>>>>>>---- CS
+                              RF00177 1415 ccccgcCcGAAGccgccgcgccAAccuuaaggaggcgggcggCuAaGgcggggccggcgAccggGgcgAAGU 1486
+                                           :::C::: GAAG:::::+::::AACCUU  GGA:::::::::C A :::G::::::::GAC::GGG:GAAGU
+  NZ_CP066836.1:3016181-3017722_minus 1424 UUGCAAAAGAAGUAGGUAGCUUAACCUUCGGGAGGGCGCUUACCACUUUGUGAUUCAUGACUGGGGUGAAGU 1495
+                                           ************************************************************************ PP
+
+                                                                                           NC
+                                           >>-->>-->,<<<<<<<<<<____>>>>>>>>>>::::::::::::: CS
+                              RF00177 1487 CGUAaCAAGGuagCcguaccGGAAggugcgGcugGAUcAccUcCUUu 1533
+                                           CGUAACAAGGUA:CCGUA::GGAA::UGCGG:UGGAUCACCUCCUU 
+  NZ_CP066836.1:3016181-3017722_minus 1496 CGUAACAAGGUAACCGUAGGGGAACCUGCGGUUGGAUCACCUCCUUA 1542
+                                           *********************************************** PP
+
+
+
+Internal CM pipeline statistics summary:
+----------------------------------------
+Query sequence(s):                                               1  (1542 residues searched)
+Query sequences re-searched for truncated hits:                  1  (4626.0 residues re-searched, avg per model)
+Target model(s):                                                 1  (1533 consensus positions)
+Windows   passing  local HMM SSV           filter:               4  (1); expected (0.35)
+Windows   passing  local HMM Viterbi       filter:                  (off)
+Windows   passing  local HMM Viterbi  bias filter:                  (off)
+Windows   passing  local HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing  local HMM Forward  bias filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward  bias filter:               4  (1); expected (0.02)
+Envelopes passing glocal HMM envelope defn filter:               4  (1); expected (0.02)
+Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
+Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
+
+# CPU time: 2.97u 0.07s 00:00:03.04 Elapsed: 00:00:03.05
+//
+Query:       NZ_CP066836.1:3150038-3151579_minus  [L=1542]
+Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
+Hit scores:
+ rank     E-value  score  bias  modelname  start    end   mdl trunc   gc  description
+ ----   --------- ------ -----  --------- ------ ------   --- ----- ----  -----------
+  (1) !         0 1578.1  14.0  RF00177        1   1542 +  cm    no 0.54  Bacterial small subunit ribosomal RNA
+
+
+Hit alignments:
+>> RF00177  Bacterial small subunit ribosomal RNA
+ rank     E-value  score  bias mdl mdl from   mdl to       seq from      seq to       acc trunc   gc
+ ----   --------- ------ ----- --- -------- --------    ----------- -----------      ---- ----- ----
+  (1) !         0 1578.1  14.0  cm        1     1533 []           1        1542 + [] 0.99    no 0.54
+
+                                                                                                                    NC
+                                           ::::::::<<<<<_______>>>>>,{{{{-{{{{{{,{{{{{{{{{----{{{-{{{,,<<<--<<<<<-. CS
+                              RF00177    1 uuuauggAGaGuuUGAUCcUggCuCAGggcGaaCGCuGGCGGcgcGcuUaAcaCAuGCAAGuCGagcccca. 71  
+                                           ++++UG+AGAGUUUGAUC UGGCUCAG:::GAACGCUGGCGGC::GC+UAACACAUGCAAGUCGA:C:::A 
+  NZ_CP066836.1:3150038-3151579_minus    1 AAAUUGAAGAGUUUGAUCAUGGCUCAGAUUGAACGCUGGCGGCAGGCCUAACACAUGCAAGUCGAACGGUAa 72  
+                                           **********************************************************************99 PP
+
+                                                                                                   v                NC
+                                           ...<<<<<<<____>>>>>>>...->>->>>>>>,,,,,,[[[,,,,,,((((((((--((---(((((((, CS
+                              RF00177   72 ...cggggccuuaaggccccg...agggggcGgCGaAcGGGuGAGUAAcgCGcgggcAAccUacCcccgggu 137 
+                                               ::G::: U++:::C::    +::G:G:GGCG ACGGGUGAGUAA+::::GGG  A:CU+CC :::GG+
+  NZ_CP066836.1:3150038-3151579_minus   73 cagGAAGAAGCUUGCUUCUUUgcuGACGAGUGGCGGACGGGUGAGUAAUGUCUGGGA-AACUGCCUGAUGGA 143 
+                                           9999999999999999999999999********************************.9************* PP
+
+                                            v      v                v       v                                       NC
+                                           <<<<----<<<<<<<____>>>>>>>----->>>>,,,,,<<<<<<<<<<____>>>>>>>>>>,,,,<<<. CS
+                              RF00177  138 gcgGgAUAccccccgGAAAcggggggUAAUACcgcAUaaugccccggcccguaugggccggggcuAAAGgc. 208 
+                                           G GGGAUA C::C:GGAAAC:G::G UAAUACC CAUAAU       ::CG+A+G::        AAA::: 
+  NZ_CP066836.1:3150038-3151579_minus  144 GGGGGAUAACUACUGGAAACGGUAGCUAAUACCGCAUAAU-------GUCGCAAGAC-------CAAAGAGg 201 
+                                           ****************************************.......9********9.......******99 PP
+
+                                                                         v                                          NC
+                                           .........._____>>>,)))))))--))))))))))<<<--<-<<<--<<<<<<<<_______>>>>>>> CS
+                              RF00177  209 ..........auuuagcCGcccgggGAugggcccgCGccccAUcAGcuAGuuGGuggGGUAAuGGCccaCCa 270 
+                                                        ++:::GCC::: GAUG: CCC:::::::AU:AGCUAGU:GGUG:GGUAA GGC:CACC:
+  NZ_CP066836.1:3150038-3151579_minus  202 gggaccuucgGGCCUCUUGCCAUCGGAUGUGCCCAGAUGGGAUUAGCUAGUAGGUGGGGUAACGGCUCACCU 273 
+                                           ****99877655556********************************************************* PP
+
+                                                                                                                    NC
+                                           >>>>----->>>>,,<<<<<<<<____>>>>--->>>>]]],<<<<<<__________>>>>>>,<<<<___ CS
+                              RF00177  271 aggCgAuGAggggUAGccGgccuGAGAgggcGauCggCCaCAcuGGgaCUGAGAcACGgcCCagACuCCUAC 342 
+                                           AGGCGA+GA::::UAGC:G::CUGAGAGG::GA C:GCCACACUGG:ACUGAGACACGG:CCAGACUCCUAC
+  NZ_CP066836.1:3150038-3151579_minus  274 AGGCGACGAUCCCUAGCUGGUCUGAGAGGAUGACCAGCCACACUGGAACUGAGACACGGUCCAGACUCCUAC 345 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           _>>>>,,,}}}}}}-},,,,,<-<<<---<<<<<____>>>>>->>>>,}}-}}}}}},,<<<<------<< CS
+                              RF00177  343 GGGaGGCAGCaGugggGAAUauUgcgCAAugGgcGaAAgcCugAcgcaGCgAcgCCGCGUGgggGAuGAAgg 414 
+                                           GGGAGGCAGCAGUGGGGAAUAUUGC:CAAUGGGCG AAGCCUGA:GCAGC:A:GCCGCGUG:::GA+GAA::
+  NZ_CP066836.1:3150038-3151579_minus  346 GGGAGGCAGCAGUGGGGAAUAUUGCACAAUGGGCGCAAGCCUGAUGCAGCCAUGCCGCGUGUAUGAAGAAGG 417 
+                                           ************************************************************************ PP
+
+                                                                  v                                                 NC
+                                           <<____>>>>----->>>>,,,<<<<<<<---<-----<<<___........______>>>----->----> CS
+                              RF00177  415 ccUUcGggccGUAAAcccCUuUcccggGgGAagAaaaaccgaua........uuuuaucgguuuGAcggUAc 478 
+                                           CCUUCGGG::GUAAA:::CUUUC ::GGGGA GAA   ::G++A          UU+ C::+UUGACG UAC
+  NZ_CP066836.1:3150038-3151579_minus  418 CCUUCGGGUUGUAAAGUACUUUCAGCGGGGAGGAAG-GGAGUAAaguuaauaCCUUUGCUCAUUGACGUUAC 488 
+                                           *********************************998.7888888899988754445558999********** PP
+
+                                               v                                                                    NC
+                                           >>>>>--->,,<<<<<------<<<<<-----<<____>>------->>>>>>>>>>,}}}}}}}}}},,,, CS
+                              RF00177  479 CccgggAagAAGcccCGGCUAAcuccGUGCCAGCAGCCGCGGUAAuACggagGgggCaaGCGuugccCGGAa 550 
+                                           CC:: GAAGAAGC:CCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGG:GCAAGCGUU:::CGGAA
+  NZ_CP066836.1:3150038-3151579_minus  489 CCGCAGAAGAAGCACCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGGUGCAAGCGUUAAUCGGAA 560 
+                                           ************************************************************************ PP
+
+                                                                v                            v                 v    NC
+                                           ,,,,,,{{{-----{,[[[[-[-[[[,<<<<<<<-<<<<<<<<<<<----<<<<<<<_____>>>>>>>--> CS
+                              RF00177  551 UuAuUGGGcGUAAAGgGcgcGcAgGcGGcccggcAaGucgggcgcgAAAucccgcgGCUcAACcgcgggauc 622 
+                                           UUA+UGGGCGUAAAG GC:CG AGGCGG:::G::AAGUC:G::G::AAAU CC: GGCUCAACC :GG A+:
+  NZ_CP066836.1:3150038-3151579_minus  561 UUACUGGGCGUAAAGCGCACGCAGGCGGUUUGUUAAGUCAGAUGUGAAAUCCCCGGGCUCAACCUGGGAACU 632 
+                                           ************************************************************************ PP
+
+                                                                    v                                               NC
+                                           >>>>>>>>-->>>>>>>>>,,,(((((((((--(((((((<<--<<<<<<<<---<<<______>>>----- CS
+                              RF00177  623 gcgcccgaaACugccgggCUuGaGuccggccGAgGggggcggAAcucccgguGUAGcgGUGAAAugCGUAGA 694 
+                                           :C::C:GA+ACU::C:::CUUGAGU ::G::GAGGGGGG::GAA:UCC:GGUGUAGCGGUGAAAUGCGUAGA
+  NZ_CP066836.1:3150038-3151579_minus  633 GCAUCUGAUACUGGCAAGCUUGAGUCUCGUAGAGGGGGGUAGAAUUCCAGGUGUAGCGGUGAAAUGCGUAGA 704 
+                                           ************************************************************************ PP
+
+                                                            v          v             v          v                   NC
+                                           ->>>>>>>>-->>,,,,<--<<____>>>)))))))-))))))-))),,,]]]]--]]]],,,,<<<<<<-- CS
+                              RF00177  695 uaucgggagGAacACCacugGCGAAGGCggccccCuGggccgguaCuGACgCugAggcgCGAAAGCguGGGg 766 
+                                            AUC:GGA:GAA:ACC+ UGGCGAAGGC :CCCCCUG::C::  ACUGACGCU AGG:GCGAAAGCGUGGGG
+  NZ_CP066836.1:3150038-3151579_minus  705 GAUCUGGAGGAAUACCGGUGGCGAAGGCGGCCCCCUGGACGAAGACUGACGCUCAGGUGCGAAAGCGUGGGG 776 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           -<<---<<<<_________>>>>--->>>>>>>>,,,,,,,,,,((((((,,<<<<<<<<<<<<_____>>> CS
+                              RF00177  767 AgCaAAcgGGAUUAGAUACCCcgGUAGuCCacGCcgUAAACGAUGggcgCUAGgcgccggggggauuaaccc 838 
+                                           AGCAAAC:GGAUUAGAUACCC:GGUAGUCCACGCCGUAAACGAUG::::CU GG:::  : G:: UU A::C
+  NZ_CP066836.1:3150038-3151579_minus  777 AGCAAACAGGAUUAGAUACCCUGGUAGUCCACGCCGUAAACGAUGUCGACUUGGAGGUUGUGCCCUUGAGGC 848 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           >>>>>>>>>,,,<<____>>,,,,,))))))}}}},<<<------<<<<____>>>>---->>>,,,,,,,, CS
+                              RF00177  839 cccggcgcCgaAGcuAAcgCauUAAGcgccCCgCCUGgGGAgUACggcCGCAAGgcugAAACuCAAAGGAAU 910 
+                                            :  :::CCG AGCUAACGC+UUAAG::::CCGCCUGGGGAGUACG:CCGCAAGG:U+AAACUCAAA GAAU
+  NZ_CP066836.1:3150038-3151579_minus  849 GUGGCUUCCGGAGCUAACGCGUUAAGUCGACCGCCUGGGGAGUACGGCCGCAAGGUUAAAACUCAAAUGAAU 920 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           {{{{{-{{{{{{{-{{,,{{{{{{{{{{{{{{{{{,,,,<<<<________>>>>,,,,,,,,{{{{{{{,, CS
+                              RF00177  911 uGaCgGgGgCCCGCaCAAGCGguGgagcauGuGGuUUAAuuCGAuGcaAcgCGaaGAACCUUACCcgggcUU 982 
+                                           UGACGGGGGCCCGCACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACC:GG:CUU
+  NZ_CP066836.1:3150038-3151579_minus  921 UGACGGGGGCCCGCACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACCUGGUCUU 992 
+                                           ************************************************************************ PP
+
+                                                                            v        v                              NC
+                                           ,,,((((((((,,<<<<<<<____>>>>>>>,<<<<____>>>>)))))-))),[[-[[[[--[[[[[[[[[ CS
+                              RF00177  983 GAcgugccgggaaccccccgGAaAcgggggguccccuuaaggggcccggacacAGGUGcugCAuGgcuGuCG 1054
+                                           GAC:U:C::GGAA ::::C:GA A:G:::: +: CCUU +GG :CC::GA:A:AGGUGCUGCAUGGCUGUCG
+  NZ_CP066836.1:3150038-3151579_minus  993 GACAUCCACGGAAGUUUUCAGAGAUGAGAAUGUGCCUUCGGGAACCGUGAGACAGGUGCUGCAUGGCUGUCG 1064
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           ,,,((((((<<<____>>>,,<<<<______>>>>,,)))))),,,,,((((,<<<<<<<---<<--<<<__ CS
+                              RF00177 1055 UCAGCuCGuguCGUGAGauGUcgGGUUAAGUCCcgcAaCGaGCGCAACCCccgccccuagUUgCcAucgguu 1126
+                                           UCAGCUCGUGU:GUGA:AUGU:GGGUUAAGUCCC:CAACGAGCGCAACCC::+:CC:U:GUUGCCA+CGG U
+  NZ_CP066836.1:3150038-3151579_minus 1065 UCAGCUCGUGUUGUGAAAUGUUGGGUUAAGUCCCGCAACGAGCGCAACCCUUAUCCUUUGUUGCCAGCGG-U 1135
+                                           **********************************************************************.8 PP
+
+                                                                                                                    NC
+                                           ____>>>>>---->>>>>>>,,<<<<<<<<_____>>>>>>>>,,,,,)))),,,,]]]]-]]]---]]]]] CS
+                              RF00177 1127 uauuccggGcACUcuaggggGACcgCCggcGauAAgccGGagGAAGGuggGGAuGACGuCAaguCauCaugg 1198
+                                             ++CCGGG+ACUC:A:GG:GAC:GCC:G:GAUAA:C:GGA:GAAGGU::GGAUGACGUCAAGUCAUCAUGG
+  NZ_CP066836.1:3150038-3151579_minus 1136 CCGGCCGGGAACUCAAAGGAGACUGCCAGUGAUAAACUGGAGGAAGGUGGGGAUGACGUCAAGUCAUCAUGG 1207
+                                           8899******************************************************************** PP
+
+                                                                                                                    NC
+                                           ]]],,,,}}}}}}},,,}}-}}}}}}}}}},,,<<<<<<<-----<<<--<<---<<<____>>>--->>-- CS
+                              RF00177 1199 CCCUUAugcccgGGGCuaCACaCgugcuaCAAUGgccggcACAaaggGuaGCaAagccGcGAggcggAGCuA 1270
+                                           CCCUUA+G:CC:GGGCUACACACGUGCUACAAUG:C::::ACAAAG:G+AGC+A ::CGCGAG:: +AGC  
+  NZ_CP066836.1:3150038-3151579_minus 1208 CCCUUACGACCAGGGCUACACACGUGCUACAAUGGCGCAUACAAAGAGAAGCGACCUCGCGAGAGCAAGCGG 1279
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           -->>>----->>>>>>>,,,,,,<---<<<<<<<<________>>>>>>>>--->,,,,,}}}}},,,,,<< CS
+                              RF00177 1271 AUCccauAAAgccggcCucAGUUCGGAcuGgaGgCUGcAAcUCGcCucCagGAAGuuGGAauCGCUAGUAau 1342
+                                           A C:CAUAAA::::G:C +AGU CGGA:UGGAG:CUGCAACUCG:CUCCA:GAAGU+GGAAUCGCUAGUAAU
+  NZ_CP066836.1:3150038-3151579_minus 1280 ACCUCAUAAAGUGCGUCGUAGUCCGGAUUGGAGUCUGCAACUCGACUCCAUGAAGUCGGAAUCGCUAGUAAU 1351
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           <<<<<<_______>>>>>>>>,,,,,,}}---}}}}}}}}}}-}},,<-<<-<<---<<<<<<<<--<<<<< CS
+                              RF00177 1343 cGcggcUCAGcAugccgCgguGAAUACGuUCcCGGGcCuuGuACaCACCGcCCGUCAcgcCacggaAgccgg 1414
+                                           CG:GG:UCAG AU:CC:CGGUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCAC:CCA::G+A:::::
+  NZ_CP066836.1:3150038-3151579_minus 1352 CGUGGAUCAGAAUGCCACGGUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCACACCAUGGGAGUGGG 1423
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           <<<<<<<----<<<<<<-<<<<--<<____>>->>>>>>>>>>--->>>>>>>>>>>>-->>>>>>>>---- CS
+                              RF00177 1415 ccccgcCcGAAGccgccgcgccAAccuuaaggaggcgggcggCuAaGgcggggccggcgAccggGgcgAAGU 1486
+                                           :::C::: GAAG:::::+::::AACCUU  GGA:::::::::C A :::G::::::::GAC::GGG:GAAGU
+  NZ_CP066836.1:3150038-3151579_minus 1424 UUGCAAAAGAAGUAGGUAGCUUAACCUUCGGGAGGGCGCUUACCACUUUGUGAUUCAUGACUGGGGUGAAGU 1495
+                                           ************************************************************************ PP
+
+                                                                                           NC
+                                           >>-->>-->,<<<<<<<<<<____>>>>>>>>>>::::::::::::: CS
+                              RF00177 1487 CGUAaCAAGGuagCcguaccGGAAggugcgGcugGAUcAccUcCUUu 1533
+                                           CGUAACAAGGUA:CCGUA::GGAA::UGCGG:UGGAUCACCUCCUU 
+  NZ_CP066836.1:3150038-3151579_minus 1496 CGUAACAAGGUAACCGUAGGGGAACCUGCGGUUGGAUCACCUCCUUA 1542
+                                           *********************************************** PP
+
+
+
+Internal CM pipeline statistics summary:
+----------------------------------------
+Query sequence(s):                                               1  (1542 residues searched)
+Query sequences re-searched for truncated hits:                  1  (4626.0 residues re-searched, avg per model)
+Target model(s):                                                 1  (1533 consensus positions)
+Windows   passing  local HMM SSV           filter:               4  (1); expected (0.35)
+Windows   passing  local HMM Viterbi       filter:                  (off)
+Windows   passing  local HMM Viterbi  bias filter:                  (off)
+Windows   passing  local HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing  local HMM Forward  bias filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward  bias filter:               4  (1); expected (0.02)
+Envelopes passing glocal HMM envelope defn filter:               4  (1); expected (0.02)
+Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
+Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
+
+# CPU time: 2.93u 0.07s 00:00:03.00 Elapsed: 00:00:03.00
+//
+Query:       NZ_CP066836.1:3243611-3245152_minus  [L=1542]
+Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
+Hit scores:
+ rank     E-value  score  bias  modelname  start    end   mdl trunc   gc  description
+ ----   --------- ------ -----  --------- ------ ------   --- ----- ----  -----------
+  (1) !         0 1578.8  14.4  RF00177        1   1542 +  cm    no 0.54  Bacterial small subunit ribosomal RNA
+
+
+Hit alignments:
+>> RF00177  Bacterial small subunit ribosomal RNA
+ rank     E-value  score  bias mdl mdl from   mdl to       seq from      seq to       acc trunc   gc
+ ----   --------- ------ ----- --- -------- --------    ----------- -----------      ---- ----- ----
+  (1) !         0 1578.8  14.4  cm        1     1533 []           1        1542 + [] 0.99    no 0.54
+
+                                                                                                                    NC
+                                           ::::::::<<<<<_______>>>>>,{{{{-{{{{{{,{{{{{{{{{----{{{-{{{,,<<<--<<<<<-. CS
+                              RF00177    1 uuuauggAGaGuuUGAUCcUggCuCAGggcGaaCGCuGGCGGcgcGcuUaAcaCAuGCAAGuCGagcccca. 71  
+                                           ++++UG+AGAGUUUGAUC UGGCUCAG:::GAACGCUGGCGGC::GC+UAACACAUGCAAGUCGA:C:::A 
+  NZ_CP066836.1:3243611-3245152_minus    1 AAAUUGAAGAGUUUGAUCAUGGCUCAGAUUGAACGCUGGCGGCAGGCCUAACACAUGCAAGUCGAACGGUAa 72  
+                                           **********************************************************************99 PP
+
+                                                                                                   v                NC
+                                           ...<<<<<<<____>>>>>>>...->>->>>>>>,,,,,,[[[,,,,,,((((((((--((---(((((((, CS
+                              RF00177   72 ...cggggccuuaaggccccg...agggggcGgCGaAcGGGuGAGUAAcgCGcgggcAAccUacCcccgggu 137 
+                                              ::::::: U++:::::::   +::G:G:GGCG ACGGGUGAGUAA+::::GGG  A:CU+CC :::GG+
+  NZ_CP066836.1:3243611-3245152_minus   73 cagGAAACAGCUUGCUGUUUCgcuGACGAGUGGCGGACGGGUGAGUAAUGUCUGGGA-AACUGCCUGAUGGA 143 
+                                           999******************9999********************************.9************* PP
+
+                                            v      v                v       v                                       NC
+                                           <<<<----<<<<<<<____>>>>>>>----->>>>,,,,,<<<<<<<<<<____>>>>>>>>>>,,,,<<<. CS
+                              RF00177  138 gcgGgAUAccccccgGAAAcggggggUAAUACcgcAUaaugccccggcccguaugggccggggcuAAAGgc. 208 
+                                           G GGGAUA C::C:GGAAAC:G::G UAAUACC CAUAA        ::CG+A+G::        AAA::: 
+  NZ_CP066836.1:3243611-3245152_minus  144 GGGGGAUAACUACUGGAAACGGUAGCUAAUACCGCAUAAC-------GUCGCAAGAC-------CAAAGAGg 201 
+                                           ****************************************.......9********9.......******99 PP
+
+                                                                         v                                          NC
+                                           .........._____>>>,)))))))--))))))))))<<<--<-<<<--<<<<<<<<_______>>>>>>> CS
+                              RF00177  209 ..........auuuagcCGcccgggGAugggcccgCGccccAUcAGcuAGuuGGuggGGUAAuGGCccaCCa 270 
+                                                        ++:::GCC::: GAUG: CCC:::::::AU:AGCUAGU:GGUG:GGUAA GGC:CACC:
+  NZ_CP066836.1:3243611-3245152_minus  202 gggaccuucgGGCCUCUUGCCAUCGGAUGUGCCCAGAUGGGAUUAGCUAGUAGGUGGGGUAACGGCUCACCU 273 
+                                           ****99877655556********************************************************* PP
+
+                                                                                                                    NC
+                                           >>>>----->>>>,,<<<<<<<<____>>>>--->>>>]]],<<<<<<__________>>>>>>,<<<<___ CS
+                              RF00177  271 aggCgAuGAggggUAGccGgccuGAGAgggcGauCggCCaCAcuGGgaCUGAGAcACGgcCCagACuCCUAC 342 
+                                           AGGCGA+GA::::UAGC:G::CUGAGAGG::GA C:GCCACACUGG:ACUGAGACACGG:CCAGACUCCUAC
+  NZ_CP066836.1:3243611-3245152_minus  274 AGGCGACGAUCCCUAGCUGGUCUGAGAGGAUGACCAGCCACACUGGAACUGAGACACGGUCCAGACUCCUAC 345 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           _>>>>,,,}}}}}}-},,,,,<-<<<---<<<<<____>>>>>->>>>,}}-}}}}}},,<<<<------<< CS
+                              RF00177  343 GGGaGGCAGCaGugggGAAUauUgcgCAAugGgcGaAAgcCugAcgcaGCgAcgCCGCGUGgggGAuGAAgg 414 
+                                           GGGAGGCAGCAGUGGGGAAUAUUGC:CAAUGGGCG AAGCCUGA:GCAGC:A:GCCGCGUG:::GA+GAA::
+  NZ_CP066836.1:3243611-3245152_minus  346 GGGAGGCAGCAGUGGGGAAUAUUGCACAAUGGGCGCAAGCCUGAUGCAGCCAUGCCGCGUGUAUGAAGAAGG 417 
+                                           ************************************************************************ PP
+
+                                                                  v                                                 NC
+                                           <<____>>>>----->>>>,,,<<<<<<<---<-----<<<___........______>>>----->----> CS
+                              RF00177  415 ccUUcGggccGUAAAcccCUuUcccggGgGAagAaaaaccgaua........uuuuaucgguuuGAcggUAc 478 
+                                           CCUUCGGG::GUAAA:::CUUUC ::GGGGA GAA   ::G++A          UU+ C::+UUGACG UAC
+  NZ_CP066836.1:3243611-3245152_minus  418 CCUUCGGGUUGUAAAGUACUUUCAGCGGGGAGGAAG-GGAGUAAaguuaauaCCUUUGCUCAUUGACGUUAC 488 
+                                           *********************************998.7888888899988754445558999********** PP
+
+                                               v                                                                    NC
+                                           >>>>>--->,,<<<<<------<<<<<-----<<____>>------->>>>>>>>>>,}}}}}}}}}},,,, CS
+                              RF00177  479 CccgggAagAAGcccCGGCUAAcuccGUGCCAGCAGCCGCGGUAAuACggagGgggCaaGCGuugccCGGAa 550 
+                                           CC:: GAAGAAGC:CCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGG:GCAAGCGUU:::CGGAA
+  NZ_CP066836.1:3243611-3245152_minus  489 CCGCAGAAGAAGCACCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGGUGCAAGCGUUAAUCGGAA 560 
+                                           ************************************************************************ PP
+
+                                                                v                            v                 v    NC
+                                           ,,,,,,{{{-----{,[[[[-[-[[[,<<<<<<<-<<<<<<<<<<<----<<<<<<<_____>>>>>>>--> CS
+                              RF00177  551 UuAuUGGGcGUAAAGgGcgcGcAgGcGGcccggcAaGucgggcgcgAAAucccgcgGCUcAACcgcgggauc 622 
+                                           UUA+UGGGCGUAAAG GC:CG AGGCGG:::G::AAGUC:G::G::AAAU CC: GGCUCAACC :GG A+:
+  NZ_CP066836.1:3243611-3245152_minus  561 UUACUGGGCGUAAAGCGCACGCAGGCGGUUUGUUAAGUCAGAUGUGAAAUCCCCGGGCUCAACCUGGGAACU 632 
+                                           ************************************************************************ PP
+
+                                                                    v                                               NC
+                                           >>>>>>>>-->>>>>>>>>,,,(((((((((--(((((((<<--<<<<<<<<---<<<______>>>----- CS
+                              RF00177  623 gcgcccgaaACugccgggCUuGaGuccggccGAgGggggcggAAcucccgguGUAGcgGUGAAAugCGUAGA 694 
+                                           :C::C:GA+ACU::C:::CUUGAGU ::G::GAGGGGGG::GAA:UCC:GGUGUAGCGGUGAAAUGCGUAGA
+  NZ_CP066836.1:3243611-3245152_minus  633 GCAUCUGAUACUGGCAAGCUUGAGUCUCGUAGAGGGGGGUAGAAUUCCAGGUGUAGCGGUGAAAUGCGUAGA 704 
+                                           ************************************************************************ PP
+
+                                                            v          v             v          v                   NC
+                                           ->>>>>>>>-->>,,,,<--<<____>>>)))))))-))))))-))),,,]]]]--]]]],,,,<<<<<<-- CS
+                              RF00177  695 uaucgggagGAacACCacugGCGAAGGCggccccCuGggccgguaCuGACgCugAggcgCGAAAGCguGGGg 766 
+                                            AUC:GGA:GAA:ACC+ UGGCGAAGGC :CCCCCUG::C::  ACUGACGCU AGG:GCGAAAGCGUGGGG
+  NZ_CP066836.1:3243611-3245152_minus  705 GAUCUGGAGGAAUACCGGUGGCGAAGGCGGCCCCCUGGACGAAGACUGACGCUCAGGUGCGAAAGCGUGGGG 776 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           -<<---<<<<_________>>>>--->>>>>>>>,,,,,,,,,,((((((,,<<<<<<<<<<<<_____>>> CS
+                              RF00177  767 AgCaAAcgGGAUUAGAUACCCcgGUAGuCCacGCcgUAAACGAUGggcgCUAGgcgccggggggauuaaccc 838 
+                                           AGCAAAC:GGAUUAGAUACCC:GGUAGUCCACGCCGUAAACGAUG::::CU GG:::  : G:: UU A::C
+  NZ_CP066836.1:3243611-3245152_minus  777 AGCAAACAGGAUUAGAUACCCUGGUAGUCCACGCCGUAAACGAUGUCGACUUGGAGGUUGUGCCCUUGAGGC 848 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           >>>>>>>>>,,,<<____>>,,,,,))))))}}}},<<<------<<<<____>>>>---->>>,,,,,,,, CS
+                              RF00177  839 cccggcgcCgaAGcuAAcgCauUAAGcgccCCgCCUGgGGAgUACggcCGCAAGgcugAAACuCAAAGGAAU 910 
+                                            :  :::CCG AGCUAACGC+UUAAG::::CCGCCUGGGGAGUACG:CCGCAAGG:U+AAACUCAAA GAAU
+  NZ_CP066836.1:3243611-3245152_minus  849 GUGGCUUCCGGAGCUAACGCGUUAAGUCGACCGCCUGGGGAGUACGGCCGCAAGGUUAAAACUCAAAUGAAU 920 
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           {{{{{-{{{{{{{-{{,,{{{{{{{{{{{{{{{{{,,,,<<<<________>>>>,,,,,,,,{{{{{{{,, CS
+                              RF00177  911 uGaCgGgGgCCCGCaCAAGCGguGgagcauGuGGuUUAAuuCGAuGcaAcgCGaaGAACCUUACCcgggcUU 982 
+                                           UGACGGGGGCCCGCACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACC:GG:CUU
+  NZ_CP066836.1:3243611-3245152_minus  921 UGACGGGGGCCCGCACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACCUGGUCUU 992 
+                                           ************************************************************************ PP
+
+                                                                            v        v                              NC
+                                           ,,,((((((((,,<<<<<<<____>>>>>>>,<<<<____>>>>)))))-))),[[-[[[[--[[[[[[[[[ CS
+                              RF00177  983 GAcgugccgggaaccccccgGAaAcgggggguccccuuaaggggcccggacacAGGUGcugCAuGgcuGuCG 1054
+                                           GAC:U:C::GGAA ::::C:GA A:G:::: +: CCUU +GG :CC::GA:A:AGGUGCUGCAUGGCUGUCG
+  NZ_CP066836.1:3243611-3245152_minus  993 GACAUCCACGGAAGUUUUCAGAGAUGAGAAUGUGCCUUCGGGAACCGUGAGACAGGUGCUGCAUGGCUGUCG 1064
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           ,,,((((((<<<____>>>,,<<<<______>>>>,,)))))),,,,,((((,<<<<<<<---<<--<<<__ CS
+                              RF00177 1055 UCAGCuCGuguCGUGAGauGUcgGGUUAAGUCCcgcAaCGaGCGCAACCCccgccccuagUUgCcAucgguu 1126
+                                           UCAGCUCGUGU:GUGA:AUGU:GGGUUAAGUCCC:CAACGAGCGCAACCC::+:CC:U:GUUGCCA+CGG U
+  NZ_CP066836.1:3243611-3245152_minus 1065 UCAGCUCGUGUUGUGAAAUGUUGGGUUAAGUCCCGCAACGAGCGCAACCCUUAUCCUUUGUUGCCAGCGG-U 1135
+                                           **********************************************************************.8 PP
+
+                                                                                                                    NC
+                                           ____>>>>>---->>>>>>>,,<<<<<<<<_____>>>>>>>>,,,,,)))),,,,]]]]-]]]---]]]]] CS
+                              RF00177 1127 uauuccggGcACUcuaggggGACcgCCggcGauAAgccGGagGAAGGuggGGAuGACGuCAaguCauCaugg 1198
+                                             ++CCGGG+ACUC:A:GG:GAC:GCC:G:GAUAA:C:GGA:GAAGGU::GGAUGACGUCAAGUCAUCAUGG
+  NZ_CP066836.1:3243611-3245152_minus 1136 CCGGCCGGGAACUCAAAGGAGACUGCCAGUGAUAAACUGGAGGAAGGUGGGGAUGACGUCAAGUCAUCAUGG 1207
+                                           8899******************************************************************** PP
+
+                                                                                                                    NC
+                                           ]]],,,,}}}}}}},,,}}-}}}}}}}}}},,,<<<<<<<-----<<<--<<---<<<____>>>--->>-- CS
+                              RF00177 1199 CCCUUAugcccgGGGCuaCACaCgugcuaCAAUGgccggcACAaaggGuaGCaAagccGcGAggcggAGCuA 1270
+                                           CCCUUA+G:CC:GGGCUACACACGUGCUACAAUG:C::::ACAAAG:G+AGC+A ::CGCGAG:: +AGC  
+  NZ_CP066836.1:3243611-3245152_minus 1208 CCCUUACGACCAGGGCUACACACGUGCUACAAUGGCGCAUACAAAGAGAAGCGACCUCGCGAGAGCAAGCGG 1279
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           -->>>----->>>>>>>,,,,,,<---<<<<<<<<________>>>>>>>>--->,,,,,}}}}},,,,,<< CS
+                              RF00177 1271 AUCccauAAAgccggcCucAGUUCGGAcuGgaGgCUGcAAcUCGcCucCagGAAGuuGGAauCGCUAGUAau 1342
+                                           A C:CAUAAA::::G:C +AGU CGGA:UGGAG:CUGCAACUCG:CUCCA:GAAGU+GGAAUCGCUAGUAAU
+  NZ_CP066836.1:3243611-3245152_minus 1280 ACCUCAUAAAGUGCGUCGUAGUCCGGAUUGGAGUCUGCAACUCGACUCCAUGAAGUCGGAAUCGCUAGUAAU 1351
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           <<<<<<_______>>>>>>>>,,,,,,}}---}}}}}}}}}}-}},,<-<<-<<---<<<<<<<<--<<<<< CS
+                              RF00177 1343 cGcggcUCAGcAugccgCgguGAAUACGuUCcCGGGcCuuGuACaCACCGcCCGUCAcgcCacggaAgccgg 1414
+                                           CG:GG:UCAG AU:CC:CGGUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCAC:CCA::G+A:::::
+  NZ_CP066836.1:3243611-3245152_minus 1352 CGUGGAUCAGAAUGCCACGGUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCACACCAUGGGAGUGGG 1423
+                                           ************************************************************************ PP
+
+                                                                                                                    NC
+                                           <<<<<<<----<<<<<<-<<<<--<<____>>->>>>>>>>>>--->>>>>>>>>>>>-->>>>>>>>---- CS
+                              RF00177 1415 ccccgcCcGAAGccgccgcgccAAccuuaaggaggcgggcggCuAaGgcggggccggcgAccggGgcgAAGU 1486
+                                           :::C::: GAAG:::::+::::AACCUU  GGA:::::::::C A :::G::::::::GAC::GGG:GAAGU
+  NZ_CP066836.1:3243611-3245152_minus 1424 UUGCAAAAGAAGUAGGUAGCUUAACCUUCGGGAGGGCGCUUACCACUUUGUGAUUCAUGACUGGGGUGAAGU 1495
+                                           ************************************************************************ PP
+
+                                                                                           NC
+                                           >>-->>-->,<<<<<<<<<<____>>>>>>>>>>::::::::::::: CS
+                              RF00177 1487 CGUAaCAAGGuagCcguaccGGAAggugcgGcugGAUcAccUcCUUu 1533
+                                           CGUAACAAGGUA:CCGUA::GGAA::UGCGG:UGGAUCACCUCCUU 
+  NZ_CP066836.1:3243611-3245152_minus 1496 CGUAACAAGGUAACCGUAGGGGAACCUGCGGUUGGAUCACCUCCUUA 1542
+                                           *********************************************** PP
+
+
+
+Internal CM pipeline statistics summary:
+----------------------------------------
+Query sequence(s):                                               1  (1542 residues searched)
+Query sequences re-searched for truncated hits:                  1  (4626.0 residues re-searched, avg per model)
+Target model(s):                                                 1  (1533 consensus positions)
+Windows   passing  local HMM SSV           filter:               4  (1); expected (0.35)
+Windows   passing  local HMM Viterbi       filter:                  (off)
+Windows   passing  local HMM Viterbi  bias filter:                  (off)
+Windows   passing  local HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing  local HMM Forward  bias filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward  bias filter:               4  (1); expected (0.02)
+Envelopes passing glocal HMM envelope defn filter:               4  (1); expected (0.02)
+Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
+Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
+
+# CPU time: 2.91u 0.06s 00:00:02.97 Elapsed: 00:00:02.97
+//
+Query:       NZ_CP066836.1:3797366-3798907_plus  [L=1542]
+Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
+Hit scores:
+ rank     E-value  score  bias  modelname  start    end   mdl trunc   gc  description
+ ----   --------- ------ -----  --------- ------ ------   --- ----- ----  -----------
+  (1) !         0 1577.3  14.2  RF00177        1   1542 +  cm    no 0.54  Bacterial small subunit ribosomal RNA
+
+
+Hit alignments:
+>> RF00177  Bacterial small subunit ribosomal RNA
+ rank     E-value  score  bias mdl mdl from   mdl to       seq from      seq to       acc trunc   gc
+ ----   --------- ------ ----- --- -------- --------    ----------- -----------      ---- ----- ----
+  (1) !         0 1577.3  14.2  cm        1     1533 []           1        1542 + [] 0.99    no 0.54
+
+                                                                                                                    NC
+                                          ::::::::<<<<<_______>>>>>,{{{{-{{{{{{,{{{{{{{{{----{{{-{{{,,<<<--<<<<<-.. CS
+                             RF00177    1 uuuauggAGaGuuUGAUCcUggCuCAGggcGaaCGCuGGCGGcgcGcuUaAcaCAuGCAAGuCGagcccca.. 71  
+                                          ++++UG+AGAGUUUGAUC UGGCUCAG:::GAACGCUGGCGGC::GC+UAACACAUGCAAGUCGA:C:::A  
+  NZ_CP066836.1:3797366-3798907_plus    1 AAAUUGAAGAGUUUGAUCAUGGCUCAGAUUGAACGCUGGCGGCAGGCCUAACACAUGCAAGUCGAACGGUAac 73  
+                                          **********************************************************************999 PP
+
+                                                                                                 v                v NC
+                                          ..<<<<<<<____>>>>>>>...->>->>>>>>,,,,,,[[[,,,,,,((((((((--((---(((((((,<< CS
+                             RF00177   72 ..cggggccuuaaggccccg...agggggcGgCGaAcGGGuGAGUAAcgCGcgggcAAccUacCcccgggugc 139 
+                                             ::G::: U++:::C::    +::G:G:GGCG ACGGGUGAGUAA+::::GGG  A:CU+CC :::GG+G 
+  NZ_CP066836.1:3797366-3798907_plus   74 agGAAGAAGCUUGCUUCUUUgcuGACGAGUGGCGGACGGGUGAGUAAUGUCUGGGA-AACUGCCUGAUGGAGG 145 
+                                          999999999999999999999999********************************.9*************** PP
+
+                                                v                v       v                                          NC
+                                          <<----<<<<<<<____>>>>>>>----->>>>,,,,,<<<<<<<<<<____>>>>>>>>>>,,,,<<<.... CS
+                             RF00177  140 gGgAUAccccccgGAAAcggggggUAAUACcgcAUaaugccccggcccguaugggccggggcuAAAGgc.... 208 
+                                          GGGAUA C::C:GGAAAC:G::G UAAUACC CAUAA        ::CG+A+G::        AAA:::    
+  NZ_CP066836.1:3797366-3798907_plus  146 GGGAUAACUACUGGAAACGGUAGCUAAUACCGCAUAAC-------GUCGCAAGAC-------CAAAGAGgggg 204 
+                                          **************************************.......9********9.......******99*** PP
+
+                                                                     v                                              NC
+                                          ......._____>>>,)))))))--))))))))))<<<--<-<<<--<<<<<<<<_______>>>>>>>>>>> CS
+                             RF00177  209 .......auuuagcCGcccgggGAugggcccgCGccccAUcAGcuAGuuGGuggGGUAAuGGCccaCCaaggC 274 
+                                                    ++:::GCC::: GAUG: CCC:::::::AU:AGCUAGU:GGUG:GGUAA GGC:CACC:AGGC
+  NZ_CP066836.1:3797366-3798907_plus  205 accuucgGGCCUCUUGCCAUCGGAUGUGCCCAGAUGGGAUUAGCUAGUAGGUGGGGUAACGGCUCACCUAGGC 277 
+                                          *99877655556************************************************************* PP
+
+                                                                                                                    NC
+                                          ----->>>>,,<<<<<<<<____>>>>--->>>>]]],<<<<<<__________>>>>>>,<<<<____>>>> CS
+                             RF00177  275 gAuGAggggUAGccGgccuGAGAgggcGauCggCCaCAcuGGgaCUGAGAcACGgcCCagACuCCUACGGGaG 347 
+                                          GA+GA::::UAGC:G::CUGAGAGG::GA C:GCCACACUGG:ACUGAGACACGG:CCAGACUCCUACGGGAG
+  NZ_CP066836.1:3797366-3798907_plus  278 GACGAUCCCUAGCUGGUCUGAGAGGAUGACCAGCCACACUGGAACUGAGACACGGUCCAGACUCCUACGGGAG 350 
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          ,,,}}}}}}-},,,,,<-<<<---<<<<<____>>>>>->>>>,}}-}}}}}},,<<<<------<<<<____ CS
+                             RF00177  348 GCAGCaGugggGAAUauUgcgCAAugGgcGaAAgcCugAcgcaGCgAcgCCGCGUGgggGAuGAAggccUUcG 420 
+                                          GCAGCAGUGGGGAAUAUUGC:CAAUGGGCG AAGCCUGA:GCAGC:A:GCCGCGUG:::GA+GAA::CCUUCG
+  NZ_CP066836.1:3797366-3798907_plus  351 GCAGCAGUGGGGAAUAUUGCACAAUGGGCGCAAGCCUGAUGCAGCCAUGCCGCGUGUAUGAAGAAGGCCUUCG 423 
+                                          ************************************************************************* PP
+
+                                                           v                                                    v   NC
+                                          >>>>----->>>>,,,<<<<<<<---<-----<<<___........______>>>----->---->>>>>>-- CS
+                             RF00177  421 ggccGUAAAcccCUuUcccggGgGAagAaaaaccgaua........uuuuaucgguuuGAcggUAcCccgggA 485 
+                                          GG::GUAAA:::CUUUC ::GGGGA GAA   ::G++A          UU+ C::+UUGACG UACCC:: GA
+  NZ_CP066836.1:3797366-3798907_plus  424 GGUUGUAAAGUACUUUCAGCGGGGAGGAAG-GGAGUAAaguuaauaCCUUUGCUCAUUGACGUUACCCGCAGA 495 
+                                          ***************************998.7888888899988754445558999***************** PP
+
+                                                                                                                    NC
+                                          ->,,<<<<<------<<<<<-----<<____>>------->>>>>>>>>>,}}}}}}}}}},,,,,,,,,,{{ CS
+                             RF00177  486 agAAGcccCGGCUAAcuccGUGCCAGCAGCCGCGGUAAuACggagGgggCaaGCGuugccCGGAaUuAuUGGG 558 
+                                          AGAAGC:CCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGG:GCAAGCGUU:::CGGAAUUA+UGGG
+  NZ_CP066836.1:3797366-3798907_plus  496 AGAAGCACCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGGUGCAAGCGUUAAUCGGAAUUACUGGG 568 
+                                          ************************************************************************* PP
+
+                                                       v                            v                 v             NC
+                                          {-----{,[[[[-[-[[[,<<<<<<<-<<<<<<<<<<<----<<<<<<<_____>>>>>>>-->>>>>>>>>- CS
+                             RF00177  559 cGUAAAGgGcgcGcAgGcGGcccggcAaGucgggcgcgAAAucccgcgGCUcAACcgcgggaucgcgcccgaa 631 
+                                          CGUAAAG GC:CG AGGCGG:::G::AAGUC:G::G::AAAU CC: GGCUCAACC :GG A+::C::C:GA+
+  NZ_CP066836.1:3797366-3798907_plus  569 CGUAAAGCGCACGCAGGCGGUUUGUUAAGUCAGAUGUGAAAUCCCCGGGCUCAACCUGGGAACUGCAUCUGAU 641 
+                                          ************************************************************************* PP
+
+                                                          v                                                         NC
+                                          ->>>>>>>>>,,,(((((((((--(((((((<<--<<<<<<<<---<<<______>>>------>>>>>>>>- CS
+                             RF00177  632 ACugccgggCUuGaGuccggccGAgGggggcggAAcucccgguGUAGcgGUGAAAugCGUAGAuaucgggagG 704 
+                                          ACU::C:::CUUGAGU ::G::GAGGGGGG::GAA:UCC:GGUGUAGCGGUGAAAUGCGUAGA AUC:GGA:G
+  NZ_CP066836.1:3797366-3798907_plus  642 ACUGGCAAGCUUGAGUCUCGUAGAGGGGGGUAGAAUUCCAGGUGUAGCGGUGAAAUGCGUAGAGAUCUGGAGG 714 
+                                          ************************************************************************* PP
+
+                                                 v          v             v          v                              NC
+                                          ->>,,,,<--<<____>>>)))))))-))))))-))),,,]]]]--]]]],,,,<<<<<<---<<---<<<<_ CS
+                             RF00177  705 AacACCacugGCGAAGGCggccccCuGggccgguaCuGACgCugAggcgCGAAAGCguGGGgAgCaAAcgGGA 777 
+                                          AA:ACC+ UGGCGAAGGC :CCCCCUG::C::  ACUGACGCU AGG:GCGAAAGCGUGGGGAGCAAAC:GGA
+  NZ_CP066836.1:3797366-3798907_plus  715 AAUACCGGUGGCGAAGGCGGCCCCCUGGACGAAGACUGACGCUCAGGUGCGAAAGCGUGGGGAGCAAACAGGA 787 
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          ________>>>>--->>>>>>>>,,,,,,,,,,((((((,,<<<<<<<<<<<<_____>>>>>>>>>>>>,,, CS
+                             RF00177  778 UUAGAUACCCcgGUAGuCCacGCcgUAAACGAUGggcgCUAGgcgccggggggauuaaccccccggcgcCgaA 850 
+                                          UUAGAUACCC:GGUAGUCCACGCCGUAAACGAUG::::CU GG:::  : G:: UU A::C :  :::CCG A
+  NZ_CP066836.1:3797366-3798907_plus  788 UUAGAUACCCUGGUAGUCCACGCCGUAAACGAUGUCGACUUGGAGGUUGUGCCCUUGAGGCGUGGCUUCCGGA 860 
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          <<____>>,,,,,))))))}}}},<<<------<<<<____>>>>---->>>,,,,,,,,{{{{{-{{{{{{{ CS
+                             RF00177  851 GcuAAcgCauUAAGcgccCCgCCUGgGGAgUACggcCGCAAGgcugAAACuCAAAGGAAUuGaCgGgGgCCCG 923 
+                                          GCUAACGC+UUAAG::::CCGCCUGGGGAGUACG:CCGCAAGG:U+AAACUCAAA GAAUUGACGGGGGCCCG
+  NZ_CP066836.1:3797366-3798907_plus  861 GCUAACGCGUUAAGUCGACCGCCUGGGGAGUACGGCCGCAAGGUUAAAACUCAAAUGAAUUGACGGGGGCCCG 933 
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          -{{,,{{{{{{{{{{{{{{{{{,,,,<<<<________>>>>,,,,,,,,{{{{{{{,,,,,((((((((,,< CS
+                             RF00177  924 CaCAAGCGguGgagcauGuGGuUUAAuuCGAuGcaAcgCGaaGAACCUUACCcgggcUUGAcgugccgggaac 996 
+                                          CACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACC:GG:CUUGAC:U:C::GGAA 
+  NZ_CP066836.1:3797366-3798907_plus  934 CACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACCUGGUCUUGACAUCCACGGAAG 1006
+                                          ************************************************************************* PP
+
+                                                             v        v                                             NC
+                                          <<<<<<____>>>>>>>,<<<<____>>>>)))))-))),[[-[[[[--[[[[[[[[[,,,((((((<<<___ CS
+                             RF00177  997 cccccgGAaAcgggggguccccuuaaggggcccggacacAGGUGcugCAuGgcuGuCGUCAGCuCGuguCGUG 1069
+                                          ::::C:GA A:G:::: +: CCUU +GG :CC::GA:A:AGGUGCUGCAUGGCUGUCGUCAGCUCGUGU:GUG
+  NZ_CP066836.1:3797366-3798907_plus 1007 UUUUCAGAGAUGAGAAUGUGCCUUCGGGAACCGUGAGACAGGUGCUGCAUGGCUGUCGUCAGCUCGUGUUGUG 1079
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          _>>>,,<<<<______>>>>,,)))))),,,,,((((,<<<<<<<---<<--<<<______>>>>>---->>> CS
+                             RF00177 1070 AGauGUcgGGUUAAGUCCcgcAaCGaGCGCAACCCccgccccuagUUgCcAucgguuuauuccggGcACUcua 1142
+                                          A:AUGU:GGGUUAAGUCCC:CAACGAGCGCAACCC::+:CC:U:GUUGCCA+CGG U  ++CCGGG+ACUC:A
+  NZ_CP066836.1:3797366-3798907_plus 1080 AAAUGUUGGGUUAAGUCCCGCAACGAGCGCAACCCUUAUCCUUUGUUGCCAGCGG-UCCGGCCGGGAACUCAA 1151
+                                          *******************************************************.88899************ PP
+
+                                                                                                                    NC
+                                          >>>>,,<<<<<<<<_____>>>>>>>>,,,,,)))),,,,]]]]-]]]---]]]]]]]],,,,}}}}}}},,, CS
+                             RF00177 1143 ggggGACcgCCggcGauAAgccGGagGAAGGuggGGAuGACGuCAaguCauCauggCCCUUAugcccgGGGCu 1215
+                                          :GG:GAC:GCC:G:GAUAA:C:GGA:GAAGGU::GGAUGACGUCAAGUCAUCAUGGCCCUUA+G:CC:GGGCU
+  NZ_CP066836.1:3797366-3798907_plus 1152 AGGAGACUGCCAGUGAUAAACUGGAGGAAGGUGGGGAUGACGUCAAGUCAUCAUGGCCCUUACGACCAGGGCU 1224
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          }}-}}}}}}}}}},,,<<<<<<<-----<<<--<<---<<<____>>>--->>---->>>----->>>>>>>, CS
+                             RF00177 1216 aCACaCgugcuaCAAUGgccggcACAaaggGuaGCaAagccGcGAggcggAGCuAAUCccauAAAgccggcCu 1288
+                                          ACACACGUGCUACAAUG:C::::ACAAAG:G+AGC+A ::CGCGAG:: +AGC  A C:CAUAAA::::G:C 
+  NZ_CP066836.1:3797366-3798907_plus 1225 ACACACGUGCUACAAUGGCGCAUACAAAGAGAAGCGACCUCGCGAGAGCAAGCGGACCUCAUAAAGUGCGUCG 1297
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          ,,,,,<---<<<<<<<<________>>>>>>>>--->,,,,,}}}}},,,,,<<<<<<<<_______>>>>>> CS
+                             RF00177 1289 cAGUUCGGAcuGgaGgCUGcAAcUCGcCucCagGAAGuuGGAauCGCUAGUAaucGcggcUCAGcAugccgCg 1361
+                                          +AGU CGGA:UGGAG:CUGCAACUCG:CUCCA:GAAGU+GGAAUCGCUAGUAAUCG:GG:UCAG AU:CC:CG
+  NZ_CP066836.1:3797366-3798907_plus 1298 UAGUCCGGAUUGGAGUCUGCAACUCGACUCCAUGAAGUCGGAAUCGCUAGUAAUCGUGGAUCAGAAUGCCACG 1370
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          >>,,,,,,}}---}}}}}}}}}}-}},,<-<<-<<---<<<<<<<<--<<<<<<<<<<<<----<<<<<<-<< CS
+                             RF00177 1362 guGAAUACGuUCcCGGGcCuuGuACaCACCGcCCGUCAcgcCacggaAgccggccccgcCcGAAGccgccgcg 1434
+                                          GUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCAC:CCA::G+A::::::::C::: GAAG:::::+::
+  NZ_CP066836.1:3797366-3798907_plus 1371 GUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCACACCAUGGGAGUGGGUUGCAAAAGAAGUAGGUAGC 1443
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          <<--<<____>>->>>>>>>>>>--->>>>>>>>>>>>-->>>>>>>>---->>-->>-->,<<<<<<<<<<_ CS
+                             RF00177 1435 ccAAccuuaaggaggcgggcggCuAaGgcggggccggcgAccggGgcgAAGUCGUAaCAAGGuagCcguaccG 1507
+                                          ::AACCUU  GGA:::::::::C A :::G::::::::GAC::GGG:GAAGUCGUAACAAGGUA:CCGUA::G
+  NZ_CP066836.1:3797366-3798907_plus 1444 UUAACCUUCGGGAGGGCGCUUACCACUUUGUGAUUCAUGACUGGGGUGAAGUCGUAACAAGGUAACCGUAGGG 1516
+                                          ************************************************************************* PP
+
+                                                                     NC
+                                          ___>>>>>>>>>>::::::::::::: CS
+                             RF00177 1508 GAAggugcgGcugGAUcAccUcCUUu 1533
+                                          GAA::UGCGG:UGGAUCACCUCCUU 
+  NZ_CP066836.1:3797366-3798907_plus 1517 GAACCUGCGGUUGGAUCACCUCCUUA 1542
+                                          ************************** PP
+
+
+
+Internal CM pipeline statistics summary:
+----------------------------------------
+Query sequence(s):                                               1  (1542 residues searched)
+Query sequences re-searched for truncated hits:                  1  (4626.0 residues re-searched, avg per model)
+Target model(s):                                                 1  (1533 consensus positions)
+Windows   passing  local HMM SSV           filter:               4  (1); expected (0.35)
+Windows   passing  local HMM Viterbi       filter:                  (off)
+Windows   passing  local HMM Viterbi  bias filter:                  (off)
+Windows   passing  local HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing  local HMM Forward  bias filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward  bias filter:               4  (1); expected (0.02)
+Envelopes passing glocal HMM envelope defn filter:               4  (1); expected (0.02)
+Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
+Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
+
+# CPU time: 2.97u 0.08s 00:00:03.05 Elapsed: 00:00:03.04
+//
+Query:       NZ_CP066836.1:4599904-4601445_plus  [L=1542]
+Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
+Hit scores:
+ rank     E-value  score  bias  modelname  start    end   mdl trunc   gc  description
+ ----   --------- ------ -----  --------- ------ ------   --- ----- ----  -----------
+  (1) !         0 1577.2  14.7  RF00177        1   1542 +  cm    no 0.55  Bacterial small subunit ribosomal RNA
+
+
+Hit alignments:
+>> RF00177  Bacterial small subunit ribosomal RNA
+ rank     E-value  score  bias mdl mdl from   mdl to       seq from      seq to       acc trunc   gc
+ ----   --------- ------ ----- --- -------- --------    ----------- -----------      ---- ----- ----
+  (1) !         0 1577.2  14.7  cm        1     1533 []           1        1542 + [] 0.99    no 0.55
+
+                                                                                                                    NC
+                                          ::::::::<<<<<_______>>>>>,{{{{-{{{{{{,{{{{{{{{{----{{{-{{{,,<<<--<<<<<-.. CS
+                             RF00177    1 uuuauggAGaGuuUGAUCcUggCuCAGggcGaaCGCuGGCGGcgcGcuUaAcaCAuGCAAGuCGagcccca.. 71  
+                                          ++++UG+AGAGUUUGAUC UGGCUCAG:::GAACGCUGGCGGC::GC+UAACACAUGCAAGUCGA:C:::A  
+  NZ_CP066836.1:4599904-4601445_plus    1 AAAUUGAAGAGUUUGAUCAUGGCUCAGAUUGAACGCUGGCGGCAGGCCUAACACAUGCAAGUCGAACGGUAac 73  
+                                          **********************************************************************999 PP
+
+                                                                                                 v                v NC
+                                          ..<<<<<<<____>>>>>>>...->>->>>>>>,,,,,,[[[,,,,,,((((((((--((---(((((((,<< CS
+                             RF00177   72 ..cggggccuuaaggccccg...agggggcGgCGaAcGGGuGAGUAAcgCGcgggcAAccUacCcccgggugc 139 
+                                            : ::::: U++::::: :   +::G:G:GGCG ACGGGUGAGUAA+::::GGG  A:CU+CC :::GG+G 
+  NZ_CP066836.1:4599904-4601445_plus   74 agGGAUCAGCUUGCUGAUUCgcuGACGAGUGGCGGACGGGUGAGUAAUGUCUGGGA-AACUGCCUGAUGGAGG 145 
+                                          9*******************9999********************************.9*************** PP
+
+                                                v                v       v                                          NC
+                                          <<----<<<<<<<____>>>>>>>----->>>>,,,,,<<<<<<<<<<____>>>>>>>>>>,,,,<<<.... CS
+                             RF00177  140 gGgAUAccccccgGAAAcggggggUAAUACcgcAUaaugccccggcccguaugggccggggcuAAAGgc.... 208 
+                                          GGGAUA C::C:GGAAAC:G::G UAAUACC CAUAA        ::CG+A+G::        AAA:::    
+  NZ_CP066836.1:4599904-4601445_plus  146 GGGAUAACUACUGGAAACGGUAGCUAAUACCGCAUAAC-------GUCGCAAGAC-------CAAAGAGgggg 204 
+                                          **************************************.......9********9.......******99*** PP
+
+                                                                     v                                              NC
+                                          ......._____>>>,)))))))--))))))))))<<<--<-<<<--<<<<<<<<_______>>>>>>>>>>> CS
+                             RF00177  209 .......auuuagcCGcccgggGAugggcccgCGccccAUcAGcuAGuuGGuggGGUAAuGGCccaCCaaggC 274 
+                                                    ++:::GCC::: GAUG: CCC:::::::AU:AGCUAGU:GGUG:GGUAA GGC:CACC:AGGC
+  NZ_CP066836.1:4599904-4601445_plus  205 accuucgGGCCUCUUGCCAUCGGAUGUGCCCAGAUGGGAUUAGCUAGUAGGUGGGGUAACGGCUCACCUAGGC 277 
+                                          *99877655556************************************************************* PP
+
+                                                                                                                    NC
+                                          ----->>>>,,<<<<<<<<____>>>>--->>>>]]],<<<<<<__________>>>>>>,<<<<____>>>> CS
+                             RF00177  275 gAuGAggggUAGccGgccuGAGAgggcGauCggCCaCAcuGGgaCUGAGAcACGgcCCagACuCCUACGGGaG 347 
+                                          GA+GA::::UAGC:G::CUGAGAGG::GA C:GCCACACUGG:ACUGAGACACGG:CCAGACUCCUACGGGAG
+  NZ_CP066836.1:4599904-4601445_plus  278 GACGAUCCCUAGCUGGUCUGAGAGGAUGACCAGCCACACUGGAACUGAGACACGGUCCAGACUCCUACGGGAG 350 
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          ,,,}}}}}}-},,,,,<-<<<---<<<<<____>>>>>->>>>,}}-}}}}}},,<<<<------<<<<____ CS
+                             RF00177  348 GCAGCaGugggGAAUauUgcgCAAugGgcGaAAgcCugAcgcaGCgAcgCCGCGUGgggGAuGAAggccUUcG 420 
+                                          GCAGCAGUGGGGAAUAUUGC:CAAUGGGCG AAGCCUGA:GCAGC:A:GCCGCGUG:::GA+GAA::CCUUCG
+  NZ_CP066836.1:4599904-4601445_plus  351 GCAGCAGUGGGGAAUAUUGCACAAUGGGCGCAAGCCUGAUGCAGCCAUGCCGCGUGUAUGAAGAAGGCCUUCG 423 
+                                          ************************************************************************* PP
+
+                                                           v                                                    v   NC
+                                          >>>>----->>>>,,,<<<<<<<---<-----<<<___........______>>>----->---->>>>>>-- CS
+                             RF00177  421 ggccGUAAAcccCUuUcccggGgGAagAaaaaccgaua........uuuuaucgguuuGAcggUAcCccgggA 485 
+                                          GG::GUAAA:::CUUUC ::GGGGA GAA   ::G++A          UU+ C::+UUGACG UACCC:: GA
+  NZ_CP066836.1:4599904-4601445_plus  424 GGUUGUAAAGUACUUUCAGCGGGGAGGAAG-GGAGUAAaguuaauaCCUUUGCUCAUUGACGUUACCCGCAGA 495 
+                                          ***************************998.7888888899988754445558999***************** PP
+
+                                                                                                                    NC
+                                          ->,,<<<<<------<<<<<-----<<____>>------->>>>>>>>>>,}}}}}}}}}},,,,,,,,,,{{ CS
+                             RF00177  486 agAAGcccCGGCUAAcuccGUGCCAGCAGCCGCGGUAAuACggagGgggCaaGCGuugccCGGAaUuAuUGGG 558 
+                                          AGAAGC:CCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGG:GCAAGCGUU:::CGGAAUUA+UGGG
+  NZ_CP066836.1:4599904-4601445_plus  496 AGAAGCACCGGCUAACUCCGUGCCAGCAGCCGCGGUAAUACGGAGGGUGCAAGCGUUAAUCGGAAUUACUGGG 568 
+                                          ************************************************************************* PP
+
+                                                       v                            v                 v             NC
+                                          {-----{,[[[[-[-[[[,<<<<<<<-<<<<<<<<<<<----<<<<<<<_____>>>>>>>-->>>>>>>>>- CS
+                             RF00177  559 cGUAAAGgGcgcGcAgGcGGcccggcAaGucgggcgcgAAAucccgcgGCUcAACcgcgggaucgcgcccgaa 631 
+                                          CGUAAAG GC:CG AGGCGG:::G::AAGUC:G::G::AAAU CC: GGCUCAACC :GG A+::C::C:GA+
+  NZ_CP066836.1:4599904-4601445_plus  569 CGUAAAGCGCACGCAGGCGGUUUGUUAAGUCAGAUGUGAAAUCCCCGGGCUCAACCUGGGAACUGCAUCUGAU 641 
+                                          ************************************************************************* PP
+
+                                                          v                                                         NC
+                                          ->>>>>>>>>,,,(((((((((--(((((((<<--<<<<<<<<---<<<______>>>------>>>>>>>>- CS
+                             RF00177  632 ACugccgggCUuGaGuccggccGAgGggggcggAAcucccgguGUAGcgGUGAAAugCGUAGAuaucgggagG 704 
+                                          ACU::C:::CUUGAGU ::G::GAGGGGGG::GAA:UCC:GGUGUAGCGGUGAAAUGCGUAGA AUC:GGA:G
+  NZ_CP066836.1:4599904-4601445_plus  642 ACUGGCAAGCUUGAGUCUCGUAGAGGGGGGUAGAAUUCCAGGUGUAGCGGUGAAAUGCGUAGAGAUCUGGAGG 714 
+                                          ************************************************************************* PP
+
+                                                 v          v             v          v                              NC
+                                          ->>,,,,<--<<____>>>)))))))-))))))-))),,,]]]]--]]]],,,,<<<<<<---<<---<<<<_ CS
+                             RF00177  705 AacACCacugGCGAAGGCggccccCuGggccgguaCuGACgCugAggcgCGAAAGCguGGGgAgCaAAcgGGA 777 
+                                          AA:ACC+ UGGCGAAGGC :CCCCCUG::C::  ACUGACGCU AGG:GCGAAAGCGUGGGGAGCAAAC:GGA
+  NZ_CP066836.1:4599904-4601445_plus  715 AAUACCGGUGGCGAAGGCGGCCCCCUGGACGAAGACUGACGCUCAGGUGCGAAAGCGUGGGGAGCAAACAGGA 787 
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          ________>>>>--->>>>>>>>,,,,,,,,,,((((((,,<<<<<<<<<<<<_____>>>>>>>>>>>>,,, CS
+                             RF00177  778 UUAGAUACCCcgGUAGuCCacGCcgUAAACGAUGggcgCUAGgcgccggggggauuaaccccccggcgcCgaA 850 
+                                          UUAGAUACCC:GGUAGUCCACGCCGUAAACGAUG::::CU GG:::  : G:: UU A::C :  :::CCG A
+  NZ_CP066836.1:4599904-4601445_plus  788 UUAGAUACCCUGGUAGUCCACGCCGUAAACGAUGUCGACUUGGAGGUUGUGCCCUUGAGGCGUGGCUUCCGGA 860 
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          <<____>>,,,,,))))))}}}},<<<------<<<<____>>>>---->>>,,,,,,,,{{{{{-{{{{{{{ CS
+                             RF00177  851 GcuAAcgCauUAAGcgccCCgCCUGgGGAgUACggcCGCAAGgcugAAACuCAAAGGAAUuGaCgGgGgCCCG 923 
+                                          GCUAACGC+UUAAG::::CCGCCUGGGGAGUACG:CCGCAAGG:U+AAACUCAAA GAAUUGACGGGGGCCCG
+  NZ_CP066836.1:4599904-4601445_plus  861 GCUAACGCGUUAAGUCGACCGCCUGGGGAGUACGGCCGCAAGGUUAAAACUCAAAUGAAUUGACGGGGGCCCG 933 
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          -{{,,{{{{{{{{{{{{{{{{{,,,,<<<<________>>>>,,,,,,,,{{{{{{{,,,,,((((((((,,< CS
+                             RF00177  924 CaCAAGCGguGgagcauGuGGuUUAAuuCGAuGcaAcgCGaaGAACCUUACCcgggcUUGAcgugccgggaac 996 
+                                          CACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACC:GG:CUUGAC:U:C::GGAA 
+  NZ_CP066836.1:4599904-4601445_plus  934 CACAAGCGGUGGAGCAUGUGGUUUAAUUCGAUGCAACGCGAAGAACCUUACCUGGUCUUGACAUCCACGGAAG 1006
+                                          ************************************************************************* PP
+
+                                                             v        v                                             NC
+                                          <<<<<<____>>>>>>>,<<<<____>>>>)))))-))),[[-[[[[--[[[[[[[[[,,,((((((<<<___ CS
+                             RF00177  997 cccccgGAaAcgggggguccccuuaaggggcccggacacAGGUGcugCAuGgcuGuCGUCAGCuCGuguCGUG 1069
+                                          ::::C:GA A:G:::: +: CCUU +GG :CC::GA:A:AGGUGCUGCAUGGCUGUCGUCAGCUCGUGU:GUG
+  NZ_CP066836.1:4599904-4601445_plus 1007 UUUUCAGAGAUGAGAAUGUGCCUUCGGGAACCGUGAGACAGGUGCUGCAUGGCUGUCGUCAGCUCGUGUUGUG 1079
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          _>>>,,<<<<______>>>>,,)))))),,,,,((((,<<<<<<<---<<--<<<______>>>>>---->>> CS
+                             RF00177 1070 AGauGUcgGGUUAAGUCCcgcAaCGaGCGCAACCCccgccccuagUUgCcAucgguuuauuccggGcACUcua 1142
+                                          A:AUGU:GGGUUAAGUCCC:CAACGAGCGCAACCC::+:CC:U:GUUGCCA+CGG U  ++CCGGG+ACUC:A
+  NZ_CP066836.1:4599904-4601445_plus 1080 AAAUGUUGGGUUAAGUCCCGCAACGAGCGCAACCCUUAUCCUUUGUUGCCAGCGG-UCCGGCCGGGAACUCAA 1151
+                                          *******************************************************.88899************ PP
+
+                                                                                                                    NC
+                                          >>>>,,<<<<<<<<_____>>>>>>>>,,,,,)))),,,,]]]]-]]]---]]]]]]]],,,,}}}}}}},,, CS
+                             RF00177 1143 ggggGACcgCCggcGauAAgccGGagGAAGGuggGGAuGACGuCAaguCauCauggCCCUUAugcccgGGGCu 1215
+                                          :GG:GAC:GCC:G:GAUAA:C:GGA:GAAGGU::GGAUGACGUCAAGUCAUCAUGGCCCUUA+G:CC:GGGCU
+  NZ_CP066836.1:4599904-4601445_plus 1152 AGGAGACUGCCAGUGAUAAACUGGAGGAAGGUGGGGAUGACGUCAAGUCAUCAUGGCCCUUACGACCAGGGCU 1224
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          }}-}}}}}}}}}},,,<<<<<<<-----<<<--<<---<<<____>>>--->>---->>>----->>>>>>>, CS
+                             RF00177 1216 aCACaCgugcuaCAAUGgccggcACAaaggGuaGCaAagccGcGAggcggAGCuAAUCccauAAAgccggcCu 1288
+                                          ACACACGUGCUACAAUG:C::::ACAAAG:G+AGC+A ::CGCGAG:: +AGC  A C:CAUAAA::::G:C 
+  NZ_CP066836.1:4599904-4601445_plus 1225 ACACACGUGCUACAAUGGCGCAUACAAAGAGAAGCGACCUCGCGAGAGCAAGCGGACCUCAUAAAGUGCGUCG 1297
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          ,,,,,<---<<<<<<<<________>>>>>>>>--->,,,,,}}}}},,,,,<<<<<<<<_______>>>>>> CS
+                             RF00177 1289 cAGUUCGGAcuGgaGgCUGcAAcUCGcCucCagGAAGuuGGAauCGCUAGUAaucGcggcUCAGcAugccgCg 1361
+                                          +AGU CGGA:UGGAG:CUGCAACUCG:CUCCA:GAAGU+GGAAUCGCUAGUAAUCG:GG:UCAG AU:CC:CG
+  NZ_CP066836.1:4599904-4601445_plus 1298 UAGUCCGGAUUGGAGUCUGCAACUCGACUCCAUGAAGUCGGAAUCGCUAGUAAUCGUGGAUCAGAAUGCCACG 1370
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          >>,,,,,,}}---}}}}}}}}}}-}},,<-<<-<<---<<<<<<<<--<<<<<<<<<<<<----<<<<<<-<< CS
+                             RF00177 1362 guGAAUACGuUCcCGGGcCuuGuACaCACCGcCCGUCAcgcCacggaAgccggccccgcCcGAAGccgccgcg 1434
+                                          GUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCAC:CCA::G+A::::::::C::: GAAG:::::+::
+  NZ_CP066836.1:4599904-4601445_plus 1371 GUGAAUACGUUCCCGGGCCUUGUACACACCGCCCGUCACACCAUGGGAGUGGGUUGCAAAAGAAGUAGGUAGC 1443
+                                          ************************************************************************* PP
+
+                                                                                                                    NC
+                                          <<--<<____>>->>>>>>>>>>--->>>>>>>>>>>>-->>>>>>>>---->>-->>-->,<<<<<<<<<<_ CS
+                             RF00177 1435 ccAAccuuaaggaggcgggcggCuAaGgcggggccggcgAccggGgcgAAGUCGUAaCAAGGuagCcguaccG 1507
+                                          ::AACCUU  GGA:::::::::C A :::G::::::::GAC::GGG:GAAGUCGUAACAAGGUA:CCGUA::G
+  NZ_CP066836.1:4599904-4601445_plus 1444 UUAACCUUCGGGAGGGCGCUUACCACUUUGUGAUUCAUGACUGGGGUGAAGUCGUAACAAGGUAACCGUAGGG 1516
+                                          ************************************************************************* PP
+
+                                                                     NC
+                                          ___>>>>>>>>>>::::::::::::: CS
+                             RF00177 1508 GAAggugcgGcugGAUcAccUcCUUu 1533
+                                          GAA::UGCGG:UGGAUCACCUCCUU 
+  NZ_CP066836.1:4599904-4601445_plus 1517 GAACCUGCGGUUGGAUCACCUCCUUA 1542
+                                          ************************** PP
+
+
+
+Internal CM pipeline statistics summary:
+----------------------------------------
+Query sequence(s):                                               1  (1542 residues searched)
+Query sequences re-searched for truncated hits:                  1  (4626.0 residues re-searched, avg per model)
+Target model(s):                                                 1  (1533 consensus positions)
+Windows   passing  local HMM SSV           filter:               4  (1); expected (0.35)
+Windows   passing  local HMM Viterbi       filter:                  (off)
+Windows   passing  local HMM Viterbi  bias filter:                  (off)
+Windows   passing  local HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing  local HMM Forward  bias filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward       filter:               4  (1); expected (0.02)
+Windows   passing glocal HMM Forward  bias filter:               4  (1); expected (0.02)
+Envelopes passing glocal HMM envelope defn filter:               4  (1); expected (0.02)
+Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
+Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
+
+# CPU time: 2.91u 0.07s 00:00:02.98 Elapsed: 00:00:02.98
+//
+[ok]
