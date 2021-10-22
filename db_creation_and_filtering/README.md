@@ -56,13 +56,13 @@ The following variables define **dependencies**:
 
 3. `CMSEARCH_FOR_EXTRACT_16S` -- the program `cmsearch` from [Infernal](http://eddylab.org/infernal/). The program is used to extract 16S rRNA genes from genomic sequences. Here, we should use `cmsearcn` 1.1.1, to be fully consistent wuth PGAP.
 
-4. `RFAM_FOR_EXTRACT_16S` -- [Rfam](https://rfam.xfam.org/) covariance model (uncompressed `.cm` file). It is used to extract 16S rRNA genes from genomic sequences. Here, we should use [Rfam 12.0](ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz), to be fully consistent wuth PGAP.
+4. `RFAM_FOR_EXTRACT_16S` -- [Rfam](https://rfam.xfam.org/) covariance model (uncompressed `.cm` file). It is used to extract 16S rRNA genes from genomic sequences. Here, we should use Rfam 12.0: ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz, to be fully consistent wuth PGAP.
 
 5. `CMSCAN_FOR_FILTERING` -- the program `cmscan` from [Infernal](http://eddylab.org/infernal/). The program is used to filter incomplete sequences of 16S rRNA genes. Here, we should use the latest version of `cmsearcn` (1.1.4).
 
 6. `CMPRESS_FOR_FILTERING` -- the program `cmpress` from [Infernal](http://eddylab.org/infernal/). The program is used to filter incomplete sequences of 16S rRNA genes. Here, we should use the latest version of `cmpress` (1.1.4).
 
-7. `RFAM_FOR_FILTERING` -- [Rfam](https://rfam.xfam.org/) covariance model (uncompressed `.cm` file). It is used to extract 16S rRNA genes from genomic sequences. Here, we should use [Rfam 14.6](ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.6/Rfam.cm.gz), to be fully consistent wuth PGAP.
+7. `RFAM_FOR_FILTERING` -- [Rfam](https://rfam.xfam.org/) covariance model (uncompressed `.cm` file). It is used to extract 16S rRNA genes from genomic sequences. Here, we should use Rfam 14.6: ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.6/Rfam.cm.gz, to be fully consistent wuth PGAP.
 
 8. `MUSCLE` -- [MUSCLE](https://www.drive5.com/muscle/) executable for multiple sequence alignment.
 

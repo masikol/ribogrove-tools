@@ -34,7 +34,7 @@ done
 
 # |=== Configure all paths to intermediate and result files ===|
 
-ASS_ID_TO_GI_FPATH="${WORKDIR}/${PREFIX}_assembly_2_refseq.tsv"
+ASS_ID_TO_GI_FPATH="${WORKDIR}/${PREFIX}_assembly_2_GI.tsv"
 
 GI_ACC_TITLES_FPATH="${WORKDIR}/${PREFIX}_refseq_accs.tsv"
 
@@ -114,7 +114,7 @@ python3 "${SCRIPT_DIR}/merge_assID2acc_and_remove_WGS.py" \
 python3 "${SCRIPT_DIR}/download_genomes.py" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --outdir "${GENOMES_GBK_DIR}" \
-  --log-file "${LOGS_DIR}/archaea_genome_download_log.log"
+  --log-file "${LOGS_DIR}/${PREFIX}_download_genomes.log"
 
 
 # == Extract Rfam covariance model for 16S rRNA genes exttaction ==
@@ -242,8 +242,7 @@ python3 "${SCRIPT_DIR}/drop_repeats.py" \
 python3 "${SCRIPT_DIR}/get_taxIDs.py" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --all-fasta-file "${ALL_GENES_FASTA}" \
-  --per-genome-outfile "${PER_GENOME_TAXID_FPATH}" \
-  --seqkit "${SEQKIT}"
+  --per-genome-outfile "${PER_GENOME_TAXID_FPATH}"
 
 
 # == Map seqIDs to taxIDs ==
@@ -262,8 +261,7 @@ python3 "${SCRIPT_DIR}/add_taxonomy_names.py" \
   --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
   --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
   --per-genome-outfile "${PER_GENOME_TAXONOMY_FPATH}" \
-  --per-gene-outfile "${PER_GENE_TAXONOMY_FPATH}" \
-  --seqkit "${SEQKIT}"
+  --per-gene-outfile "${PER_GENE_TAXONOMY_FPATH}"
 
 #  End of the taxonomy section
 # =========================

@@ -6,14 +6,14 @@
 
 # Input files:
 # 1. Fasta file of genes sequences (-f/--fasta-seqs-file).
-# 2. TSV file if per-replicon genes statistics (-s/--genes-stats-file).
+# 2. TSV file of per-replicon genes statistics (-s/--genes-stats-file).
 # 3. TSV file `.tblout` outputed by the script `compare_all_seqs_to_cm.py` (-t/--cmscan-tblout).
 # 4. (optional) Fasta file of NR conserved regions from work
 #    "How conserved are the conserved 16S-rRNA regions?"
 #    (table 5, https://peerj.com/articles/3036/)
 #    -c/--conserved-regions-fasta
 
-# Output files (they all will be stored in output directory --outdir):
+# Output files (they all will be stored in output directory -o/--outdir):
 # 1. pident_pivotal_genes.tsv -- TSV file containing pidents (and some other statistics)
 #    of pairwise alignments of pivotal genes vs non-pivotal genes.
 # 2. insertions.tsv -- TSV file containing information about discovered insertions

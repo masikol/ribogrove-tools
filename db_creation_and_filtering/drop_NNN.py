@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-# The script discards gene sequences, which contains at least 3 N's in theirs sequences
+# The script discards gene sequences, which originate from the genomes
+#   containing at least 3 Ns (undefined bases) in a row in theis sequences.
 
 # Input files:
 # 1. `-i/--assm-acc-file` is output of script merge_assID2acc_and_remove_WGS.py.

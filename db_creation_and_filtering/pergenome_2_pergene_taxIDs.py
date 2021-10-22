@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Script maps seqIDs to TaxIDs using `--per-genome-taxID-file` file.
+# The script maps seqIDs to TaxIDs using `--per-genome-taxID-file` file.
 
 # Input files:
 # 1. -i/--assm-acc-file -- is output of script merge_assID2acc_and_remove_WGS.py.

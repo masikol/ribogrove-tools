@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # The script removes gene sequences, which contain large repeats.
-# The script requires a threshold (repeat length) for distinguishing "large" and "not large" repeats,
+# The script requires a threshold (repeat length) for distinguishing "large" and "not large" repeats.
 
 # Input files:
 # 1. -f/--input-fasta-file -- input fasta file.

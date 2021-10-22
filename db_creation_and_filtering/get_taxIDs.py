@@ -10,8 +10,6 @@
 # Output files:
 # 1. --per-genome-outfile -- output file mapping Assembly IDs to taxIDs
 
-# Dependencies:
-# 1. --seqkit seqkit executable
 
 import os
 
@@ -26,6 +24,7 @@ from typing import List, Dict
 
 import pandas as pd
 from Bio import Entrez
+from Bio import SeqIO
 Entrez.email = 'maximdeynonih@gmail.com'
 
 
@@ -58,14 +57,6 @@ parser.add_argument(
     required=True
 )
 
-# Dependencies
-
-parser.add_argument(
-    '--seqkit',
-    help='seqkit executable',
-    required=True
-)
-
 args = parser.parse_args()
 
 
@@ -73,22 +64,15 @@ args = parser.parse_args()
 assm_acc_fpath = os.path.abspath(args.assm_acc_file)
 fasta_seqs_fpath = os.path.abspath(args.all_fasta_file)
 per_genome_outfpath = os.path.abspath(args.per_genome_outfile)
-seqkit_fpath = os.path.abspath(args.seqkit)
 
 
 # Check existance of all input files and dependencies
-for fpath in (assm_acc_fpath, fasta_seqs_fpath, seqkit_fpath):
+for fpath in (assm_acc_fpath, fasta_seqs_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
     # end if
 # enb for
-
-# Check if seqkit executable is actually executable
-if not os.access(seqkit_fpath, os.X_OK):
-    print(f'Error: file `{seqkit_fpath}` is not executable!')
-    sys.exit(1)
-# end if
 
 # Create output directories if needed
 if not os.path.isdir(os.path.dirname(per_genome_outfpath)):
@@ -103,32 +87,26 @@ if not os.path.isdir(os.path.dirname(per_genome_outfpath)):
 
 print(assm_acc_fpath)
 print(fasta_seqs_fpath)
-print(seqkit_fpath)
 print()
 
 
-def get_genes_seqIDs(fasta_seqs_fpath: str, seqkit_fpath: str) -> List[str]:
+def get_genes_seqIDs(fasta_seqs_fpath: str) -> List[str]:
     # Function reports all seqIDs of sequences from given fasta file fasta_seqs_fpath.
 
-    # Configure command reporting seqIDs of fasta file
-    cmd = f'{seqkit_fpath} seq -ni {fasta_seqs_fpath}'
-    pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
-    stdout_stderr = pipe.communicate()
+    seq_records = SeqIO.parse(fasta_seqs_fpath, 'fasta')
 
-    if pipe.returncode != 0:
-        print('Error at popen: extracting genes\' seqIDs')
-        print(stdout_stderr[1].decode('utf-8'))
-        sys.exit(pipe.returncode)
-    else:
-        # Parse seqIDs
-        genes_seqIDs = list(stdout_stderr[0].decode('utf-8').split('\n'))
-    # end if
+    seqIDs = list(
+        map(
+            lambda x: x.id,
+            seq_records
+        )
+    )
 
-    return genes_seqIDs
+    return seqIDs
 # end def get_genes_seqIDs
 
 
-def make_acc_seqIDs_dict(fasta_seqs_fpath: str, seqkit_fpath: str) -> Dict[str, List[str]]:
+def make_acc_seqIDs_dict(fasta_seqs_fpath: str) -> Dict[str, List[str]]:
     # Function creates dictionary that maps accessions to seqIDs
 
     # Get all seqIDs of gene sequences.
@@ -136,7 +114,7 @@ def make_acc_seqIDs_dict(fasta_seqs_fpath: str, seqkit_fpath: str) -> Dict[str, 
     #   therefore, we do this `reversed` here
     genes_seqIDs = list(
         reversed(
-            get_genes_seqIDs(fasta_seqs_fpath, seqkit_fpath)
+            get_genes_seqIDs(fasta_seqs_fpath)
         )
     )
 
@@ -168,7 +146,7 @@ assm_acc_df = pd.read_csv(
 
 # Create dictionary that maps ACCESSION.VERSION's to seqIDs
 print('Building `acc_seqIDs_dict`')
-acc_seqIDs_dict = make_acc_seqIDs_dict(fasta_seqs_fpath, seqkit_fpath)
+acc_seqIDs_dict = make_acc_seqIDs_dict(fasta_seqs_fpath)
 # accs_with_16S_genes = set(acc_seqIDs_dict.keys())
 print('`acc_seqIDs_dict` is built')
 

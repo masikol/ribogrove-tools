@@ -14,9 +14,6 @@
 # 1. TSV file mapping Assembly IDs to taxonomy (--per-genome-outfile)
 # 2. TSV file mapping genes seqIDs to taxonomy (--per-gene-outfile)
 
-# Dependencies:
-# 1. Path to seqkit exetutable (--seqkit)
-
 
 import os
 
@@ -70,14 +67,6 @@ parser.add_argument(
     required=True
 )
 
-# Dependencies
-
-parser.add_argument(
-    '--seqkit',
-    help='seqkit executable',
-    required=True
-)
-
 args = parser.parse_args()
 
 
@@ -87,22 +76,15 @@ per_gene_taxid_fpath = os.path.abspath(args.per_gene_taxid_file)
 rankedlineage_path = os.path.abspath(args.ranked_lineage)
 per_genome_outfpath = os.path.abspath(args.per_genome_outfile)
 per_gene_outfpath = os.path.abspath(args.per_gene_outfile)
-seqkit_fpath = os.path.abspath(args.seqkit)
 
 
 # Check existance of all input files and dependencies
-for fpath in (per_genome_taxid_fpath, per_gene_taxid_fpath, rankedlineage_path, seqkit_fpath):
+for fpath in (per_genome_taxid_fpath, per_gene_taxid_fpath, rankedlineage_path):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
     # end if
 # enb for
-
-# Check if seqkit executable is actually executable
-if not os.access(seqkit_fpath, os.X_OK):
-    print(f'Error: file `{seqkit_fpath}` is not executable!')
-    sys.exit(1)
-# end if
 
 # Create output directories if needed
 for some_dir in map(os.path.dirname, [per_genome_outfpath, per_gene_outfpath]):
@@ -119,7 +101,6 @@ for some_dir in map(os.path.dirname, [per_genome_outfpath, per_gene_outfpath]):
 print(per_genome_taxid_fpath)
 print(per_gene_taxid_fpath)
 print(rankedlineage_path)
-print(seqkit_fpath)
 print()
 
 
