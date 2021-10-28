@@ -12,8 +12,8 @@
 ### Output files:
 # 1. `-o / --outfile` -- an output TSV file.
 # The output file contains the following columns:
-# - `seqID` -- RybaSom sequence identifier;
-# - `r1_start`, `r1_end`, `r2_start`, `r2_end` -- cordinates of repeats within RybaSom sequences;
+# - `seqID` -- Ribogrove sequence identifier;
+# - `r1_start`, `r1_end`, `r2_start`, `r2_end` -- cordinates of repeats within Ribogrove sequences;
 # - `rep_len` -- repeat length;
 # - `rep_seq` -- repeat sequence;
 

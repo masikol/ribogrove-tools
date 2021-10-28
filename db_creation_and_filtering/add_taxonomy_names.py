@@ -19,7 +19,7 @@
 
 ### Output files:
 # 1. `--per-genome-outfile` -- a TSV file mapping Assembly IDs to taxonomy. Mandatory.
-# 2. `--per-gene-outfile` -- a TSV file mapping RybaSom seqIDs to taxonomy. Mandatory.
+# 2. `--per-gene-outfile` -- a TSV file mapping Ribogrove seqIDs to taxonomy. Mandatory.
 
 
 import os

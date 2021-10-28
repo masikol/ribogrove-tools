@@ -7,9 +7,9 @@
 ### Input files:
 # 1. `-f/--fasta-seqs-file` -- input fasta file to be annotated.
 #   This file is the output of the script `drop_repeats.py`. Mandatory.
-# 2. `-t / --per-gene-taxonomy-file` -- a TSV file mapping RybaSom seqIDs to taxonomy.
+# 2. `-t / --per-gene-taxonomy-file` -- a TSV file mapping Ribogrove seqIDs to taxonomy.
 #   This file is the output of the script `add_taxonomy_names.py`. Mandatory.
-# 3. `-c / --categories-file` -- a TSV file mapping RybaSom seqIDs to categories.
+# 3. `-c / --categories-file` -- a TSV file mapping Ribogrove seqIDs to categories.
 #   This file is the output of the script `assign_genome_categories.py`. Mandatory.
 
 ### Output files:

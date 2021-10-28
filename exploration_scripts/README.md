@@ -1,4 +1,4 @@
-Here, scripts used for exploration of RybaSom data are located.
+Here, scripts used for exploration of Ribogrove data are located.
 
 # Content
 
