@@ -1,6 +1,6 @@
-# Ribogrove database creation and sequence filtering
+# RiboGrove database creation and sequence filtering
 
-Here you can find scripts that were (and can be) used for Ribogrove construction.
+Here you can find scripts that were (and can be) used for RiboGrove construction.
 
 Each Python script can be used on its own using command line interace. At the same time, they are integrated in a pipeline `collect_and_filter_ssu_pipeline.sh`.
 

@@ -1,12 +1,12 @@
-# Ribogrove paper
+# RiboGrove paper
 
-This repo contains the software for Ribogrove database constuction and exploration.
+This repo contains the software for RiboGrove database constuction and exploration.
 
-Ribogrove is a genome-based database of full-length sequences of prokaryotic 16S rRNA genes. Sequences are derived from RefSeq database.
+RiboGrove is a genome-based database of full-length sequences of prokaryotic 16S rRNA genes. Sequences are derived from RefSeq database.
 
 ## Latest release
 
-(not yet) The first Ribogrove release (1.207) was constructed using scripts from this repo released under version 1.207 (as well). RefSeq release 207 was used for that, hence the Ribogrove release version.
+(not yet) The first RiboGrove release (1.207) was constructed using scripts from this repo released under version 1.207 (as well). RefSeq release 207 was used for that, hence the RiboGrove release version.
 
 ## Contents:
 
