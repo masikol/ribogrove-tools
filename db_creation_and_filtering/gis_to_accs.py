@@ -79,7 +79,6 @@ gi_df = pd.read_csv(
     sep='\t'
 )
 
-
 chunk_size = 50
 n_done_ids = 0
 
@@ -102,7 +101,7 @@ with open(outfpath, 'wt') as outfile:
             )
         )
 
-        # We will terminate if 3 errors occur in a row
+        # We will terminate if 5 errors occur in a row
         # Request summary for RefSeq record
         error = True
         n_errors = 0
@@ -114,9 +113,9 @@ with open(outfpath, 'wt') as outfile:
                 )
                 records = Entrez.read(handle)
                 handle.close()
-            except OSError:
+            except (OSError, RuntimeError):
                 n_errors += 1
-                if n_errors == 3:
+                if n_errors == 5:
                     raise OSError("Cannot request esummary")
                 # end if
             else:
