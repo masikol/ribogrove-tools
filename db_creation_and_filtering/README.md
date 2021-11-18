@@ -20,7 +20,7 @@ The pipeline consists of 4 major steps:
 
 ### Input data for the pipeline
 
-The pipeline takes configuration file (`.conf`) as input. Examples of that configuration files can be found in directory `config/`: `bacteria_config.conf` and `archaea_config.conf`.
+The pipeline takes configuration file (`.conf`) as input. Examples of that configuration files can be found in directory `config/`: `bacteria_example.conf` and `archaea_example.conf`.
 
 Thus, usage of pipeline script is following:
 
