@@ -12,7 +12,7 @@
 ## Command line arguments
 
 ### Input files:
-# 1. `-i / --assm-id-file` -- input file of Assembly IDs (one per line). Mandatory.
+# 1. `-i / --accs-file` -- input file of Assembly IDs (one per line). Mandatory.
 
 ###  Output files:
 # 1. `-o / --outfile` -- output TSV file mapping Assembly IDs to RefSeq GI numbers. Mandatory.
@@ -37,8 +37,9 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument(
     '-i',
-    '--assm-id-file',
-    help='file with Assembly IDs, one per line',
+    '--assm-acc-file',
+    help="""TSV file (with header) with
+  Assembly IDs, GI numbers, ACCESSION.VERSION's and titles separated by tabs""",
     required=True
 )
 
@@ -53,13 +54,13 @@ args = parser.parse_args()
 
 
 # For convenience
-assm_id_fpath = os.path.realpath(args.assm_id_file)
+assm_accs_fpath = os.path.realpath(args.assm_acc_file)
 outfpath = os.path.realpath(args.outfile)
 
 
 # Check existance of input file
-if not os.path.exists(assm_id_fpath):
-    print(f'Error: file `{assm_id_fpath}` does not exist!')
+if not os.path.exists(assm_accs_fpath):
+    print(f'Error: file `{assm_accs_fpath}` does not exist!')
     sys.exit(1)
 # end if
 
@@ -73,13 +74,58 @@ if not os.path.isdir(os.path.dirname(outfpath)):
 # end if
 
 
-# Read assembly IDs
-ass_ids = tuple(
+
+def esummary_assembly(ass_id):
+
+    # We will terminate if 3 errors occur in a row
+    n_errors = 0
+
+    # Request RefSeq GI number
+    while n_errors < 3:
+        try:
+            handle = Entrez.esummary(
+                db='assembly',
+                id=ass_id
+            )
+            record = Entrez.read(handle)
+            handle.close()
+            break
+        except (IOError, RuntimeError, http.client.HTTPException) as err:
+            print('\n' + str(err))
+            n_errors += 1
+        # end try
+
+        if len(record[0]['ERROR']) != 0:
+            print('\n' + '\n'.join(record[0]['ERROR']))
+            n_errors += 1
+            print('Sleeping 30 seconds')
+            time.sleep(30)
+        # end if
+    # end while
+
+    if n_errors >= 3:
+        print(f'\n3 errors (Assembly ID {ass_id})')
+        print('Sleeping 60 seconds')
+        time.sleep(60)
+        return None
+    # end if
+
+    return record
+# end def esummary_assembly
+
+
+# Read all assembly IDs
+ass_ids = set(
     map(
-        str.strip,
-        open(assm_id_fpath).readlines()
+        lambda x: x.split('\t')[0],
+        map(
+            str.strip,
+            open(assm_accs_fpath).readlines()[1:]
+        )
     )
 )
+
+ass_ids = {1270421, 10960041}
 
 
 # == Proceed ==
@@ -87,61 +133,26 @@ ass_ids = tuple(
 with open(outfpath, 'wt') as outfile:
 
     # Write header
-    outfile.write('ass_id\tgi_number\n')
+    outfile.write('ass_id\tstatus\n')
 
     # Iterate over assembly IDs
     for i, ass_id in enumerate(ass_ids):
 
         print(f'\rDoing {i+1}/{len(ass_ids)}: {ass_id}', end=' ')
 
-        # We will terminate if 3 errors occur in a row
-        n_errors = 0
-
-        # Request RefSeq GI number
-        while n_errors < 3:
-            try:
-                handle = Entrez.elink(
-                    dbfrom='assembly',
-                    db='nuccore',
-                    id=ass_id,
-                    linkname='assembly_nuccore_refseq'
-                )
-                record = Entrez.read(handle)
-                handle.close()
-                break
-            except (IOError, RuntimeError, http.client.IncompleteRead) as err:
-                print('\n' + str(err))
-                n_errors += 1
-            # end try
-
-            if len(record[0]['ERROR']) != 0:
-                print('\n' + '\n'.join(record[0]['ERROR']))
-                n_errors += 1
-            # end if
-        # end while
-
-        if n_errors >= 3:
-            print('\n3 errors!')
-            print(f'Please, handle Assembly ID {ass_id} manually.')
-            print('Sleeping for 60 seconds')
-            time.sleep(60)
+        record = esummary_assembly(ass_id)
+        if record is None:
             continue
         # end if
 
-        # Extract RefSeq GI number
-        try:
-            gi_numbers = [link['Id'] for link in record[0]['LinkSetDb'][0]['Link']]
-        except IndexError:
-            pass
-        else:
-            # Write output
-            for gi_number in gi_numbers:
-                outfile.write(f'{ass_id}\t{gi_number}\n')
-            # end for
-        # end try
+        ass_status = record['DocumentSummarySet']['DocumentSummary'][0]['AssemblyStatus']
+        # updated_uid = updated_record['DocumentSummarySet']['DocumentSummary'][0].attributes['uid']
+        # init_ass_accession = record['DocumentSummarySet']['DocumentSummary'][0]['AssemblyAccession']
+
+        outfile.write(f'{ass_id}\t{ass_status}\n')
 
         # Wait a bit: we don't want NCBI to ban us :)
-        time.sleep(0.4)
+        time.sleep(0.5)
     # end for
 # end with
 
