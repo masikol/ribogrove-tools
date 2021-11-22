@@ -101,7 +101,7 @@ if not os.path.isdir(os.path.dirname(outfpath)):
 
 print(assm_2_gi_fpath)
 print(gi_2_acc_fpath)
-print(refseq_catalog_fpath)
+print(filtered_catalog_fpath)
 print()
 
 

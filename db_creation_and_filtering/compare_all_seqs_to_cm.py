@@ -36,7 +36,7 @@ import sys
 import argparse
 import subprocess as sp
 
-import pandas
+import pandas as pd
 from Bio import SeqIO
 
 
@@ -290,7 +290,7 @@ if cached_tblout:
     print('{} sequences left to be processed by cmscan'.format(len(seq_records_for_cmscan)))
 
     # Write unprocessed sequences to temporary fasta file
-    tmp_fasta_fpath = os.path.join(os.getcwd(), 'tmp.fasta')
+    tmp_fasta_fpath = os.path.join(outdpath, 'tmp.fasta')
     with open(tmp_fasta_fpath, 'wt') as tmp_fasta:
         for record in seq_records_for_cmscan:
             tmp_fasta.write(f'>{record.description}\n{str(record.seq)}\n')
