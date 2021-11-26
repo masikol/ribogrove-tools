@@ -468,7 +468,9 @@ with open(outfpath, 'wt') as outfile, \
 
         # Assign category to the genome
         category = None
-        if contains_NNN or degenerate_in_16S or unlocalized_16S:
+        if contains_NNN:
+            category = 'NA'
+        elif degenerate_in_16S or unlocalized_16S:
             category = 3
         elif is_pacbio(seqtech) or (is_illumina(seqtech) and is_nanopore(seqtech)):
             category = 1

@@ -593,7 +593,7 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, open(outstats_fpath, 'wt') as 
     stats_outfile.write('{}\n'.format('\t'.join(stats_header)))
 
     # For each RefSeq record: extract 16S rRNA genes from it
-    for i, row in acc_df.iterrows():
+    for i, row in acc_df.drop_duplicates().iterrows():
 
         ass_id = row['ass_id']
         gi_number = row['gi_number']
