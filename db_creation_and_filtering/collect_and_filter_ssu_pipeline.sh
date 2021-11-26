@@ -34,6 +34,8 @@ done
 
 # |=== Configure all paths to intermediate and result files ===|
 
+FILTERED_REFSEQ_CATALOG_FILE="${REFSEQ_CATALOG_FILE/.catalog.gz/_filtered.catalog.gz}"
+
 ASS_ID_TO_GI_FPATH="${WORKDIR}/${PREFIX}_assembly_2_GI.tsv"
 
 GI_ACC_TITLES_FPATH="${WORKDIR}/${PREFIX}_refseq_accs.tsv"
@@ -74,16 +76,30 @@ FINAL_GENES_STATS="${GENES_DIR}/${PREFIX}_final_gene_stats.tsv"
 SEQS_WITH_REPEATS_FASTA="${GENES_DIR}/${PREFIX}_gene_seqs_with_repeats.fasta"
 
 ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_final_gene_seqs_annotated.fasta"
+ANNOTATED_RAW_FASTA="${GENES_DIR}/${PREFIX}_raw_gene_seqs_annotated.fasta"
 
 RFAM_DIR_FOR_EXTRACT_16S=`dirname "${RFAM_FOR_EXTRACT_16S}"`
-RFAM_FAMILY_FOR_EXTRACT_16S="${RFAM_DIR_FOR_EXTRACT_16S}/${RFAM_FAMILY_ID}_for_extract_16S.cm"
+RFAM_FAMILY_FOR_EXTRACT_16S="${RFAM_DIR_FOR_EXTRACT_16S}/${PREFIX}_${RFAM_FAMILY_ID}_for_extract_16S.cm"
 
 RFAM_DIR_FOR_FILTERING=`dirname "${RFAM_FOR_EXTRACT_16S}"`
-RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${RFAM_FAMILY_ID}_for_filtering.cm"
+RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${PREFIX}_${RFAM_FAMILY_ID}_for_filtering.cm"
 
+COUNT_BASES_TABLE="${WORKDIR}/bases_count.tsv"
+RAW_COUNT_BASES_TABLE="${WORKDIR}/raw_bases_count.tsv"
+
+PER_GENE_STATS="${WORKDIR}/${PREFIX}_per_gene_stats.tsv"
+RAW_PER_GENE_STATS="${WORKDIR}/${PREFIX}_raw_per_gene_stats.tsv"
+
+ENTROPY_FILE="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_entropy.tsv"
 
 
 # |=== Proceed ===|
+
+
+# == Filter RefSeq .catalog file ==
+python3 "${SCRIPT_DIR}/filter_refseq_catalog.py" \
+  --raw-refseq-catalog "${REFSEQ_CATALOG_FILE}" \
+  --outfile "${FILTERED_REFSEQ_CATALOG_FILE}"
 
 
 # == Translate Assembly UIDs to RefSeq GI numbers ==
@@ -106,10 +122,11 @@ python3 "${SCRIPT_DIR}/gis_to_accs.py" \
 python3 "${SCRIPT_DIR}/merge_assID2acc_and_remove_WGS.py" \
   --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
   --gi-2-acc-file "${GI_ACC_TITLES_FPATH}" \
+  --refseq-catalog "${FILTERED_REFSEQ_CATALOG_FILE}" \
   --outfile "${ASS_ACC_MERGED_FPATH}"
 
 
-# == Download genomes ==
+# # == Download genomes ==
 
 python3 "${SCRIPT_DIR}/download_genomes.py" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
@@ -117,7 +134,7 @@ python3 "${SCRIPT_DIR}/download_genomes.py" \
   --log-file "${LOGS_DIR}/${PREFIX}_download_genomes.log"
 
 
-# == Extract Rfam covariance model for 16S rRNA genes exttaction ==
+# == Extract Rfam covariance model for 16S rRNA genes extraction ==
 
 "${CMFETCH}" "${RFAM_FOR_EXTRACT_16S}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_EXTRACT_16S}"
 if [[ $? != 0 ]]; then
@@ -137,6 +154,37 @@ python3 "${SCRIPT_DIR}/extract_16S.py" \
   --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
   --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
   --seqkit "${SEQKIT}"
+
+
+# === Taxonomy section ===
+
+# == Get taxIDs for our genomes ==
+
+python3 "${SCRIPT_DIR}/get_taxIDs_from_catalog.py" \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --refseq-catalog-file "${FILTERED_REFSEQ_CATALOG_FILE}" \
+  --per-genome-outfile "${PER_GENOME_TAXID_FPATH}"
+
+# == Map seqIDs to taxIDs ==
+
+python3 "${SCRIPT_DIR}/pergenome_2_pergene_taxIDs.py" \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --all-fasta-file "${ALL_GENES_FASTA}" \
+  --per-genome-taxID-file "${PER_GENOME_TAXID_FPATH}" \
+  --per-gene-outfile "${PER_GENE_TAXID_FPATH}" \
+
+
+# == Map our Aseembly IDs (and seqIDs) to full taxonomy using our taxIDs ==
+
+python3 "${SCRIPT_DIR}/add_taxonomy_names.py" \
+  --per-genome-taxid-file "${PER_GENOME_TAXID_FPATH}" \
+  --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
+  --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
+  --per-genome-outfile "${PER_GENOME_TAXONOMY_FPATH}" \
+  --per-gene-outfile "${PER_GENE_TAXONOMY_FPATH}"
+
+#  End of the taxonomy section
+# =========================
 
 
 # == Assign categories to downloaded genomes ==
@@ -178,6 +226,7 @@ python3 "${SCRIPT_DIR}/compare_all_seqs_to_cm.py" \
   --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
   --cmscan "${CMSCAN_FOR_FILTERING}" \
   --cmpress "${CMPRESS_FOR_FILTERING}" \
+  --prev-tblout "${PREV_TBLOUT_FILE}" \
   --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}"
 
 
@@ -214,7 +263,6 @@ python3 "${SCRIPT_DIR}/drop_aberrant_genes.py" \
   --aberrant-fasta-file "${ABERRANT_GENES_FASTA}"
 
 
-
 # == Find repeats in genes sequences ==
 
 python3 "${SCRIPT_DIR}/find_repeats.py" \
@@ -235,37 +283,6 @@ python3 "${SCRIPT_DIR}/drop_repeats.py" \
   --repeat-len-threshold 25
 
 
-# === Taxonomy section ===
-
-# == Get taxIDs for our genomes ==
-
-python3 "${SCRIPT_DIR}/get_taxIDs.py" \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --all-fasta-file "${ALL_GENES_FASTA}" \
-  --per-genome-outfile "${PER_GENOME_TAXID_FPATH}"
-
-
-# == Map seqIDs to taxIDs ==
-
-python3 "${SCRIPT_DIR}/pergenome_2_pergene_taxIDs.py" \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --all-fasta-file "${ALL_GENES_FASTA}" \
-  --per-genome-taxID-file "${PER_GENOME_TAXID_FPATH}" \
-  --per-gene-outfile "${PER_GENE_TAXID_FPATH}" \
-
-
-# == Map our Aseembly IDs (and seqIDs) to full taxonomy using our taxIDs ==
-
-python3 "${SCRIPT_DIR}/add_taxonomy_names.py" \
-  --per-genome-taxid-file "${PER_GENOME_TAXID_FPATH}" \
-  --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
-  --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
-  --per-genome-outfile "${PER_GENOME_TAXONOMY_FPATH}" \
-  --per-gene-outfile "${PER_GENE_TAXONOMY_FPATH}"
-
-#  End of the taxonomy section
-# =========================
-
 
 # == Annotate sequences: add taxonomy and categories to their headers ==
 python3 "${SCRIPT_DIR}/annotate_seq_names.py" \
@@ -280,3 +297,54 @@ tmp_fasta='/tmp/tmp.fasta'
 cat "${ANNOTATED_RESULT_FASTA}" | "${SEQKIT}" seq -uw 60 > "${tmp_fasta}"
 cat "${tmp_fasta}" > "${ANNOTATED_RESULT_FASTA}"
 rm "${tmp_fasta}"
+
+
+# == Annotate "raw" sequences: add taxonomy and categories to their headers ==
+python3 "${SCRIPT_DIR}/annotate_seq_names.py" \
+  --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
+  --per-gene-taxonomy-file "${PER_GENE_TAXONOMY_FPATH}" \
+  --categories-file "${CATEGORIES_FPATH}" \
+  --outfile "${ANNOTATED_RAW_FASTA}"
+
+
+# == Make result sequences pretty: 60 bp per line ==
+tmp_fasta='/tmp/tmp.fasta'
+cat "${ANNOTATED_RAW_FASTA}" | "${SEQKIT}" seq -uw 60 > "${tmp_fasta}"
+cat "${tmp_fasta}" > "${ANNOTATED_RAW_FASTA}"
+rm "${tmp_fasta}"
+
+
+# == Make per-gene statistics file (final) ==
+
+python3 "${SCRIPT_DIR}/count_bases.py" \
+  --input-fasta "${ANNOTATED_RESULT_FASTA}" \
+  --outfile "${COUNT_BASES_TABLE}"
+
+python3 "${SCRIPT_DIR}/merge_bases_categories_taxonomy.py" \
+  --bases-file "${COUNT_BASES_TABLE}" \
+  --categories-file "${CATEGORIES_FPATH}" \
+  --taxonomy-file "${PER_GENE_TAXONOMY_FPATH}" \
+  --outfile "${PER_GENE_STATS}"
+
+
+# == Make per-gene statistics file (raw) ==
+
+python3 "${SCRIPT_DIR}/count_bases.py" \
+  --input-fasta "${ANNOTATED_RAW_FASTA}" \
+  --outfile "${RAW_COUNT_BASES_TABLE}"
+
+python3 "${SCRIPT_DIR}/merge_bases_categories_taxonomy.py" \
+  --bases-file "${RAW_COUNT_BASES_TABLE}" \
+  --categories-file "${CATEGORIES_FPATH}" \
+  --taxonomy-file "${PER_GENE_TAXONOMY_FPATH}" \
+  --outfile "${RAW_PER_GENE_STATS}"
+
+
+# == Calculate entropy -- intragenomic variability ==
+
+python3 "${SCRIPT_DIR}/calculate_entropy.py" \
+  --fasta-seqs-file "${ANNOTATED_RESULT_FASTA}" \
+  --genes-stats-file "${FINAL_GENES_STATS}" \
+  --categories-file "${CATEGORIES_FPATH}" \
+  --outfile "${ENTROPY_FILE}" \
+  --muscle "${MUSCLE}"
