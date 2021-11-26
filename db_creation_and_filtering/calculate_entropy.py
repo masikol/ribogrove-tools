@@ -22,7 +22,11 @@
 
 
 import os
+
+print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+
 import sys
+import gzip
 import math
 import argparse
 import operator
@@ -93,7 +97,7 @@ args = parser.parse_args()
 # For convenience
 fasta_seqs_fpath = os.path.abspath(args.fasta_seqs_file)
 genes_stats_fpath = os.path.abspath(args.genes_stats_file)
-categories_fpath = os.path.abspath(args.per_genome_categories_file)
+categories_fpath = os.path.abspath(args.categories_file)
 muscle_fpath = os.path.abspath(args.muscle)
 outfpath = os.path.abspath(args.outfile)
 
@@ -251,9 +255,14 @@ ass_ids = tuple(set(categories_df[categories_df['category'] == 1]['ass_id']))
 seq_records = tuple(SeqIO.parse(fasta_seqs_fpath, 'fasta'))
 
 
-with open(outfpath, 'wt') as entropy_outfile:
+per_base_entropy_fpath = os.path.join(
+    os.path.dirname(outfpath),
+    'per_base_' + os.path.basename(outfpath) + '.gz'
+)
 
-    entropy_outfile.write('ass_id\tpos\tentropy\n')
+with gzip.open(per_base_entropy_fpath, 'wt') as per_base_entropy_outfile:
+
+    per_base_entropy_outfile.write('ass_id\tpos\tentropy\n')
 
     # Iterate over assemblies
     for i, ass_id in enumerate(ass_ids):
@@ -273,12 +282,56 @@ with open(outfpath, 'wt') as entropy_outfile:
 
             # Write per-base entropy
             for i, entropy in enumerate(entropy_arr):
-                entropy_outfile.write(f'{ass_id}\t{i}\t{entropy}\n')
+                per_base_entropy_outfile.write(f'{ass_id}\t{i}\t{entropy}\n')
             # end for
         # end if
     # end for
 # end with
 
+print()
+print(f'The per-base entropy file is here: {per_base_entropy_fpath}')
+print('Summarizing the calculated entropy...')
+
+
+# Summarize entropy: calculate sum and mean for each genome
+
+# Read per-base entropy file
+with gzip.open(per_base_entropy_fpath, 'rt') as per_base_entropy_outfile:
+    per_base_entropy_df = pd.read_csv(per_base_entropy_outfile, sep='\t')
+# end with
+
+# Calculate sum and mean entropy for each genome
+# Calculate number of variable positions for each genome
+
+count_var_positions = lambda entropy_arr: len(
+    tuple(
+        filter(
+            lambda entropy: entropy > 1e-6,
+            entropy_arr
+        )
+    )
+)
+
+summary_entropy_df = per_base_entropy_df.groupby('ass_id', as_index=False) \
+    .agg({'entropy': ('sum', 'mean', count_var_positions)})
+
+summary_entropy_df.columns = ['ass_id', 'sum_entropy', 'mean_entropy', 'num_var_cols']
+
+del per_base_entropy_df
+
+summary_entropy_df['num_var_cols'] = summary_entropy_df['num_var_cols'].map(int)
+
+
+# Overwrite the per-base file: it is barely informative
+summary_entropy_df.to_csv(
+    outfpath,
+    sep='\t',
+    mode='w',
+    index=False,
+    header=True
+)
+
 
 print('\nCompleted!')
 print(outfpath)
+print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
