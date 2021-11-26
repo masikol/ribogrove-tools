@@ -58,8 +58,7 @@ ass_acc_df = pd.read_csv(ass_acc_fpath, sep='\t').query('ass_id in @all_ass_ids'
 # print(ass_acc_df.shape)
 # print(ass_acc_df.head())
 
-tax_df = pd.read_csv(tax_fpath, sep='\t').query('ass_id in @all_ass_ids') \
-    .rename(columns={'superkingdom': 'domain'})
+tax_df = pd.read_csv(tax_fpath, sep='\t').query('ass_id in @all_ass_ids')
 # print(tax_df.shape)
 # print(tax_df.head())
 

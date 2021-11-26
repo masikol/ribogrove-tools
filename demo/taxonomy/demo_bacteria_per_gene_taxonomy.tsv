@@ -1,4 +1,4 @@
-ass_id	seqID	taxID	tax_name	species	genus	family	order	class	phylum	superkingdom
+ass_id	seqID	taxID	tax_name	species	genus	family	order	class	phylum	domain
 10601601	NZ_CP063063.1:372608-374156_plus	83559	Chlamydia suis	Chlamydia suis	Chlamydia	Chlamydiaceae	Chlamydiales	Chlamydiia	Chlamydiae	Bacteria
 10613051	NZ_CP066836.1:2159197-2160738_minus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
 10613051	NZ_CP066836.1:2975089-2976630_minus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria

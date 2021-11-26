@@ -118,7 +118,7 @@ tax_df = pd.read_csv(
         'order': str,
         'class': str,
         'phylum': str,
-        'superkingdom': str,
+        'domain': str,
     }
 )
 
@@ -154,7 +154,7 @@ with open(outfpath, 'wt') as outfile:
         # Form taxonomy (lineage) string
         taxonomy = tax_sep.join(
             (
-                'NA' if pd.isnull(curr_tax_record['superkingdom']) else curr_tax_record['superkingdom'],
+                'NA' if pd.isnull(curr_tax_record['domain']) else curr_tax_record['domain'],
                 'NA' if pd.isnull(curr_tax_record['phylum']) else curr_tax_record['phylum'],
                 'NA' if pd.isnull(curr_tax_record['class']) else curr_tax_record['class'],
                 'NA' if pd.isnull(curr_tax_record['order']) else curr_tax_record['order'],

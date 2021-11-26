@@ -191,6 +191,9 @@ rankedlineage_df = pd.read_csv(
     }
 )
 
+# Rename the 'superkingdom' column
+rankedlineage_df = rankedlineage_df.rename(columns={'superkingdom': 'domain'})
+
 # Remove columns of no interest
 rankedlineage_df = rankedlineage_df.drop(columns=['kingdom'], axis=1)
 

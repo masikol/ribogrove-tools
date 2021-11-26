@@ -9,12 +9,12 @@ stats_df['gc_skew'] <- (stats_df['g'] - stats_df['c']) /
 stats_df['at_skew'] <- (stats_df['a'] - stats_df['t']) /
                        (stats_df['a'] + stats_df['t'])
 
-stats_df <- stats_df[complete.cases(stats_df[c('superkingdom', 'phylum')]),]
+stats_df <- stats_df[complete.cases(stats_df[c('domain', 'phylum')]),]
 
 
 set_Organism <- function(x, output) {
   result <- 'Other bacteria'
-  if (x[['superkingdom']] == 'Bacteria') {
+  if (x[['domain']] == 'Bacteria') {
     if (x[['phylum']] == 'Actinobacteria') {
       result <- 'Actinobacteria'
     }

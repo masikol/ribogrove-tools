@@ -18,6 +18,9 @@
 
 
 import os
+
+print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+
 import sys
 import argparse
 
@@ -98,14 +101,14 @@ bases_df = pd.read_csv(bases_fpath, sep='\t')
 # ass_id  seqID   category
 categories_df = pd.read_csv(categories_fpath, sep='\t')
 
-# seqID   ass_id  accs    taxID   tax_name        genus   family  order   class   phylum  superkingdom
+# seqID   ass_id  accs    taxID   tax_name        genus   family  order   class   phylum  domain
 taxonomy_df = pd.read_csv(taxonomy_fpath, sep='\t')
 
 
 print('Merging...')
 merged_df = bases_df \
     .merge(categories_df[['seqID', 'category', 'ass_id']], on='seqID', how='left') \
-    .merge(taxonomy_df[['seqID', 'taxID', 'tax_name', 'species', 'genus', 'family', 'order', 'class', 'phylum', 'superkingdom']],
+    .merge(taxonomy_df[['seqID', 'taxID', 'tax_name', 'species', 'genus', 'family', 'order', 'class', 'phylum', 'domain']],
         on='seqID',
         how='left'
     )
@@ -126,3 +129,4 @@ merged_df.to_csv(
 
 print('Completed!')
 print(outfpath)
+print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
