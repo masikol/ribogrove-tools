@@ -12,6 +12,9 @@
 
 
 import os
+
+print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+
 import sys
 import argparse
 
@@ -95,3 +98,4 @@ with open(infpath, 'rt') as infile, open(outfpath, 'w') as outfile:
 
 print('\nCompleted!')
 print(outfpath)
+print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
