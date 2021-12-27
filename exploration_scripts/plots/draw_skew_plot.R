@@ -1,6 +1,6 @@
 library(ggplot2)
 
-infpath <- '/mnt/1.5_drive_0/16S_scrubbling/prokar_gene_stats.tsv'
+infpath <- '/mnt/1.5_drive_0/RiboGrove_releases/1.207_TEST/metadata/gene_seqs_statistics.tsv'
 stats_df <- read.csv(infpath, sep='\t')
 
 stats_df['gc_skew'] <- (stats_df['g'] - stats_df['c']) /
@@ -82,16 +82,16 @@ ggplot(data = stats_df) +
     aes(x = gc_skew, y = at_skew),
     method=lm,
     color = actinobacteria_line_color,
-    se = F,
-    linetype = actinobacteria_line_type
+    se = F
+    # linetype = actinobacteria_line_type
   )+
   geom_smooth(
     data = subset(stats_df, stats_df$Organism == 'Archaea'),
     aes(x = gc_skew, y = at_skew),
     method=lm,
     color = archaea_line_color,
-    se = F,
-    linetype = archaea_line_type
+    se = F
+    # linetype = archaea_line_type
   ) +
   theme_bw()
 

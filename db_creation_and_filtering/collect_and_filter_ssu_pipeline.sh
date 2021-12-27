@@ -126,7 +126,7 @@ python3 "${SCRIPT_DIR}/merge_assID2acc_and_remove_WGS.py" \
   --outfile "${ASS_ACC_MERGED_FPATH}"
 
 
-# # == Download genomes ==
+# == Download genomes ==
 
 python3 "${SCRIPT_DIR}/download_genomes.py" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
@@ -177,6 +177,7 @@ python3 "${SCRIPT_DIR}/pergenome_2_pergene_taxIDs.py" \
 # == Map our Aseembly IDs (and seqIDs) to full taxonomy using our taxIDs ==
 
 python3 "${SCRIPT_DIR}/add_taxonomy_names.py" \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --per-genome-taxid-file "${PER_GENOME_TAXID_FPATH}" \
   --per-gene-taxid-file "${PER_GENE_TAXID_FPATH}" \
   --ranked-lineage "${RANKEDLINEAGE_FPATH}" \

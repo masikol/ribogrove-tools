@@ -81,12 +81,13 @@ accs = tuple(
     )
 )
 
+
 # == Proceed ==
 
 with open(outfpath, 'wt') as outfile:
 
     # Write header
-    # outfile.write('acc\tass_id\n')
+    outfile.write('acc\tass_id\n')
 
     # Iterate over assembly IDs
     for i, acc in enumerate(accs):
@@ -120,6 +121,7 @@ with open(outfpath, 'wt') as outfile:
 
         if n_errors >= 3:
             print('\n3 errors!')
+            outfile.write(f'{acc}\tERROR\n')
             continue
         # end if
 
