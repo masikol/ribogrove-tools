@@ -1,4 +1,4 @@
-<h1 style="color: var(--main-bg-color); font-size: 1.7rem;">RiboGrove</h1>
+<img src="/cager/img/RiboGrove_logo.gif"><br /><br />
 <h2>Contents</h2>
 <ul>
 <li><a href="#overview">Overview</a></li>
