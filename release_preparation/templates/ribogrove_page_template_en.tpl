@@ -1,4 +1,4 @@
-<img src="/cager/img/RiboGrove_logo.gif"><br /><br />
+<img src="/cager/img/RiboGrove_logo.png"><br /><br />
 <h2>Contents</h2>
 <ul>
 <li><a href="#overview">Overview</a></li>

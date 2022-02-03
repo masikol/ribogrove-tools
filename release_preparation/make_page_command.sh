@@ -32,3 +32,14 @@ python3 make_ribogrove_release_page.py \
   --entropy-summary /mnt/1.5_drive_0/RiboGrove_releases/3.209/metadata/entropy_summary.tsv \
   --outdir /mnt/1.5_drive_0/RiboGrove_pages/3.209/ \
   --seqkit /usr/bin/seqkit
+
+python3 make_ribogrove_release_page.py \
+  --release-num 4.210 \
+  --release-date 2022-01-12 \
+  --final-fasta /mnt/1.5_drive_0/RiboGrove_releases/4.210/ribogrove_4.210_sequences.fasta.gz \
+  --raw-fasta /mnt/1.5_drive_0/RiboGrove_releases/4.210/raw_ribogrove_4.210_sequences.fasta.gz \
+  --metadata /mnt/1.5_drive_0/RiboGrove_releases/4.210/metadata_ribogrove_4.210.zip \
+  --gene-stats-table /mnt/1.5_drive_0/RiboGrove_releases/4.210/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/1.5_drive_0/RiboGrove_releases/4.210/metadata/entropy_summary.tsv \
+  --outdir /mnt/1.5_drive_0/RiboGrove_pages/4.210/ \
+  --seqkit /usr/bin/seqkit

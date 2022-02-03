@@ -1,4 +1,4 @@
-<img src="/cager/img/RiboGrove_logo.gif"><br /><br />
+<img src="/cager/img/RiboGrove_logo.png"><br /><br />
 <h2>Содержание</h2>
 <ul>
 <li><a href="#overview">Описание</a></li>
@@ -249,7 +249,7 @@
 <div id="top-var" class="pad-anchor"></div>
 </caption>
 <tbody>
-<tr><th class="alnleft">ID геномной сборки</th><th class="numcol">Сумма энтропии<sup>*</sup>, биты</th><th class="numcol">Средняя энтропия<sup>*</sup>, биты</th><th class="numcol">Количество изменсивых позиций</th><th class="numcol">Число копий</th><th class="alnleft">Организм</th></tr>
+<tr><th class="alnleft">ID геномной сборки</th><th class="numcol">Сумма энтропии<sup>*</sup>, биты</th><th class="numcol">Средняя энтропия<sup>*</sup>, биты</th><th class="numcol">Количество изменчивых позиций</th><th class="numcol">Число копий</th><th class="alnleft">Организм</th></tr>
 
 <tr>
 <td colspan="6" class="subhead">Бактерии</td>
@@ -260,7 +260,7 @@
 <td class="numcol">{{ row['sum_entropy'] }}</td>
 <td class="numcol">{{ row['mean_entropy'] }}</td>
 <td class="numcol">{{ row['num_var_cols'] }}</td>
-<td class="numcol">{{ row['copy_numer'] }}</td>
+<td class="numcol">{{ row['copy_number'] }}</td>
 <td><i>{{ row['species'] }}</i></td>
 </tr>
 {% endfor %}
@@ -273,7 +273,7 @@
 <td class="numcol">{{ row['sum_entropy'] }}</td>
 <td class="numcol">{{ row['mean_entropy'] }}</td>
 <td class="numcol">{{ row['num_var_cols'] }}</td>
-<td class="numcol">{{ row['copy_numer'] }}</td>
+<td class="numcol">{{ row['copy_number'] }}</td>
 <td><i>{{ row['species'] }}</i></td>
 </tr>
 {% endfor %}

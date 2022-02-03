@@ -110,34 +110,7 @@ print(mfeprimer_fpath)
 print()
 
 
-# Bacteria
-
 primers = {
-    # '27F': 'AGAGTTTGATCMTGGCTCAG',
-    # '16S_BV2f': 'AGTGGCGGACGGGTGAGTAA',
-    # 'CCF': 'CCAGACTCCTACGGGAGGCAGC',
-    # '16SAmpliconPCRForwardPrimer': 'CCTACGGGNGGCWGCAG',
-    # '336F-seq': 'ACGGYCCAGACTCCTACG',
-    # '338R': 'GCTGCCTCCCGTAGGAGT',
-    # '515F': 'GTGCCAGCMGCCGCGGTAA',
-    # '522R-seq': 'TATTACCGCGGCTGCTGGCAC',
-    # '16S_BV3r': 'CCGCGGCTGCTGGCAC',
-    # '519R': 'GWATTACCGCGGCKGCTG',
-    # '806R': 'GGACTACHVGGGTWTCTAAT',
-    # '784F': 'AGGATTAGATACCCTGGTA',
-    # '16SAmpliconPCRReversePrimer': 'GACTACHVGGGTATCTAATCC',
-    # '907R': 'CCGYCAATTCMTTTRAGTTT',
-    # '918F-seq': 'ACTCAAAKGAATTGACGGG',
-    # '926R-seq': 'CCGTCAATTCATTTGAGTTT',
-    # '968F': 'AACGCGAAGAACCTTAC',
-    # 'CDR': 'CTTGTGCGGGCCCCCGTCAATTC',
-    # '1061R': 'CRRCACGAGCTGACGAC',
-    # '1100R': 'AGGGTTGCGCTCGTTG',
-    # '1114F': 'GCAACGAGCGCAACCC',
-    # '1193R': 'ACGTCATCCCCACCTTCC',
-    # # '1237F': 'GGGCTACACACGYGCWAC',
-    # '1391R': 'GACGGGCGGTGTGTRCA',
-    # '1492Rl': 'GGTTACCTTGTTACGACTT',
     '27F': 'AGAGTTTGATYMTGGCTCAG',
     '338R': 'GCTGCCTCCCGTAGGAGT',
     '534R': 'ATTACCGCGGCTGCTGG',
@@ -183,64 +156,6 @@ primer_pairs = [
     # V7-V9
     ['1115F', '1492R'],
 ]
-
-# primer_pairs = [
-#     # Full
-#     ['27F', '1492Rl'],
-#     # Two
-#     # V1-V2
-#     ['27F', '338R'],
-#     # V2-V3
-#     ['16S_BV2f', '16S_BV3r'],
-#     ['16S_BV2f', '519R'],
-#     ['16S_BV2f', '522R-seq'],
-#     # V3-V4
-#     ['16SAmpliconPCRForwardPrimer', '16SAmpliconPCRReversePrimer'],
-#     ['16SAmpliconPCRForwardPrimer', '806R'],
-#     ['CCF', '16SAmpliconPCRReversePrimer'],
-#     ['CCF', '806R'],
-#     ['336F-seq', '16SAmpliconPCRReversePrimer'],
-#     ['336F-seq', '806R'],
-#     # V4-V5
-#     ['515F', '907R'],
-#     ['515F', 'CDR'],
-#     ['515F', '926R-seq'],
-#     # V5-V6
-#     ['784F', '1061R'],
-#     ['784F', '1100R'],
-#     # V6-V7
-#     ['968F', '1193R'],
-#     ['918F-seq', '1193R'],
-#     # V7-V8
-#     ['1114F', '1391R'],
-#     # Three
-#     # V1-V3
-#     ['27F', '16S_BV3r'],
-#     ['27F', '519R'],
-#     ['27F', '522R-seq'],
-#     # V2-V4
-#     ['16S_BV2f', '16SAmpliconPCRReversePrimer'],
-#     ['16S_BV2f', '806R'],
-#     # V3-V5
-#     ['16SAmpliconPCRForwardPrimer', '907R'],
-#     ['16SAmpliconPCRForwardPrimer', 'CDR'],
-#     ['CCF', '907R'],
-#     ['CCF', 'CDR'],
-#     ['336F-seq', '907R'],
-#     ['336F-seq', 'CDR'],
-#     ['16SAmpliconPCRForwardPrimer', '926R-seq'],
-#     ['CCF', '926R-seq'],
-#     # V4-V6
-#     ['515F', '1061R'],
-#     ['515F', '1100R'],
-#     # V5-V7
-#     ['784F', '1193R'],
-#     # V6-V8
-#     ['968F', '1391R'],
-#     ['918F-seq', '1391R'],
-#     # V7-V9
-#     ['1114F', '1492Rl'],
-# ]
 
 
 # Configure paths to temporary files
@@ -341,7 +256,7 @@ for i, seq_record in enumerate(seq_records):
     index_cmd = f'{mfeprimer_fpath} index -i {tmp_fasta} -k {k_mer_size} -c 2'
     os.system(index_cmd)
 
-    # For feach primer pair, check if they can anneal
+    # For each primer pair, check if they can anneal
     for nameF, nameR in primer_pairs:
 
         # Kind of ID for primer pair
