@@ -34,12 +34,12 @@ python3 make_ribogrove_release_page.py \
   --seqkit /usr/bin/seqkit
 
 python3 make_ribogrove_release_page.py \
-  --release-num 4.210 \
-  --release-date 2022-01-12 \
-  --final-fasta /mnt/1.5_drive_0/RiboGrove_releases/4.210/ribogrove_4.210_sequences.fasta.gz \
-  --raw-fasta /mnt/1.5_drive_0/RiboGrove_releases/4.210/raw_ribogrove_4.210_sequences.fasta.gz \
-  --metadata /mnt/1.5_drive_0/RiboGrove_releases/4.210/metadata_ribogrove_4.210.zip \
-  --gene-stats-table /mnt/1.5_drive_0/RiboGrove_releases/4.210/metadata/gene_seqs_statistics.tsv \
-  --entropy-summary /mnt/1.5_drive_0/RiboGrove_releases/4.210/metadata/entropy_summary.tsv \
-  --outdir /mnt/1.5_drive_0/RiboGrove_pages/4.210/ \
+  --release-num 5.211 \
+  --release-date 2022-03-14 \
+  --final-fasta /mnt/1.5_drive_0/RiboGrove_releases/5.211/ribogrove_5.211_sequences.fasta.gz \
+  --raw-fasta /mnt/1.5_drive_0/RiboGrove_releases/5.211/raw_ribogrove_5.211_sequences.fasta.gz \
+  --metadata /mnt/1.5_drive_0/RiboGrove_releases/5.211/metadata_ribogrove_5.211.zip \
+  --gene-stats-table /mnt/1.5_drive_0/RiboGrove_releases/5.211/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/1.5_drive_0/RiboGrove_releases/5.211/metadata/entropy_summary.tsv \
+  --outdir /mnt/1.5_drive_0/RiboGrove_pages/5.211/ \
   --seqkit /usr/bin/seqkit

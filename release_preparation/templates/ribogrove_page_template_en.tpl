@@ -21,6 +21,7 @@
 <li><a href="#select-head">Selecting header data</a></li>
 </ul>
 </li>
+<li><a href="#citing-ribogrove">Citing RiboGrove</a></li>
 </ul>
 <hr />
 <h2>Overview</h2>
@@ -168,23 +169,23 @@
 <td colspan="4" class="subhead">Bacteria</td>
 </tr>
 {% for _, row in ribogrove_top_longest_df.query('domain == "Bacteria"').iterrows() %}
-    <tr class="sumtab-row">
-    <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
-    <td class="numcol">{{ row['len'] }}</td>
-    <td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
-    <td><i>{{ row['species'] }}</i></td>
-    </tr>
+<tr class="sumtab-row">
+<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
+<td class="numcol">{{ row['len'] }}</td>
+<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td><i>{{ row['species'] }}</i></td>
+</tr>
 {% endfor %}
 <tr>
 <td colspan="4" class="subhead">Archaea</td>
 </tr>
 {% for _, row in ribogrove_top_longest_df.query('domain == "Archaea"').iterrows() %}
-    <tr class="sumtab-row">
-    <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
-    <td class="numcol">{{ row['len'] }}</td>
-    <td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
-    <td><i>{{ row['species'] }}</i></td>
-    </tr>
+<tr class="sumtab-row">
+<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
+<td class="numcol">{{ row['len'] }}</td>
+<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td><i>{{ row['species'] }}</i></td>
+</tr>
 {% endfor %}
 </tbody>
 </table>
@@ -198,23 +199,23 @@
 <td colspan="4" class="subhead">Bacteria</td>
 </tr>
 {% for _, row in ribogrove_top_shortest_df.query('domain == "Bacteria"').iterrows() %}
-    <tr class="sumtab-row">
-    <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
-    <td class="numcol">{{ row['len'] }}</td>
-    <td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
-    <td><i>{{ row['species'] }}</i></td>
-    </tr>
+<tr class="sumtab-row">
+<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
+<td class="numcol">{{ row['len'] }}</td>
+<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td><i>{{ row['species'] }}</i></td>
+</tr>
 {% endfor %}
 <tr>
 <td colspan="4" class="subhead">Archaea</td>
 </tr>
 {% for _, row in ribogrove_top_shortest_df.query('domain == "Archaea"').iterrows() %}
-    <tr class="sumtab-row">
-    <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
-    <td class="numcol">{{ row['len'] }}</td>
-    <td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
-    <td><i>{{ row['species'] }}</i></td>
-    </tr>
+<tr class="sumtab-row">
+<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
+<td class="numcol">{{ row['len'] }}</td>
+<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td><i>{{ row['species'] }}</i></td>
+</tr>
 {% endfor %}
 </tbody>
 </table>
@@ -229,21 +230,21 @@
 <td colspan="4" class="subhead">Bacteria</td>
 </tr>
 {% for _, row in ribogrove_top_copy_numbers_df.query('domain == "Bacteria"').iterrows() %}
-    <tr class="sumtab-row">
-    <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
-    <td class="numcol">{{ row['copy_number'] }}</td>
-    <td><i>{{ row['species'] }}</i></td>
-    </tr>
+<tr class="sumtab-row">
+<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
+<td class="numcol">{{ row['copy_number'] }}</td>
+<td><i>{{ row['species'] }}</i></td>
+</tr>
 {% endfor %}
 <tr>
 <td colspan="4" class="subhead">Archaea</td>
 </tr>
 {% for _, row in ribogrove_top_copy_numbers_df.query('domain == "Archaea"').iterrows() %}
-    <tr class="sumtab-row">
-    <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
-    <td class="numcol">{{ row['copy_number'] }}</td>
-    <td><i>{{ row['species'] }}</i></td>
-    </tr>
+<tr class="sumtab-row">
+<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
+<td class="numcol">{{ row['copy_number'] }}</td>
+<td><i>{{ row['species'] }}</i></td>
+</tr>
 {% endfor %}
 </tbody>
 </table>
@@ -299,7 +300,7 @@
 <li>strand of the RefSeq genomic sequence, where the gene is located: <span class="samp-highl">plus</span>.</li>
 </ol></li>
 <li>The complete name of the organism, according to the <a href="https://www.ncbi.nlm.nih.gov/taxonomy">NCBI Taxonomy database</a>: <span class="samp-highl">Bacillus_velezensis</span>.</li>
-<li>Taxonomy string, comprising domain (<span class="samp-highl">Bacteria</span>), phylum (<span class="samp-highl">Firmicutes</span>), class (<span class="samp-highl">Bacilli</span>), order (<span class="samp-highl">Bacillales</span>), family (<span class="samp-highl">Bacillaceae</span>), and genus (<span class="samp-highl">Bacillus</span>) names. The names are separated and flanked be semicolons (<span class="samp-highl">;</span>).</li>
+<li>Taxonomy string, comprising domain (<span class="samp-highl">Bacteria</span>), phylum (<span class="samp-highl">Firmicutes</span>), class (<span class="samp-highl">Bacilli</span>), order (<span class="samp-highl">Bacillales</span>), family (<span class="samp-highl">Bacillaceae</span>), and genus (<span class="samp-highl">Bacillus</span>) names. The names are separated and flanked by semicolons (<span class="samp-highl">;</span>).</li>
 <li>The category of the genome, from which the gene sequence originates: (<span class="samp-highl">category:2</span>. Category 1 genomes are of the highest reliability, and category 3 genomes are least reliable.</li>
 </ol>
 <h3>Subsetting sequences</h3>
@@ -346,3 +347,7 @@
 <p><strong>Example 3</strong>. Select all accession numbers</p>
 <p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | sort | uniq</p>
 <p class="samp-comment">This might be done only if you have <span class="samp">sort</span> and <span class="samp">uniq</span> utilities installed (Linux and Mac OS systems should have them built-in).</p>
+<h2>Citing RiboGrove</h2>
+<div id="citing-ribogrove" class="pad-anchor"></div>
+<p>If you find RiboGrove useful for your research please cite:</p>
+<p>Maxim A. Sikolenko, Leonid N. Valentovich. "RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes" // Research in Microbiology, 2022, 103936.<br /> (DOI: <a target="_blank" href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>. Epub ahead of print).</p>

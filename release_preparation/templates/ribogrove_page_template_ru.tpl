@@ -21,6 +21,7 @@
 <li><a href="#select-head">Извлечение информации из заголовков последовательностей</a></li>
 </ul>
 </li>
+<li><a href="#citing-ribogrove">Цитирование RiboGrove</a></li>
 </ul>
 <hr />
 <h2>Описание</h2>
@@ -32,7 +33,7 @@
 <h2>Файлы</h2>
 <div id="downloads" class="pad-anchor"></div>
 <h3>Актуальная версия &ndash; {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
-<p>Выпуск RiboGrove {{ ribogrove_release_number }} основан на данных, полученных из базы данных RefSeq версии 207.</p>
+<p>Выпуск RiboGrove {{ ribogrove_release_number }} основан на данных, полученных из базы данных RefSeq версии {{ refseq_release }}.</p>
 <ul>
 <li>Fasta-файл полноразмерных последовательностей генов 16S рРНК. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Скачать (gzip'нутый fasta-файл, {{ final_fasta_fsize_fmt }} Мб)</a></li>
 <li>"Сырая" версия fasta-файла, указанного выше. Данный файл содержит в том числе и неполные последовательности генов. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/raw_ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Скачать (gzip'нутый fasta-файл, {{ raw_fasta_fsize_fmt }} Мб)</a></li>
@@ -163,26 +164,26 @@
 <tbody>
 <tr><th class="alnleft">ID геномной сборки</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">Идентификатор(ы) послед-ти(ей)<br />в БД RiboGrove</th><th class="alnleft">Организм</th></tr>
 <tr>
-<td colspan="4" class="subhead">Бактрии</td>
+<td colspan="4" class="subhead">Бактерии</td>
 </tr>
 {% for _, row in ribogrove_top_longest_df.query('domain == "Bacteria"').iterrows() %}
-    <tr class="sumtab-row">
-    <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
-    <td class="numcol">{{ row['len'] }}</td>
-    <td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
-    <td><i>{{ row['species'] }}</i></td>
-    </tr>
+<tr class="sumtab-row">
+<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
+<td class="numcol">{{ row['len'] }}</td>
+<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td><i>{{ row['species'] }}</i></td>
+</tr>
 {% endfor %}
 <tr>
 <td colspan="4" class="subhead">Археи</td>
 </tr>
 {% for _, row in ribogrove_top_longest_df.query('domain == "Archaea"').iterrows() %}
-    <tr class="sumtab-row">
-    <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
-    <td class="numcol">{{ row['len'] }}</td>
-    <td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
-    <td><i>{{ row['species'] }}</i></td>
-    </tr>
+<tr class="sumtab-row">
+<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
+<td class="numcol">{{ row['len'] }}</td>
+<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td><i>{{ row['species'] }}</i></td>
+</tr>
 {% endfor %}
 </tbody>
 </table>
@@ -196,23 +197,23 @@
 <td colspan="4" class="subhead">Бактерии</td>
 </tr>
 {% for _, row in ribogrove_top_shortest_df.query('domain == "Bacteria"').iterrows() %}
-    <tr class="sumtab-row">
-    <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
-    <td class="numcol">{{ row['len'] }}</td>
-    <td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
-    <td><i>{{ row['species'] }}</i></td>
-    </tr>
+<tr class="sumtab-row">
+<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
+<td class="numcol">{{ row['len'] }}</td>
+<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td><i>{{ row['species'] }}</i></td>
+</tr>
 {% endfor %}
 <tr>
 <td colspan="4" class="subhead">Археи</td>
 </tr>
 {% for _, row in ribogrove_top_shortest_df.query('domain == "Archaea"').iterrows() %}
-    <tr class="sumtab-row">
-    <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
-    <td class="numcol">{{ row['len'] }}</td>
-    <td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
-    <td><i>{{ row['species'] }}</i></td>
-    </tr>
+<tr class="sumtab-row">
+<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
+<td class="numcol">{{ row['len'] }}</td>
+<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td><i>{{ row['species'] }}</i></td>
+</tr>
 {% endfor %}
 </tbody>
 </table>
@@ -226,21 +227,21 @@
 <td colspan="4" class="subhead">Бактерии</td>
 </tr>
 {% for _, row in ribogrove_top_copy_numbers_df.query('domain == "Bacteria"').iterrows() %}
-    <tr class="sumtab-row">
-    <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
-    <td class="numcol">{{ row['copy_number'] }}</td>
-    <td><i>{{ row['species'] }}</i></td>
-    </tr>
+<tr class="sumtab-row">
+<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
+<td class="numcol">{{ row['copy_number'] }}</td>
+<td><i>{{ row['species'] }}</i></td>
+</tr>
 {% endfor %}
 <tr>
 <td colspan="4" class="subhead">Археи</td>
 </tr>
 {% for _, row in ribogrove_top_copy_numbers_df.query('domain == "Archaea"').iterrows() %}
-    <tr class="sumtab-row">
-    <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
-    <td class="numcol">{{ row['copy_number'] }}</td>
-    <td><i>{{ row['species'] }}</i></td>
-    </tr>
+<tr class="sumtab-row">
+<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
+<td class="numcol">{{ row['copy_number'] }}</td>
+<td><i>{{ row['species'] }}</i></td>
+</tr>
 {% endfor %}
 </tbody>
 </table>
@@ -343,3 +344,7 @@
 <p><strong>Пример 3</strong>. Выбрать все коды доступа из базы данных RefSeq</p>
 <p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | sort | uniq</p>
 <p class="samp-comment">Такая команда сработает успешно, лишь если в вашей системе установлены пррграммы <span class="samp">sort</span> и <span class="samp">uniq</span> (в системах Linux и Mac OS эти программы должны быть предустановлены).</p>
+<h2>Цитирование RiboGrove</h2>
+<div id="citing-ribogrove" class="pad-anchor"></div>
+<p>Если RiboGrove была полезна вам в вашей работе, пожалуйста, цитируйте следующую публикацию:</p>
+<p>Maxim A. Sikolenko, Leonid N. Valentovich. "RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes" // Research in Microbiology, 2022, 103936.<br /> (DOI: <a target="_blank" href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>. Epub ahead of print).</p>
