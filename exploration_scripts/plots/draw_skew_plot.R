@@ -1,6 +1,6 @@
 library(ggplot2)
 
-infpath <- '/mnt/1.5_drive_0/RiboGrove_releases/1.207_TEST/metadata/gene_seqs_statistics.tsv'
+infpath <- '/mnt/1.5_drive_0/RiboGrove_releases/4.210/metadata/gene_seqs_statistics.tsv'
 stats_df <- read.csv(infpath, sep='\t')
 
 stats_df['gc_skew'] <- (stats_df['g'] - stats_df['c']) /

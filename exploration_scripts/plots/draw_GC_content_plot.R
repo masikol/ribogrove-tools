@@ -1,7 +1,7 @@
 library(ggplot2)
 
 
-infpath <- '/mnt/1.5_drive_0/RiboGrove_workdirs/1.207/per_genome_avg_16S_gc_df.tsv'
+infpath <- '/mnt/1.5_drive_0/RiboGrove_workdirs/4.210/per_genome_avg_16S_gc_df.tsv'
 df <- read.csv(infpath, sep = '\t')
 
 # df <- subset(df, df$domain == 'Bacteria')
