@@ -235,15 +235,18 @@ print('done\n')
 template_fpaths = (
     'ribogrove_page_template_en.tpl',
     'ribogrove_page_template_ru.tpl',
+    'ribogrove_page_template_ua.tpl',
 )
 
 thousand_separators = (
     ',',
     '&nbsp;',
+    '&nbsp;',
 )
 
 decimal_separators = (
     '.',
+    ',',
     ',',
 )
 
