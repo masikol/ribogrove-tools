@@ -9,7 +9,7 @@ from src.formatting import format_int_number
 def make_ribogrove_top_shortest_df(gene_stats_df, top_num=10):
 
     # Columns for the output dataframe
-    out_columns = ['ass_id', 'len', 'seqID', 'species', 'domain']
+    out_columns = ['ass_id', 'len', 'seqID', 'title', 'domain']
 
     # Create an output dataframe
     top_df = pd.DataFrame({colname: [] for colname in out_columns})
@@ -49,7 +49,7 @@ def make_ribogrove_top_shortest_df(gene_stats_df, top_num=10):
                     'ass_id': list(curr_genome_df['ass_id'])[0],
                     'len': list(curr_genome_df['len'])[0],
                     'seqID': list(curr_genome_df['seqID']),
-                    'species': list(curr_genome_df['species'])[0],
+                    'title': list(curr_genome_df['title'])[0],
                     'domain': list(curr_genome_df['domain'])[0],
                 }
             )

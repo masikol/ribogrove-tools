@@ -174,7 +174,7 @@
 </tr>
 {% for _, row in ribogrove_top_longest_df.query('domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
-<td><i>{{ row['species'] }}</i></td>
+<td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
@@ -185,7 +185,7 @@
 </tr>
 {% for _, row in ribogrove_top_longest_df.query('domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
-<td><i>{{ row['species'] }}</i></td>
+<td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
@@ -204,7 +204,7 @@
 </tr>
 {% for _, row in ribogrove_top_shortest_df.query('domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
-<td><i>{{ row['species'] }}</i></td>
+<td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
@@ -215,7 +215,7 @@
 </tr>
 {% for _, row in ribogrove_top_shortest_df.query('domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
-<td><i>{{ row['species'] }}</i></td>
+<td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
@@ -234,7 +234,7 @@
 </tr>
 {% for _, row in ribogrove_top_copy_numbers_df.query('domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
-<td><i>{{ row['species'] }}</i></td>
+<td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
 </tr>
@@ -244,7 +244,7 @@
 </tr>
 {% for _, row in ribogrove_top_copy_numbers_df.query('domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
-<td><i>{{ row['species'] }}</i></td>
+<td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
 </tr>
@@ -263,7 +263,7 @@
 </tr>
 {% for _, row in ribogrove_top_intragenomic_var_df.query('domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
-<td><i>{{ row['species'] }}</i></td>
+<td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['sum_entropy'] }}</td>
 <td class="numcol">{{ row['mean_entropy'] }}</td>
 <td class="numcol">{{ row['num_var_cols'] }}</td>
@@ -276,7 +276,7 @@
 </tr>
 {% for _, row in ribogrove_top_intragenomic_var_df.query('domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
-<td><i>{{ row['species'] }}</i></td>
+<td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['sum_entropy'] }}</td>
 <td class="numcol">{{ row['mean_entropy'] }}</td>
 <td class="numcol">{{ row['num_var_cols'] }}</td>

@@ -20,6 +20,9 @@ from src.top_shortest_genes import make_ribogrove_top_shortest_df, format_shorte
 from src.top_copy_numbers import make_ribogrove_top_copy_numbers_df, format_top_copy_numbers_df
 from src.top_variability import make_ribogrove_top_intragenomic_var_df, format_top_intragenomic_var_df
 from src.formatting import format_float_number
+from src.strains_names import retrieve_strain_name_en, \
+                              retrieve_strain_name_ru, \
+                              retrieve_strain_name_ua
 
 # == Parse arguments ==
 
@@ -71,6 +74,12 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '--source-genomes',
+    help='a file of information about what genomes were used for the RiboGrove construction',
+    required=True
+)
+
 # Output files
 
 parser.add_argument(
@@ -98,6 +107,7 @@ raw_fasta_fpath = os.path.abspath(args.raw_fasta)
 metadata_fpath = os.path.abspath(args.metadata)
 gene_stats_fpath = os.path.abspath(args.gene_stats_table)
 entropy_summary_fpath = os.path.abspath(args.entropy_summary)
+source_genomes_fpath = os.path.abspath(args.source_genomes)
 outdpath = os.path.abspath(args.outdir)
 seqkit_fpath = os.path.abspath(args.seqkit)
 
@@ -123,6 +133,7 @@ input_fpaths = (
     metadata_fpath,
     gene_stats_fpath,
     entropy_summary_fpath,
+    source_genomes_fpath,
 )
 
 for fpath in input_fpaths:
@@ -170,8 +181,19 @@ final_fasta_fsize = get_file_size_MB(final_fasta_fpath)
 raw_fasta_fsize = get_file_size_MB(raw_fasta_fpath)
 metadata_fsize = get_file_size_MB(metadata_fpath)
 
+
 # Read per-gene statistics file
 gene_stats_df = pd.read_csv(gene_stats_fpath, sep='\t')
+# Read info about source genomes
+source_genomes_df = pd.read_csv(source_genomes_fpath, sep='\t')
+init_columns = gene_stats_df.columns
+gene_stats_df = gene_stats_df.merge(
+    source_genomes_df[['ass_id', 'title',]],
+    on='ass_id',
+    how='left'
+).drop_duplicates(subset=init_columns)
+del init_columns
+
 
 # Read entropy summary file
 entropy_summary_df = pd.read_csv(entropy_summary_fpath, sep='\t')
@@ -250,6 +272,12 @@ decimal_separators = (
     ',',
 )
 
+strains_names_functions = (
+    retrieve_strain_name_en,
+    retrieve_strain_name_ru,
+    retrieve_strain_name_ua,
+)
+
 # Paths to output files
 rendered_html_fpaths = tuple(
     map(
@@ -265,7 +293,8 @@ language_zip = zip(
     template_fpaths,
     thousand_separators,
     decimal_separators,
-    rendered_html_fpaths
+    rendered_html_fpaths,
+    strains_names_functions
 )
 
 
@@ -273,7 +302,7 @@ language_zip = zip(
 
 print('\nRendering HTML pages:')
 
-for template_fpath, thousand_separator, decimal_separator, outfpath in language_zip:
+for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_strain_name in language_zip:
 
     # Format numeric data
 
@@ -354,7 +383,8 @@ for template_fpath, thousand_separator, decimal_separator, outfpath in language_
                 ribogrove_top_longest_df=fmt_ribogrove_top_longest_df,
                 ribogrove_top_shortest_df=fmt_ribogrove_top_shortest_df,
                 ribogrove_top_copy_numbers_df=fmt_ribogrove_top_copy_numbers_df,
-                ribogrove_top_intragenomic_var_df=fmt_ribogrove_top_intragenomic_var_df
+                ribogrove_top_intragenomic_var_df=fmt_ribogrove_top_intragenomic_var_df,
+                retrieve_strain_name=retrieve_strain_name
         )
     # end with
 

@@ -11,13 +11,13 @@ def make_ribogrove_top_copy_numbers_df(gene_stats_df, top_num=10):
     series_nunique = lambda x: x.nunique()
 
     # Columns for the output dataframe
-    out_columns = ['ass_id', 'copy_number', 'species', 'domain']
+    out_columns = ['ass_id', 'copy_number', 'title', 'domain']
 
     by_genome_copy_number_df = gene_stats_df.groupby('ass_id', as_index=False) \
         .agg({'seqID': series_nunique}) \
         .rename(columns={'seqID': 'copy_number'}) \
         .merge(
-            gene_stats_df[['ass_id', 'species', 'domain']].drop_duplicates(),
+            gene_stats_df[['ass_id', 'title', 'domain']].drop_duplicates(),
             on='ass_id',
             how='left'
         )
@@ -47,7 +47,7 @@ def make_ribogrove_top_copy_numbers_df(gene_stats_df, top_num=10):
                 {
                     'ass_id': domain_copy_number_df.loc[top_genome_counter, 'ass_id'],
                     'copy_number': domain_copy_number_df.loc[top_genome_counter, 'copy_number'],
-                    'species': domain_copy_number_df.loc[top_genome_counter, 'species'],
+                    'title': domain_copy_number_df.loc[top_genome_counter, 'title'],
                     'domain': domain_copy_number_df.loc[top_genome_counter, 'domain'],
                 }
             )

@@ -43,3 +43,18 @@ python3 make_ribogrove_release_page.py \
   --entropy-summary /mnt/1.5_drive_0/RiboGrove_releases/5.211/metadata/entropy_summary.tsv \
   --outdir /mnt/1.5_drive_0/RiboGrove_pages/5.211/ \
   --seqkit /usr/bin/seqkit
+
+
+# New -- with strain names
+
+python3 make_ribogrove_release_page.py \
+  --release-num 5.211 \
+  --release-date 2022-03-14 \
+  --final-fasta /home/deynonih/cager/RiboGrove/releases/5.211/ribogrove_5.211_sequences.fasta.gz \
+  --raw-fasta /home/deynonih/cager/RiboGrove/releases/5.211/raw_ribogrove_5.211_sequences.fasta.gz \
+  --metadata /home/deynonih/cager/RiboGrove/releases/5.211/metadata_ribogrove_5.211.zip \
+  --gene-stats-table /home/deynonih/cager/RiboGrove/releases/5.211/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /home/deynonih/cager/RiboGrove/releases/5.211/metadata/entropy_summary.tsv \
+  --source-genomes /home/deynonih/cager/RiboGrove/releases/5.211/metadata/source_RefSeq_genomes.tsv \
+  --outdir /home/deynonih/cager/TMP_OUTDIR \
+  --seqkit /usr/bin/seqkit

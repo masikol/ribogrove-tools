@@ -13,7 +13,7 @@ def make_ribogrove_top_intragenomic_var_df(entropy_summary_df, gene_stats_df, to
         'mean_entropy',
         'num_var_cols',
         'copy_number',
-        'species',
+        'title',
         'domain',
     ]
 
@@ -23,7 +23,7 @@ def make_ribogrove_top_intragenomic_var_df(entropy_summary_df, gene_stats_df, to
         .agg({'seqID': series_nunique}) \
         .rename(columns={'seqID': 'copy_number'}) \
         .merge(
-            gene_stats_df[['ass_id', 'species', 'domain']].drop_duplicates(),
+            gene_stats_df[['ass_id', 'title', 'domain']].drop_duplicates(),
             on='ass_id',
             how='left'
         )
@@ -65,7 +65,7 @@ def make_ribogrove_top_intragenomic_var_df(entropy_summary_df, gene_stats_df, to
                     'mean_entropy': domain_entropy_df.loc[top_genome_counter, 'mean_entropy'],
                     'num_var_cols': domain_entropy_df.loc[top_genome_counter, 'num_var_cols'],
                     'copy_number': domain_entropy_df.loc[top_genome_counter, 'copy_number'],
-                    'species': domain_entropy_df.loc[top_genome_counter, 'species'],
+                    'title': domain_entropy_df.loc[top_genome_counter, 'title'],
                     'domain': domain_entropy_df.loc[top_genome_counter, 'domain'],
                 }
             )
