@@ -27,6 +27,7 @@ import time
 import argparse
 import http.client
 
+import pandas as pd
 
 from Bio import Entrez
 Entrez.email = 'maximdeynonih@gmail.com'
@@ -145,6 +146,46 @@ with open(outfpath, 'wt') as outfile:
     # end for
 # end with
 
-print('\nCompleted!')
+print('\nRemoving duplicated GI numbers...')
+
+raw_df = pd.read_csv(outfpath, sep='\t')
+drop_dupl_df = raw_df.drop_duplicates(subset=['gi_number'])
+
+if drop_dupl_df.shape[0] != raw_df.shape[0]:
+    print(
+        'Found {} duplicated GI numbers' \
+            .format(raw_df.shape[0] - drop_dupl_df.shape[0])
+    )
+
+    duplicated_gis = set(
+        raw_df.groupby('gi_number', as_index=False) \
+            .agg({'ass_id': 'count'}) \
+            .query('ass_id > 1')['gi_number']
+        )
+    dupl_fpath = os.path.join(
+        os.path.dirname(outfpath),
+        'duplicated_GI_numbers.txt'
+    )
+    print('Writing duplicated GI numbers to file `{}`'.format(dupl_fpath))
+    with open(dupl_fpath, 'w') as dupl_file:
+        str_gis = map(str, duplicated_gis)
+        dupl_file.write('\n'.join(str_gis) + '\n')
+    # end with
+
+    print('Removing duplicated lines in file `{}`'.format(outfpath))
+    drop_dupl_df.to_csv(
+        outfpath,
+        sep='\t',
+        index=False,
+        header=True,
+        encoding='utf-8',
+        na_rep='NA',
+        mode='w'
+    )
+else:
+    print('No duplicated GI numbers found')
+# end if
+
+print('Completed!')
 print(outfpath)
 print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')

@@ -41,14 +41,14 @@
 <hr />
 <h2>Опис</h2>
 <div id="overview" class="pad-anchor"></div>
-<p>RiboGrove &mdash; це база даних послідовностей генів 16S рРНК бактерій та архей. RiboGrove утримує тільки повнорозмірні послідовності генів 16S рРНК, а для її утворення не було використано ампліконних даних. Їншими словами, на відміну від схожих ресурсів, присвячених послідовностям рРНК, таких як <a href="https://www.arb-silva.de/">Silva</a> та <a href="http://rdp.cme.msu.edu/">RDP</a>, RiboGrove не утримує часткових послідовностей генів 16S рРНК.</p>
-<p>Послідовнності RiboGrove походять із повністю зібраних геномів прокаріотів, депонуваних у БД <a href="https://ncbi.nlm.nih.gov/refseq/">RefSeq</a>.</p>
+<p>RiboGrove &mdash; це база даних послідовностей генів 16S рРНК бактерій та архей. RiboGrove утримує тільки повнорозмірні послідовності генів 16S рРНК, а для її утворення не було використано ампліконних даних. Іншими словами, на відміну від схожих ресурсів, присвячених послідовностям рРНК, таких як <a href="https://www.arb-silva.de/">Silva</a> та <a href="http://rdp.cme.msu.edu/">RDP</a>, RiboGrove не утримує часткових послідовностей генів 16S рРНК.</p>
+<p>Послідовнності RiboGrove походять із повністю зібраних геномів прокаріотів із БД <a href="https://ncbi.nlm.nih.gov/refseq/">RefSeq</a>.</p>
 <p>Програми, за допомогую яких RiboGrove була створена, находится у наступному ҐітХаб-репозиторії: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
 <hr />
 <h2>Цитування RiboGrove</h2>
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <p>Якщо база даних RiboGrove сталася корисною для ваших досліджень, посилайтеся, будь ласка, на наступну публікацію:</p>
-<p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, 2022, 103936.<br /> (DOI: <a target="_blank" href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>. Epub ahead of print).</p>
+<p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br /> (ЦІО: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>).</p>
 <hr />
 <h2>Завантаження</h2>
 <div id="downloads" class="pad-anchor"></div>

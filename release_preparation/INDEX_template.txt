@@ -1,4 +1,4 @@
-In this archive, the metadata for Ribogrove RELEASE_NUMBER_REPLACE are stored.
+In this archive, the metadata for RiboGrove RELEASE_NUMBER_REPLACE are stored.
 
 The metadata consists of the following files:
 1. source_RefSeq_genomes.tsv
@@ -17,7 +17,7 @@ The metadata consists of the following files:
 
 == source_RefSeq_genomes.tsv ==
 
-This is a TSV file, which contains information about what genomes were used for the Ribogrove construction.
+This is a TSV file, which contains information about what genomes were used for the RiboGrove construction.
 
 Column descriptions:
 
@@ -48,7 +48,7 @@ Column descriptions:
 ==   per_replicon_statistics.tsv   ==
 == raw_per_replicon_statistics.tsv ==
 
-These are TSV files, which contain information about number of genes in each RefSeq genomic sequences, and about sizes of these genes. The "raw" file contains information about all gene sequences (including partial) extracted from genomic sequences, whereas the file `per_replicon_statistics.tsv` describes the final Ribogrove sequences, which dows not contain partial gene sequences.
+These are TSV files, which contain information about number of genes in each RefSeq genomic sequences, and about sizes of these genes. The "raw" file contains information about all gene sequences (including partial) extracted from genomic sequences, whereas the file `per_replicon_statistics.tsv` describes the final RiboGrove sequences, which dows not contain partial gene sequences.
 
 Column descriptions:
 
@@ -69,7 +69,7 @@ This is a TSV file, which contains information about what genome cetagories were
 Column descriptions:
 
 - Column `ass_id`: the Assembly ID of a genome (https://ncbi.nlm.nih.gov/assembly/).
-- Column `seqID`: Ribogrove sequence ID of a gene.
+- Column `seqID`: RiboGrove sequence ID of a gene.
 - Column `seqtech`: sequencing technology.
 - Column `contains_NNN`: [1/0] 1 -- the genome contains at least 3 Ns in a row; 0 -- the genome does not.
 - Column `degenerate_in_16S`: [1/0] 1 -- the genome contains degenerate bases in target genes; 0 -- the genome does not.
@@ -84,7 +84,7 @@ This is a TSV file, which contains taxonomic affiliation of each genome (Assembl
 Column descriptions:
 
 - Column `ass_id`: the Assembly ID of a genome (https://ncbi.nlm.nih.gov/assembly/).
-- Column `seqID`: Ribogrove sequence ID of a gene.
+- Column `seqID`: RiboGrove sequence ID of a gene.
 - Column `taxID`: the Taxonomy ID from the NCBI Taxonomy database (https://www.ncbi.nlm.nih.gov/taxonomy).
 - Column `tax_name`: the taxonomy name from the NCBI Taxonomy database (https://www.ncbi.nlm.nih.gov/taxonomy).
 - 7 columns `species`, `genus`, `family`, `order`, `class`, `phylum`, `domain`. Each of them contains the name of the taxon at the corresponding taxonomical level.
@@ -96,7 +96,7 @@ This is a TSV file, which contains information about intragenomic repeats found 
 
 Column descriptions:
 
-- Column `seqID`: Ribogrove sequence ID of a gene.
+- Column `seqID`: RiboGrove sequence ID of a gene.
 - Column `gene_len`: length of the gene sequence (bp).
 - Column `r1_start`: start position (within a gene) of the first occurence of a repeat.
 - Column `r1_end`: end position (within a gene) of the first occurence of a repeat.

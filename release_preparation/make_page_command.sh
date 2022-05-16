@@ -58,3 +58,15 @@ python3 make_ribogrove_release_page.py \
   --source-genomes /home/deynonih/cager/RiboGrove/releases/5.211/metadata/source_RefSeq_genomes.tsv \
   --outdir /home/deynonih/cager/TMP_OUTDIR \
   --seqkit /usr/bin/seqkit
+
+python3 make_ribogrove_release_page.py \
+  --release-num 6.212 \
+  --release-date 2022-05-13 \
+  --final-fasta /mnt/1.5_drive_0/RiboGrove_releases/6.212/ribogrove_6.212_sequences.fasta.gz \
+  --raw-fasta /mnt/1.5_drive_0/RiboGrove_releases/6.212/raw_ribogrove_6.212_sequences.fasta.gz \
+  --metadata /mnt/1.5_drive_0/RiboGrove_releases/6.212/metadata_ribogrove_6.212.zip \
+  --gene-stats-table /mnt/1.5_drive_0/RiboGrove_releases/6.212/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/1.5_drive_0/RiboGrove_releases/6.212/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/1.5_drive_0/RiboGrove_releases/6.212/metadata/source_RefSeq_genomes.tsv \
+  --outdir /mnt/1.5_drive_0/RiboGrove_pages/6.212/ \
+  --seqkit /usr/bin/seqkit

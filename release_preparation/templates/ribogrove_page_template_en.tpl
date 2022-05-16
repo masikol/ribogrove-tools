@@ -28,13 +28,13 @@
 <h2>Overview</h2>
 <div id="overview" class="pad-anchor"></div>
 <p>RiboGrove is a database of 16S rRNA gene sequences of bacteria and archaea. RiboGrove contains only full-length sequences of 16S rRNA genes since amplicon data is not used for its construction. In other words, unlike similar rRNA resources like <a href="https://www.arb-silva.de/">Silva</a> and <a href="http://rdp.cme.msu.edu/">RDP</a>, RiboGrove does not contain partial gene sequences.</p>
-<p>Completely assembled prokaryotic genomes deposited in <a href="https://www.ncbi.nlm.nih.gov/refseq/">RefSeq</a> database were used for the RiboGrove construction.</p>
+<p>Completely assembled prokaryotic genomes from <a href="https://www.ncbi.nlm.nih.gov/refseq/">RefSeq</a> database were used for the RiboGrove construction.</p>
 <p>The software used for the RiboGrove construction can be found in the following GitHub repository: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
 <hr />
 <h2>Citing RiboGrove</h2>
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <p>If you find RiboGrove useful for your research please cite:</p>
-<p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, 2022, 103936.<br /> (DOI: <a target="_blank" href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>. Epub ahead of print).</p>
+<p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br /> (DOI: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>.).</p>
 <hr />
 <h2>Downloads</h2>
 <div id="downloads" class="pad-anchor"></div>
@@ -42,7 +42,7 @@
 <p>The release is based on RefSeq release {{ refseq_release }}.</p>
 <ul>
 <li>A fasta file of full-length 16S gene sequences. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Download (gzipped fasta file, {{ final_fasta_fsize_fmt }} MB)</a></li>
-<li>A "raw" version of the fasta file above. This file contains partial sequences. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/raw_ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Download (gzipped fasta file, {{ raw_fasta_fsize_fmt }} MB)</a></li>
+<li>A &ldquo;raw&ldquo; version of the fasta file above. This file contains partial sequences. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/raw_ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Download (gzipped fasta file, {{ raw_fasta_fsize_fmt }} MB)</a></li>
 <li>Metadata <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/metadata_ribogrove_{{ ribogrove_release_number }}.zip">Download (zip archive {{ metadata_fsize_fmt }} MB)</a></li>
 </ul>
 <p>The fasta files are compressed with gzip, and the metadata file is a zip archive. To uncompress them, Linux and Mac OS users may use gzip and zip programs, they should be built-in. For Windows users, the free and open source (de)compression program <a href="https://www.7-zip.org/">7-Zip</a> is available.</p>
@@ -289,7 +289,7 @@
 </tbody>
 </table>
 
-<p><sup>*</sup> &mdash; entropy is <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)">Shannon entropy</a> calculated for each column of the multiple sequence alignment (MSA) of all full-length 16S rRNA genes of a genome. Entropy is then summed up (column "Sum of entropy") and averaged (column "Mean entropy").</p>
+<p><sup>*</sup> &mdash; entropy is <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)">Shannon entropy</a> calculated for each column of the multiple sequence alignment (MSA) of all full-length 16S rRNA genes of a genome. Entropy is then summed up (column &ldquo;Sum of entropy&rdquo;) and averaged (column &ldquo;Mean entropy&rdquo;).</p>
 <hr />
 <h2>Searching data in RiboGrove</h2>
 <div id="searching-data" class="pad-anchor"></div>

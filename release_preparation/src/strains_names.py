@@ -90,5 +90,5 @@ def _make_genus_name(title_words, is_candidatus):
         genus = title_words[0]
     # end if
 
-    return '<i>{}</i>'.format(genus)
+    return '{}'.format(genus)
 # end def
