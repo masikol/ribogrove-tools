@@ -13,7 +13,7 @@
 </div>
 <p><div class="warn-section"><a href="http://mbio.bas-net.by/cager/en/ribogrove">Головний сайт</a>, де мы розміщуємо базу даних RiboGrove, може бути недосяжним поза межами Білорусі через технічні проблеми та загальну біду. Актуальний реліз RiboGrove можна знайти тут &mdash; нехай база даних буде досяжна принаймни такою мірою.</div></p><br />
 <h1 style="display:none">RiboGrove</h1>
-<img src="/cager/img/RiboGrove_logo.png"><br /><br />
+<img src="img/RiboGrove_logo.png"><br /><br />
 <h2>Зміст</h2>
 <ul>
 <li><a href="#overview">Опис</a></li>
@@ -52,7 +52,7 @@
 <hr />
 <h2>Завантаження</h2>
 <div id="downloads" class="pad-anchor"></div>
-<h3>ктуальний реліз RiboGrove &mdash; {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
+<h3>Актуальний реліз RiboGrove &mdash; {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
 <p>Реліз заснований на базі даних RefSeq {{ refseq_release }}.</p>
 <ul>
 <li>Fasta-файл повнорозмірних послідовностей генів 16S рРНК. <a href="ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Завантажити (&bdquo;ґзіп'нутий&ldquo; fasta-файл, {{ final_fasta_fsize_fmt }} Мб)</a></li>
@@ -323,45 +323,45 @@
 <p>Ви можете відбирати певні послідовності із файлів fasta за допомогою програми <strong>Seqkit</strong> (<a href="https://github.com/shenwei356/seqkit">ҐітХаб-репозиторій</a>, <a href="https://bioinf.shenwei.me/seqkit/">документація</a>). Це безкоштовна, кросплатформенна, багатофункціональна та доволі швидка програма, яка може обробляти як &bdquo;ґзіп'нуті&ldquo;, так і прості нестиснуті файли fasta. А саме: <span class="samp">seqkit grep</span> &mdash; оцю програму можна використовувати для відбіру постідовностей.</p>
 <h4>Вибір послідовностей по заголовку</h4>
 <div id="subset-by-header" class="pad-anchor"></div>
-<p>Нехай ми робимо вибірку з файла <span class="samp">ribogrove_5.211_sequences.fasta.gz</span>. Наступні приклади команд користання програмою <span class="samp">seqkit grep</span> можуть статися корисними для вас:</p>
+<p>Нехай ми робимо вибірку з файла <span class="samp">ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</span>. Наступні приклади команд користання програмою <span class="samp">seqkit grep</span> можуть статися корисними для вас:</p>
 <p><strong>Приклад 1</strong>. Вибрати одну послідовність по SeqID</p>
-<p class="samp-highl samp-vwide">seqkit grep -p "NZ_CP079719.1:86193-87742_plus" ribogrove_5.211_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit grep -p "NZ_CP079719.1:86193-87742_plus" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Опція <span class="samp">-p</span> задає рядок, який програма буде шукати у fasta-заголовках (на самій справі, тільки в тій частині заголовків, де запісаний SeqID).</p>
 <p><strong>Приклад 2</strong>. Вибрати всі послідовності генів однієї геномної послідовності RefSeq по коду доступу</p>
-<p class="samp-highl samp-vwide">seqkit grep -nrp "NZ_CP079719.1" ribogrove_5.211_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit grep -nrp "NZ_CP079719.1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Тут потрібні ще дві опціі: <span class="samp">-n</span> та <span class="samp">-r</span>. Перша вказує програмі шукати підрядки в заголовках цілком, а не тільки в ідентифікаторах (SeqID). Друга опція вказує програмі, що їй треба шукати не тількі ті заголовки, які цілком співпадають із шуканим рядком, а також і ті, які утримують шуканий рядок як свою частину.</p>
 <p><strong>Приклад 3</strong>. Вибрати всі послідовності генів одного геному (ID геномної збірки <a href="https://ncbi.nlm.nih.gov/assembly/10577151">10577151</a>), який має два реплікони: <a href="https://ncbi.nlm.nih.gov/nuccore/NZ_CP079110.1">NZ_CP079110.1</a> та <a href="https://ncbi.nlm.nih.gov/nuccore/NZ_CP079111.1">NZ_CP079111.1</a></p>
-<p class="samp-highl samp-vwide">seqkit grep -nr -p "NZ_CP079110.1" -p "NZ_CP079111.1" ribogrove_5.211_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit grep -nr -p "NZ_CP079110.1" -p "NZ_CP079111.1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p><strong>Приклад 4</strong>. Вибрати всі послідовності актинобактерий</p>
-<p class="samp-highl samp-vwide">seqkit grep -nrp ";Actinobacteria;" ribogrove_5.211_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit grep -nrp ";Actinobacteria;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Про всяк випадок, оточюйте таксономію крапками з комою (<span class="samp-highl">;</span>).</p>
 <p><strong>Приклад 5</strong>. Вибрати всі послідовності з геномів категорії 1</p>
-<p class="samp-highl samp-vwide">seqkit grep -nrp "category:1" ribogrove_5.211_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit grep -nrp "category:1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p><strong>Приклад 6</strong>. Вибрати всі послідовності крім тих, які належать типу <i>Firmicutes</i></p>
-<p class="samp-highl samp-vwide">seqkit grep -nvrp ";Firmicutes;" ribogrove_5.211_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit grep -nvrp ";Firmicutes;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Зверніть увагу на опцію <span class="samp">-v</span> у рядку з опціями <span class="samp">-nvrp</span>. Оця опція інвертує поведінку програми, і тепер вона знайде всі послідовності, заголовки яких <em>не</em> утримують рядку <span class="samp">;Firmicutes;</span>.</p>
 <h4>Вибір послідовностей по довжині</h4>
 <div id="subset-by-len" class="pad-anchor"></div>
-<p>Нехай ми робимо вибірку з файла <span class="samp">ribogrove_5.211_sequences.fasta.gz</span>. Наступні приклади команд користання програмою <span class="samp">seqkit seq</span> можуть статися корисними для вас:</p>
+<p>Нехай ми робимо вибірку з файла <span class="samp">ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</span>. Наступні приклади команд користання програмою <span class="samp">seqkit seq</span> можуть статися корисними для вас:</p>
 <p><strong>Приклад 1</strong>. Вибрати всі послідовності довше ніж 1600 п.о.</p>
-<p class="samp-highl samp-vwide">seqkit seq -m 1601 ribogrove_5.211_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit seq -m 1601 ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Опція <span class="samp">-m</span> задає мінімальну довжину послідовності, які програма подасть на вихід.</p>
 <p><strong>Приклад 2</strong>. Вибрати всі послідовності коротше ніж 1500 п.о.</p>
-<p class="samp-highl samp-vwide">seqkit seq -M 1499 ribogrove_5.211_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit seq -M 1499 ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Опція <span class="samp">-M</span> задає максимальну довжину послідовності, які програма подасть на вихід.</p>
 <p><strong>Приклад 3</strong>. Вибрати всі послідовності, довжина яких знаходится в інтервалі [1500, 1600] п.о.</p>
-<p class="samp-highl samp-vwide">seqkit seq -m 1500 -M 1600 ribogrove_5.211_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit seq -m 1500 -M 1600 ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <h4>Вибір даних заголовків</h4>
 <div id="select-head" class="pad-anchor"></div>
 <p>Інколи буває корисно одержати тількі дані заголовків із файла fasta. Отже, наступні приклади команд користання програмою <span class="samp">seqkit seq</span> можуть статися корисними для вас:</p>
 <p><strong>Приклад 1</strong>. Вибрати просто всі заголовки</p>
-<p class="samp-highl samp-vwide">seqkit seq -n ribogrove_5.211_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit seq -n ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Опція <span class="samp">-n</span> каже програмі, щоби вона подавала на вихід тільки заголовки.</p>
 <p><strong>Приклад 2</strong>. Вибрати всі ідентифікатори послідовностей (тобто частини заголовків до першого пробіла)</p>
-<p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_5.211_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Опція <span class="samp">-i</span> каже програмі, щоби вона подавала на вихід тільки ідентифікатори.</p>
 <p><strong>Приклад 3</strong>. Вибрати всі (RefSeq'овські) коди доступу</p>
-<p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_5.211_sequences.fasta.gz | cut -f1 -d':' | sort | uniq</p>
+<p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | cut -f1 -d':' | sort | uniq</p>
 <p class="samp-comment">Така команда спрацює, тільки якщо на комп'ютері установлені утиліти <span class="samp">sort</span>, <span class="samp">cut</span> та <span class="samp">uniq</span> (на Linux та Mac OS оці програми звичайно встановлені разом із сістемою).</p>
 <br />
 <hr />
