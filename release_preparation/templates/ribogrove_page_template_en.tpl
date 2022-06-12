@@ -5,6 +5,10 @@
 <li><a href="#overview">Overview</a></li>
 <li><a href="#citing-ribogrove">Citing RiboGrove</a></li>
 <li><a href="#downloads">Downloads</a></li>
+<ul style="list-style-type: none;">
+  <li><a href="#latest-release">Latest RiboGrove release</li>
+  <li><a href="#release-archive">RiboGrove release archive</li>
+</ul>
 <li><a href="#summary">Summary</a>
 <ul style="list-style-type: none;">
 <li><a href="#db-size">RiboGrove size</a></li>
@@ -18,6 +22,7 @@
 </li>
 <li><a href="#searching-data">Searching data in RiboGrove</a>
 <ul style="list-style-type: none;">
+<li><a href="#header-format">Header format</a></li>
 <li><a href="#subset-by-header">Subsetting sequences by header</a></li>
 <li><a href="#subset-by-len">Subsetting sequences by length</a></li>
 <li><a href="#select-head">Selecting header data</a></li>
@@ -25,20 +30,21 @@
 </li>
 </ul>
 <hr />
-<h2>Overview</h2>
 <div id="overview" class="pad-anchor"></div>
+<h2>Overview</h2>
 <p>RiboGrove is a database of 16S rRNA gene sequences of bacteria and archaea. RiboGrove contains only full-length sequences of 16S rRNA genes since amplicon data is not used for its construction. In other words, unlike similar rRNA resources like <a href="https://www.arb-silva.de/">Silva</a> and <a href="http://rdp.cme.msu.edu/">RDP</a>, RiboGrove does not contain partial gene sequences.</p>
 <p>Completely assembled prokaryotic genomes from <a href="https://www.ncbi.nlm.nih.gov/refseq/">RefSeq</a> database were used for the RiboGrove construction.</p>
 <p>The software used for the RiboGrove construction can be found in the following GitHub repository: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
 <hr />
-<h2>Citing RiboGrove</h2>
 <div id="citing-ribogrove" class="pad-anchor"></div>
+<h2>Citing RiboGrove</h2>
 <p>If you find RiboGrove useful for your research please cite:</p>
 <p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br /> (DOI: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>.).</p>
 <hr />
-<h2>Downloads</h2>
 <div id="downloads" class="pad-anchor"></div>
-<h3>Latest release &mdash; {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
+<h2>Downloads</h2>
+<div id="latest-release" class="pad-anchor"></div>
+<h3>Latest RiboGrove release &mdash; {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
 <p>The release is based on RefSeq release {{ refseq_release }}.</p>
 <ul>
 <li>A fasta file of full-length 16S gene sequences. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Download (gzipped fasta file, {{ final_fasta_fsize_fmt }} MB)</a></li>
@@ -46,13 +52,14 @@
 <li>Metadata <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/metadata_ribogrove_{{ ribogrove_release_number }}.zip">Download (zip archive {{ metadata_fsize_fmt }} MB)</a></li>
 </ul>
 <p>The fasta files are compressed with gzip, and the metadata file is a zip archive. To uncompress them, Linux and Mac OS users may use gzip and zip programs, they should be built-in. For Windows users, the free and open source (de)compression program <a href="https://www.7-zip.org/">7-Zip</a> is available.</p>
+<div id="release-archive" class="pad-anchor"></div>
 <h3>RiboGrove release archive</h3>
 <p>You can find all releases at the <a href="/cager/en/content/60-ribogrove-archive">RiboGrove release archive</a>.</p>
 <hr />
-<h2>Summary</h2>
 <div id="summary" class="pad-anchor"></div>
-<table class="sum-table"><caption>RiboGrove size
+<h2>Summary</h2>
 <div id="db-size" class="pad-anchor"></div>
+<table class="sum-table"><caption>RiboGrove size
 </caption>
 <tbody>
 <tr><th></th><th class="numcol">Bacteria</th><th class="numcol">Archaea</th><th class="numcol">Total</th></tr>
@@ -100,8 +107,8 @@
 </tr>
 </tbody>
 </table>
-<table class="sum-table"><caption>16S rRNA gene lengths
 <div id="gene-lens" class="pad-anchor"></div>
+<table class="sum-table"><caption>16S rRNA gene lengths
 </caption>
 <tbody>
 <tr><th></th><th class="numcol">Bacteria</th><th class="numcol">Archaea</th></tr>
@@ -147,9 +154,9 @@
 </tr>
 </tbody>
 </table>
-<p><sup>*</sup> &mdash; metrics marked with this sign were calculated with preliminary normalization, i.e. median within-species gene length were used for the summary.</p>
-<table class="sum-table"><caption>16S rRNA gene copy number
+<p><sup>*</sup> Metrics marked with this sign were calculated with preliminary normalization, i.e. median within-species gene length were used for the summary.</p>
 <div id="copy-number" class="pad-anchor"></div>
+<table class="sum-table"><caption>16S rRNA gene copy number
 </caption>
 <tbody>
 <tr><th class="numcol">Copy number <sup>*</sup></th><th class="numcol">Number of species</th><th class="numcol">Per cent of species (%)</th></tr>
@@ -164,10 +171,10 @@
 
 </tbody>
 </table>
-<p><sup>*</sup> &mdash; these are median within-species copy numbers.</p>
+<p><sup>*</sup> These are median within-species copy numbers.</p>
 
-<table class="sum-table"><caption>Top-10 longest 16S rRNA genes
 <div id="top-longest" class="pad-anchor"></div>
+<table class="sum-table"><caption>Top-10 longest 16S rRNA genes
 </caption>
 <tbody>
 <tr><th class="alnleft">Organism</th><th class="numcol">Gene length (bp)</th><th class="alnleft">RiboGrove Sequence ID(s)</th><th class="alnleft">Assembly ID</th></tr>
@@ -196,8 +203,8 @@
 </tbody>
 </table>
 
-<table class="sum-table"><caption>Top-10 shortest 16S rRNA genes
 <div id="top-shortest" class="pad-anchor"></div>
+<table class="sum-table"><caption>Top-10 shortest 16S rRNA genes
 </caption>
 <tbody>
 <tr><th class="alnleft">Organism</th><th class="numcol">Gene length (bp)</th><th class="alnleft">RiboGrove Sequence ID(s)</th><th class="alnleft">Assembly ID</th></tr>
@@ -226,8 +233,8 @@
 </tbody>
 </table>
 
-<table class="sum-table"><caption>Top-10 genomes with largest 16S rRNA copy numbers
 <div id="top-copy-num" class="pad-anchor"></div>
+<table class="sum-table"><caption>Top-10 genomes with largest 16S rRNA copy numbers
 </caption>
 <tbody>
 <tr><th class="alnleft">Organism</th><th class="numcol">Copy number</th><th class="alnleft">Assembly ID</th></tr>
@@ -254,11 +261,11 @@
 </tbody>
 </table>
 
-<table class="sum-table"><caption>Top-10 genomes with highest intragenomic variability of 16S rRNA genes
 <div id="top-var" class="pad-anchor"></div>
+<table class="sum-table"><caption>Top-10 genomes with highest intragenomic variability of 16S rRNA genes
 </caption>
 <tbody>
-<tr><th class="alnleft">Organism</th><th class="numcol">Sum of entropy<sup>*</sup> (bits)</th><th class="numcol">Mean entropy<sup>*</sup> (bits)</th><th class="numcol">Number of variable positions</th><th class="numcol">Copy number</th><th class="alnleft">Assembly ID</th></tr>
+<tr><th class="alnleft">Organism</th><th class="numcol">Sum of entropy<sup> *</sup> (bits)</th><th class="numcol">Mean entropy<sup> *</sup> (bits)</th><th class="numcol">Number of variable positions</th><th class="numcol">Copy number</th><th class="alnleft">Assembly ID</th></tr>
 
 <tr>
 <td colspan="6" class="subhead">Bacteria</td>
@@ -289,11 +296,14 @@
 </tbody>
 </table>
 
-<p><sup>*</sup> &mdash; entropy is <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)">Shannon entropy</a> calculated for each column of the multiple sequence alignment (MSA) of all full-length 16S rRNA genes of a genome. Entropy is then summed up (column &ldquo;Sum of entropy&rdquo;) and averaged (column &ldquo;Mean entropy&rdquo;).</p>
+<p><sup>*</sup> Entropy is <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)">Shannon entropy</a> calculated for each column of the multiple sequence alignment (MSA) of all full-length 16S rRNA genes of a genome. Entropy is then summed up (column &ldquo;Sum of entropy&rdquo;) and averaged (column &ldquo;Mean entropy&rdquo;).</p>
+<p><sup>**</sup> <i>Halomicrobium</i> sp. ZPS1 is a quite remarkable case. This genome harbours two 16S rRNA genes, therefore entropy is equal to the number of mismatching nucleotides between sequences of the genes. Respectively, per cent of identity between these two gene sequences is 90.70%! This is remarkable, because the usual (however arbitrary) <em>genus</em> demarcation threshold of per cent of identity is 95%.</p>
+
 <hr />
-<h2>Searching data in RiboGrove</h2>
 <div id="searching-data" class="pad-anchor"></div>
+<h2>Searching data in RiboGrove</h2>
 <p>RiboGrove is a very minimalistic database &mdash; it comprises a collection of plain fasta files with metadata. Thus, extended search instruments are not available for it. We admit this problem and provide a list of suggestions below. The suggestions would help you to explore and subset RiboGrove data.</p>
+<div id="header-format" class="pad-anchor"></div>
 <h3>Header format</h3>
 <p>RiboGrove fasta data has the following format of header:</p>
 <p class="samp-highl samp-vwide">&gt;NZ_CP079719.1:86193-87742_plus Bacillus_velezensis ;Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Bacillus; category:2</p>
@@ -309,46 +319,46 @@
 <li>The category of the genome, from which the gene sequence originates: (<span class="samp-highl">category:2</span>. Category 1 genomes are of the highest reliability, and category 3 genomes are least reliable.</li>
 </ol>
 <h3>Subsetting sequences</h3>
-<p>You can subset specific sequences from fasta files using the <strong>Seqkit</strong> program (<a href="https://github.com/shenwei356/seqkit">GitHub repo</a>, <a href="https://bioinf.shenwei.me/seqkit/">documentation</a>). It is free, cross-platform, multifunctional and pretty fast and can process both gzipped and uncompressed fasta files. To be specific, the <span class="samp">seqkit grep</span> is the program that should be used for subsetting.</p>
-<h4>Subsetting sequences by header</h4>
+<p>You can subset specific sequences from fasta files using the <strong>Seqkit</strong> program (<a href="https://github.com/shenwei356/seqkit">GitHub repo</a>, <a href="https://bioinf.shenwei.me/seqkit/">documentation</a>). It is free, cross-platform, multifunctional and pretty fast and can process both gzipped and uncompressed fasta files. Programs <span class="samp">seqkit grep</span> and <span class="samp">seqkit seq</span> are useful for sequence subsetting.</p>
 <div id="subset-by-header" class="pad-anchor"></div>
+<h4>Subsetting sequences by header</h4>
 <p>Given the downloaded fasta file <span class="samp">ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</span>, consider the following examples of sequence subsetting using <span class="samp">seqkit grep</span>:</p>
-<p><strong>Example 1</strong>. Select a single sequence by SeqID</p>
+<p><strong>Example 1</strong>. Select a single sequence by SeqID.</p>
 <p class="samp-highl samp-vwide">seqkit grep -p "NZ_CP079719.1:86193-87742_plus" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">The <span class="samp">-p</span> option sets a pattern to search in fasta headers (only in sequence IDs, actually).</p>
-<p><strong>Example 2</strong>. Select all gene sequences of a single RefSeq genomic sequence by accession number</p>
+<p><strong>Example 2</strong>. Select all gene sequences of a single RefSeq genomic sequence by accession number.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp "NZ_CP079719.1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Here, two more options are required: <span class="samp">-n</span> and <span class="samp">-r</span>. The former tells the program to match the whole headers instead of IDs only. The latter tells the program not to exclude partial matches from output, i.e. if the pattern is a substring of a header, the header will be printed to output.</p>
-<p><strong>Example 3</strong>. Select all gene sequences of a single genome (Assembly ID <a href="https://www.ncbi.nlm.nih.gov/assembly/10577151">10577151</a>), which has two replicons: <a href="https://www.ncbi.nlm.nih.gov/nuccore/NZ_CP079110.1">NZ_CP079110.1</a> and <a href="https://www.ncbi.nlm.nih.gov/nuccore/NZ_CP079111.1">NZ_CP079111.1</a></p>
+<p><strong>Example 3</strong>. Select all gene sequences of a single genome (Assembly ID <a href="https://www.ncbi.nlm.nih.gov/assembly/10577151">10577151</a>), which has two replicons: <a href="https://www.ncbi.nlm.nih.gov/nuccore/NZ_CP079110.1">NZ_CP079110.1</a> and <a href="https://www.ncbi.nlm.nih.gov/nuccore/NZ_CP079111.1">NZ_CP079111.1</a>.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nr -p "NZ_CP079110.1" -p "NZ_CP079111.1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p><strong>Example 4</strong>. Select all actinobacterial sequences</p>
+<p><strong>Example 4</strong>. Select all actinobacterial sequences.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp ";Actinobacteria;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Just in case, surround the taxonomy name with semicolons (<span class="samp-highl">;</span>).</p>
-<p><strong>Example 5</strong>. Select all sequences originating from category 1 genomes</p>
+<p><strong>Example 5</strong>. Select all sequences originating from category 1 genomes.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp "category:1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p><strong>Example 6</strong>. Select all sequences except for those belonging to <i>Firmicutes</i></p>
+<p><strong>Example 6</strong>. Select all sequences except for those belonging to <i>Firmicutes</i>.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nvrp ";Firmicutes;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Recognize the <span class="samp">-v</span> option within option sequence <span class="samp">-nvrp</span>. This option inverts match, i.e. without it the search would result in sequences belonging to <i>Firmicutes</i> only.</p>
-<h4>Subsetting sequences by length</h4>
 <div id="subset-by-len" class="pad-anchor"></div>
-<p>Given the downloaded fasta file <span class="samp">ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</span>, consider the following examples of sequence subsetting using <span class="samp">seqkit seq</span>:</p>
-<p><strong>Example 1</strong>. Select all sequences longer than 1600 bp</p>
+<h4>Subsetting sequences by length</h4>
+<p>You can use program <span class="samp">seqkit seq</span> to subset sequences by length.</p>
+<p><strong>Example 1</strong>. Select all sequences longer than 1600 bp.</p>
 <p class="samp-highl samp-vwide">seqkit seq -m 1601 ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">The <span class="samp">-m</span> option sets the minimum length of a sequence to be printed to output.</p>
-<p><strong>Example 2</strong>. Select all sequences shorter than 1500 bp</p>
+<p><strong>Example 2</strong>. Select all sequences shorter than 1500 bp.</p>
 <p class="samp-highl samp-vwide">seqkit seq -M 1499 ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">The <span class="samp">-M</span> option sets the maximum length of a sequence to be printed to output.</p>
-<p><strong>Example 3</strong>. Select all sequences having length in range [1500, 1600] bp</p>
+<p><strong>Example 3</strong>. Select all sequences having length in range [1500, 1600] bp.</p>
 <p class="samp-highl samp-vwide">seqkit seq -m 1500 -M 1600 ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<h4>Selecting header data</h4>
 <div id="select-head" class="pad-anchor"></div>
-<p>It is sometimes useful to retrieve only header information from a fasta file. So, please consider the following examples of data selection using <span class="samp">seqkit seq</span>:</p>
-<p><strong>Example 1</strong>. Select all headers</p>
+<h4>Selecting header data</h4>
+<p>It is sometimes useful to retrieve only header information from a fasta file. You can use program <span class="samp">seqkit seq</span> for it.</p>
+<p><strong>Example 1</strong>. Select all headers.</p>
 <p class="samp-highl samp-vwide">seqkit seq -n ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">The <span class="samp">-n</span> option tells the program to output only headers.</p>
-<p><strong>Example 2</strong>. Select all SeqIDs (header parts before the first space)</p>
+<p><strong>Example 2</strong>. Select all SeqIDs (header parts before the first space).</p>
 <p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">The <span class="samp">-i</span> option tells the program to output only sequence IDs.</p>
-<p><strong>Example 3</strong>. Select all accession numbers</p>
+<p><strong>Example 3</strong>. Select all accession numbers.</p>
 <p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | sort | uniq</p>
 <p class="samp-comment">This might be done only if you have <span class="samp">sort</span> and <span class="samp">uniq</span> utilities installed (Linux and Mac OS systems should have them built-in).</p>
