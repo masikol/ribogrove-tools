@@ -22,7 +22,8 @@ from src.top_variability import make_ribogrove_top_intragenomic_var_df, format_t
 from src.formatting import format_float_number
 from src.strains_names import retrieve_strain_name_en, \
                               retrieve_strain_name_ru, \
-                              retrieve_strain_name_ua
+                              retrieve_strain_name_ua, \
+                              retrieve_strain_name_be
 
 # == Parse arguments ==
 
@@ -258,10 +259,12 @@ template_fpaths = (
     'ribogrove_page_template_en.tpl',
     'ribogrove_page_template_ru.tpl',
     'ribogrove_page_template_ua.tpl',
+    'ribogrove_page_template_be.tpl',
 )
 
 thousand_separators = (
     ',',
+    '&nbsp;',
     '&nbsp;',
     '&nbsp;',
 )
@@ -270,12 +273,14 @@ decimal_separators = (
     '.',
     ',',
     ',',
+    ',',
 )
 
 strains_names_functions = (
     retrieve_strain_name_en,
     retrieve_strain_name_ru,
     retrieve_strain_name_ua,
+    retrieve_strain_name_be,
 )
 
 # Paths to output files

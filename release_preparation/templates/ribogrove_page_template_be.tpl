@@ -18,11 +18,12 @@
 <ul>
 <li><a href="#overview">Што такое RiboGrove</a></li>
 <li><a href="#citing-ribogrove">Цытаванне RiboGrove</a></li>
-<li><a href="#downloads">Файлы</a></li>
+<li><a href="#downloads">Файлы</a>
 <ul style="list-style-type: none;">
 <li><a href="#current-release">Актуальны выпуск RiboGrove</li>
 <li><a href="#release-archive">Архіў выпускаў RiboGrove</li>
 </ul>
+</li>
 <li><a href="#summary">Статыстычнае апісанне</a>
 <ul style="list-style-type: none;">
 <li><a href="#db-size">Памер RiboGrove</a></li>
@@ -56,7 +57,7 @@
 <p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br /> (<span style="cursor:help"title="Лічбавы ідэнтыфікатар аб'екта">ЛІА</span>: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>).</p>
 <hr />
 <div id="downloads" class="pad-anchor"></div>
-<h2>Запампоўкі</h2>
+<h2>Файлы</h2>
 <div id="latest-release" class="pad-anchor"></div>
 <h3>Актуальны выпуск RiboGrove &mdash; {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
 <p>Выпуск заснованы на базе дадзеных RefSeq {{ refseq_release }}.</p>

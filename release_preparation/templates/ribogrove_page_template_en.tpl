@@ -4,12 +4,13 @@
 <ul>
 <li><a href="#overview">Overview</a></li>
 <li><a href="#citing-ribogrove">Citing RiboGrove</a></li>
-<li><a href="#downloads">Downloads</a></li>
+<li><a href="#downloads">Downloads</a>
 <ul style="list-style-type: none;">
   <li><a href="#latest-release">Latest RiboGrove release</li>
   <li><a href="#release-archive">RiboGrove release archive</li>
 </ul>
-<li><a href="#summary">Summary</a>
+</li>
+<li><a href="#summary">Statistical summary</a>
 <ul style="list-style-type: none;">
 <li><a href="#db-size">RiboGrove size</a></li>
 <li><a href="#gene-lens">16S rRNA gene lengths</a></li>
@@ -57,7 +58,7 @@
 <p>You can find all releases at the <a href="/cager/en/content/60-ribogrove-archive">RiboGrove release archive</a>.</p>
 <hr />
 <div id="summary" class="pad-anchor"></div>
-<h2>Summary</h2>
+<h2>Statistical summary</h2>
 <div id="db-size" class="pad-anchor"></div>
 <table class="sum-table"><caption>RiboGrove size
 </caption>

@@ -18,11 +18,12 @@
 <ul>
 <li><a href="#overview">Що таке RiboGrove</a></li>
 <li><a href="#citing-ribogrove">Цитування RiboGrove</a></li>
-<li><a href="#downloads">Файли</a></li>
+<li><a href="#downloads">Файли</a>
 <ul style="list-style-type: none;">
   <li><a href="#latest-release">Актуальний реліз RiboGrove</li>
   <li><a href="#release-archive">Архів релізів RiboGrove</li>
 </ul>
+</li>
 <li><a href="#summary">Статистичний опис</a>
 <ul style="list-style-type: none;">
 <li><a href="#db-size">Розмір RiboGrove</a></li>

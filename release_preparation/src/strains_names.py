@@ -5,6 +5,7 @@ from functools import partial
 _organism_name_template_en = '<i>{genus}</i> <i>{species}</i> strain {strain}'
 _organism_name_template_ru = '<i>{genus}</i> <i>{species}</i> {strain}'
 _organism_name_template_ua = '<i>{genus}</i> <i>{species}</i> {strain}'
+_organism_name_template_be = '<i>{genus}</i> <i>{species}</i> {strain}'
 
 
 def _retrieve_strain_name(title, organism_name_template):
@@ -45,6 +46,10 @@ retrieve_strain_name_ru = partial(
 retrieve_strain_name_ua = partial(
     _retrieve_strain_name,
     organism_name_template=_organism_name_template_ua
+)
+retrieve_strain_name_be = partial(
+    _retrieve_strain_name,
+    organism_name_template=_organism_name_template_be
 )
 
 
