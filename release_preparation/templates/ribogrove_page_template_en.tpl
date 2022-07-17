@@ -1,8 +1,13 @@
 <h1 style="display:none">RiboGrove</h1>
-<img src="/cager/img/RiboGrove_logo.png"><br /><br />
+<img src="/cager/img/RiboGrove_logo.png"><br><br>
 <h2>Contents</h2>
 <ul>
-<li><a href="#overview">Overview</a></li>
+<li><a href="#overview">What is RiboGrove</a>
+<ul style="list-style-type: none;">
+<li><a href="#other-databases">RiboGrove and other 16S rRNA databases</a></li>
+<li><a href="#genome-categories">Genome categories</a></li>
+</ul>
+</li>
 <li><a href="#citing-ribogrove">Citing RiboGrove</a></li>
 <li><a href="#downloads">Downloads</a>
 <ul style="list-style-type: none;">
@@ -30,18 +35,45 @@
 </ul>
 </li>
 </ul>
-<hr />
+<hr>
 <div id="overview" class="pad-anchor"></div>
-<h2>Overview</h2>
-<p>RiboGrove is a database of 16S rRNA gene sequences of bacteria and archaea. RiboGrove contains only full-length sequences of 16S rRNA genes since amplicon data is not used for its construction. In other words, unlike similar rRNA resources like <a href="https://www.arb-silva.de/">Silva</a> and <a href="http://rdp.cme.msu.edu/">RDP</a>, RiboGrove does not contain partial gene sequences.</p>
-<p>Completely assembled prokaryotic genomes from <a href="https://www.ncbi.nlm.nih.gov/refseq/">RefSeq</a> database were used for the RiboGrove construction.</p>
+<h2>What is RiboGrove</h2>
+<p>RiboGrove is a database of 16S rRNA gene sequences of bacteria and archaea.</p>
+<p>RiboGrove is based on the <a href="https://ncbi.nlm.nih.gov/refseq/">RefSeq</a> database. It contains only full-length sequences of 16S rRNA genes, and the sequences are derived from completely assembled prokaryotic genomes deposited in RefSeq. Hence we posit high reliability of RiboGrove sequences.</p>
+<div id="other-databases" class="pad-anchor"></div>
+<h3>RiboGrove and other 16S rRNA databases</h3>
+<p>Here is a summary showing what is the (qualitative) difference between RiboGrove and similar rRNA sequence databases, namely <a href="https://www.arb-silva.de/">Silva</a>, <a href="http://rdp.cme.msu.edu/">RDP</a>, and <a href="https://greengenes.secondgenome.com/">Greengenes</a>. Briefly, RiboGrove is inferior in sequence amount and diversity, but superior in sequence reliability.</p>
+<table class="sum-table">
+<tbody>
+  <tr class="sumtab-row"><th></th><th class="alcentr">RiboGrove</th><th class="alcentr">Silva</th><th class="alcentr">RDP</th><th class="alcentr">Greengenes</th></tr>
+  <tr class="sumtab-row"><td class="feature-col">Represented organisms</td><td class="alcentr">Bacteria<br>Archaea</td><td class="alcentr">Bacteria<br>Archaea<br>Eukaryotes</td><td class="alcentr">Bacteria<br>Archaea<br>Eukaryotes</td><td class="alcentr">Bacteria<br>Archaea</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Represented ribosome subunits</td><td class="alcentr">Small</td><td class="alcentr">Large<br>Small</td><td class="alcentr">Large<br>Small</td><td class="alcentr">Small</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Contains sequences from assembles genomes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Contains amplicon sequences</td><td class="alcentr">No</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Contains partial gene sequences</td><td class="alcentr">No</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
+</tbody>
+</table>
+<div id="genome-categories" class="pad-anchor"></div>
+<h3>Genome categories</h3>
+<p>All genomes used for RiboGrove construction were divided into three categories according to their expected reliability:</p>
+<ol style="list-style:none;">
+  <li><strong>Category 1</strong> (the highest reliability). Genomes showing no signs of a low-quality assembly and sequenced either with PacBio technology or with combination (Oxford&nbsp;Nanopore&nbsp;+&nbsp;Illumina).</li>
+  <li><strong>Category 2.</strong> Genomes showing no signs of a low-quality assembly and sequenced with any other technology (or the technology is not specified).</li>
+  <li><strong>Category 3</strong> (the lowest reliability). Genomes showing at least one sign of a low-quality assembly.</li>
+</ol>
+<p>Signs of a low-quality assembly are the following:</p>
+<ul>
+  <li>The genome contains degenerate base(s) in 16S rRNA genes sequences.</li>
+  <li>The assembly includes at least one RefSeq record whose title contains the phrase <q>map unlocalized</q> and this record contains a 16S rRNA gene or a part of it.</li>
+</ul>
+<br>
 <p>The software used for the RiboGrove construction can be found in the following GitHub repository: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
-<hr />
+<hr>
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <h2>Citing RiboGrove</h2>
 <p>If you find RiboGrove useful for your research please cite:</p>
-<p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br /> (DOI: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>.).</p>
-<hr />
+<p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br> (DOI: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>.).</p>
+<hr>
 <div id="downloads" class="pad-anchor"></div>
 <h2>Downloads</h2>
 <div id="latest-release" class="pad-anchor"></div>
@@ -50,13 +82,53 @@
 <ul>
 <li>A fasta file of full-length 16S gene sequences. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Download (gzipped fasta file, {{ final_fasta_fsize_fmt }} MB)</a></li>
 <li>A &ldquo;raw&ldquo; version of the fasta file above. This file contains partial sequences. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/raw_ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Download (gzipped fasta file, {{ raw_fasta_fsize_fmt }} MB)</a></li>
-<li>Metadata <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/metadata_ribogrove_{{ ribogrove_release_number }}.zip">Download (zip archive {{ metadata_fsize_fmt }} MB)</a></li>
+<li>Metadata <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/metadata_ribogrove_{{ ribogrove_release_number }}.zip">Download (zip archive {{ metadata_fsize_fmt }} MB)</a><br>
+  <details>
+    <summary><small>What information exactly does the metadata contain?</small></summary>
+    <small>
+      <p>The metadata consists of the following files:</p>
+      <ol>
+      <li>
+        <span class="samp-highl">source_RefSeq_genomes.tsv</span><br>
+        This is a TSV files, which contains information about what genomes were used for the RiboGrove construction.
+      </li>
+      <li>
+        <span class="samp-highl">gene_seqs_statistics.tsv</span>, <span class="samp-highl">raw_gene_seqs_statistics.tsv</span><br>
+        These are TSV file, which contains nucleotide conposition, size, genomic and taxonomic affiliation of the gene sequences. The &ldquo;raw&rdquo; file also includes information about partial genes.
+      </li>
+      <li>
+        <span class="samp-highl">per_replicon_statistics.tsv</span>, <span class="samp-highl">raw_per_replicon_statistics.tsv</span><br>
+        These are TSV files, which contain information about number of 16S rRNA genes in each RefSeq genomic sequences, and about sizes of these genes. The &ldquo;raw&rdquo; file also includes information about partial genes.
+      </li>
+      <li>
+        <span class="samp-highl">categories.tsv</span><br>
+        This is a TSV file, which contains information about what genome categories were assigned to each genome and why. Moreover, it contains information about what sequencing technology was used to sequence each genome.
+      </li>
+      <li>
+        <span class="samp-highl">taxonomy.tsv</span><br>
+        This is a TSV file, which contains taxonomic affiliation of each genome and gene.
+      </li>
+      <li>
+        <span class="samp-highl">intragenic_repeats.tsv</span><br>
+        This is a TSV file, which contains information about intragenomic repeats found in gene sequences using <a href="https://github.com/deprekate/RepeatFinder">RepeatFinder</a>.
+      </li>
+      <li>
+        <span class="samp-highl">cmscan_output_table.tblout</span><br>
+        This is a TSV file, which contains complete output of <a href="http://eddylab.org/infernal/">cmscan</a> program outputted after processing all 16S rRNA sequences.
+      </li>
+      <li>
+        <span class="samp-highl">entropy_summary.tsv</span><br>
+        This is a TSV file, which contains summary of instragenomic variability of the 16S rRNA genes. Intragenomic variability are calculated only for the category&nbsp;1 genomes having more than one 16S rRNA gene. Intragenomic variability is evaluated using Shannon entropy. We align gene sequences from each genome using <a href="https://drive5.com/muscle5/">MUSCLE</a>, and then we calculate Shannon entropy for each multiple alignment column (i.e. base).
+      </li>
+    </ol></small>
+  </details>
+</li>
 </ul>
 <p>The fasta files are compressed with gzip, and the metadata file is a zip archive. To uncompress them, Linux and Mac OS users may use gzip and zip programs, they should be built-in. For Windows users, the free and open source (de)compression program <a href="https://www.7-zip.org/">7-Zip</a> is available.</p>
 <div id="release-archive" class="pad-anchor"></div>
 <h3>RiboGrove release archive</h3>
 <p>You can find all releases at the <a href="/cager/en/content/60-ribogrove-archive">RiboGrove release archive</a>.</p>
-<hr />
+<hr>
 <div id="summary" class="pad-anchor"></div>
 <h2>Statistical summary</h2>
 <div id="db-size" class="pad-anchor"></div>
@@ -186,7 +258,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
-<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
 </tr>
 {% endfor %}
@@ -197,7 +269,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
-<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
 </tr>
 {% endfor %}
@@ -216,7 +288,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
-<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
 </tr>
 {% endfor %}
@@ -227,7 +299,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
-<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
 </tr>
 {% endfor %}
@@ -300,7 +372,7 @@
 <p><sup>*</sup> Entropy is <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)">Shannon entropy</a> calculated for each column of the multiple sequence alignment (MSA) of all full-length 16S rRNA genes of a genome. Entropy is then summed up (column &ldquo;Sum of entropy&rdquo;) and averaged (column &ldquo;Mean entropy&rdquo;).</p>
 <p><sup>**</sup> <i>Halomicrobium</i> sp. ZPS1 is a quite remarkable case. This genome harbours two 16S rRNA genes, therefore entropy is equal to the number of mismatching nucleotides between sequences of the genes. Respectively, per cent of identity between these two gene sequences is 90.70%! This is remarkable, because the usual (however arbitrary) <em>genus</em> demarcation threshold of per cent of identity is 95%.</p>
 
-<hr />
+<hr>
 <div id="searching-data" class="pad-anchor"></div>
 <h2>Searching data in RiboGrove</h2>
 <p>RiboGrove is a very minimalistic database &mdash; it comprises a collection of plain fasta files with metadata. Thus, extended search instruments are not available for it. We admit this problem and provide a list of suggestions below. The suggestions would help you to explore and subset RiboGrove data.</p>

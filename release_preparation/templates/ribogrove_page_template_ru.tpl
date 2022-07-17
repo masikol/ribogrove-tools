@@ -1,8 +1,13 @@
 <h1 style="display:none">RiboGrove</h1>
-<img src="/cager/img/RiboGrove_logo.png"><br /><br />
+<img src="/cager/img/RiboGrove_logo.png"><br><br>
 <h2>Содержание</h2>
 <ul>
-<li><a href="#overview">Что такое RiboGrove</a></li>
+<li><a href="#overview">Что такое RiboGrove</a>
+<ul style="list-style-type: none;">
+<li><a href="#other-databases">RiboGrove и другие базы данных 16S рРНК</a></li>
+<li><a href="#genome-categories">Категории геномов</a></li>
+</ul>
+</li>
 <li><a href="#citing-ribogrove">Цитирование RiboGrove</a></li>
 <li><a href="#downloads">Файлы</a>
 <ul style="list-style-type: none;">
@@ -30,18 +35,45 @@
 </ul>
 </li>
 </ul>
-<hr />
+<hr>
 <div id="overview" class="pad-anchor"></div>
 <h2>Что такое RiboGrove</h2>
-<p>RiboGrove &mdash; это база данных последовательностей генов 16S рРНК бактерий и архей. RiboGrove содержит исключительно полноразмерные последовательности генов 16S рРНК, т.к. при составлении базы данных не использовались данные секвенирования ампликонов. Другими словами, в отличие от сходных информационных ресурсов, посвящённых последовательностям (генов) рРНК &mdash; таких как <a href="https://www.arb-silva.de/">Silva</a> или <a href="http://rdp.cme.msu.edu/">RDP</a> &mdash; RiboGrove не содержит неполных последовательностей генов (например, только участков V3-V4).</p>
-<p>Для составления базы данных RiboGrove использовались полностью собранные геномы прокариот из базы данных <a href="https://www.ncbi.nlm.nih.gov/refseq/">RefSeq</a>.</p>
+<p>RiboGrove &mdash; это база данных последовательностей генов 16S рРНК бактерий и архей.</p>
+<p>RiboGrove основывается на базе данных <a href="https://ncbi.nlm.nih.gov/refseq/">RefSeq</a>. RiboGrove содержит только полноразмерные последовательности генов 16S рРНК, а сами последовательности взяты из полностью собранных геномов прокариот, депонированных в RefSeq. Поэтому мы постулируем высокую надёжность последовательностей, содержащихся в RiboGrove.</p>
+<div id="other-databases" class="pad-anchor"></div>
+<h3>RiboGrove и другие базы данных 16S рРНК</h3>
+<p>Таблица ниже показывает, чем (качественно) RiboGrove отличается от схожих баз данных последовательностей РНК, а именно <a href="https://www.arb-silva.de/">Silva</a>, <a href="http://rdp.cme.msu.edu/">RDP</a> и <a href="https://greengenes.secondgenome.com/">Greengenes</a>. Говоря коротко, RiboGrove уступает аналогам по количеству последовательностей и их разнообразию, но превосходит по достоверности последовательностей.</p>
+<table class="sum-table">
+<tbody>
+  <tr class="sumtab-row"><th></th><th class="alcentr">RiboGrove</th><th class="alcentr">Silva</th><th class="alcentr">RDP</th><th class="alcentr">Greengenes</th></tr>
+  <tr class="sumtab-row"><td class="feature-col">Представленные организмы</td><td class="alcentr">Бактерии<br>Археи</td><td class="alcentr">Бактерии<br>Археи<br>Эукариоты</td><td class="alcentr">Бактерии<br>Археи<br>Эукариоты</td><td class="alcentr">Бактерии<br>Археи</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Представленные субъединицы рибосом</td><td class="alcentr">Малая</td><td class="alcentr">Большая<br>Малая</td><td class="alcentr">Большая<br>Малая</td><td class="alcentr">Малая</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Содержит последовательности собранных геномов</td><td class="alcentr">Да</td><td class="alcentr">Да</td><td class="alcentr">Да</td><td class="alcentr">Да</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Содержит последовательности ампликонов</td><td class="alcentr">Нет</td><td class="alcentr">Да</td><td class="alcentr">Да</td><td class="alcentr">Да</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Содержит неполные последовательности генов</td><td class="alcentr">Нет</td><td class="alcentr">Да</td><td class="alcentr">Да</td><td class="alcentr">Да</td></tr>
+</tbody>
+</table>
+<div id="genome-categories" class="pad-anchor"></div>
+<h3>Категории геномов</h3>
+<p>Все геномы, из которых брались данные для создания RiboGrove, были разделены на три категории по их достоверности:</p>
+<ol style="list-style:none;">
+  <li><strong>Категория 1</strong> (неименьшая достоверность). Геномы, которые не демонстрируют признаков низкокачественной сборки и которые были секвенированы с помощью технологии PacBio либо комбинации (Oxford&nbsp;Nanopore&nbsp;+&nbsp;Illumina).</li>
+  <li><strong>Категория 2.</strong> Геномы, которые не демонстрируют признаков низкокачественной сборки, секвенированные с помощью любой другой технологии (либо те, для которых технология секвенирования не была указана).</li>
+  <li><strong>Категория 3</strong> (наименьшая достоверность). Геномы, которые демонстрируют хотя бы один признак низкокачественной сборки.</li>
+</ol>
+<p>Признаки низкокачественной сборки:</p>
+<ul>
+  <li>Геном содержит хотя бы одно вырожденное основание в последовательностях его генов 16S рРНК.</li>
+  <li>Сборка генома содержит хотя бы одну запись базы данных RefSeq, в названии которой есть фраза <q>map unlocalized</q>, и эта запись содержит последовательность гена 16S рРНК либо его часть.</li>
+</ul>
+<br>
 <p>Программы, с помощью которых RiboGrove была создана, доступны в репозитории на ГитХабе: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
-<hr />
+<hr>
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <h2>Цитирование RiboGrove</h2>
 <p>Если RiboGrove была полезна вам в вашей работе, пожалуйста, цитируйте следующую публикацию:</p>
-<p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br /> (ЦИО: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>.</p>
-<hr />
+<p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br> (ЦИО: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>.</p>
+<hr>
 <div id="downloads" class="pad-anchor"></div>
 <h2>Файлы</h2>
 <div id="latest-release" class="pad-anchor"></div>
@@ -50,13 +82,53 @@
 <ul>
 <li>Fasta-файл полноразмерных последовательностей генов 16S рРНК. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Скачать (gzip&rsquo;нутый fasta-файл, {{ final_fasta_fsize_fmt }} Мб)</a></li>
 <li>&bdquo;Сырая&ldquo; версия fasta-файла, указанного выше. Данный файл содержит в том числе и неполные последовательности генов. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/raw_ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Скачать (gzip&rsquo;нутый fasta-файл, {{ raw_fasta_fsize_fmt }} Мб)</a></li>
-<li>Метаданные. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/metadata_ribogrove_{{ ribogrove_release_number }}.zip">Скачать (zip-архив {{ metadata_fsize_fmt }} Мб)</a></li>
+<li>Метаданные. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/metadata_ribogrove_{{ ribogrove_release_number }}.zip">Скачать (zip-архив {{ metadata_fsize_fmt }} Мб)</a><br>
+<details>
+  <summary><small>Какая именно информация содержится в метаданных?</small></summary>
+  <small>
+    <p>Метаданные содержат следующие файлы:</p>
+    <ol>
+    <li>
+      <span class="samp-highl">source_RefSeq_genomes.tsv</span><br>
+      Это TSV-файл, который содержит информацию про то, какие геномы использовались для создания RiboGrove.
+    </li>
+    <li>
+      <span class="samp-highl">gene_seqs_statistics.tsv</span>, <span class="samp-highl">raw_gene_seqs_statistics.tsv</span><br>
+      Это TSV-файлы, которые содержат информацию про нуклеотидный состав, размер, геномную и таксономическую принадлежность последовательностей генов. &bdquo;Сырая&ldquo; (&bdquo;raw&ldquo;) версия дополнительно содержит информацию про неполные гены.
+    </li>
+    <li>
+      <span class="samp-highl">per_replicon_statistics.tsv</span>, <span class="samp-highl">raw_per_replicon_statistics.tsv</span><br>
+      Это TSV-файлы, которые содержат информацию про количество генов 16S рРНК в каждой геномной последовательности из БД RefSeq и про размер этих генов. &bdquo;Сырая&ldquo; (&bdquo;raw&ldquo;) версия дополнительно содержит информацию про неполные гены.
+    </li>
+    <li>
+      <span class="samp-highl">categories.tsv</span><br>
+      Это TSV-файл, который содержит информацию про категорию каждого генома, который был использован для создания RiboGrove. Также в этом файле есть информация про технологии, которые использовались для секвенирования этих геномов.
+    </li>
+    <li>
+      <span class="samp-highl">taxonomy.tsv</span><br>
+      Это TSV-файл, который содержит таксономическую принадлежность каждого генома и гена.
+    </li>
+    <li>
+      <span class="samp-highl">intragenic_repeats.tsv</span><br>
+      Это TSV-файл, который содержит информацию про внутригенные повторы в последовательностях генов, обнаруженные с помощью программы <a href="https://github.com/deprekate/RepeatFinder">RepeatFinder</a>.
+    </li>
+    <li>
+      <span class="samp-highl">cmscan_output_table.tblout</span><br>
+      Это TSV-файл, который содержит полный результат работы программы <a href="http://eddylab.org/infernal/">cmscan</a>, после обработки всех последовательностей генов 16S рРНК.
+    </li>
+    <li>
+      <span class="samp-highl">entropy_summary.tsv</span><br>
+      Это TSV-файл, который содержит информацию про внутригеномную изменчивость генов 16S рРНК. Внутригеномную изменчивость вычисляли только для геномов категории&nbsp;1, в которых есть хотя бы два гена 16S рРНК. Для оценки изменчивости использовали энтропию Шенона: выравнивали последовательности генов каждого генома с помощью программы <a href="https://drive5.com/muscle5/">MUSCLE</a>, и после этого вычисляли энтропию для каждого столбца множественного выравнивания.
+    </li>
+  </ol></small>
+</details>
+</li>
 </ul>
 <p>Fasta-файлы сжаты с помощью программы gzip, а метаданные &mdash; с помощью программы zip. Чтобы разархивировать их, пользователи Linux и Mac OS могут воспользоваться программами gzip и zip, соответственно; эти программы должны быть предустановлены. Пользователи же Windows могут воспользоваться бесплатной программой <a href="https://www.7-zip.org/">7-Zip</a>.</p>
 <div id="release-archive" class="pad-anchor"></div>
 <h3>Архив выпусков RiboGrove</h3>
 <p>Вы можете найти все выпуски RiboGrove в <a href="/cager/ru/content/60-ribogrove-archive">архиве выпусков RiboGrove</a>.</p>
-<hr />
+<hr>
 <div id="summary" class="pad-anchor"></div>
 <h2>Статистическое описание</h2>
 <div id="db-size" class="pad-anchor"></div>
@@ -176,7 +248,7 @@
 <table class="sum-table">
 <caption>Топ-10 самых длинных генов 16S рРНК</caption>
 <tbody>
-<tr><th class="alnleft">Организм</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Идентификатор<br />геномной сборки</th></tr>
+<tr><th class="alnleft">Организм</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Идентификатор<br>геномной сборки</th></tr>
 <tr>
 <td colspan="4" class="subhead">Бактерии</td>
 </tr>
@@ -184,7 +256,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
-<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
 </tr>
 {% endfor %}
@@ -195,7 +267,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
-<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
 </tr>
 {% endfor %}
@@ -207,7 +279,7 @@
 <table class="sum-table">
 <caption>Топ-10 самых коротких генов 16S рРНК</caption>
 <tbody>
-<tr><th class="alnleft">Организм</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Идентификатор<br />геномной сборки</th></tr>
+<tr><th class="alnleft">Организм</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Идентификатор<br>геномной сборки</th></tr>
 <tr>
 <td colspan="4" class="subhead">Бактерии</td>
 </tr>
@@ -215,7 +287,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
-<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
 </tr>
 {% endfor %}
@@ -226,7 +298,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['title']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
-<td class="seqid-td">{{ '<br />'.join(row['seqID']) }}</td>
+<td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['ass_id'] }}">{{ row['ass_id'] }}</a></td>
 </tr>
 {% endfor %}
@@ -238,7 +310,7 @@
 <table class="sum-table">
 <caption>Tоп-10 геномов с наибольшим числом копий генов 16S рРНК</caption>
 <tbody>
-<tr><th class="alnleft">Организм</th><th class="numcol">Число копий</th><th class="alnleft">Идентификатор<br />геномной сборки</th></tr>
+<tr><th class="alnleft">Организм</th><th class="numcol">Число копий</th><th class="alnleft">Идентификатор<br>геномной сборки</th></tr>
 <tr>
 <td colspan="4" class="subhead">Бактерии</td>
 </tr>
@@ -266,7 +338,7 @@
 <table class="sum-table">
 <caption>Tоп-10 геномов с наибольшей внутригеномной изменчивостью генов 16S рРНК</caption>
 <tbody>
-<tr><th class="alnleft">Организм</th><th class="numcol">Сумма энтропии<sup> *</sup>, биты</th><th class="numcol">Средняя энтропия<sup> *</sup>, биты</th><th class="numcol">Количество изменчивых позиций</th><th class="numcol">Число копий</th><th class="alnleft">Идентификатор<br />геномной сборки</th></tr>
+<tr><th class="alnleft">Организм</th><th class="numcol">Сумма энтропии<sup> *</sup>, биты</th><th class="numcol">Средняя энтропия<sup> *</sup>, биты</th><th class="numcol">Количество изменчивых позиций</th><th class="numcol">Число копий</th><th class="alnleft">Идентификатор<br>геномной сборки</th></tr>
 
 <tr>
 <td colspan="6" class="subhead">Бактерии</td>
@@ -299,7 +371,7 @@
 
 <p><sup>*</sup> Энтропия в данном случае &mdash; это <a href="https://ru.wikipedia.org/wiki/Информационная_энтропия">энтропия Шенона</a>, вычисленная для каждого столбца множественного выравнивания полноразмерных последовательностей генов 16S рРНК индивидуального генома. Вычисленная энтропия далее суммировалась (столбец &laquo;Сумма энтропии&raquo;) или усреднялась (столбец &laquo;Средняя энтропия&raquo;).</p>
 <p><sup>**</sup> <i>Halomicrobium</i> sp. ZPS1 &mdash; показательный случай. В этом геноме два гена 16S рРНК, поэтому энтропия равна количеству нуклеотидов, которые не совпадают в их последовательностях. Вычислив процент идентичности (соращённо ПИ) последовательностей этих двух генов, получим 90,70%! Напомним, что за порог ПИ последовательностей генов 16S рРНК для отнесейния организмов да отдельных <em>родов</em> обычно принимают (впрочем, произвольно) значение 95%.</p>
-<hr />
+<hr>
 <div id="searching-data" class="pad-anchor"></div>
 <h2>Поиск данных в базе данных RiboGrove</h2>
 <p>RiboGrove &mdash; очень минималистичная база данных: она представляет собой несколько файлов в формате fasta, а также метаданные. Поэтому, расширенные средства поиска для неё недоступны. Мы признаём эту проблему и оставляем рекомендации по поиску данных в RiboGrove. Рекомендации помогут вам изучать и делать выборки данных из БД RiboGrove.</p>
