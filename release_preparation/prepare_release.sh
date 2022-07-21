@@ -167,6 +167,14 @@ for f in "${BACTERIA_ENTROPY_SUMMARY}" "${ARCHAEA_ENTROPY_SUMMARY}"; do
 done
 RIBOGROVE_ENTROPY_SUMMARY="${METADATA_DIR}/entropy_summary.tsv"
 
+# QIIME2-compatible taxonomy
+QIIME2_TAXONOMY="${METADATA_DIR}/QIIME2-compatible-taxonomy.txt"
+QIIME2_CONVERSION_SCRIPT='./make_qiime_taxonomy_file.py'
+if [[ ! -f "${QIIME2_CONVERSION_SCRIPT}" ]]; then
+    echo "Error: cannot find file '${QIIME2_CONVERSION_SCRIPT}'"
+    exit 1
+fi
+
 
 # |======= PROCEED =======|
 
@@ -306,6 +314,13 @@ fi
 cat "${BACTERIA_ENTROPY_SUMMARY}" > "${RIBOGROVE_ENTROPY_SUMMARY}"
 cat "${ARCHAEA_ENTROPY_SUMMARY}" | csvtk del-header -tT >> "${RIBOGROVE_ENTROPY_SUMMARY}"
 echo "${RIBOGROVE_ENTROPY_SUMMARY}"
+
+# QIIME2-compatible taxonomy
+echo -n 'QIIME2-compatible taxonomy...  '
+python3 "${QIIME2_CONVERSION_SCRIPT}" \
+    --in-ribogrove-taxonomy "${RIBOGROVE_TAXONOMY}" \
+    --out-qiime2-taxonomy "${QIIME2_TAXONOMY}"
+echo "${QIIME2_TAXONOMY}"
 
 # Zip the metadata
 echo "Zipping the metadata directory: '${METADATA_DIR}/'"

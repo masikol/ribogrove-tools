@@ -10,6 +10,7 @@ The metadata consists of the following files:
 7. intragenic_repeats.tsv
 8. cmscan_output_table.tblout
 9. entropy_summary.tsv
+10. QIIME2-compatible-taxonomy.txt
 
 
 |=== File descriptions ===|
@@ -31,11 +32,11 @@ Column descriptions:
 == raw_gene_seqs_statistics.tsv ==
 
 This is a TSV file, which contains nucleotide conposition, size, genomic and taxonomic affiliation of the gene sequences.
-`raw_gene_seqs_statistics.tsv` is the same buu for "raw" gene sequence set.
+`raw_gene_seqs_statistics.tsv` is the same but for "raw" gene sequence set.
 
 Column descriptions:
 
-- Column `seqID`: 
+- Column `seqID`: RiboGrove sequence ID of a gene.
 - 15 columns `a`,`t`,`g`,`c`,`r`,`y`,`w`,`s`,`k`,`m`,`h`,`v`,`b`,`d`,`n`. Each of them corresponds to the nucleotide base, according to IUPAC (https://www.bioinformatics.org/sms/iupac.html). For each row, a column from this list contains number of corresponding base in the gene sequence (e.g. number 395 in column `a` insicates that the gene contains 395 adenine bases).
 - Column `len`: length of the gene sequence (bp).
 - Column `category`: the category of the genome, from which the gene originates.
@@ -48,7 +49,7 @@ Column descriptions:
 ==   per_replicon_statistics.tsv   ==
 == raw_per_replicon_statistics.tsv ==
 
-These are TSV files, which contain information about number of genes in each RefSeq genomic sequences, and about sizes of these genes. The "raw" file contains information about all gene sequences (including partial) extracted from genomic sequences, whereas the file `per_replicon_statistics.tsv` describes the final RiboGrove sequences, which dows not contain partial gene sequences.
+These are TSV files, which contain information about number of genes in each RefSeq genomic sequences, and about sizes of these genes. The "raw" file contains information about all gene sequences (including partial) extracted from genomic sequences, whereas the file `per_replicon_statistics.tsv` describes the final RiboGrove sequences, which does not contain partial gene sequences.
 
 Column descriptions:
 
@@ -116,47 +117,21 @@ Column descriptions is completely adopted from section 6 of Infernal userguide: 
 - Column `accession`: The accession of the target sequence or profile, or ’-’ if none.
 - Column `query_name`: The name of the query sequence or profile.
 - Column `accession`: The accession of the query sequence or profile, or ’-’ if none.
-- `mdl` (model): Which type of model was used to compute the final score. Either ’cm’ or ’hmm’. A CM is used
-to compute the final hit scores unless the model has zero basepairs or the --hmmonly option is used, in which
-case a HMM will be used.
-- Column `mdl_from` (model coord): The start of the alignment of this hit with respect to the profile (CM or HMM),
-numbered 1..N for a profile of N consensus positions.
-- Column `mdl_to` (model coord): The end of the alignment of this hit with respect to the profile (CM or HMM), num-
-bered 1..N for a profile of N consensus positions.
-- Column `seq_from` (ali coord): The start of the alignment of this hit with respect to the sequence, numbered 1..L
-for a sequence of L residues.
-- Column `seq_to` (ali coord): The end of the alignment of this hit with respect to the sequence, numbered 1..L for a
-sequence of L residues.
-- Column `strand`: The strand on which the hit occurs on the sequence. ’+’ if the hit is on the top (Watson) strand, ’-’ if
-the hit is on the bottom (Crick) strand. If on the top strand, the “seq from” value will be less than or equal to the
-“seq to” value, else it will be greater than or equal to it.
-- Column `trunc`: Indicates if this is predicted to be a truncated CM hit or not. This will be “no” if it is a CM hit that is not
-predicted to be truncated by the end of the sequence, “5’ ” or “3’ ” if the hit is predicted to have one or more 5’ or
-3’ residues missing due to a artificial truncation of the sequence, or “5’&3”’ if the hit is predicted to have one or
-more 5’ residues missing and one or more 3’ residues missing. If the hit is an HMM hit, this will always be ’-’.
-- Column `pass`: Indicates what “pass” of the pipeline the hit was detected on. This is probably only useful for testing and
-debugging. Non-truncated hits are found on the first pass, truncated hits are found on successive passes.
+- `mdl` (model): Which type of model was used to compute the final score. Either ’cm’ or ’hmm’. A CM is used to compute the final hit scores unless the model has zero basepairs or the --hmmonly option is used, in which case a HMM will be used.
+- Column `mdl_from` (model coord): The start of the alignment of this hit with respect to the profile (CM or HMM), numbered 1..N for a profile of N consensus positions.
+- Column `mdl_to` (model coord): The end of the alignment of this hit with respect to the profile (CM or HMM), numbered 1..N for a profile of N consensus positions.
+- Column `seq_from` (ali coord): The start of the alignment of this hit with respect to the sequence, numbered 1..L for a sequence of L residues.
+- Column `seq_to` (ali coord): The end of the alignment of this hit with respect to the sequence, numbered 1..L for a sequence of L residues.
+- Column `strand`: The strand on which the hit occurs on the sequence. ’+’ if the hit is on the top (Watson) strand, ’-’ if the hit is on the bottom (Crick) strand. If on the top strand, the “seq from” value will be less than or equal to the “seq to” value, else it will be greater than or equal to it.
+- Column `trunc`: Indicates if this is predicted to be a truncated CM hit or not. This will be “no” if it is a CM hit that is not predicted to be truncated by the end of the sequence, “5’ ” or “3’ ” if the hit is predicted to have one or more 5’ or 3’ residues missing due to a artificial truncation of the sequence, or “5’&3”’ if the hit is predicted to have one or more 5’ residues missing and one or more 3’ residues missing. If the hit is an HMM hit, this will always be ’-’.
+- Column `pass`: Indicates what “pass” of the pipeline the hit was detected on. This is probably only useful for testing and debugging. Non-truncated hits are found on the first pass, truncated hits are found on successive passes.
 - Column `gc`: Fraction of G and C nucleotides in the hit.
-- Column `bias`: The biased-composition correction: the bit score difference contributed by the null3 model for CM hits, or
-the null2 model for HMM hits. High bias scores may be a red flag for a false positive. It is difficult to correct for all
-possible ways in which a nonrandom but nonhomologous biological sequences can appear to be similar, such as
-short-period tandem repeats, so there are cases where the bias correction is not strong enough (creating false
-positives).
-- Column `score`: The score (in bits) for this target/query comparison. It includes the biased-composition correction (the
-“null3” model for CM hits, or the “null2” model for HMM hits).
-- Column `E-value`: The expectation value (statistical significance) of the target. This is a per query E-value; i.e. calcu-
-lated as the expected number of false positives achieving this comparison’s score for a single query against the
-search space Z. For cmsearch Z is defined as the total number of nucleotides in the target dataset multiplied
-by 2 because both strands are searched. For cmscan Z is the total number of nucleotides in the query sequence
-multiplied by 2 because both strands are searched and multiplied by the number of models in the target database.
-If you search with multiple queries and if you want to control the overall false positive rate of that search rather
-than the false positive rate per query, you will want to multiply this per-query E-value by how many queries you’re
-doing.
-- Column `inc`: Indicates whether or not this hit achieves the inclusion threshold: ’!’ if it does, ’?’ if it does not (and rather
-only achieves the reporting threshold). By default, the inclusion threshold is an E-value of 0.01 and the reporting
-threshold is an E-value of 10.0, but these can be changed with command line options as described in the manual
-pages.
-- Column `description_of_target`: The remainder of the line is the target’s description line, as free text
+- Column `bias`: The biased-composition correction: the bit score difference contributed by the null3 model for CM hits, or the null2 model for HMM hits. High bias scores may be a red flag for a false positive. It is difficult to correct for all possible ways in which a nonrandom but nonhomologous biological sequences can appear to be similar, such as short-period tandem repeats, so there are cases where the bias correction is not strong enough (creating false positives).
+- Column `score`: The score (in bits) for this target/query comparison. It includes the biased-composition correction (the “null3” model for CM hits, or the “null2” model for HMM hits).
+- Column `E-value`: The expectation value (statistical significance) of the target. This is a per query E-value; i.e. calcu- lated as the expected number of false positives achieving this comparison’s score for a single query against the search space Z. For cmsearch Z is defined as the total number of nucleotides in the target dataset multiplied by 2 because both strands are searched. For cmscan Z is the total number of nucleotides in the query sequence multiplied by 2 because both strands are searched and multiplied by the number of models in the target database.
+If you search with multiple queries and if you want to control the overall false positive rate of that search rather than the false positive rate per query, you will want to multiply this per-query E-value by how many queries you’re doing.
+- Column `inc`: Indicates whether or not this hit achieves the inclusion threshold: ’!’ if it does, ’?’ if it does not (and rather only achieves the reporting threshold). By default, the inclusion threshold is an E-value of 0.01 and the reporting threshold is an E-value of 10.0, but these can be changed with command line options as described in the manual pages.
+- Column `description_of_target`: The remainder of the line is the target’s description line, as free text.
 
 
 == entropy_summary.tsv ==
@@ -169,3 +144,14 @@ Column descriptions:
 - Column `sum_entropy`: sum of per-base entropy for a particular genome (bp).
 - Column `mean_entropy`: mean per-base entropy for a particular genome (bp).
 - Column `num_var_cols`: number of variable positions in the multiple sequence alignment.
+
+
+== QIIME2-compatible-taxonomy.txt ==
+
+This is a TSV file, which can be used to train a QIIME2 classifier (see the tutorial https://docs.qiime2.org).
+
+This file is headerless.
+Column descriptions:
+
+- Column #1: RiboGrove sequence ID of a gene.
+- Column #2: taxonomy string.

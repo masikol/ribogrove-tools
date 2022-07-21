@@ -70,3 +70,15 @@ python3 make_ribogrove_release_page.py \
   --source-genomes /mnt/1.5_drive_0/RiboGrove_releases/6.212/metadata/source_RefSeq_genomes.tsv \
   --outdir /mnt/1.5_drive_0/RiboGrove_pages/6.212/ \
   --seqkit /usr/bin/seqkit
+
+python3 make_ribogrove_release_page.py \
+  --release-num 7.213 \
+  --release-date 2022-07-20 \
+  --final-fasta /mnt/1.5_drive_0/RiboGrove_releases/7.213/ribogrove_7.213_sequences.fasta.gz \
+  --raw-fasta /mnt/1.5_drive_0/RiboGrove_releases/7.213/raw_ribogrove_7.213_sequences.fasta.gz \
+  --metadata /mnt/1.5_drive_0/RiboGrove_releases/7.213/metadata_ribogrove_7.213.zip \
+  --gene-stats-table /mnt/1.5_drive_0/RiboGrove_releases/7.213/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/1.5_drive_0/RiboGrove_releases/7.213/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/1.5_drive_0/RiboGrove_releases/7.213/metadata/source_RefSeq_genomes.tsv \
+  --outdir /mnt/1.5_drive_0/RiboGrove_pages/7.213/ \
+  --seqkit /usr/bin/seqkit
