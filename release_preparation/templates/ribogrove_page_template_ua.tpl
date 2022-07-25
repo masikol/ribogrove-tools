@@ -248,7 +248,7 @@
 <p><sup>*</sup> Метрики, позначені зірочкою, розрахувано зі попередньою нормалізацією: вирахуванням <em>медіан</em> довжин генів у межах виду.</p>
 <div id="copy-number" class="pad-anchor"></div>
 <table class="sum-table">
-<caption>Кількість копій генів 16S рРНК</caption>
+<caption>Кількість копій генів 16S рРНК<br><small>(Бактерії та Археї)</small></caption>
 <tbody>
 <tr><th class="numcol">Кількість копій <sup>*</sup></th><th class="numcol">Кількість видів</th><th class="numcol">Відсоток видів, %</th></tr>
 {% for _, row in ribogrove_copy_number_df.iterrows() %}

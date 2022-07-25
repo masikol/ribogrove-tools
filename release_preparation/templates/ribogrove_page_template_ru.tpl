@@ -72,7 +72,7 @@
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <h2>Цитирование RiboGrove</h2>
 <p>Если RiboGrove была полезна вам в вашей работе, пожалуйста, цитируйте следующую публикацию:</p>
-<p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br> (ЦИО: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>.</p>
+<p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br> (ЦИО: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>).</p>
 <hr>
 <div id="downloads" class="pad-anchor"></div>
 <h2>Файлы</h2>
@@ -234,7 +234,7 @@
 <p><sup>*</sup> Метрики, помеченные звёздочкой, были рассчитаны с предварительной нормализацией данных, а именно: медианные значения длины внутри каждого вида использовались для расчёта этих метрик.</p>
 <div id="copy-number" class="pad-anchor"></div>
 <table class="sum-table">
-<caption>Число копий генов 16S рРНК</caption>
+<caption>Число копий генов 16S рРНК<br><small>(Бактерии и Археи)</small></caption>
 <tbody>
 <tr><th class="numcol">Число копий <sup>*</sup></th><th class="numcol">Количество видов</th><th class="numcol">Процент видов, %</th></tr>
 {% for _, row in ribogrove_copy_number_df.iterrows() %}

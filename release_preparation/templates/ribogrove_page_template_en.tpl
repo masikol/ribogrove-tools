@@ -72,7 +72,7 @@
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <h2>Citing RiboGrove</h2>
 <p>If you find RiboGrove useful for your research please cite:</p>
-<p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br> (DOI: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>.).</p>
+<p>Maxim A. Sikolenko, Leonid N. Valentovich. &ldquo;RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes&rdquo; // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br> (DOI: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>).</p>
 <hr>
 <div id="downloads" class="pad-anchor"></div>
 <h2>Downloads</h2>
@@ -233,8 +233,8 @@
 </table>
 <p><sup>*</sup> Metrics marked with this sign were calculated with preliminary normalization, i.e. median within-species gene length were used for the summary.</p>
 <div id="copy-number" class="pad-anchor"></div>
-<table class="sum-table"><caption>16S rRNA gene copy number
-</caption>
+<table class="sum-table">
+<caption>16S rRNA gene copy number<br><small>(Bacteria and Archaea)</small></caption>
 <tbody>
 <tr><th class="numcol">Copy number <sup>*</sup></th><th class="numcol">Number of species</th><th class="numcol">Per cent of species (%)</th></tr>
 

@@ -248,7 +248,7 @@
 <p><sup>*</sup> Метрыкі, пазначаныя зорачкай, вылічаныя з папярэдняй нармалізацыяй: вылічэннем <em>медыян</em> даўжынь генаў у межах віду.</p>
 <div id="copy-number" class="pad-anchor"></div>
 <table class="sum-table">
-<caption>Колькасць копій генаў 16S рРНК</caption>
+<caption>Колькасць копій генаў 16S рРНК<br><small>(Бактэрыі і Археі)</small></caption>
 <tbody>
 <tr><th class="numcol">Колькасць копій <sup>*</sup></th><th class="numcol">Колькасць відаў</th><th class="numcol">Адсотак відаў, %</th></tr>
 {% for _, row in ribogrove_copy_number_df.iterrows() %}
