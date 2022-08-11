@@ -573,7 +573,7 @@ acc_df = pd.read_csv(
     sep='\t'
 )
 
-
+# For testing purposes
 # accs_select = {
 #     'NZ_CP013210.1',
 #     'NZ_CP008696.1',

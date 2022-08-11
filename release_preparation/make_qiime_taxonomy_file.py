@@ -94,10 +94,12 @@ def make_species_name(raw_species):
     # end if
     
     species_name = species_name.partition(' ')[2]
-    species_match = re.match(r'^[a-z]+$', species_name)
-    if species_match is None:
-        species_name = ''
-    # end if
+
+    # TODO: remove completely
+    # species_match = re.match(r'^[a-z]+$', species_name)
+    # if species_match is None:
+    #     species_name = ''
+    # # end if
 
     return species_name
 # end def

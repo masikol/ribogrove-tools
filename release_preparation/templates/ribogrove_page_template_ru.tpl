@@ -3,20 +3,20 @@
 <h2>Содержание</h2>
 <ul>
 <li><a href="#overview">Что такое RiboGrove</a>
-<ul style="list-style-type: none;">
+<ul class="ribogrove-nested-list">
 <li><a href="#other-databases">RiboGrove и другие базы данных 16S рРНК</a></li>
 <li><a href="#genome-categories">Категории геномов</a></li>
 </ul>
 </li>
 <li><a href="#citing-ribogrove">Цитирование RiboGrove</a></li>
 <li><a href="#downloads">Файлы</a>
-<ul style="list-style-type: none;">
+<ul class="ribogrove-nested-list">
   <li><a href="#latest-release">Актуальный выпуск RiboGrove</li>
   <li><a href="#release-archive">Архив выпусков RiboGrove</li>
 </ul>
 </li>
 <li><a href="#summary">Статистическое описание</a>
-<ul style="list-style-type: none;">
+<ul class="ribogrove-nested-list">
 <li><a href="#db-size">Размер базы данных RiboGrove</a></li>
 <li><a href="#gene-lens">Длина генов 16S рРНК</a></li>
 <li><a href="#copy-number">Число копий генов 16S рРНК</a></li>
@@ -27,7 +27,7 @@
 </ul>
 </li>
 <li><a href="#searching-data">Поиск данных в базе данных RiboGrove</a>
-<ul style="list-style-type: none;">
+<ul class="ribogrove-nested-list">
 <li><a href="#header-format">Формат заголовка</a></li>
 <li><a href="#subset-by-header">Выборка последовательностей по заголовку</a></li>
 <li><a href="#subset-by-len">Выборка последовательностей по длине</a></li>
@@ -342,7 +342,7 @@
 <table class="sum-table">
 <caption>Tоп-10 геномов с наибольшей внутригеномной изменчивостью генов 16S рРНК</caption>
 <tbody>
-<tr><th class="alnleft">Организм</th><th class="numcol">Сумма энтропии<sup> *</sup>, биты</th><th class="numcol">Средняя энтропия<sup> *</sup>, биты</th><th class="numcol">Количество изменчивых позиций</th><th class="numcol">Число копий</th><th class="alnleft">Идентификатор<br>геномной сборки</th></tr>
+<tr><th class="alnleft">Организм</th><th class="numcol">Сумма энтропии<sup> *</sup>, биты</th><th class="numcol">Средняя энтропия<sup> *</sup>, биты</th><th class="numcol">Количество изменчивых позиций</th><th class="numcol">Число копий генов</th><th class="alnleft">Идентификатор<br>геномной сборки</th></tr>
 
 <tr>
 <td colspan="6" class="subhead">Бактерии</td>

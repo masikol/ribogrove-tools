@@ -17,20 +17,20 @@
 <h2>Зміст</h2>
 <ul>
 <li><a href="#overview">Що таке RiboGrove</a>
-<ul style="list-style-type: none;">
+<ul class="ribogrove-nested-list">
 <li><a href="#other-databases">RiboGrove і інші бази даних 16S рРНК</a></li>
 <li><a href="#genome-categories">Категорії геномів</a></li>
 </ul>
 </li>
 <li><a href="#citing-ribogrove">Цитування RiboGrove</a></li>
 <li><a href="#downloads">Файли</a>
-<ul style="list-style-type: none;">
+<ul class="ribogrove-nested-list">
   <li><a href="#latest-release">Актуальний реліз RiboGrove</li>
   <li><a href="#release-archive">Архів релізів RiboGrove</li>
 </ul>
 </li>
 <li><a href="#summary">Статистичний опис</a>
-<ul style="list-style-type: none;">
+<ul class="ribogrove-nested-list">
 <li><a href="#db-size">Розмір RiboGrove</a></li>
 <li><a href="#gene-lens">Довжина генів 16S рРНК</a></li>
 <li><a href="#copy-number">Кількість копій генів 16S рРНК</a></li>
@@ -41,7 +41,7 @@
 </ul>
 </li>
 <li><a href="#searching-data">Пошук даних у RiboGrove</a>
-<ul style="list-style-type: none;">
+<ul class="ribogrove-nested-list">
   <li><a href="#header-format">Формат заголовку</a></li>
 <li><a href="#subset-by-header">Вибір послідовностей по заголовку</a></li>
 <li><a href="#subset-by-len">Вибір послідовностей по довжині</a></li>
@@ -356,7 +356,7 @@
 <table class="sum-table">
 <caption>Топ-10 геномів за найбільшею мінливістю генів 16S рРНК</caption>
 <tbody>
-<tr><th class="alnleft">Організм</th><th class="numcol">Сума ентропії<sup> *</sup>, біти</th><th class="numcol">Середня ентропія<sup> *</sup>, біти</th><th class="numcol">Кількість мінливих позіцій</th><th class="numcol">Кількість копій</th><th class="alnleft">Ідентифікатор<br> геномної збірки</th></tr>
+<tr><th class="alnleft">Організм</th><th class="numcol">Сума ентропії<sup> *</sup>, біти</th><th class="numcol">Середня ентропія<sup> *</sup>, біти</th><th class="numcol">Кількість мінливих позіцій</th><th class="numcol">Кількість копій генів</th><th class="alnleft">Ідентифікатор<br> геномної збірки</th></tr>
 <tr>
 <td colspan="6" class="subhead">Бактерії</td>
 </tr>

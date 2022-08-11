@@ -45,7 +45,6 @@ ASS_ACC_MERGED_FPATH="${WORKDIR}/${PREFIX}_refseq_accs_merged.tsv"
 ALL_GENES_FASTA="${GENES_DIR}/${PREFIX}_all_collected.fasta"
 ALL_GENES_STATS="${GENES_DIR}/${PREFIX}_all_collected_stats.tsv"
 
-# PER_GENOME_CAT_FPATH="${CATEGORIES_DIR}/${PREFIX}_per_genome_categories.tsv"
 CATEGORIES_FPATH="${CATEGORIES_DIR}/${PREFIX}_categories.tsv"
 SEQTECH_LOGFILE="${LOGS_DIR}/${PREFIX}_seqtech_log.log"
 
@@ -97,9 +96,9 @@ ENTROPY_FILE="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_entropy.tsv"
 
 
 # == Filter RefSeq .catalog file ==
-python3 "${SCRIPT_DIR}/filter_refseq_catalog.py" \
-  --raw-refseq-catalog "${REFSEQ_CATALOG_FILE}" \
-  --outfile "${FILTERED_REFSEQ_CATALOG_FILE}"
+# python3 "${SCRIPT_DIR}/filter_refseq_catalog.py" \
+#   --raw-refseq-catalog "${REFSEQ_CATALOG_FILE}" \
+#   --outfile "${FILTERED_REFSEQ_CATALOG_FILE}"
 
 
 # == Translate Assembly UIDs to RefSeq GI numbers ==
@@ -221,14 +220,22 @@ fi
 
 
 # == Compare all remainig genes to Rfam covariance model (cm) ==
-
-python3 "${SCRIPT_DIR}/compare_all_seqs_to_cm.py" \
-  --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
-  --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
-  --cmscan "${CMSCAN_FOR_FILTERING}" \
-  --cmpress "${CMPRESS_FOR_FILTERING}" \
-  --prev-tblout "${PREV_TBLOUT_FILE}" \
-  --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}"
+if [[ ! -z "${PREV_TBLOUT_FILE}" ]]; then
+  python3 "${SCRIPT_DIR}/compare_all_seqs_to_cm.py" \
+    --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
+    --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
+    --cmscan "${CMSCAN_FOR_FILTERING}" \
+    --cmpress "${CMPRESS_FOR_FILTERING}" \
+    --prev-tblout "${PREV_TBLOUT_FILE}" \
+    --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}"
+else 
+  python3 "${SCRIPT_DIR}/compare_all_seqs_to_cm.py" \
+    --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
+    --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
+    --cmscan "${CMSCAN_FOR_FILTERING}" \
+    --cmpress "${CMPRESS_FOR_FILTERING}" \
+    --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}"
+fi
 
 
 # == Find aberrant genes and record long indels ==

@@ -9,12 +9,16 @@
 ### Input files:
 # 1. `-f / --in-fasta-file` -- an input fasta file of SSU gene sequences.
 #   This file is the output of the script `drop_NNN.py`. Mandatory.
+# 2. `--prev-tblout` -- a file that is the output of this script, but for previous RiboGrove release.
+#   Use of previous data will speed up this script dramatically.
+#   If you a creating RiboGrove 8.214, then specify `--prev-tblout <TBLOUT_FILE_FOR_RIBOGROVE_7.213>`.
+#   Optional.
 
 ### Output files:
 # 1. `-o / --outdir` -- the output directory for the output files (mandatory argument):
-   # - the file `cmscan_output_table.tblout`. It is a TSV file of comparison statistics:
-   #   similariry score, dlignment coordinates etc.
-   # - the file `cmscan_output.txt` -- a txt file, which contains complete output of `cmscan`.
+#   - the file `cmscan_output_table.tblout`. It is a TSV file of comparison statistics:
+#       similariry score, alignment coordinates etc.
+#   - the file `cmscan_output.txt` -- a txt file, which contains complete output of `cmscan`.
 
 ### Dependencies:
 # 1. `--cmscan` -- a `cmscan` executable from Infernal (http://eddylab.org/infernal/).
@@ -95,7 +99,11 @@ args = parser.parse_args()
 
 # For convenience
 fasta_seqs_fpath = os.path.abspath(args.in_fasta_file)
-prev_tblout_fpath = os.path.abspath(args.prev_tblout)
+if not args.prev_tblout is None:
+    prev_tblout_fpath = os.path.abspath(args.prev_tblout)
+else:
+    prev_tblout_fpath = None
+# end if
 rfam_fpath = os.path.abspath(args.rfam_family_cm)
 outdpath = os.path.abspath(args.outdir)
 cmscan_fpath = os.path.abspath(args.cmscan)
@@ -128,9 +136,8 @@ if not os.path.isdir(outdpath):
     # end try
 # end if
 
-
 # Check if prev_tblout is specified
-if not prev_tblout_fpath is None:
+if not prev_tblout_fpath is None and prev_tblout_fpath != '':
     # A flag variable for convenience
     cached_tblout = True
 

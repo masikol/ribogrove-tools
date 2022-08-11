@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 
-# The script maps Assembly IDs to Taxonomy IDs using elink utility
-#   (https://www.ncbi.nlm.nih.gov/books/NBK25497/).
-# Requires Internet connection.
+# The script maps Assembly IDs to Taxonomy IDs using RefSeq `.catalog.gz` file.
+# The script retrieves TaxIDs from the `.catalog.gz` file.
 
 ## Command line arguments
 ### Input files:
 # 1. `-i / --assm-acc-file` -- a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).
 #   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
-# 2. `-f / --all-fasta-file` -- a fasta file with all extracted genes sequences.
-#   This file is the output of the script `extract_16S.py`. Mandatory.
+# 2. `-c / --refseq-catalog-file` -- A RefSeq "catalog" file of the current release.
+#   This is the file `RefSeq-releaseXXX.catalog.gz` from here:
+#   https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/.
+#   It is better to filter this file with `filter_refseq_catalog.py` before running current script.
 
 ### Output files:
 # 1. `--per-genome-outfile` -- an output TSV file mapping Assembly IDs to taxIDs.
@@ -26,10 +27,8 @@ import time
 import gzip
 import argparse
 import subprocess as sp
-from typing import List, Dict
 
 import pandas as pd
-from Bio import Entrez
 from Bio import SeqIO
 
 
@@ -67,10 +66,8 @@ args = parser.parse_args()
 
 # For convenience
 assm_acc_fpath = os.path.abspath(args.assm_acc_file)
-# fasta_seqs_fpath = os.path.abspath(args.all_fasta_file)
 refseq_catalog_fpath = os.path.abspath(args.refseq_catalog_file)
 per_genome_outfpath = os.path.abspath(args.per_genome_outfile)
-# email = args.email
 
 
 # Check existance of all input files and dependencies
@@ -178,7 +175,6 @@ with open(per_genome_outfpath, 'wt') as per_genome_outfile:
         if len(tax_ID_set) != 1:
             print(f'\nMultiple TaxIDs for Assembly ID {ass_id}: {", ".join(tax_ID_set)}')
             print(f'Using this taxID: {tax_id}')
-            # print(f'{ass_id} ({accs}): {tax_ID_set}')
         # end if
 
         # Write to per-genome output file

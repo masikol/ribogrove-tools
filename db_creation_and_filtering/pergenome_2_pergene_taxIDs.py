@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # The script maps seqIDs to TaxIDs using `--per-genome-taxID-file` file, which is the output
-#   of the script `get_taxIDs.py`.
+#   of the script `get_taxIDs_from_catalog.py`.
 
 ## Command line arguments
 ### Input files:
@@ -10,7 +10,7 @@
 # 2. `-f / --all-fasta-file` -- a fasta file with all extracted genes sequences.
 #   This file is the output of the script `extract_16S.py`. Mandatory.
 # 3. `--per-genome-taxID-file` -- a TSV file mapping Assembly IDs to taxIDs.
-#   This file is the output of the script `get_taxIDs.py`. Mandatory.
+#   This file is the output of the script `get_taxIDs_from_catalog.py`. Mandatory.
 
 ### Output files:
 # 1. `--per-gene-outfile` -- an output TSV file mapping seqIDs to taxIDs. Mandatory.
@@ -147,7 +147,6 @@ with open(per_gene_outfpath, 'wt') as per_gene_outfile:
         for seqID in curr_seqIDs:
             per_gene_outfile.write(f'{ass_id}\t{seqID}\t{taxID}\n')
         # end for
-
     # end for
 # end with
 

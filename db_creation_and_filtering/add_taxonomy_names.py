@@ -11,6 +11,9 @@
 ## Command line arguments
 
 ### Input files:
+# 1. `-i / --assm-acc-file` -- a TSV file (with header)
+#   with Assembly IDs, GI numbers, ACCESSION.VERSION's and titles separated by tabs.
+#   Mandatory.
 # 1. `--per-genome-taxid-file` -- a TSV file mapping Assembly IDs to taxIDs.
 #   This file is the output of the script `get_taxIDs.py`. Mandatory.
 # 2. `--per-gene-taxid-file` -- a TSV file mapping genes seqIDs to taxIDs.

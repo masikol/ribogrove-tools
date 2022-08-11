@@ -3,20 +3,20 @@
 <h2>Contents</h2>
 <ul>
 <li><a href="#overview">What is RiboGrove</a>
-<ul style="list-style-type: none;">
+<ul class="ribogrove-nested-list">
 <li><a href="#other-databases">RiboGrove and other 16S rRNA databases</a></li>
 <li><a href="#genome-categories">Genome categories</a></li>
 </ul>
 </li>
 <li><a href="#citing-ribogrove">Citing RiboGrove</a></li>
 <li><a href="#downloads">Downloads</a>
-<ul style="list-style-type: none;">
+<ul class="ribogrove-nested-list">
   <li><a href="#latest-release">Latest RiboGrove release</li>
   <li><a href="#release-archive">RiboGrove release archive</li>
 </ul>
 </li>
 <li><a href="#summary">Statistical summary</a>
-<ul style="list-style-type: none;">
+<ul class="ribogrove-nested-list">
 <li><a href="#db-size">RiboGrove size</a></li>
 <li><a href="#gene-lens">16S rRNA gene lengths</a></li>
 <li><a href="#copy-number">16S rRNA gene copy number</a></li>
@@ -27,7 +27,7 @@
 </ul>
 </li>
 <li><a href="#searching-data">Searching data in RiboGrove</a>
-<ul style="list-style-type: none;">
+<ul class="ribogrove-nested-list">
 <li><a href="#header-format">Header format</a></li>
 <li><a href="#subset-by-header">Subsetting sequences by header</a></li>
 <li><a href="#subset-by-len">Subsetting sequences by length</a></li>
@@ -342,7 +342,7 @@
 <table class="sum-table"><caption>Top-10 genomes with highest intragenomic variability of 16S rRNA genes
 </caption>
 <tbody>
-<tr><th class="alnleft">Organism</th><th class="numcol">Sum of entropy<sup> *</sup> (bits)</th><th class="numcol">Mean entropy<sup> *</sup> (bits)</th><th class="numcol">Number of variable positions</th><th class="numcol">Copy number</th><th class="alnleft">Assembly ID</th></tr>
+<tr><th class="alnleft">Organism</th><th class="numcol">Sum of entropy<sup> *</sup> (bits)</th><th class="numcol">Mean entropy<sup> *</sup> (bits)</th><th class="numcol">Number of variable positions</th><th class="numcol">Gene copy number</th><th class="alnleft">Assembly ID</th></tr>
 
 <tr>
 <td colspan="6" class="subhead">Bacteria</td>
