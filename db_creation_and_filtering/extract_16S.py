@@ -105,6 +105,19 @@ parser.add_argument(
     required=True
 )
 
+# Prev "cached" data
+
+parser.add_argument(
+    '--prev-all-genes-fasta',
+    help='output fasta file for genes sequences from previous RiboGrove release',
+    required=False
+)
+
+parser.add_argument(
+    '--prev-all-genes-stats',
+    help='output TSV file for per-replicon statistics from previous RiboGrove release',
+    required=False
+)
 
 args = parser.parse_args()
 
@@ -113,9 +126,20 @@ assm_acc_fpath = os.path.realpath(args.assm_acc_file)
 gbk_dpath = os.path.realpath(args.gbk_dir)
 fasta_outfpath = os.path.realpath(args.out_fasta)
 outstats_fpath = os.path.realpath(args.out_stats)
+
 cmsearch_fpath = os.path.realpath(args.cmsearch)
 rfam_family_fpath = os.path.realpath(args.rfam_family_cm)
 seqkit_fpath = os.path.realpath(args.seqkit)
+
+if not args.prev_all_genes_fasta is None and not args.prev_all_genes_stats is None:
+    cached_gene_seqs = True
+    prev_all_fasta_fpath = os.path.abspath(args.prev_all_genes_fasta)
+    prev_all_stats_fpath = os.path.abspath(args.prev_all_genes_stats)
+else:
+    cached_gene_seqs = False
+    prev_all_fasta_fpath = None
+    prev_all_stats_fpath = None
+# end if
 
 
 # Check existance of input file -i/--assm-acc-file
@@ -162,11 +186,23 @@ if not os.path.exists(rfam_family_fpath):
     sys.exit(1)
 # end if
 
+# Check if previous ("cached") files is specified
+if cached_gene_seqs:
+    for f in (prev_all_fasta_fpath, prev_all_stats_fpath):
+        if not os.path.exists(f):
+            print(f'Error: file `{f}` does not exist!')
+            sys.exit(1)
+        # end if
+    # end for
+# end if
+
 
 print(assm_acc_fpath)
 print(gbk_dpath)
 print(cmsearch_fpath)
 print(rfam_family_fpath)
+print(prev_all_fasta_fpath)
+print(prev_all_stats_fpath)
 print(seqkit_fpath)
 print()
 
@@ -566,12 +602,36 @@ def calc_gene_stats(extracted_genes: List[Tuple[str, str]]):
 # end def calc_gene_stats
 
 
+def create_acc_seqs_dict(fasta_fpath, cached_accs):
+    acc_seqs_dict = {acc: list() for acc in cached_accs}
+    seq_records = SeqIO.parse(fasta_fpath, 'fasta')
+
+    for sr in seq_records:
+        acc = sr.id.partition(':')[0]
+        acc_seqs_dict[acc].append(sr)
+    # end for
+
+    return acc_seqs_dict
+# end def
+
+
 # Read input data
 
 acc_df = pd.read_csv(
     assm_acc_fpath,
     sep='\t'
 )
+
+# Read "cached" data
+if cached_gene_seqs:
+    print('Reading cached data...')
+    cached_stats_df = pd.read_csv(prev_all_stats_fpath, sep='\t')
+    cached_accs = set(cached_stats_df['acc'])
+    acc_seqs_dict = create_acc_seqs_dict(prev_all_fasta_fpath, cached_accs)
+    print('done')
+else:
+    cached_accs = set()
+# end if
 
 # For testing purposes
 # accs_select = {
@@ -595,9 +655,28 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, open(outstats_fpath, 'wt') as 
     # For each RefSeq record: extract 16S rRNA genes from it
     for i, row in acc_df.drop_duplicates().iterrows():
 
+        acc = row['acc']
+
+        if acc in cached_accs:
+            curr_seq_records = acc_seqs_dict[acc]
+            for sr in curr_seq_records:
+                fasta_outfile.write(f'>{sr.description}\n{sr.seq}\n')
+            # end for
+
+            cached_acc_stats_df = cached_stats_df[cached_stats_df['acc'] == acc]
+            cached_acc_stats_df.to_csv(
+                stats_outfile,
+                sep='\t',
+                header=False,
+                index=False,
+                na_rep='NA',
+                encoding='utf-8'
+            )
+            continue # cache hit
+        # end if
+
         ass_id = row['ass_id']
         gi_number = row['gi_number']
-        acc = row['acc']
         title = row['title']
 
         print(f'\rDoing {i+1}/{n_accs}: {acc}', end=' '*10)

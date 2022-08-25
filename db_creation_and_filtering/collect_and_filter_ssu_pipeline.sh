@@ -94,6 +94,8 @@ RAW_PER_GENE_STATS="${WORKDIR}/${PREFIX}_raw_per_gene_stats.tsv"
 ENTROPY_FILE="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_entropy.tsv"
 
 if [[ ! -z "${PREV_WORKDIR}" ]]; then
+  PREV_ALL_GENES_FASTA="${PREV_WORKDIR}/gene_seqs/${PREFIX}_all_collected.fasta"
+  PREV_ALL_GENES_STATS="${PREV_WORKDIR}/gene_seqs/${PREFIX}_all_collected_stats.tsv"
   PREV_ASS_ACC_MERGED_FILE="${PREV_WORKDIR}/${PREFIX}_categories.tsv"
   PREV_CATEGORY_FILE="${PREV_WORKDIR}/categories/${PREFIX}_refseq_accs_merged.tsv"
   PREV_TBLOUT_FILE="${PREV_WORKDIR}/aberrations_and_heterogeneity/cmscan_output_table.tblout"
@@ -162,15 +164,27 @@ fi
 
 
 # == Extract 16S genes from downloaded genomes ==
-
-python3 "${SCRIPT_DIR}/extract_16S.py" \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --gbk-dir "${GENOMES_GBK_DIR}" \
-  --out-fasta "${ALL_GENES_FASTA}" \
-  --out-stats "${ALL_GENES_STATS}" \
-  --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
-  --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
-  --seqkit "${SEQKIT}"
+if [[ ! -z "${PREV_ALL_GENES_FASTA}" && ! -z "${PREV_ALL_GENES_STATS}" ]]; then
+  python3 "${SCRIPT_DIR}/extract_16S.py" \
+    --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+    --gbk-dir "${GENOMES_GBK_DIR}" \
+    --out-fasta "${ALL_GENES_FASTA}" \
+    --out-stats "${ALL_GENES_STATS}" \
+    --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
+    --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
+    --prev-all-genes-fasta "${PREV_ALL_GENES_FASTA}" \
+    --prev-all-genes-stats "${PREV_ALL_GENES_STATS}" \
+    --seqkit "${SEQKIT}"
+else
+  python3 "${SCRIPT_DIR}/extract_16S.py" \
+    --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+    --gbk-dir "${GENOMES_GBK_DIR}" \
+    --out-fasta "${ALL_GENES_FASTA}" \
+    --out-stats "${ALL_GENES_STATS}" \
+    --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
+    --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
+    --seqkit "${SEQKIT}"
+fi
 
 
 # === Taxonomy section ===

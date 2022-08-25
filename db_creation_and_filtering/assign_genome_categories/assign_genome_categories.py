@@ -235,6 +235,7 @@ def find_degenerate_in_16S(fasta_seqs_fpath: str, stats_df: pd.DataFrame, seqkit
 # end def find_degenerate_in_16S
 
 
+# TODO: remove seqkit from here
 def get_genes_seqIDs(fasta_seqs_fpath: str, seqkit_fpath: str) -> List[str]:
     # Function reports all seqIDs of sequences from given fasta file fasta_seqs_fpath.
 
