@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# TODO: update description
+
 # The script merges two files together:
 # 1) a TSV file, which is output of the script `assembly2gi_numbers.py` (`-c` option);
 # 2) a TSV file, which is output of the script `gis_to_accs.py` (`-c` option).

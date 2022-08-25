@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
+# TODO: add description
+
 import os
 
 print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
 
+import sys
 import gzip
 import argparse
 

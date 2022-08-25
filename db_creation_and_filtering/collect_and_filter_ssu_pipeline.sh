@@ -93,6 +93,12 @@ RAW_PER_GENE_STATS="${WORKDIR}/${PREFIX}_raw_per_gene_stats.tsv"
 
 ENTROPY_FILE="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_entropy.tsv"
 
+if [[ ! -z "${PREV_WORKDIR}" ]]; then
+  PREV_ASS_ACC_MERGED_FILE="${PREV_WORKDIR}/${PREFIX}_categories.tsv"
+  PREV_CATEGORY_FILE="${PREV_WORKDIR}/categories/${PREFIX}_refseq_accs_merged.tsv"
+  PREV_TBLOUT_FILE="${PREV_WORKDIR}/aberrations_and_heterogeneity/cmscan_output_table.tblout"
+fi
+
 
 # |=== Proceed ===|
 
@@ -201,13 +207,25 @@ python3 "${SCRIPT_DIR}/add_taxonomy_names.py" \
 
 # == Assign categories to downloaded genomes ==
 
-python3 "${SCRIPT_DIR}/assign_genome_categories/assign_genome_categories.py" \
-  --all-fasta-file "${ALL_GENES_FASTA}" \
-  --all-stats-file "${ALL_GENES_STATS}" \
-  --gbk-dir "${GENOMES_GBK_DIR}" \
-  --outfile "${CATEGORIES_FPATH}" \
-  --seqtech-logfile "${SEQTECH_LOGFILE}" \
-  --seqkit "${SEQKIT}"
+if [[ ! -z "${PREV_CATEGORY_FILE}" && ! -z "${PREV_ASS_ACC_MERGED_FILE}" ]]; then
+  python3 "${SCRIPT_DIR}/assign_genome_categories/assign_genome_categories.py" \
+    --all-fasta-file "${ALL_GENES_FASTA}" \
+    --all-stats-file "${ALL_GENES_STATS}" \
+    --gbk-dir "${GENOMES_GBK_DIR}" \
+    --outfile "${CATEGORIES_FPATH}" \
+    --seqtech-logfile "${SEQTECH_LOGFILE}" \
+    --prev-categories "${PREV_CATEGORY_FILE}" \
+    --prev-assm-acc-file "${PREV_ASS_ACC_MERGED_FILE}" \
+    --seqkit "${SEQKIT}"
+else
+  python3 "${SCRIPT_DIR}/assign_genome_categories/assign_genome_categories.py" \
+    --all-fasta-file "${ALL_GENES_FASTA}" \
+    --all-stats-file "${ALL_GENES_STATS}" \
+    --gbk-dir "${GENOMES_GBK_DIR}" \
+    --outfile "${CATEGORIES_FPATH}" \
+    --seqtech-logfile "${SEQTECH_LOGFILE}" \
+    --seqkit "${SEQKIT}"
+fi
 
 
 # == Drop genes from genomes containing at least 3 N's in a row ==

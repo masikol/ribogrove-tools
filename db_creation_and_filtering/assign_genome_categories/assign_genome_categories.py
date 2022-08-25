@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# TODO: update description
+
 # The script assigns categories to downlaoded genomes. Categories are assigned according
 #   to the reliability of a genome assembly.
 # The categories are the following:
@@ -73,6 +75,20 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '--prev-categories',
+    help='file of genome categories from previous RiboGrove release',
+    required=False
+)
+parser.add_argument(
+    '--prev-assm-acc-file',
+    help="""TSV file (with header) with
+    Assembly IDs, GI numbers, ACCESSION.VERSION's and titles separated by tabs
+    from previous RiboGrove release""",
+    required=False
+)
+
+
 # Output files
 
 parser.add_argument(
@@ -105,6 +121,15 @@ args = parser.parse_args()
 fasta_seqs_fpath = os.path.abspath(args.all_fasta_file)
 in_stats_fpath = os.path.abspath(args.all_stats_file)
 gbk_dpath = os.path.abspath(args.gbk_dir)
+if not args.prev_categories is None and not args.prev_assm_acc_file is None:
+    cached_categories = True
+    prev_categories_fpath = os.path.abspath(args.prev_categories)
+    prev_assm_acc_fpath = os.path.abspath(args.prev_assm_acc_file)
+else:
+    cached_categories = False
+    prev_categories_fpath = None
+    prev_assm_acc_fpath = None
+# end if
 outfpath = os.path.abspath(args.outfile)
 seqtech_logfpath = os.path.abspath(args.seqtech_logfile)
 seqkit_fpath = os.path.abspath(args.seqkit)
@@ -142,9 +167,21 @@ for some_dir in map(os.path.dirname, [outfpath, seqtech_logfpath]):
     # end if
 # end if
 
+# Check if previous ("cached") files is specified
+if cached_categories:
+    for f in (prev_categories_fpath, prev_assm_acc_fpath):
+        if not os.path.exists(f):
+            print(f'Error: file `{f}` does not exist!')
+            sys.exit(1)
+        # end if
+    # end for
+# end if
+
 print(fasta_seqs_fpath)
 print(in_stats_fpath)
 print(gbk_dpath)
+print(prev_categories_fpath)
+print(prev_assm_acc_fpath)
 print(seqtech_logfpath)
 print(seqkit_fpath)
 print()
@@ -394,9 +431,32 @@ ass_ids_degenerate_in_16S = find_degenerate_in_16S(fasta_seqs_fpath, stats_df, s
 print(f'Found {len(ass_ids_degenerate_in_16S)} assemblies containing 16S genes with degenerate bases')
 
 # Create dictionary that maps ACCESSION.VERSION's to seqIDs
-print('Building `acc_seqIDs_dict`')
+print('Building auxiliary data structures...')
 acc_seqIDs_dict = make_acc_seqIDs_dict(fasta_seqs_fpath, seqkit_fpath)
-print('`acc_seqIDs_dict` is built')
+print('done')
+
+
+def encode_accs(acc_list):
+    return ''.join(sorted(acc_list))
+# end def
+
+if cached_categories:
+    print('Reading cached files')
+
+    prev_categories_df = pd.read_csv(prev_categories_fpath, sep='\t')
+    cached_ass_ids = set(prev_categories_df['ass_id'])
+
+    prev_assm_acc_df = pd.read_csv(prev_assm_acc_fpath, sep='\t')
+    ass_ids = set(prev_assm_acc_df['ass_id'])
+    acc_code_dict = dict()
+    for ass_id in ass_ids:
+        accs = tuple(prev_assm_acc_df[prev_assm_acc_df['ass_id'] == ass_id]['acc'])
+        acc_code_dict[ass_id] = encode_accs(accs)
+    # end for
+    print('done')
+else:
+    cached_ass_ids = set()
+# end if
 
 
 # == Proceed ==
@@ -414,8 +474,27 @@ with open(outfpath, 'wt') as outfile, \
     for i, ass_id in enumerate(assembly_IDs):
         print(f'\rDoing {i+1}/{len(assembly_IDs)}: {ass_id}', end=' '*10)
 
+        # Try find cached data
+        if ass_id in cached_ass_ids:
+            accs = tuple(stats_df[stats_df['ass_id'] == ass_id]['acc'])
+            acc_code = encode_accs(accs)
+            if acc_code == acc_code_dict[ass_id]:
+                cached_ass_df = prev_categories_df[prev_categories_df['ass_id'] == ass_id]
+                cached_ass_df.to_csv(
+                    outfile,
+                    sep='\t',
+                    header=False,
+                    index=False,
+                    na_rep='NA',
+                    encoding='utf-8'
+                )
+                continue # cache hit
+            # end if
+        # end if
+
         # Get rows corresponding to current assembly
         ass_df = stats_df[stats_df['ass_id'] == ass_id]
+
 
         # Genome has (maybe, patrial) SSU genes in "map unlocalized" sequences
         unlocalized_16S = False
