@@ -3,9 +3,9 @@
 # Copyright (C) 2020 Howard Hughes Medical Institute.
 # Freely distributed under the BSD open source license.
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# query sequence file:                   /mnt/1.5_drive_0/16S_scrubbling/demo/gene_seqs/demo_bacteria_gene_seqs_no_NNN.fasta
-# target CM database:                    /mnt/1.5_drive_0/16S_scrubbling/rfam/RF00177_for_filtering.cm
-# tabular output of hits:                /mnt/1.5_drive_0/16S_scrubbling/demo/aberrations_and_heterogeneity/cmscan_output_table.tblout
+# query sequence file:                   /mnt/1.5_drive_0/tmp/demo_RiboGrove_workdir/gene_seqs/demo_bacteria_gene_seqs_no_NNN.fasta
+# target CM database:                    /mnt/1.5_drive_0/RiboGrove/RiboGrove_misc/rfam/demo_bacteria_RF00177_for_filtering.cm
+# tabular output of hits:                /mnt/1.5_drive_0/tmp/demo_RiboGrove_workdir/aberrations_and_heterogeneity/cmscan_output_table.tblout
 # prefer accessions over names:          yes
 # search top-strand only:                on
 # number of worker threads:              8
@@ -190,7 +190,7 @@ Envelopes passing glocal HMM envelope defn filter:               4  (1); expecte
 Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
 Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
 
-# CPU time: 3.00u 0.07s 00:00:03.07 Elapsed: 00:00:03.06
+# CPU time: 2.94u 0.07s 00:00:03.01 Elapsed: 00:00:03.02
 //
 Query:       NZ_CP063062.1:399242-400790_plus  [L=1549]
 Description: Chlamydia suis strain 111 Ry chromosome, complete genome
@@ -371,7 +371,7 @@ Envelopes passing glocal HMM envelope defn filter:               4  (1); expecte
 Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
 Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
 
-# CPU time: 2.93u 0.06s 00:00:02.99 Elapsed: 00:00:02.99
+# CPU time: 2.95u 0.06s 00:00:03.01 Elapsed: 00:00:03.01
 //
 Query:       NZ_CP066836.1:2159197-2160738_minus  [L=1542]
 Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
@@ -559,7 +559,7 @@ Envelopes passing glocal HMM envelope defn filter:               4  (1); expecte
 Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
 Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
 
-# CPU time: 2.98u 0.06s 00:00:03.04 Elapsed: 00:00:03.06
+# CPU time: 2.92u 0.06s 00:00:02.98 Elapsed: 00:00:02.98
 //
 Query:       NZ_CP066836.1:2975089-2976630_minus  [L=1542]
 Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
@@ -747,7 +747,7 @@ Envelopes passing glocal HMM envelope defn filter:               4  (1); expecte
 Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
 Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
 
-# CPU time: 2.97u 0.06s 00:00:03.03 Elapsed: 00:00:03.03
+# CPU time: 2.93u 0.06s 00:00:02.99 Elapsed: 00:00:02.99
 //
 Query:       NZ_CP066836.1:3016181-3017722_minus  [L=1542]
 Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
@@ -935,7 +935,7 @@ Envelopes passing glocal HMM envelope defn filter:               4  (1); expecte
 Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
 Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
 
-# CPU time: 2.97u 0.07s 00:00:03.04 Elapsed: 00:00:03.05
+# CPU time: 2.92u 0.03s 00:00:02.95 Elapsed: 00:00:02.95
 //
 Query:       NZ_CP066836.1:3150038-3151579_minus  [L=1542]
 Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
@@ -1123,7 +1123,7 @@ Envelopes passing glocal HMM envelope defn filter:               4  (1); expecte
 Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
 Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
 
-# CPU time: 2.93u 0.07s 00:00:03.00 Elapsed: 00:00:03.00
+# CPU time: 2.89u 0.05s 00:00:02.94 Elapsed: 00:00:02.94
 //
 Query:       NZ_CP066836.1:3243611-3245152_minus  [L=1542]
 Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
@@ -1311,7 +1311,7 @@ Envelopes passing glocal HMM envelope defn filter:               4  (1); expecte
 Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
 Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
 
-# CPU time: 2.91u 0.06s 00:00:02.97 Elapsed: 00:00:02.97
+# CPU time: 2.84u 0.05s 00:00:02.88 Elapsed: 00:00:02.89
 //
 Query:       NZ_CP066836.1:3797366-3798907_plus  [L=1542]
 Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
@@ -1499,7 +1499,7 @@ Envelopes passing glocal HMM envelope defn filter:               4  (1); expecte
 Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
 Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
 
-# CPU time: 2.97u 0.08s 00:00:03.05 Elapsed: 00:00:03.04
+# CPU time: 2.90u 0.06s 00:00:02.96 Elapsed: 00:00:02.96
 //
 Query:       NZ_CP066836.1:4599904-4601445_plus  [L=1542]
 Description: Escherichia coli strain Ec-FL1-1X chromosome, complete genome
@@ -1687,6 +1687,6 @@ Envelopes passing glocal HMM envelope defn filter:               4  (1); expecte
 Envelopes passing  local CM  CYK           filter:               4  (1); expected (0.0001)
 Total CM hits reported:                                          1  (0.25); includes 0 truncated hit(s)
 
-# CPU time: 2.91u 0.07s 00:00:02.98 Elapsed: 00:00:02.98
+# CPU time: 2.89u 0.04s 00:00:02.93 Elapsed: 00:00:02.93
 //
 [ok]

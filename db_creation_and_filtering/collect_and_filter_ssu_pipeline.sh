@@ -38,7 +38,9 @@ FILTERED_REFSEQ_CATALOG_FILE="${REFSEQ_CATALOG_FILE/.catalog.gz/_filtered.catalo
 
 ASS_ID_TO_GI_FPATH="${WORKDIR}/${PREFIX}_assembly_2_GI.tsv"
 
+ACC_BLACKLIST_FPATH="${SCRIPT_DIR}/accession_blacklist.tsv"
 GI_ACC_TITLES_FPATH="${WORKDIR}/${PREFIX}_refseq_accs.tsv"
+GI_ACC_TITLES_FILT_FPATH="${WORKDIR}/${PREFIX}_refseq_accs_filtered.tsv"
 
 ASS_ACC_MERGED_FPATH="${WORKDIR}/${PREFIX}_refseq_accs_merged.tsv"
 
@@ -96,9 +98,9 @@ ENTROPY_FILE="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_entropy.tsv"
 
 
 # == Filter RefSeq .catalog file ==
-# python3 "${SCRIPT_DIR}/filter_refseq_catalog.py" \
-#   --raw-refseq-catalog "${REFSEQ_CATALOG_FILE}" \
-#   --outfile "${FILTERED_REFSEQ_CATALOG_FILE}"
+python3 "${SCRIPT_DIR}/filter_refseq_catalog.py" \
+  --raw-refseq-catalog "${REFSEQ_CATALOG_FILE}" \
+  --outfile "${FILTERED_REFSEQ_CATALOG_FILE}"
 
 
 # == Translate Assembly UIDs to RefSeq GI numbers ==
@@ -115,13 +117,23 @@ python3 "${SCRIPT_DIR}/gis_to_accs.py" \
   --outfile "${GI_ACC_TITLES_FPATH}"
 
 
-# == Merge Assembly IDs to ACCESSION.VERSION's and titles ==
-# Moreover, this will remove "whole genome shotgun" sequences
+# == Remove unreliable and irrelevant genomic sequences ==
+# 1. Remove "whole genome shotgun" sequences.
+# 2. Remove sequences added to RefSeq after the current release.
+# 3. Remove sequences from the blacklist.
 
-python3 "${SCRIPT_DIR}/merge_assID2acc_and_remove_WGS.py" \
-  --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
+python3 "${SCRIPT_DIR}/remove_unwanted_refseq_seqs.py" \
   --gi-2-acc-file "${GI_ACC_TITLES_FPATH}" \
   --refseq-catalog "${FILTERED_REFSEQ_CATALOG_FILE}" \
+  --acc-blacklist "${ACC_BLACKLIST_FPATH}" \
+  --outfile "${GI_ACC_TITLES_FILT_FPATH}"
+
+
+# == Merge Assembly IDs to ACCESSION.VERSION's and titles ==
+
+python3 "${SCRIPT_DIR}/merge_assIDs_and_accs.py" \
+  --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
+  --gi-2-acc-file "${GI_ACC_TITLES_FILT_FPATH}" \
   --outfile "${ASS_ACC_MERGED_FPATH}"
 
 
