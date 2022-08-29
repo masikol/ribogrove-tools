@@ -307,7 +307,7 @@ if cached_tblout:
     fasta_seqs_fpath_for_cmscan = tmp_fasta_fpath
 
     # Let the garbage collector devour this objects
-    del seq_records, seqIDs, seqIDs_for_cmscan, prev_tblout_df, cached_seqIDs, seq_records_for_cmscan
+    del seq_records, seqIDs, seqIDs_for_cmscan, prev_tblout_df, cached_seqIDs
 # end if
 
 
@@ -330,26 +330,22 @@ command = ' '.join([
 
 # == Proceed ==
 
+all_seqs_are_cached = len(seq_records_for_cmscan) == 0
+if not all_seqs_are_cached:
+    print('Running cmscan command:')
+    print(command)
+    print('It will take a while: single sequence is processed for ~3 seconds')
+    print('To check progress, run this command (it will list all seqIDs of processed sequences):')
+    print(f'  grep -c "Query:" {output_file}')
 
-print('Running cmscan command:')
-print(command)
-print('It will take a while: single sequence is processed for ~3 seconds')
-print('To check progress, run this command (it will list all seqIDs of processed sequences):')
-print(f'  grep -c "Query:" {output_file}')
-
-exit_code = os.system(command)
-if exit_code != 0:
-    print('Error!')
+    exit_code = os.system(command)
+    if exit_code != 0:
+        print('Error!')
+        sys.exit(1)
+    # end if
 # end if
 
-
-# Reformat output .tblout table
-print(f'Reformatting output file `{tblout_fpath}`...')
-reformat_tblout(tblout_fpath, tblout_header)
-print('Done')
-
 if cached_tblout:
-
     # Remove temporary fasta file
     try:
         os.unlink(tmp_fasta_fpath)
@@ -359,17 +355,25 @@ if cached_tblout:
         print('Proceeding anyway\n')
     # end try
 
+    mode = 'w' if all_seqs_are_cached else 'a'
+
     # Add cached .tblout dataframe rows
     cached_tblout_df.to_csv(
         tblout_fpath,
         sep='\t',
         index=False,
         header=False,
-        mode='a',
+        mode=mode,
         na_rep='NA'
     )
-
 # end if
+
+
+# Reformat output .tblout table
+print(f'Reformatting output file `{tblout_fpath}`...')
+reformat_tblout(tblout_fpath, tblout_header)
+print('Done')
+
 
 print('\nCompleted!')
 print(output_file)

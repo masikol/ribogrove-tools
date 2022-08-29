@@ -75,11 +75,14 @@ parser.add_argument(
     required=True
 )
 
+# "Cached" files
+
 parser.add_argument(
     '--prev-categories',
     help='file of genome categories from previous RiboGrove release',
     required=False
 )
+
 parser.add_argument(
     '--prev-assm-acc-file',
     help="""TSV file (with header) with

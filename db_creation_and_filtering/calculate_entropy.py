@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# TODO: update descriptions
+
 # The script calculates per-base intragenomic entropy from non-aberrant genes.
 # The script aligns gene sequences with MUSCLE, and then caculates per-base entropy basing
 #   on this multiple sequence alignment. The script calculates variability of the
@@ -71,6 +73,22 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '--prev-per-base-entropy-file',
+    help="""TSV file (with header: ass_id,pos,entropy)
+    containing per-base intragenomic entropy. For example, file `per_base_demo_bacteria_entropy.tsv.gz`.
+    The file may be gzipped.""",
+    required=False
+)
+
+parser.add_argument(
+    '--prev-assm-acc-file',
+    help="""TSV file (with header) with
+    Assembly IDs, GI numbers, ACCESSION.VERSION's and titles separated by tabs
+    from previous RiboGrove release""",
+    required=False
+)
+
 
 # Output files
 
@@ -101,6 +119,17 @@ categories_fpath = os.path.abspath(args.categories_file)
 muscle_fpath = os.path.abspath(args.muscle)
 outfpath = os.path.abspath(args.outfile)
 
+cached_entropy = not args.prev_assm_acc_file         is None \
+             and not args.prev_per_base_entropy_file is None
+if cached_entropy:
+    prev_perbase_entropy_fpath = os.path.abspath(args.prev_per_base_entropy_file)
+    prev_assm_acc_fpath = os.path.abspath(args.prev_assm_acc_file)
+else:
+    cached_entropy = False
+    prev_perbase_entropy_fpath = None
+    prev_assm_acc_fpath = None
+# end if
+
 
 # Check existance of all input files and dependencies
 for fpath in (fasta_seqs_fpath, genes_stats_fpath, muscle_fpath, categories_fpath):
@@ -126,11 +155,23 @@ if not os.path.isdir(os.path.dirname(outfpath)):
     # end try
 # end if
 
+# Check if previous ("cached") files is specified
+if cached_entropy:
+    for f in (prev_perbase_entropy_fpath, prev_assm_acc_fpath):
+        if not os.path.exists(f):
+            print(f'Error: file `{f}` does not exist!')
+            sys.exit(1)
+        # end if
+    # end for
+# end if
+
 
 print(fasta_seqs_fpath)
 print(genes_stats_fpath)
 print(categories_fpath)
 print(muscle_fpath)
+print(prev_perbase_entropy_fpath)
+print(prev_assm_acc_fpath)
 print()
 
 
@@ -240,6 +281,45 @@ def calc_entropy(msa_records: Sequence[SeqRecord]) -> Sequence[float]:
 # end def calc_entropy
 
 
+def encode_accs(acc_list):
+    return ''.join(sorted(acc_list))
+# end def
+
+
+def read_maybegzipped_df_tsv(fpath):
+    if fpath.endswith('.gz'):
+        open_func = gzip.open
+    else:
+        open_func = open
+    # end if
+
+    with open_func(fpath, 'rt') as file:
+        df = pd.read_csv(file, sep='\t')
+    # end with
+
+    return df
+# end def
+
+
+if cached_entropy:
+    print('Reading cached files')
+
+    prev_perbase_entropy_df = read_maybegzipped_df_tsv(prev_perbase_entropy_fpath)
+    cached_ass_ids = set(prev_perbase_entropy_df['ass_id'])
+
+    prev_assm_acc_df = pd.read_csv(prev_assm_acc_fpath, sep='\t')
+    ass_ids = set(prev_assm_acc_df['ass_id'])
+    acc_code_dict = dict()
+    for ass_id in ass_ids:
+        accs = tuple(prev_assm_acc_df[prev_assm_acc_df['ass_id'] == ass_id]['acc'])
+        acc_code_dict[ass_id] = encode_accs(accs)
+    # end for
+    print('done')
+else:
+    cached_ass_ids = set()
+# end if
+
+
 # == Proceed ==
 
 # Read statistics file
@@ -268,12 +348,30 @@ with gzip.open(per_base_entropy_fpath, 'wt') as per_base_entropy_outfile:
     for i, ass_id in enumerate(ass_ids):
         print(f'\rDoing {i+1}/{len(ass_ids)}: {ass_id}', end=' '*10)
 
+        if ass_id in cached_ass_ids:
+            acc_list = tuple(stats_df[stats_df['ass_id'] == ass_id]['acc'])
+            acc_code = encode_accs(acc_list)
+            if acc_code == acc_code_dict[ass_id]:
+                cached_perbase_ass_df = prev_perbase_entropy_df[
+                    prev_perbase_entropy_df['ass_id'] == ass_id
+                ]
+                cached_perbase_ass_df.to_csv(
+                    per_base_entropy_outfile,
+                    sep='\t',
+                    header=False,
+                    index=False,
+                    na_rep='NA',
+                    encoding='utf-8'
+                )
+                continue # cache hit
+            # end if
+        # end if
+
         # Select genes sequnences for currnet genome
         selected_seq_records = select_gene_seqs(ass_id, seq_records, stats_df)
 
         # Perform MSA only if there are at least 2 sequences
         if len(selected_seq_records) > 1:
-
             # Perform MSA
             msa_records = do_msa(selected_seq_records, muscle_fpath)
 

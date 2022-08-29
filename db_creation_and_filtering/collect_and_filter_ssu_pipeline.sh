@@ -96,9 +96,10 @@ ENTROPY_FILE="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_entropy.tsv"
 if [[ ! -z "${PREV_WORKDIR}" ]]; then
   PREV_ALL_GENES_FASTA="${PREV_WORKDIR}/gene_seqs/${PREFIX}_all_collected.fasta"
   PREV_ALL_GENES_STATS="${PREV_WORKDIR}/gene_seqs/${PREFIX}_all_collected_stats.tsv"
-  PREV_ASS_ACC_MERGED_FILE="${PREV_WORKDIR}/${PREFIX}_categories.tsv"
-  PREV_CATEGORY_FILE="${PREV_WORKDIR}/categories/${PREFIX}_refseq_accs_merged.tsv"
+  PREV_ASS_ACC_MERGED_FILE="${PREV_WORKDIR}/${PREFIX}_refseq_accs_merged.tsv"
+  PREV_CATEGORY_FILE="${PREV_WORKDIR}/categories/${PREFIX}_categories.tsv"
   PREV_TBLOUT_FILE="${PREV_WORKDIR}/aberrations_and_heterogeneity/cmscan_output_table.tblout"
+  PREV_PERBASE_ENTROPY_FILE="${PREV_WORKDIR}/aberrations_and_heterogeneity/per_base_${PREFIX}_entropy.tsv.gz"
 fi
 
 
@@ -164,7 +165,7 @@ fi
 
 
 # == Extract 16S genes from downloaded genomes ==
-if [[ ! -z "${PREV_ALL_GENES_FASTA}" && ! -z "${PREV_ALL_GENES_STATS}" ]]; then
+if [[ ! -z "${PREV_WORKDIR}" ]]; then
   python3 "${SCRIPT_DIR}/extract_16S.py" \
     --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
     --gbk-dir "${GENOMES_GBK_DIR}" \
@@ -221,7 +222,7 @@ python3 "${SCRIPT_DIR}/add_taxonomy_names.py" \
 
 # == Assign categories to downloaded genomes ==
 
-if [[ ! -z "${PREV_CATEGORY_FILE}" && ! -z "${PREV_ASS_ACC_MERGED_FILE}" ]]; then
+if [[ ! -z "${PREV_WORKDIR}" ]]; then
   python3 "${SCRIPT_DIR}/assign_genome_categories/assign_genome_categories.py" \
     --all-fasta-file "${ALL_GENES_FASTA}" \
     --all-stats-file "${ALL_GENES_STATS}" \
@@ -264,7 +265,7 @@ fi
 
 
 # == Compare all remainig genes to Rfam covariance model (cm) ==
-if [[ ! -z "${PREV_TBLOUT_FILE}" ]]; then
+if [[ ! -z "${PREV_WORKDIR}" ]]; then
   python3 "${SCRIPT_DIR}/compare_all_seqs_to_cm.py" \
     --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
@@ -394,9 +395,20 @@ python3 "${SCRIPT_DIR}/merge_bases_categories_taxonomy.py" \
 
 # == Calculate entropy -- intragenomic variability ==
 
-python3 "${SCRIPT_DIR}/calculate_entropy.py" \
-  --fasta-seqs-file "${ANNOTATED_RESULT_FASTA}" \
-  --genes-stats-file "${FINAL_GENES_STATS}" \
-  --categories-file "${CATEGORIES_FPATH}" \
-  --outfile "${ENTROPY_FILE}" \
-  --muscle "${MUSCLE}"
+if [[ ! -z "${PREV_WORKDIR}" ]]; then
+  python3 "${SCRIPT_DIR}/calculate_entropy.py" \
+    --fasta-seqs-file "${ANNOTATED_RESULT_FASTA}" \
+    --genes-stats-file "${FINAL_GENES_STATS}" \
+    --categories-file "${CATEGORIES_FPATH}" \
+    --outfile "${ENTROPY_FILE}" \
+    --prev-per-base-entropy-file "${PREV_PERBASE_ENTROPY_FILE}" \
+    --prev-assm-acc-file "${PREV_ASS_ACC_MERGED_FILE}" \
+    --muscle "${MUSCLE}"
+else
+  python3 "${SCRIPT_DIR}/calculate_entropy.py" \
+    --fasta-seqs-file "${ANNOTATED_RESULT_FASTA}" \
+    --genes-stats-file "${FINAL_GENES_STATS}" \
+    --categories-file "${CATEGORIES_FPATH}" \
+    --outfile "${ENTROPY_FILE}" \
+    --muscle "${MUSCLE}"
+fi
