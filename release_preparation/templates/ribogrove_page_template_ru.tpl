@@ -234,14 +234,17 @@
 <p><sup>*</sup> Метрики, помеченные звёздочкой, были рассчитаны с предварительной нормализацией данных, а именно: медианные значения длины внутри каждого вида использовались для расчёта этих метрик.</p>
 <div id="copy-number" class="pad-anchor"></div>
 <table class="sum-table">
-<caption>Число копий генов 16S рРНК<br><small>(Бактерии и Археи)</small></caption>
+<caption>Число копий генов 16S рРНК</caption>
 <tbody>
-<tr><th class="numcol">Число копий <sup>*</sup></th><th class="numcol">Количество видов</th><th class="numcol">Процент видов, %</th></tr>
+<tr><th class="numcol">Число копий <sup>*</sup></th><th class="numcol" colspan="2">Бактерии</th><th class="numcol" colspan="2">Археи</th></tr>
+<tr><td></td><td>Количество видов</td><td>Процент видов, %</td><td>Количество видов</td><td>Процент видов, %</td></tr>
 {% for _, row in ribogrove_copy_number_df.iterrows() %}
 <tr class="sumtab-row">
 <td class="numcol">{{ row['copy_number'] }}</td>
-<td class="numcol">{{ row['number_of_species'] }}</td>
-<td class="numcol">{{ row['percent_of_species'] }}</td>
+<td class="numcol">{{ row['number_of_species_bacteria'] }}</td>
+<td class="numcol">{{ row['percent_of_species_bacteria'] }}</td>
+<td class="numcol">{{ row['number_of_species_archaea'] }}</td>
+<td class="numcol">{{ row['percent_of_species_archaea'] }}</td>
 </tr>
 {% endfor %}
 </tbody>

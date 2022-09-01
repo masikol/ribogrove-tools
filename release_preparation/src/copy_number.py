@@ -7,14 +7,49 @@ from src.formatting import format_int_number, format_float_number
 
 
 def make_ribogrove_copy_number_df(gene_stats_df):
+    bacteria_gcn_df = _make_per_species_median_gcn_df(gene_stats_df, 'Bacteria')
+    archaea_gcn_df  = _make_per_species_median_gcn_df(gene_stats_df,  'Archaea')
 
+    merged_gcn_df = bacteria_gcn_df.merge(
+        archaea_gcn_df,
+        on='copy_number',
+        how='left'
+    ).fillna(0)
+
+    merged_gcn_df.columns = [
+        'copy_number',
+        'number_of_species_bacteria',
+        'percent_of_species_bacteria',
+        'number_of_species_archaea',
+        'percent_of_species_archaea',
+    ]
+
+    int_colnames = [
+        'copy_number',
+        'number_of_species_bacteria',
+        'number_of_species_archaea',
+    ]
+    for colname in int_colnames:
+        merged_gcn_df[colname] = merged_gcn_df[colname].map(int)
+    # end for
+
+    print(merged_gcn_df.shape)
+    print(merged_gcn_df)
+
+    return merged_gcn_df
+# end def make_ribogrove_copy_number_df
+
+
+def _make_per_species_median_gcn_df(gene_stats_df, domain_name):
     series_nunique = lambda x: x.nunique()
 
-    by_genome_copy_number_df = gene_stats_df.groupby('ass_id', as_index=False) \
+    domain_gene_stats_df = gene_stats_df[gene_stats_df['domain'] == domain_name]
+
+    by_genome_copy_number_df = domain_gene_stats_df.groupby('ass_id', as_index=False) \
         .agg({'seqID': series_nunique}) \
         .rename(columns={'seqID': 'copy_number'}) \
         .merge(
-            gene_stats_df[['ass_id', 'species']].drop_duplicates(),
+            domain_gene_stats_df[['ass_id', 'species']].drop_duplicates(),
             on='ass_id',
             how='left'
         )
@@ -28,7 +63,7 @@ def make_ribogrove_copy_number_df(gene_stats_df):
         .agg({'species': series_nunique}) \
         .rename(columns={'species': 'number_of_species'})
 
-    total_species_count = gene_stats_df['species'].nunique()
+    total_species_count = domain_gene_stats_df['species'].nunique()
 
     ribogrove_copy_number_df['percent_of_species'] = ribogrove_copy_number_df['number_of_species'] \
                                                      / total_species_count \
@@ -39,10 +74,8 @@ def make_ribogrove_copy_number_df(gene_stats_df):
         ascending=True
     )
 
-    print(ribogrove_copy_number_df)
-
     return ribogrove_copy_number_df
-# end def make_ribogrove_copy_number_df
+# end def
 
 
 def format_copy_number_df(ribogrove_copy_number_df, thousand_separator, decimal_separator):
@@ -62,10 +95,14 @@ def format_copy_number_df(ribogrove_copy_number_df, thousand_separator, decimal_
     fmt_ribogrove_copy_number_df = ribogrove_copy_number_df.copy()
     fmt_ribogrove_copy_number_df['copy_number'] = fmt_ribogrove_copy_number_df['copy_number'] \
         .map(curr_format_int_number)
-    fmt_ribogrove_copy_number_df['number_of_species'] = fmt_ribogrove_copy_number_df['number_of_species'] \
-        .map(curr_format_int_number)
-    fmt_ribogrove_copy_number_df['percent_of_species'] = fmt_ribogrove_copy_number_df['percent_of_species'] \
-        .map(curr_format_float_number)
+    fmt_ribogrove_copy_number_df['number_of_species_bacteria'] = \
+        fmt_ribogrove_copy_number_df['number_of_species_bacteria'].map(curr_format_int_number)
+    fmt_ribogrove_copy_number_df['percent_of_species_bacteria'] = \
+        fmt_ribogrove_copy_number_df['percent_of_species_bacteria'].map(curr_format_float_number)
+    fmt_ribogrove_copy_number_df['number_of_species_archaea'] = \
+        fmt_ribogrove_copy_number_df['number_of_species_archaea'].map(curr_format_int_number)
+    fmt_ribogrove_copy_number_df['percent_of_species_archaea'] = \
+        fmt_ribogrove_copy_number_df['percent_of_species_archaea'].map(curr_format_float_number)
 
     return fmt_ribogrove_copy_number_df
 # end def format_copy_number_df

@@ -253,7 +253,7 @@ print('done\n')
 
 
 # Language stuff
-# (English, Russian)
+# (English, Belarusian, Ukrainian, Russian)
 
 template_fpaths = (
     'ribogrove_page_template_en.tpl',

@@ -234,15 +234,18 @@
 <p><sup>*</sup> Metrics marked with this sign were calculated with preliminary normalization, i.e. median within-species gene length were used for the summary.</p>
 <div id="copy-number" class="pad-anchor"></div>
 <table class="sum-table">
-<caption>16S rRNA gene copy number<br><small>(Bacteria and Archaea)</small></caption>
+<caption>16S rRNA gene copy number</caption>
 <tbody>
-<tr><th class="numcol">Copy number <sup>*</sup></th><th class="numcol">Number of species</th><th class="numcol">Per cent of species (%)</th></tr>
+<tr><th class="numcol">Copy number <sup>*</sup></th><th class="numcol" colspan="2">Bacteria</th><th class="numcol" colspan="2">Archaea</th></tr>
+<tr><td></td><td>Number of species</td><td>Per cent of species (%)</td><td>Number of species</td><td>Per cent of species (%)</td></tr>
 
 {% for _, row in ribogrove_copy_number_df.iterrows() %}
 <tr class="sumtab-row">
 <td class="numcol">{{ row['copy_number'] }}</td>
-<td class="numcol">{{ row['number_of_species'] }}</td>
-<td class="numcol">{{ row['percent_of_species'] }}</td>
+<td class="numcol">{{ row['number_of_species_bacteria'] }}</td>
+<td class="numcol">{{ row['percent_of_species_bacteria'] }}</td>
+<td class="numcol">{{ row['number_of_species_archaea'] }}</td>
+<td class="numcol">{{ row['percent_of_species_archaea'] }}</td>
 </tr>
 {% endfor %}
 
