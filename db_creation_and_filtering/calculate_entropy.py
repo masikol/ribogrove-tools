@@ -36,7 +36,7 @@ from array import array
 import subprocess as sp
 from io import StringIO
 from functools import reduce
-from typing import Sequence, List
+from typing import Sequence, Dict, List
 
 import numpy as np
 import pandas as pd
@@ -176,23 +176,19 @@ print()
 
 
 def select_gene_seqs(ass_id: str,
-    seq_records: Sequence[str],
-    stats_df: pd.DataFrame) -> Sequence[SeqRecord]:
-
-    # Get ACCESSION.VERSION's for current assembly
-    accs = set(stats_df[stats_df['ass_id'] == ass_id]['acc'])
-
-    # Filter genes from current genome
-    selected_seq_records = tuple(
-        filter(
-            lambda r: r.id.split(':')[1] in accs,
-            seq_records
-        )
+                     seq_records: Sequence[SeqRecord]) -> Sequence[SeqRecord]:
+    selected_seq_records = filter(
+        lambda r: get_ass_id_from_seq_record(r) == ass_id,
+        seq_records
     )
-
     # Make result dictionary and return it
-    return selected_seq_records
-# end def select_gene_seqs
+    return tuple(selected_seq_records)
+# end def
+
+
+def get_ass_id_from_seq_record(seq_record):
+    return int(seq_record.id.partition(':')[0][2:])
+# end def
 
 
 
@@ -368,7 +364,7 @@ with gzip.open(per_base_entropy_fpath, 'wt') as per_base_entropy_outfile:
         # end if
 
         # Select genes sequnences for currnet genome
-        selected_seq_records = select_gene_seqs(ass_id, seq_records, stats_df)
+        selected_seq_records = select_gene_seqs(ass_id, seq_records)
 
         # Perform MSA only if there are at least 2 sequences
         if len(selected_seq_records) > 1:

@@ -114,54 +114,54 @@ fi
 
 # == Translate Assembly UIDs to RefSeq GI numbers ==
 
-# python3 "${SCRIPT_DIR}/assembly2gi_numbers.py" \
-#   --assm-id-file "${ASSEMBLY_IDS_FPATH}" \
-#   --outfile "${ASS_ID_TO_GI_FPATH}"
+python3 "${SCRIPT_DIR}/assembly2gi_numbers.py" \
+  --assm-id-file "${ASSEMBLY_IDS_FPATH}" \
+  --outfile "${ASS_ID_TO_GI_FPATH}"
 
 
-# # == Translate RefSeq GI numbers to corresponding ACCESSION.VERSION's and titles ==
+# == Translate RefSeq GI numbers to corresponding ACCESSION.VERSION's and titles ==
 
-# python3 "${SCRIPT_DIR}/gis_to_accs.py" \
-#   --gi-file "${ASS_ID_TO_GI_FPATH}" \
-#   --outfile "${GI_ACC_TITLES_FPATH}"
-
-
-# # == Remove unreliable and irrelevant genomic sequences ==
-# # 1. Remove "whole genome shotgun" sequences.
-# # 2. Remove sequences added to RefSeq after the current release.
-# # 3. Remove sequences from the blacklist.
-
-# python3 "${SCRIPT_DIR}/remove_unwanted_refseq_seqs.py" \
-#   --gi-2-acc-file "${GI_ACC_TITLES_FPATH}" \
-#   --refseq-catalog "${FILTERED_REFSEQ_CATALOG_FILE}" \
-#   --acc-blacklist "${ACC_BLACKLIST_FPATH}" \
-#   --outfile "${GI_ACC_TITLES_FILT_FPATH}"
+python3 "${SCRIPT_DIR}/gis_to_accs.py" \
+  --gi-file "${ASS_ID_TO_GI_FPATH}" \
+  --outfile "${GI_ACC_TITLES_FPATH}"
 
 
-# # == Merge Assembly IDs to ACCESSION.VERSION's and titles ==
+# == Remove unreliable and irrelevant genomic sequences ==
+# 1. Remove "whole genome shotgun" sequences.
+# 2. Remove sequences added to RefSeq after the current release.
+# 3. Remove sequences from the blacklist.
 
-# python3 "${SCRIPT_DIR}/merge_assIDs_and_accs.py" \
-#   --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
-#   --gi-2-acc-file "${GI_ACC_TITLES_FILT_FPATH}" \
-#   --outfile "${ASS_ACC_MERGED_FPATH}"
-
-
-# # == Download genomes ==
-
-# python3 "${SCRIPT_DIR}/download_genomes.py" \
-#   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-#   --outdir "${GENOMES_GBK_DIR}" \
-#   --log-file "${LOGS_DIR}/${PREFIX}_download_genomes.log"
+python3 "${SCRIPT_DIR}/remove_unwanted_refseq_seqs.py" \
+  --gi-2-acc-file "${GI_ACC_TITLES_FPATH}" \
+  --refseq-catalog "${FILTERED_REFSEQ_CATALOG_FILE}" \
+  --acc-blacklist "${ACC_BLACKLIST_FPATH}" \
+  --outfile "${GI_ACC_TITLES_FILT_FPATH}"
 
 
-# # == Extract Rfam covariance model for 16S rRNA genes extraction ==
+# == Merge Assembly IDs to ACCESSION.VERSION's and titles ==
 
-# "${CMFETCH}" "${RFAM_FOR_EXTRACT_16S}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_EXTRACT_16S}"
-# if [[ $? != 0 ]]; then
-#   echo 'Error!'
-#   echo "Cannot extract model for family ${RFAM_FAMILY_ID} from file ${RFAM_FOR_EXTRACT_16S}"
-#   exit 1
-# fi
+python3 "${SCRIPT_DIR}/merge_assIDs_and_accs.py" \
+  --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
+  --gi-2-acc-file "${GI_ACC_TITLES_FILT_FPATH}" \
+  --outfile "${ASS_ACC_MERGED_FPATH}"
+
+
+# == Download genomes ==
+
+python3 "${SCRIPT_DIR}/download_genomes.py" \
+  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
+  --outdir "${GENOMES_GBK_DIR}" \
+  --log-file "${LOGS_DIR}/${PREFIX}_download_genomes.log"
+
+
+# == Extract Rfam covariance model for 16S rRNA genes extraction ==
+
+"${CMFETCH}" "${RFAM_FOR_EXTRACT_16S}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_EXTRACT_16S}"
+if [[ $? != 0 ]]; then
+  echo 'Error!'
+  echo "Cannot extract model for family ${RFAM_FAMILY_ID} from file ${RFAM_FOR_EXTRACT_16S}"
+  exit 1
+fi
 
 
 # == Extract 16S genes from downloaded genomes ==

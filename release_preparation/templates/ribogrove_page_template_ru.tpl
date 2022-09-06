@@ -385,21 +385,21 @@
 <div id="header-format" class="pad-anchor"></div>
 <h3>Формат fasta-заголовка</h3>
 <p>Fasta-файлы, составляющие базу данных RiboGrove имеют следующий формат заголовка:</p>
-<p class="samp-highl samp-vwide">&gt;G_10567291:NZ_CP079719.1:86193-87742:plus ;d__Bacteria;p__Firmicutes;c__Bacilli;o__Bacillales;f__Bacillaceae;g__Bacillus;s__velezensis; category:2</p>
+<p class="samp-highl samp-vwide">&gt;G_324861:NZ_CP009686.1:8908-10459:plus ;Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Bacillus;cereus; category:1</p>
 <p>Основные части заголовка отделены друг от друга пробелами. Заголовок состоит из трёх таких частей:</p>
 <ol>
-<li>Идентификатор последовательности (seqID): <span class="samp-highl">G_10567291:NZ_CP079719.1:86193-87742:plus</span>. SeqID, в свою очередь, состоит из четырёх частей, отделённых друг от друга двоеточиями (<span class="samp-highl">:</span>):
+<li>Идентификатор последовательности (seqID): <span class="samp-highl">G_324861:NZ_CP009686.1:8908-10459:plus</span>. SeqID, в свою очередь, состоит из четырёх частей, отделённых друг от друга двоеточиями (<span class="samp-highl">:</span>):
 <ol>
-<li>Идентификатор сборки генома, которому принадлежит последовательность гена: <span class="samp-highl">G_10567291</span>. Перед идентификатором сборки пишется префикс <span class="samp-highl">G_</span>, чтобы обеспечить специфичность поиска.</li>
-<li>Код доступа геномной последовательности из БД RefSeq, которой принадлежит последовательность гена: <span class="samp-highl">NZ_CP079719.1</span>.</li>
-<li>Координаты гена в пределах геномной последовательности из RefSeq: <span class="samp-highl">86193-87742</span> (отсчёт координат начинается с единицы, правая и левая координаты включены в интервал).</li>
+<li>Идентификатор сборки генома, которому принадлежит последовательность гена: <span class="samp-highl">G_324861</span>. Перед идентификатором сборки пишется префикс <span class="samp-highl">G_</span>, чтобы обеспечить специфичность поиска.</li>
+<li>Код доступа геномной последовательности из БД RefSeq, которой принадлежит последовательность гена: <span class="samp-highl">NZ_CP009686.1</span>.</li>
+<li>Координаты гена в пределах геномной последовательности из RefSeq: <span class="samp-highl">8908-10459</span> (отсчёт координат начинается с единицы, правая и левая координаты включены в интервал).</li>
 <li>Знак цепи геномной последовательности из RefSeq, на которой расположен ген: <span class="samp-highl">plus</span> (либо <span class="samp-highl">minus</span>).</li>
 </ol>
 </li>
-<li>Строка таксономии, а именно названия домена (<span class="samp-highl">Bacteria</span>), отдела (<span class="samp-highl">Firmicutes</span>), класса (<span class="samp-highl">Bacilli</span>), порядка (<span class="samp-highl">Bacillales</span>), семейства (<span class="samp-highl">Bacillaceae</span>) и рода (<span class="samp-highl">Bacillus</span>), а также видовой эпитет (<span class="samp-highl">velezensis</span>).<br>
+<li>Строка таксономии, а именно названия домена (<span class="samp-highl">Bacteria</span>), отдела (<span class="samp-highl">Firmicutes</span>), класса (<span class="samp-highl">Bacilli</span>), порядка (<span class="samp-highl">Bacillales</span>), семейства (<span class="samp-highl">Bacillaceae</span>) и рода (<span class="samp-highl">Bacillus</span>), а также видовой эпитет (<span class="samp-highl">cereus</span>).<br>
 Перед каждым названием пишется префикс, который обозначает ранг: <span class="samp-highl">d__</span> для домена, <span class="samp-highl">p__</span> для отдела, <span class="samp-highl">c__</span> для класса, <span class="samp-highl">o__</span> для порядка, <span class="samp-highl">f__</span> для семейства, <span class="samp-highl">g__</span> для рода и <span class="samp-highl">s__</span> для видового эпитета. В префиксах после буквы пишутся <strong>два</strong> знака нижнего подчёркивания.<br>
 Названия разделены и окружены точками с запятой (<span class="samp-highl">;</span>).</li>
-<li>Категория генома, и которого происходит ген: (<span class="samp-highl">category:2</span>). Сборки геномов 1-й категории наиболее достоверны, а геномов 3-й категории &mdash; наименее достоверны.</li>
+<li>Категория генома, и которого происходит ген: (<span class="samp-highl">category:1</span>).</li>
 </ol>
 <h3>Выборка последовательностей</h3>
 <p>Отбирать последовательности из fasta-файлов можно с помощью программы <strong>Seqkit</strong> (<a href="https://github.com/shenwei356/seqkit">ГитХаб-репозиторий</a>, <a href="https://bioinf.shenwei.me/seqkit/">документация</a>). Это бесплатная, кроссплатформенная, многофункциональная и весьма шустрая программа; она может обрабатывать gzip&rsquo;нутые и простые fasta-файлы. Для выборки данных из fasta-файлов удобно использовать программы <span class="samp">seqkit grep</span> и <span class="samp">seqkit seq</span>.</p>
@@ -407,10 +407,10 @@
 <h4>Выборка последовательностей по заголовку</h4>
 <p>Пусть мы делаем выборку из файла <span class="samp">ribogrove_6.212_sequences.fasta.gz</span>. Полезными могут быть следующие примеры команд для выборки последовательностей с помощью <span class="samp">seqkit grep</span>:</p>
 <p><strong>Пример 1</strong>. Выбрать индивидуальную последовательность по идентификатору (seqID).</p>
-<p class="samp-highl samp-vwide">seqkit grep -p "G_10567291:NZ_CP079719.1:86193-87742:plus" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit grep -p "G_324861:NZ_CP009686.1:8908-10459:plus" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Опция <span class="samp">-p</span> задаёт строку, которую программа будет искать в fasta-заголовках (на самом дела, только в той части заголовков, в которой записан seqID).</p>
-<p><strong>Пример 2</strong>. Выбрать все последовательности генов, которые происходят из индивидуальной геномной последовательности single из БД RefSeq, по коду доступа геномной последовательности <span class="samp">NZ_CP079719.1</span>.</p>
-<p class="samp-highl samp-vwide">seqkit grep -nrp ":NZ_CP079719.1:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p><strong>Пример 2</strong>. Выбрать все последовательности генов, которые происходят из индивидуальной геномной последовательности single из БД RefSeq, по коду доступа геномной последовательности <span class="samp">NZ_CP009686.1</span>.</p>
+<p class="samp-highl samp-vwide">seqkit grep -nrp ":NZ_CP009686.1:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Тут, нужно указывать ещё две опции: <span class="samp">-n</span> и <span class="samp">-r</span>. Первая указывает программе, что ей следует искать вхождение строки-запроса в заголовках целиком, а не только в seqID. Вторая опция указывает программе, что ей следует искать не только полные совпадения (строка-запрос идентична полному заголовку), но и частичные (когда строка-запрос является подстрокой заголовка).</p>
 <p class="samp-comment">Чтобы обеспечить специфичность поиска, окружайте код доступа двоеточиями (<span class="samp-highl">:</span>).</p>
 <p><strong>Пример 3</strong>. Выбрать все последовательности генов индивидуального генома (идентификатор геномной сборки <a href="https://www.ncbi.nlm.nih.gov/assembly/10577151">10577151</a>).</p>
@@ -423,7 +423,7 @@
 <p class="samp-highl samp-vwide">seqkit grep -nrp "category:1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p><strong>Пример 6</strong>. Выбрать все последовательности генов, кроме тех, которые принадлежат фирмикутам.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nvrp ";p__Firmicutes;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p class="samp-comment">Обратите внимание на опцию <span class="samp">-v</span> внутри строки с опциями (<span class="samp">-nvrp</span>). Эта опция инвертирует поведение программы, и теперь она находит только те последовательности, в заголовках которых нет подстроки <span class="samp">;p__Firmicutes;</span>.</p>
+<p class="samp-comment">Обратите внимание на опцию <span class="samp">-v</span> внутри строки с опциями (<span class="samp">-nvrp</span>). Эта опция инвертирует поведение программы, и теперь она находит только те последовательности, в заголовках которых нет подстроки &laquo;<span class="samp">;p__Firmicutes;</span>&raquo;.</p>
 <div id="subset-by-len" class="pad-anchor"></div>
 <h4>Выборка последовательностей по длине</h4>
 <p>Отбирать последовательности по длине можно с помощью программы <span class="samp">seqkit seq</span>.</p>

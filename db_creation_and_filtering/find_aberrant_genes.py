@@ -196,23 +196,19 @@ print()
 
 
 def select_gene_seqs(ass_id: str,
-    seq_records: Sequence[str],
-    stats_df: pd.DataFrame) -> Dict[str, SeqRecord]:
-
-    # Get ACCESSION.VERSION's for current assembly
-    accs = set(stats_df[stats_df['ass_id'] == ass_id]['acc'])
-
-    # Filter genes from current genome
-    selected_seq_records = tuple(
-        filter(
-            lambda r: r.id.split(':')[1] in accs,
-            seq_records
-        )
+                     seq_records: Sequence[str]) -> Dict[str, SeqRecord]:
+    selected_seq_records = filter(
+        lambda r: get_ass_id_from_seq_record(r) == ass_id,
+        seq_records
     )
-
     # Make result dictionary and return it
     return {r.id: r for r in selected_seq_records}
-# end def select_gene_seqs
+# end def
+
+
+def get_ass_id_from_seq_record(seq_record):
+    return int(seq_record.id.partition(':')[0][2:])
+# end def
 
 
 def pairwise_align(
@@ -433,8 +429,8 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
     for i, ass_id in enumerate(ass_ids):
         print(f'\rDoing genome #{i+1}/{len(ass_ids)}: {ass_id}', end=' '*10)
 
-         # Select SSU genes from current genome
-        selected_seq_records = select_gene_seqs(ass_id, seq_records, stats_df)
+        # Select SSU genes from current genome
+        selected_seq_records = select_gene_seqs(ass_id, seq_records)
 
         if len(selected_seq_records) == 0:
             continue

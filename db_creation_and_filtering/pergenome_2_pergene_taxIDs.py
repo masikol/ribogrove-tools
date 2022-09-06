@@ -28,6 +28,7 @@ from typing import Sequence
 
 import pandas as pd
 from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
 
 
 # == Parse arguments ==
@@ -97,24 +98,41 @@ if not os.path.isdir(os.path.dirname(per_gene_outfpath)):
 # end if
 
 
+# TODO: remove completely
+# def select_gene_seqIDs(ass_id: str,
+#     seq_records: Sequence[str],
+#     ass_acc_df: pd.DataFrame) -> Sequence[str]:
+
+#     # Get ACCESSION.VERSION's for current assembly
+#     accs = set(ass_acc_df[ass_acc_df['ass_id'] == ass_id]['acc'])
+
+#     # Filter genes from current genome
+#     selected_seq_records = tuple(
+#         filter(
+#             lambda r: r.id.split(':')[1] in accs,
+#             seq_records
+#         )
+#     )
+
+#     # Make result dictionary and return it
+#     return tuple(map(lambda r: r.id, selected_seq_records))
+# # end def
+
+
 def select_gene_seqIDs(ass_id: str,
-    seq_records: Sequence[str],
-    ass_acc_df: pd.DataFrame) -> Sequence[str]:
-
-    # Get ACCESSION.VERSION's for current assembly
-    accs = set(ass_acc_df[ass_acc_df['ass_id'] == ass_id]['acc'])
-
-    # Filter genes from current genome
-    selected_seq_records = tuple(
-        filter(
-            lambda r: r.id.split(':')[1] in accs,
-            seq_records
-        )
+                       seq_records: Sequence[SeqRecord]) -> Sequence[str]:
+    selected_seq_records = filter(
+        lambda r: get_ass_id_from_seq_record(r) == ass_id,
+        seq_records
     )
-
-    # Make result dictionary and return it
+    # Make result tuple and return it
     return tuple(map(lambda r: r.id, selected_seq_records))
-# end def select_gene_seqs
+# end def
+
+
+def get_ass_id_from_seq_record(seq_record):
+    return int(seq_record.id.partition(':')[0][2:])
+# end def
 
 
 ass_acc_df = pd.read_csv(ass_acc_fpath, sep='\t')
@@ -142,7 +160,7 @@ with open(per_gene_outfpath, 'wt') as per_gene_outfile:
             set(ass_acc_df[ass_acc_df['ass_id'] == ass_id]['taxID'])
         ))
 
-        curr_seqIDs = select_gene_seqIDs(ass_id, seq_records, ass_acc_df)
+        curr_seqIDs = select_gene_seqIDs(ass_id, seq_records)
 
         for seqID in curr_seqIDs:
             per_gene_outfile.write(f'{ass_id}\t{seqID}\t{taxID}\n')

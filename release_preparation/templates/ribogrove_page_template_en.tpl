@@ -386,21 +386,21 @@
 <div id="header-format" class="pad-anchor"></div>
 <h3>Header format</h3>
 <p>RiboGrove fasta data has the following format of header:</p>
-<p class="samp-highl samp-vwide">&gt;G_10567291:NZ_CP079719.1:86193-87742:plus ;d__Bacteria;p__Firmicutes;c__Bacilli;o__Bacillales;f__Bacillaceae;g__Bacillus;s__velezensis; category:2</p>
+<p class="samp-highl samp-vwide">&gt;G_324861:NZ_CP009686.1:8908-10459:plus ;Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Bacillus;cereus; category:1</p>
 <p>Major blocks of a header are separated by spaces. A header consists of three such blocks:</p>
 <ol>
-<li>Sequence ID (seqID): <span class="samp-highl">G_10567291:NZ_CP079719.1:86193-87742:plus</span>. SeqID, in turn, consists of four parts separated by semicolons (<span class="samp-highl">:</span>):
+<li>Sequence ID (seqID): <span class="samp-highl">G_324861:NZ_CP009686.1:8908-10459:plus</span>. SeqID, in turn, consists of four parts separated by semicolons (<span class="samp-highl">:</span>):
 <ol>
-<li>The assembly ID of the genome, from which the gene originates: <span class="samp-highl">G_10567291</span>. Assembly ID is preceded by the prefix <span class="samp-highl">G_</span> to ensure search specificity.</li>
-<li>The accession number of the RefSeq sequence, from which the gene originates: <span class="samp-highl">NZ_CP079719.1</span>.</li>
-<li>Coordinates of the gene within this RefSeq genomic sequence: <span class="samp-highl">86193-87742</span> (coordinates are 1-based, left-closed and right-closed).</li>
+<li>The assembly ID of the genome, from which the gene originates: <span class="samp-highl">G_324861</span>. Assembly ID is preceded by the prefix <span class="samp-highl">G_</span> to ensure search specificity.</li>
+<li>The accession number of the RefSeq sequence, from which the gene originates: <span class="samp-highl">NZ_CP009686.1</span>.</li>
+<li>Coordinates of the gene within this RefSeq genomic sequence: <span class="samp-highl">8908-10459</span> (coordinates are 1-based, left-closed and right-closed).</li>
 <li>Strand of the RefSeq genomic sequence, where the gene is located: <span class="samp-highl">plus</span> (or <span class="samp-highl">minus</span>).</li>
 </ol>
 </li>
-<li>A taxonomy string, comprising domain (<span class="samp-highl">Bacteria</span>), phylum (<span class="samp-highl">Firmicutes</span>), class (<span class="samp-highl">Bacilli</span>), order (<span class="samp-highl">Bacillales</span>), family (<span class="samp-highl">Bacillaceae</span>), genus (<span class="samp-highl">Bacillus</span>) names, and the specific epithet (<span class="samp-highl">velezensis</span>).<br>
+<li>A taxonomy string, comprising domain (<span class="samp-highl">Bacteria</span>), phylum (<span class="samp-highl">Firmicutes</span>), class (<span class="samp-highl">Bacilli</span>), order (<span class="samp-highl">Bacillales</span>), family (<span class="samp-highl">Bacillaceae</span>), genus (<span class="samp-highl">Bacillus</span>) names, and the specific epithet (<span class="samp-highl">cereus</span>).<br>
 Each name is preceded by a prefix, which denotes rank: <span class="samp-highl">d__</span> for domain, <span class="samp-highl">p__</span> for phylum, <span class="samp-highl">c__</span> for class, <span class="samp-highl">o__</span> for order, <span class="samp-highl">f__</span> for family, <span class="samp-highl">g__</span> for genus, and <span class="samp-highl">s__</span> for specific epithet. Prefixes contain <strong>double</strong> underscores.<br>
 The taxonomic names are separated and flanked by semicolons (<span class="samp-highl">;</span>).</li>
-<li>The category of the genome, from which the gene sequence originates: (<span class="samp-highl">category:2</span>). Category 1 genomes are of the highest reliability, and category 3 genomes are least reliable.</li>
+<li>The category of the genome, from which the gene sequence originates: (<span class="samp-highl">category:1</span>).</li>
 </ol>
 <h3>Subsetting sequences</h3>
 <p>You can subset specific sequences from fasta files using the <strong>Seqkit</strong> program (<a href="https://github.com/shenwei356/seqkit">GitHub repo</a>, <a href="https://bioinf.shenwei.me/seqkit/">documentation</a>). It is free, cross-platform, multifunctional and pretty fast and can process both gzipped and uncompressed fasta files. Programs <span class="samp">seqkit grep</span> and <span class="samp">seqkit seq</span> are useful for sequence subsetting.</p>
@@ -408,10 +408,10 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
 <h4>Subsetting sequences by header</h4>
 <p>Given the downloaded fasta file <span class="samp">ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</span>, consider the following examples of sequence subsetting using <span class="samp">seqkit grep</span>:</p>
 <p><strong>Example 1</strong>. Select a single sequence by SeqID.</p>
-<p class="samp-highl samp-vwide">seqkit grep -p "G_10567291:NZ_CP079719.1:86193-87742:plus" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit grep -p "G_324861:NZ_CP009686.1:8908-10459:plus" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">The <span class="samp">-p</span> option sets a pattern to search in fasta headers (only in sequence IDs, actually).</p>
-<p><strong>Example 2</strong>. Select all gene sequences of a single RefSeq genomic sequence by accession number.</p>
-<p class="samp-highl samp-vwide">seqkit grep -nrp ":NZ_CP079719.1:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p><strong>Example 2</strong>. Select all gene sequences of a single RefSeq genomic sequence by accession number <span class="samp">NZ_CP009686.1</span>.</p>
+<p class="samp-highl samp-vwide">seqkit grep -nrp ":NZ_CP009686.1:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Here, two more options are required: <span class="samp">-n</span> and <span class="samp">-r</span>. The former tells the program to match the whole headers instead of IDs only. The latter tells the program not to exclude partial matches from output, i.e. if the pattern is a substring of a header, the header will be printed to output.</p>
 <p class="samp-comment">To ensure search specificity, surround the Accession.Version with colons (<span class="samp-highl">:</span>).</p>
 <p><strong>Example 3</strong>. Select all gene sequences of a single genome (Assembly ID <a href="https://www.ncbi.nlm.nih.gov/assembly/10577151">10577151</a>).</p>
@@ -424,7 +424,7 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
 <p class="samp-highl samp-vwide">seqkit grep -nrp "category:1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p><strong>Example 6</strong>. Select all sequences except for those belonging to <i>Firmicutes</i>.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nvrp ";p__Firmicutes;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p class="samp-comment">Recognize the <span class="samp">-v</span> option within option sequence <span class="samp">-nvrp</span>. This option inverts match, i.e. without it the search would result in sequences belonging to <i>Firmicutes</i> only.</p>
+<p class="samp-comment">Recognize the <span class="samp">-v</span> option within option sequence <span class="samp">-nvrp</span>. This option inverts match, i.e. output will comprise sequences, headers of which do <strong>not</strong> contain substring &ldquo;<span class="samp">;p__Firmicutes;</span>&rdquo;.</p>
 <div id="subset-by-len" class="pad-anchor"></div>
 <h4>Subsetting sequences by length</h4>
 <p>You can use program <span class="samp">seqkit seq</span> to subset sequences by length.</p>
