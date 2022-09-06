@@ -92,14 +92,8 @@ def make_species_name(raw_species):
     if raw_species.startswith('Candidatus '):
         species_name = species_name.replace('Candidatus ', '')
     # end if
-    
-    species_name = species_name.partition(' ')[2]
 
-    # TODO: remove completely
-    # species_match = re.match(r'^[a-z]+$', species_name)
-    # if species_match is None:
-    #     species_name = ''
-    # # end if
+    species_name = species_name.partition(' ')[2]
 
     return species_name
 # end def

@@ -35,7 +35,7 @@ def gene_seqs_2_stats(seqs_fasta_fpath: str, ass_acc_fpath: str, stats_outfpath:
     print('Creating auxiliary data structures...')
     seq_record_dict = dict()
     for seq_record in seq_records:
-        acc = seq_record.id.partition(':')[0]
+        acc = seq_record.id.split(':')[1]
         try:
             seq_record_dict[acc].append(seq_record)
         except KeyError:

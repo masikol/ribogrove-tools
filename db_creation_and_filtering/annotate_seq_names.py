@@ -99,6 +99,19 @@ print(cat_fpath)
 print()
 
 
+def make_species_name(raw_species):
+    species_name = raw_species
+    
+    if raw_species.startswith('Candidatus '):
+        species_name = species_name.replace('Candidatus ', '')
+    # end if
+
+    species_name = species_name.partition(' ')[2]
+
+    return species_name
+# end def
+
+
 tax_sep = ';'
 
 # == Proceed ==
@@ -151,30 +164,34 @@ with open(outfpath, 'wt') as outfile:
         # Select line of taxonomy DF for current sequence
         curr_tax_record = tax_df.loc[seq_record.id, ]
 
-        # Form taxonomy (lineage) string
-        taxonomy = tax_sep.join(
-            (
-                'NA' if pd.isnull(curr_tax_record['domain']) else curr_tax_record['domain'],
-                'NA' if pd.isnull(curr_tax_record['phylum']) else curr_tax_record['phylum'],
-                'NA' if pd.isnull(curr_tax_record['class']) else curr_tax_record['class'],
-                'NA' if pd.isnull(curr_tax_record['order']) else curr_tax_record['order'],
-                'NA' if pd.isnull(curr_tax_record['family']) else curr_tax_record['family'],
-                'NA' if pd.isnull(curr_tax_record['genus']) else curr_tax_record['genus'],
-            )
-        )
+        raw_species_name = 'NA' if pd.isnull(curr_tax_record['species']) else curr_tax_record['species']
+        species_name = make_species_name(raw_species_name)
 
-        # Form taxonomy name
-        if not pd.isnull(curr_tax_record['tax_name']):
-            tax_name = curr_tax_record['tax_name'].replace(' ', '_')
-        else:
-            tax_name = 'no_taxonomy_name'
-        # end if
+        tax_names = [
+            'NA' if pd.isnull(curr_tax_record[ 'domain']) else curr_tax_record[ 'domain'],
+            'NA' if pd.isnull(curr_tax_record[ 'phylum']) else curr_tax_record[ 'phylum'],
+            'NA' if pd.isnull(curr_tax_record[  'class']) else curr_tax_record[  'class'],
+            'NA' if pd.isnull(curr_tax_record[  'order']) else curr_tax_record[  'order'],
+            'NA' if pd.isnull(curr_tax_record[ 'family']) else curr_tax_record[ 'family'],
+            'NA' if pd.isnull(curr_tax_record[  'genus']) else curr_tax_record[  'genus'],
+            species_name,
+        ]
+
+        prefixes = ['d__', 'p__', 'c__', 'o__', 'f__', 'g__', 's__',]
+
+        tax_names_with_prefixes = [
+            '{}{}'.format(prefix, name) for prefix, name in zip(prefixes, tax_names)
+        ]
+
+        # Form taxonomy (lineage) string
+        taxonomy = tax_sep.join(tax_names_with_prefixes)
+        taxonomy = taxonomy.replace(' ', '_')
 
         # Select category
         category = cat_df[cat_df['seqID'] == seq_record.id]['category'].values[0]
 
         # Form header for output fasta file
-        seq_record.description = f'{seq_record.id} {tax_name} {tax_sep}{taxonomy}{tax_sep} category:{category}'
+        seq_record.description = f'{seq_record.id} {tax_sep}{taxonomy}{tax_sep} category:{category}'
 
         outfile.write(f'>{seq_record.description}\n{seq_record.seq}\n')
     # end for

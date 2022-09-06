@@ -315,7 +315,7 @@ def seq_start_may_truncate_ssu(gbrecord: SeqRecord, features: List[SeqFeature]):
 # end def seq_start_may_truncate_ssu
 
 
-def extract_gene_as_is(feature: SeqFeature, gbrecord: SeqRecord):
+def extract_gene_as_is(feature: SeqFeature, gbrecord: SeqRecord, ass_id: int):
     # Function extracts sequence of gene feature `feature` from `gbrecord`
 
     # We will report 1-based left-closed and right-closed coordinates
@@ -332,7 +332,7 @@ def extract_gene_as_is(feature: SeqFeature, gbrecord: SeqRecord):
     # end if
 
     # Set `strand` value
-    strand_str = 'plus' if seq_strand == 1 else 'minus'
+    strand_word = 'plus' if seq_strand == 1 else 'minus'
 
     # Remove chars '<' and '>': they will appear if
     #   Bio.SeqFeature.BeforePosition or Bio.SeqFeature.AfterPosition
@@ -340,10 +340,21 @@ def extract_gene_as_is(feature: SeqFeature, gbrecord: SeqRecord):
     seq_start_for_header = str(seq_start).replace('<', '')
     seq_end_for_header = str(seq_end).replace('>', '')
 
-    header = f'{gbrecord.id}:{seq_start_for_header}-{seq_end_for_header}_{strand_str} {gbrecord.description}'
+    seqID = make_seqID(ass_id, gbrecord.id, seq_start_for_header, seq_end_for_header, strand_word)
+    header = f'{seqID} {gbrecord.description}'
 
     return header, seq
 # end def extract_gene_as_is
+
+
+def make_seqID(ass_id, acc, seq_start, seq_end, strand_word):
+    return 'G_{}:{}:{}-{}:{}'.format(
+        ass_id,
+        acc,
+        seq_start, seq_end,
+        strand_word
+    )
+# end def
 
 
 def run_cmsearch(fasta_fpath: str):
@@ -491,7 +502,7 @@ def extract_gene_seq_after_cmsearch(
 # end def extract_gene_seq_1based_coords
 
 
-def extract_reannotated_genes(gbrecord: SeqRecord, topology: str):
+def extract_reannotated_genes(gbrecord: SeqRecord, topology: str, ass_id: int):
     # Function reannotates 16S rRNA genes in `gbrecord` with cmsearch
     #   and extracts sequences of discovered genes from it.
 
@@ -544,27 +555,18 @@ def extract_reannotated_genes(gbrecord: SeqRecord, topology: str):
             seq = seq.reverse_complement()
         # end if
 
-        strand_str = 'plus' if seq_strand == '+' else 'minus'
+        strand_word = 'plus' if seq_strand == '+' else 'minus'
 
         seq_start_for_header = seq_start
         seq_end_for_header = seq_end
 
         # Configure sequence header
-        seq_header = '{}:{}-{}_{} {}'\
-            .format(
-                gbrecord.id,
-                seq_start_for_header,
-                seq_end_for_header,
-                strand_str,
-                gbrecord.description
-            )
+        seqID = make_seqID(ass_id, gbrecord.id, seq_start_for_header, seq_end_for_header, strand_word)
+        seq_header = f'{seqID} {gbrecord.description}'
 
         # Add extracted gene to the list
         genes.append(
-            (
-                seq_header,
-                seq
-            )
+            (seq_header, seq)
         )
     # end for
 
@@ -607,7 +609,7 @@ def create_acc_seqs_dict(fasta_fpath, cached_accs):
     seq_records = SeqIO.parse(fasta_fpath, 'fasta')
 
     for sr in seq_records:
-        acc = sr.id.partition(':')[0]
+        acc = sr.id.split(':')[1]
         acc_seqs_dict[acc].append(sr)
     # end for
 
@@ -710,13 +712,13 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, open(outstats_fpath, 'wt') as 
         if improper_16S_annotation or (seq_start_truncation and topology == 'circular'):
             # Reannotate 16S rRNA genes using cmsearch
             # And extract reannotated genes
-            extracted_genes = extract_reannotated_genes(gbrecord, topology)
+            extracted_genes = extract_reannotated_genes(gbrecord, topology, ass_id)
             for header, seq in extracted_genes:
                 fasta_outfile.write(f'>{header}\n{seq}\n')
             # end for
         else:
             # Just extract genes, that have been already annotated
-            extracted_genes = [extract_gene_as_is(f, gbrecord) for f in ssu_features]
+            extracted_genes = [extract_gene_as_is(f, gbrecord, ass_id) for f in ssu_features]
             for header, seq in extracted_genes:
                 fasta_outfile.write(f'>{header}\n{seq}\n')
             # end for

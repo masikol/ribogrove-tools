@@ -185,7 +185,7 @@ def select_gene_seqs(ass_id: str,
     # Filter genes from current genome
     selected_seq_records = tuple(
         filter(
-            lambda r: r.id.partition(':')[0] in accs,
+            lambda r: r.id.split(':')[1] in accs,
             seq_records
         )
     )

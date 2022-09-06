@@ -238,29 +238,19 @@ def find_degenerate_in_16S(fasta_seqs_fpath: str, stats_df: pd.DataFrame, seqkit
 # end def find_degenerate_in_16S
 
 
-# TODO: remove seqkit from here
-def get_genes_seqIDs(fasta_seqs_fpath: str, seqkit_fpath: str) -> List[str]:
+def get_genes_seqIDs(fasta_seqs_fpath: str) -> List[str]:
     # Function reports all seqIDs of sequences from given fasta file fasta_seqs_fpath.
 
-    # Configure command reporting seqIDs of fasta file
-    cmd = f'{seqkit_fpath} seq -ni {fasta_seqs_fpath}'
-    pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
-    stdout_stderr = pipe.communicate()
-
-    if pipe.returncode != 0:
-        print('Error at popen: extracting genes\' seqIDs')
-        print(stdout_stderr[1].decode('utf-8'))
-        sys.exit(pipe.returncode)
-    else:
-        # Parse seqIDs
-        genes_seqIDs = list(stdout_stderr[0].decode('utf-8').split('\n'))
-    # end if
+    seq_records = SeqIO.parse(fasta_seqs_fpath, 'fasta')
+    genes_seqIDs = tuple(
+        (r.id for r in seq_records)
+    )
 
     return genes_seqIDs
-# end def get_genes_seqIDs
+# end def
 
 
-def make_acc_seqIDs_dict(fasta_seqs_fpath: str, seqkit_fpath: str) -> Dict[str, List[str]]:
+def make_acc_seqIDs_dict(fasta_seqs_fpath: str) -> Dict[str, List[str]]:
     # Function creates dictionary that maps accessions to seqIDs
 
     # Get all seqIDs of gene sequences.
@@ -268,7 +258,7 @@ def make_acc_seqIDs_dict(fasta_seqs_fpath: str, seqkit_fpath: str) -> Dict[str, 
     #   therefore, we do this `reversed` here
     genes_seqIDs = list(
         reversed(
-            get_genes_seqIDs(fasta_seqs_fpath, seqkit_fpath)
+            get_genes_seqIDs(fasta_seqs_fpath)
         )
     )
 
@@ -277,7 +267,7 @@ def make_acc_seqIDs_dict(fasta_seqs_fpath: str, seqkit_fpath: str) -> Dict[str, 
     for _ in range(len(genes_seqIDs)):
 
         seqID = genes_seqIDs.pop() # get next seqID
-        acc = seqID.partition(':')[0] # parse ACCESSION.VERSION from seqID
+        acc = seqID.split(':')[1] # parse ACCESSION.VERSION from seqID
 
         # Fill dictionary
         try:
@@ -436,7 +426,7 @@ print(f'Found {len(ass_ids_degenerate_in_16S)} assemblies containing 16S genes w
 
 # Create dictionary that maps ACCESSION.VERSION's to seqIDs
 print('Building auxiliary data structures...')
-acc_seqIDs_dict = make_acc_seqIDs_dict(fasta_seqs_fpath, seqkit_fpath)
+acc_seqIDs_dict = make_acc_seqIDs_dict(fasta_seqs_fpath)
 print('done')
 
 

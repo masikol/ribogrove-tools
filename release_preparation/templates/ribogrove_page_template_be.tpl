@@ -399,16 +399,20 @@
 <div id="header-format" class="pad-anchor"></div>
 <h3>Фармат загалоўка</h3>
 <p>Запісы паслядоўнасцяў RiboGrove у фармаце fasta маюць наступны фармат загалоўка:</p>
-<p class="samp-highl samp-vwide">&gt;NZ_CP079719.1:86193-87742_plus Bacillus_velezensis ;Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Bacillus; category:2</p>
-<p>Асноўныя часткі загалоўка адасобленыя адна ад адной прабеламі. У загалоўку павінна быць чатыры такія часткі:</p>
+<p class="samp-highl samp-vwide">&gt;G_10567291:NZ_CP079719.1:86193-87742:plus ;d__Bacteria;p__Firmicutes;c__Bacilli;o__Bacillales;f__Bacillaceae;g__Bacillus;s__velezensis; category:2</p>
+<p>Асноўныя часткі загалоўка адасобленыя адна ад адной прабеламі. У загалоўку павінна быць тры такія часткі:</p>
 <ol>
-<li>Ідэнтыфікатар паслядоўнасці (SeqID): <span class="samp-highl">NZ_CP079719.1:86193-87742_plus</span>. SeqID, у сваю чаргу, складаецца з трох частак:<ol>
-<li>код доступу паслядоўнасці RefSeq, з якой паходзіць паслядоўнасць гена: <span class="samp-highl">NZ_CP079719.1</span>;</li>
-<li>каардынаты гена у гэтай геномнай паслядоўнасці: <span class="samp-highl">86193-87742</span> (нумерацыя ідзе з 1-кі, інтэрвалы уключаюць левыя і правыя межы);</li>
-<li>ланцуг геномнай паслядоўнасці, на якой ген знаходзіцца: <span class="samp-highl">plus</span> (альбо <span class="samp-highl">minus</span>).</li>
-</ol></li>
-<li>Поўнае імя арганізма, згодна з <a href="https://ncbi.nlm.nih.gov/taxonomy">базай дадзеных NCBI Taxonomy</a>: <span class="samp-highl">Bacillus_velezensis</span>.</li>
-<li>Радок таксаноміі, а менавіта назвы дамену (<span class="samp-highl">Bacteria</span>), тыпу (<span class="samp-highl">Firmicutes</span>), класу (<span class="samp-highl">Bacilli</span>), парадку (<span class="samp-highl">Bacillales</span>), сямейства (<span class="samp-highl">Bacillaceae</span>) ды роду (<span class="samp-highl">Bacillus</span>). Назвы адасобленыя і аточаныя кропкамі з коскай (<span class="samp-highl">;</span>).</li>
+<li>Ідэнтыфікатар паслядоўнасці (SeqID): <span class="samp-highl">G_10567291:NZ_CP079719.1:86193-87742:plus</span>. SeqID, у сваю чаргу, складаецца з чатырох частак, адасобленых двукроп&rsquo;ямі (<span class="samp-highl">:</span>):
+<ol>
+<li>Ідэнтыфікатар зборкі геному, з якога паходзіць паслядоўнасць гена: <span class="samp-highl">G_10567291</span>. Перад ідэнтыфікатарам зборкі пішацца прэфікс <span class="samp-highl">G_</span>, каб забяспечыць спецыфічнасць пошуку.</li>
+<li>Код доступу паслядоўнасці RefSeq, з якой паходзіць паслядоўнасць гена: <span class="samp-highl">NZ_CP079719.1</span>.</li>
+<li>Каардынаты гена у гэтай геномнай паслядоўнасці: <span class="samp-highl">86193-87742</span> (нумерацыя ідзе з 1-кі, інтэрвалы уключаюць левыя і правыя межы).</li>
+<li>Ланцуг геномнай паслядоўнасці, на якой ген знаходзіцца: <span class="samp-highl">plus</span> (альбо <span class="samp-highl">minus</span>).</li>
+</ol>
+</li>
+<li>Радок таксаноміі, а менавіта назвы дамену (<span class="samp-highl">Bacteria</span>), тыпу (<span class="samp-highl">Firmicutes</span>), класу (<span class="samp-highl">Bacilli</span>), парадку (<span class="samp-highl">Bacillales</span>), сямейства (<span class="samp-highl">Bacillaceae</span>), роду (<span class="samp-highl">Bacillus</span>), а таксама відавы эпітэт (<span class="samp-highl">velezensis</span>).<br>
+Перад кожнай назвай пішацца прэфікс, які пазначае ранг: <span class="samp-highl">d__</span> для дамену, <span class="samp-highl">p__</span> для тыпу, <span class="samp-highl">c__</span> для класу, <span class="samp-highl">o__</span> для парадку, <span class="samp-highl">f__</span> для сямейства, <span class="samp-highl">g__</span> для роду і <span class="samp-highl">s__</span> для відавага эпітэту. У прэфіксах пасля літары пішуцца <strong>два</strong> знакі ніжняга падкрэслівання.<br>
+Таксанамічныя назвы адасобленыя і аточаныя кропкамі з коскай (<span class="samp-highl">;</span>).</li>
 <li>Катэгорыя генома, з якога паслядоўнасць гена паходзіць: (<span class="samp-highl">category:2</span>). Геномы катэгорыі 1 найбольш надзейныя, а катэгорыі 3 &mdash; найменш надзейныя.</li>
 </ol>
 <h3>Адбор паслядоўнасцяў</h3>
@@ -417,21 +421,23 @@
 <h4>Адбор паслядоўнасцяў паводле загалоўкаў</h4>
 <p>Няхай мы робім выбарку з файла <span class="samp">ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</span>. Карыснымі могуць быць наступныя прыклады каманд карыстання праграмай <span class="samp">seqkit grep</span>:</p>
 <p><strong>Прыклад 1</strong>. Выбраць адну паслядоўнасць паводле SeqID.</p>
-<p class="samp-highl samp-vwide">seqkit grep -p "NZ_CP079719.1:86193-87742_plus" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit grep -p "G_10567291:NZ_CP079719.1:86193-87742:plus" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Опцыя <span class="samp">-p</span> задае радок, які праграма будзе шукаць у fasta-загалоўках (на самой справе, толькі ў той частцы загалоўкаў, дзе запісаны SeqID: да першага прабела).</p>
 <p><strong>Прыклад 2</strong>. Выбраць усе паслядоўнасці генаў адной геномнай паслядоўнасці RefSeq паводле кода доступу.</p>
-<p class="samp-highl samp-vwide">seqkit grep -nrp "NZ_CP079719.1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p class="samp-highl samp-vwide">seqkit grep -nrp ":NZ_CP079719.1:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Тут спатрэбяцца яшчэ дзве опцыі: <span class="samp">-n</span> і <span class="samp">-r</span>. Першая кажа праграме шукаць падрадкі&#769; у загалоўках цалкам, а не толькі ў ідэнтыфікатарах (SeqID). Другая опцыя кажа праграме, што ёй трэба шукаць не толькі тыя загалоўкі, якія цалкам супадаюць з шуканым радком, а таксама і тыя, якія змяшчаюць шуканы радок як сваю частку.</p>
-<p><strong>Прыклад 3</strong>. Выбраць усе паслядоўнасці генаў аднаго генома (ідэнтыфікатар геномнай зборкі <a href="https://ncbi.nlm.nih.gov/assembly/10577151">10577151</a>), які мае два рэпліконы: <a href="https://ncbi.nlm.nih.gov/nuccore/NZ_CP079110.1">NZ_CP079110.1</a> і <a href="https://ncbi.nlm.nih.gov/nuccore/NZ_CP079111.1">NZ_CP079111.1</a>.</p>
-<p class="samp-highl samp-vwide">seqkit grep -nr -p "NZ_CP079110.1" -p "NZ_CP079111.1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p class="samp-comment">Каб забяспечыць спецыфічнасць пошуку, атачайце код доступу двукроп&rsquo;ямі (<span class="samp-highl">:</span>).</p>
+<p><strong>Прыклад 3</strong>. Выбраць усе паслядоўнасці генаў аднаго генома (ідэнтыфікатар геномнай зборкі <a href="https://ncbi.nlm.nih.gov/assembly/10577151">10577151</a>).</p>
+<p class="samp-highl samp-vwide">seqkit grep -nrp "G_10577151:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p class="samp-comment">Каб забяспечыць спецыфічнасць пошуку, пішыце прэфікс <span class="samp-highl">G_</span> перад ідэнтыфікатарам зборкі, а пасля яго &mdash; двукроп&rsquo;е (<span class="samp-highl">:</span>).</p>
 <p><strong>Прыклад 4</strong>. Выбраць усе паслядоўнасці актынабактэрый.</p>
-<p class="samp-highl samp-vwide">seqkit grep -nrp ";Actinobacteria;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p class="samp-comment">На ўсялякі выпадак, атачайце таксаномію кропкамі з коскай (<span class="samp-highl">;</span>).</p>
+<p class="samp-highl samp-vwide">seqkit grep -nrp ";p__Actinobacteria;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p class="samp-comment">Каб забяспечыць спецыфічнасць пошуку, атачайце таксаномію кропкамі з коскай (<span class="samp-highl">;</span>).</p>
 <p><strong>Прыклад 5</strong>. Выбраць усе паслядоўнасці з геномаў катэгорыі 1.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp "category:1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p><strong>Прыклад 6</strong>. Выбраць усе паслядоўнасці апроч тых, якія належаць да тыпу <i>Firmicutes</i>.</p>
-<p class="samp-highl samp-vwide">seqkit grep -nvrp ";Firmicutes;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p class="samp-comment">Звярніце ўвагу на опцыю <span class="samp">-v</span> у шэгару опцый <span class="samp">-nvrp</span>. Гэтая опцыя інвертуе паводзіны праграмы, і цяпер яна знойдзе ўсе паслядоўнасці, загалоўкі якіх <em>не</em> змяшчаюць радок <span class="samp">;Firmicutes;</span>.</p>
+<p class="samp-highl samp-vwide">seqkit grep -nvrp ";p__Firmicutes;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p class="samp-comment">Звярніце ўвагу на опцыю <span class="samp">-v</span> у шэгару опцый <span class="samp">-nvrp</span>. Гэтая опцыя інвертуе паводзіны праграмы, і цяпер яна знойдзе ўсе паслядоўнасці, у загалоўках якіх <em>няма</em> радку <span class="samp">;p__Firmicutes;</span>.</p>
 <div id="subset-by-len" class="pad-anchor"></div>
 <h4>Адбор паслядоўнасцяў паводле даўжыні</h4>
 <p>Адбіраць паслядоўнасці паводле даўжыні можна з дапамогай праграмы <span class="samp">seqkit seq</span>.</p>
@@ -453,8 +459,14 @@
 <p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Опцыя <span class="samp">-i</span> кажа праграме, каб тая падавала на выхад толькі ідэнтыфікатары.</p>
 <p><strong>Прыклад 3</strong>. Выбраць усе (RefSeq&rsquo;аўскія) коды доступу.</p>
-<p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | cut -f1 -d':' | sort | uniq</p>
-<p class="samp-comment">Такая команда спрацуе, толькі калі на камп&rsquo;ютары ўсталяваныя ўтыліты <span class="samp">sort</span>, <span class="samp">cut</span> і <span class="samp">uniq</span> (на Linux і Mac OS гэтыя праграмы звычайна ўсталяваныя разам з аперацыйная сістэмай).</p>
+<p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | cut -f2 -d':' | sort | uniq</p>
+<p class="samp-comment">Такая команда спрацуе, толькі калі на камп&rsquo;ютары ўсталяваныя ўтыліты <span class="samp">cut</span>, <span class="samp">sort</span>, і <span class="samp">uniq</span> (на Linux і Mac OS гэтыя праграмы звычайна ўсталяваныя разам з аперацыйная сістэмай).</p>
+<p><strong>Прыклад 4</strong>. Выбраць усе ідэнтыфікатары геномных зборак.</p>
+<p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | cut -f1 -d':' | sed 's/G_//' | sort | uniq</p>
+<p class="samp-comment">Такая команда спрацуе, толькі калі на камп&rsquo;ютары ўсталяваныя ўтыліты <span class="samp">cut</span>, <span class="samp">sed</span>, <span class="samp">sort</span> і <span class="samp">uniq</span> (на Linux і Mac OS гэтыя праграмы звычайна ўсталяваныя разам з аперацыйная сістэмай).</p>
+<p><strong>Прыклад 5</strong>. Выбраць усе назвы тыпаў арганізмаў.</p>
+<p class="samp-highl samp-vwide">seqkit seq -n ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | grep -Eo ';p__[^;]+' | sed -E 's/;|p__//g' | sort | uniq</p>
+<p class="samp-comment">Такая команда спрацуе, толькі калі на камп&rsquo;ютары ўсталяваныя ўтыліты <span class="samp">grep</span>, <span class="samp">sed</span>, <span class="samp">sort</span> і <span class="samp">uniq</span> (на Linux і Mac OS гэтыя праграмы звычайна ўсталяваныя разам з аперацыйная сістэмай).</p>
 <br>
 <hr>
 <p>RiboGrove, {{ ribogrove_release_date }}</p>

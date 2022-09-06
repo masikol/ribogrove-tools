@@ -315,23 +315,23 @@ if cached_tblout:
 output_file = os.path.join(outdpath, 'cmscan_output.txt')
 tblout_fpath = os.path.join(outdpath, 'cmscan_output_table.tblout')
 
-# Configure command for cmscan
-command = ' '.join([
-    cmscan_fpath,
-    f'--tblout {tblout_fpath}',
-    '--toponly --acc',
-    rfam_fpath,
-    fasta_seqs_fpath_for_cmscan,
-    f'> {output_file}',
-    f'2> {output_file}'
-])
-
-
 
 # == Proceed ==
 
-all_seqs_are_cached = len(seq_records_for_cmscan) == 0
+all_seqs_are_cached = cached_tblout and len(seq_records_for_cmscan) == 0
+
 if not all_seqs_are_cached:
+    # Configure command for cmscan
+    command = ' '.join([
+        cmscan_fpath,
+        f'--tblout {tblout_fpath}',
+        '--toponly --acc',
+        rfam_fpath,
+        fasta_seqs_fpath_for_cmscan,
+        f'> {output_file}',
+        f'2> {output_file}'
+    ])
+
     print('Running cmscan command:')
     print(command)
     print('It will take a while: single sequence is processed for ~3 seconds')
