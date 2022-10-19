@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 
-# TODO: update description
-
 # The script merges two files together:
-# 1) a TSV file, which is output of the script `assembly2gi_numbers.py` (`-c` option);
-# 2) a TSV file, which is output of the script `gis_to_accs.py` (`-c` option).
+# 1) a TSV file, which is output of the script `assembly2gi_numbers.py` (`-s` option);
+# 2) a TSV file, which is output of the script `remove_unwanted_refseq_seqs.py` (`-c` option).
 
 # The output file (`-o` option) is a TSV file of 4 columns (`ass_id`, `gi_number`, `acc`, `title`).
 #   In this file, every line corresponds to a single RefSeq record, and the line
@@ -13,13 +11,9 @@
 
 ## Command line arguments
 ### Input files:
-# 1. `-s / --assm-2-gi-file` -- input TSV file mapping Assembly IDs to RefSeq GI numbers. Mandatory.
-# 2. `-c / --gi-2-acc-file` -- input TSV file mapping RefSeq GI numbers to RefSeq ACCESSION.VERSIONs
+# 1. `-s / --assm-2-gi-file` -- an input TSV file mapping Assembly IDs to RefSeq GI numbers. Mandatory.
+# 2. `-c / --gi-2-acc-file` -- a filtered input TSV file mapping RefSeq GI numbers to RefSeq ACCESSION.VERSIONs
 #   and titles. Mandatory.
-# 3. `-a / --refseq-catalog` -- A RefSeq "catalog" file of the current release.
-#   This is the file `RefSeq-releaseXXX.catalog.gz` from here:
-#   https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/.
-#   It is better to filter this file with `filter_refseq_catalog.py` before running current script.
 
 ### Output files:
 # 1. `-o / --outfile` -- output TSV files where Assembly IDs are mapped to ACCESSION.VERSIONs

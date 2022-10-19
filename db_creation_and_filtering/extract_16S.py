@@ -12,7 +12,7 @@
 ## Command line arguments
 ### Input files:
 # 1. `-i / --assm-acc-file` -- a TSV file of 4 columns:(`ass_id`, `gi_number`, `acc`, `title`).
-#   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
+#   This file is the output of the script `merge_assIDs_and_accs.py`. Mandatory.
 # 2. `-g/--gbk-dir` -- the directory where the downloaded `.gbk.gz` files are located
 #   (see script `download_genomes.py`). Mandatory.
 
@@ -20,6 +20,12 @@
 # 1. `-o / --out-fasta` -- a fasta file containing sequences of extracted genes. Mandatory.
 # 2. `-s / --out-stats` -- a file with per-replicon statistics of extracted 16S genes:
 #   how many genes, minimum/maximum length etc. Mandatory.
+
+### "Cached" files:
+# 1. `--prev-all-genes-fasta` -- a fasta file, which is the output of this script,
+#   but for the previous RefSeq release. Optional.
+# 2. `--prev-all-genes-stats` -- a file with per-replicon statistics,
+#   which is the output of this script, but for the previous RefSeq release. Optional.
 
 ### Dependencies:
 # 1. `--cmsearch` -- a `cmsearch` program executable from Infernal (http://eddylab.org/infernal/).
@@ -47,6 +53,8 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqFeature import SeqFeature
 from Bio.SeqRecord import SeqRecord
+
+from ribogrove_seqID import make_seqID, update_seqID
 
 
 # == Parse arguments ==
@@ -347,16 +355,6 @@ def extract_gene_as_is(feature: SeqFeature, gbrecord: SeqRecord, ass_id: int):
 # end def extract_gene_as_is
 
 
-def make_seqID(ass_id, acc, seq_start, seq_end, strand_word):
-    return 'G_{}:{}:{}-{}:{}'.format(
-        ass_id,
-        acc,
-        seq_start, seq_end,
-        strand_word
-    )
-# end def
-
-
 def run_cmsearch(fasta_fpath: str):
     # Function runs cmsearch searching for 16S rRNA genes in sequence
     #   stored in file `fasta_fpath`
@@ -609,7 +607,9 @@ def create_acc_seqs_dict(fasta_fpath, cached_accs):
     seq_records = SeqIO.parse(fasta_fpath, 'fasta')
 
     for sr in seq_records:
-        acc = sr.id.split(':')[1]
+        # TODO: uncomment for RiboGrove 9.215+
+        # acc = sr.id.split(':')[1]
+        acc = sr.id.split(':')[0]
         acc_seqs_dict[acc].append(sr)
     # end for
 
@@ -658,14 +658,25 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, open(outstats_fpath, 'wt') as 
     for i, row in acc_df.drop_duplicates().iterrows():
 
         acc = row['acc']
+        print(f'\rDoing {i+1}/{n_accs}: {acc}', end=' '*10)
 
         if acc in cached_accs:
+            ass_id = row['ass_id']
             curr_seq_records = acc_seqs_dict[acc]
             for sr in curr_seq_records:
+                sr.id = update_seqID(sr.id, ass_id)
+                sr.description = '{} {}'.format(
+                    sr.id, sr.description.partition(' ')[2]
+                )
                 fasta_outfile.write(f'>{sr.description}\n{sr.seq}\n')
             # end for
 
-            cached_acc_stats_df = cached_stats_df[cached_stats_df['acc'] == acc]
+            cached_acc_stats_df = cached_stats_df[cached_stats_df['acc'] == acc].copy()
+
+            # Assembly ID may be outdated in cached_acc_stats_df.
+            # We need to update it here
+            cached_acc_stats_df['ass_id'] = np.repeat(ass_id, cached_acc_stats_df.shape[0])
+
             cached_acc_stats_df.to_csv(
                 stats_outfile,
                 sep='\t',
@@ -681,7 +692,6 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, open(outstats_fpath, 'wt') as 
         gi_number = row['gi_number']
         title = row['title']
 
-        print(f'\rDoing {i+1}/{n_accs}: {acc}', end=' '*10)
 
         # Configure output file path (e.g. `NZ_CP063178.1.gbk.gz`)
         gbk_fpath = os.path.join(

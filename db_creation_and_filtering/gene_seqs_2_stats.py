@@ -22,7 +22,7 @@ def gene_seqs_2_stats(seqs_fasta_fpath: str, ass_acc_fpath: str, stats_outfpath:
     # Function creates per-replicon statistics from given fasta file containing gene sequences.
     # :param seqs_fasta_fpath: path to input fasta file;
     # :param ass_acc_fpath: path to file containing columns (ass_id, gi_number, acc, title);
-    #   (it is output of script merge_assID2acc_and_remove_WGS.py)
+    #   (it is output of script merge_assIDs_and_accs.py)
     # :param stats_outfpath: path to output per-replicon statistics file;
 
 

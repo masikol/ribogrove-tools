@@ -9,7 +9,7 @@
 # 1. `-f / --input-fasta-file` -- an input fasta file of SSU gene sequences.
 #   This file is the output of the script `drop_NNN.py`. Mandatory.
 # 2. `-a / --assm-acc-file` -- a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).
-#   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
+#   This file is the output of the script `merge_assIDs_and_accs.py`. Mandatory.
 # 3. `--non-aberrant-seqIDs` -- a file of seqIDs of non-aberrant genes (one per line).
 #   This file is the output of the script `find_aberrant_genes.py`. Mandatory.
 # 4. `--aberrant-seqIDs` -- a file of seqIDs of aberrant genes (one per line).

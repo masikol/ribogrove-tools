@@ -189,6 +189,9 @@ with open(outfpath, 'wt') as outfile:
 
         # Select category
         category = cat_df[cat_df['seqID'] == seq_record.id]['category'].values[0]
+        if pd.isnull(category):
+            category = 'NA'
+        # end if
 
         # Form header for output fasta file
         seq_record.description = f'{seq_record.id} {tax_sep}{taxonomy}{tax_sep} category:{category}'

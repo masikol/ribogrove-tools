@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# TODO: update descriptions
-
 # The script calculates per-base intragenomic entropy from non-aberrant genes.
 # The script aligns gene sequences with MUSCLE, and then caculates per-base entropy basing
 #   on this multiple sequence alignment. The script calculates variability of the
@@ -19,8 +17,14 @@
 ### Output files:
 # 1. `-o / --outfile` -- a TSV file containing per-position intragenomic entropy. Mandatory.
 
+### "Cached" files:
+# 1. `--prev-per-base-entropy-file` -- a file of per-base entropy from the workdir
+#   of the previous RiboGrove release (per_base_*_entropy.tsv.gz).
+# 2. `--prev-assm-acc-file` -- a file `*_refseq_accs_merged.tsv` from the workdir
+#   of the previous RiboGrove release.
+
 ### Dependencies:
-# 1. `--muscle` -- a [MUSCLE](https://www.drive5.com/muscle/) aligner executable.
+# 1. `--muscle` -- a MUSCLE (https://www.drive5.com/muscle/) aligner executable.
 
 
 import os

@@ -77,7 +77,9 @@ FINAL_GENES_STATS="${GENES_DIR}/${PREFIX}_final_gene_stats.tsv"
 SEQS_WITH_REPEATS_FASTA="${GENES_DIR}/${PREFIX}_gene_seqs_with_repeats.fasta"
 
 ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_final_gene_seqs_annotated.fasta"
-ANNOTATED_RAW_FASTA="${GENES_DIR}/${PREFIX}_raw_gene_seqs_annotated.fasta"
+FINAL_SEQIDS="${GENES_DIR}/final_seqIDs.txt"
+DISCARDED_FASTA="${GENES_DIR}/${PREFIX}_discarded_gene_seqs.fasta"
+ANNOTATED_DISCARDED_FASTA="${GENES_DIR}/${PREFIX}_discarded_gene_seqs_annotated.fasta"
 
 RFAM_DIR_FOR_EXTRACT_16S=`dirname "${RFAM_FOR_EXTRACT_16S}"`
 RFAM_FAMILY_FOR_EXTRACT_16S="${RFAM_DIR_FOR_EXTRACT_16S}/${PREFIX}_${RFAM_FAMILY_ID}_for_extract_16S.cm"
@@ -86,10 +88,10 @@ RFAM_DIR_FOR_FILTERING=`dirname "${RFAM_FOR_EXTRACT_16S}"`
 RFAM_FAMILY_FOR_FILTERING="${RFAM_DIR_FOR_FILTERING}/${PREFIX}_${RFAM_FAMILY_ID}_for_filtering.cm"
 
 COUNT_BASES_TABLE="${WORKDIR}/bases_count.tsv"
-RAW_COUNT_BASES_TABLE="${WORKDIR}/raw_bases_count.tsv"
+DISCARDED_COUNT_BASES_TABLE="${WORKDIR}/discarded_bases_count.tsv"
 
 PER_GENE_STATS="${WORKDIR}/${PREFIX}_per_gene_stats.tsv"
-RAW_PER_GENE_STATS="${WORKDIR}/${PREFIX}_raw_per_gene_stats.tsv"
+DISCARDED_PER_GENE_STATS="${WORKDIR}/${PREFIX}_discarded_per_gene_stats.tsv"
 
 ENTROPY_FILE="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_entropy.tsv"
 
@@ -107,9 +109,9 @@ fi
 
 
 # == Filter RefSeq .catalog file ==
-# python3 "${SCRIPT_DIR}/filter_refseq_catalog.py" \
-#   --raw-refseq-catalog "${REFSEQ_CATALOG_FILE}" \
-#   --outfile "${FILTERED_REFSEQ_CATALOG_FILE}"
+python3 "${SCRIPT_DIR}/filter_refseq_catalog.py" \
+  --raw-refseq-catalog "${REFSEQ_CATALOG_FILE}" \
+  --outfile "${FILTERED_REFSEQ_CATALOG_FILE}"
 
 
 # == Translate Assembly UIDs to RefSeq GI numbers ==
@@ -223,7 +225,7 @@ python3 "${SCRIPT_DIR}/add_taxonomy_names.py" \
 # == Assign categories to downloaded genomes ==
 
 if [[ ! -z "${PREV_WORKDIR}" ]]; then
-  python3 "${SCRIPT_DIR}/assign_genome_categories/assign_genome_categories.py" \
+  python3 "${SCRIPT_DIR}/assign_genome_categories.py" \
     --all-fasta-file "${ALL_GENES_FASTA}" \
     --all-stats-file "${ALL_GENES_STATS}" \
     --gbk-dir "${GENOMES_GBK_DIR}" \
@@ -233,7 +235,7 @@ if [[ ! -z "${PREV_WORKDIR}" ]]; then
     --prev-assm-acc-file "${PREV_ASS_ACC_MERGED_FILE}" \
     --seqkit "${SEQKIT}"
 else
-  python3 "${SCRIPT_DIR}/assign_genome_categories/assign_genome_categories.py" \
+  python3 "${SCRIPT_DIR}/assign_genome_categories.py" \
     --all-fasta-file "${ALL_GENES_FASTA}" \
     --all-stats-file "${ALL_GENES_STATS}" \
     --gbk-dir "${GENOMES_GBK_DIR}" \
@@ -352,18 +354,29 @@ cat "${tmp_fasta}" > "${ANNOTATED_RESULT_FASTA}"
 rm "${tmp_fasta}"
 
 
-# == Annotate "raw" sequences: add taxonomy and categories to their headers ==
+# == Make a fasta file of discarded sequences ==
+seqkit seq -ni "${ANNOTATED_RESULT_FASTA}" > "${FINAL_SEQIDS}"
+cat "${ALL_GENES_FASTA}" \
+    | seqkit grep -vf "${FINAL_SEQIDS}" \
+    | seqkit sort -s > "${DISCARDED_FASTA}"
+
+if [[ -f "${FINAL_SEQIDS}" ]]; then
+  rm -v "${FINAL_SEQIDS}"
+fi
+
+
+# == Annotate discarded sequences: add taxonomy and categories to their headers ==
 python3 "${SCRIPT_DIR}/annotate_seq_names.py" \
-  --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
+  --fasta-seqs-file "${DISCARDED_FASTA}" \
   --per-gene-taxonomy-file "${PER_GENE_TAXONOMY_FPATH}" \
   --categories-file "${CATEGORIES_FPATH}" \
-  --outfile "${ANNOTATED_RAW_FASTA}"
+  --outfile "${ANNOTATED_DISCARDED_FASTA}"
 
 
 # == Make result sequences pretty: 60 bp per line ==
 tmp_fasta='/tmp/tmp.fasta'
-cat "${ANNOTATED_RAW_FASTA}" | "${SEQKIT}" seq -uw 60 > "${tmp_fasta}"
-cat "${tmp_fasta}" > "${ANNOTATED_RAW_FASTA}"
+cat "${ANNOTATED_DISCARDED_FASTA}" | "${SEQKIT}" seq -uw 60 > "${tmp_fasta}"
+cat "${tmp_fasta}" > "${ANNOTATED_DISCARDED_FASTA}"
 rm "${tmp_fasta}"
 
 
@@ -380,17 +393,17 @@ python3 "${SCRIPT_DIR}/merge_bases_categories_taxonomy.py" \
   --outfile "${PER_GENE_STATS}"
 
 
-# == Make per-gene statistics file (raw) ==
+# == Make per-gene statistics file for discarded sequences ==
 
 python3 "${SCRIPT_DIR}/count_bases.py" \
-  --input-fasta "${ANNOTATED_RAW_FASTA}" \
-  --outfile "${RAW_COUNT_BASES_TABLE}"
+  --input-fasta "${ANNOTATED_DISCARDED_FASTA}" \
+  --outfile "${DISCARDED_COUNT_BASES_TABLE}"
 
 python3 "${SCRIPT_DIR}/merge_bases_categories_taxonomy.py" \
-  --bases-file "${RAW_COUNT_BASES_TABLE}" \
+  --bases-file "${DISCARDED_COUNT_BASES_TABLE}" \
   --categories-file "${CATEGORIES_FPATH}" \
   --taxonomy-file "${PER_GENE_TAXONOMY_FPATH}" \
-  --outfile "${RAW_PER_GENE_STATS}"
+  --outfile "${DISCARDED_PER_GENE_STATS}"
 
 
 # == Calculate entropy -- intragenomic variability ==

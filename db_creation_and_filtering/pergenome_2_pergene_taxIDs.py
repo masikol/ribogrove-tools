@@ -6,7 +6,7 @@
 ## Command line arguments
 ### Input files:
 # 1. `-i / --assm-acc-file` -- a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).
-#   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
+#   This file is the output of the script `merge_assIDs_and_accs.py`. Mandatory.
 # 2. `-f / --all-fasta-file` -- a fasta file with all extracted genes sequences.
 #   This file is the output of the script `extract_16S.py`. Mandatory.
 # 3. `--per-genome-taxID-file` -- a TSV file mapping Assembly IDs to taxIDs.
@@ -96,27 +96,6 @@ if not os.path.isdir(os.path.dirname(per_gene_outfpath)):
         sys.exit(1)
     # end try
 # end if
-
-
-# TODO: remove completely
-# def select_gene_seqIDs(ass_id: str,
-#     seq_records: Sequence[str],
-#     ass_acc_df: pd.DataFrame) -> Sequence[str]:
-
-#     # Get ACCESSION.VERSION's for current assembly
-#     accs = set(ass_acc_df[ass_acc_df['ass_id'] == ass_id]['acc'])
-
-#     # Filter genes from current genome
-#     selected_seq_records = tuple(
-#         filter(
-#             lambda r: r.id.split(':')[1] in accs,
-#             seq_records
-#         )
-#     )
-
-#     # Make result dictionary and return it
-#     return tuple(map(lambda r: r.id, selected_seq_records))
-# # end def
 
 
 def select_gene_seqIDs(ass_id: str,

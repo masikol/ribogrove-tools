@@ -9,7 +9,7 @@
 <body>
 <div class="container">
 <div class="lang-section">
-<p>&#127760;&nbsp;<a href="index.html">English</a> / <a href="ribogrove_{{ ribogrove_release_number }}_be.html">Беларуская</a> / <span class="active-lang">Українська</span> / <a href="ribogrove_{{ ribogrove_release_number }}_ru.html">Русский</a></p>
+<p>&#127760;&nbsp;<a href="index.html">English</a> / <a href="latest_ribogrove_release_be.html">Беларуская</a> / <span class="active-lang">Українська</span> / <a href="latest_ribogrove_release_ru.html">Русский</a></p>
 </div>
 <p><div class="warn-section"><a href="http://mbio.bas-net.by/cager/en/ribogrove">Головний сайт</a>, де ми розміщуємо базу даних RiboGrove, може бути недосяжним поза межами Білорусі через технічні проблеми та загальну біду. Актуальний реліз RiboGrove можна знайти тут &mdash; нехай база даних буде досяжна принаймни такою мірою.</div></p><br>
 <h1 style="display:none">RiboGrove</h1>
@@ -27,6 +27,7 @@
 <ul class="ribogrove-nested-list">
   <li><a href="#latest-release">Актуальний реліз RiboGrove</li>
   <li><a href="#release-archive">Архів релізів RiboGrove</li>
+  <li><a href="#release-notes">Коментарі до релізу</li>
 </ul>
 </li>
 <li><a href="#summary">Статистичний опис</a>
@@ -56,15 +57,16 @@
 <p>RiboGrove базується на базі даних <a href="https://ncbi.nlm.nih.gov/refseq/">RefSeq</a>. RiboGrove утримує тільки повнорозмірні послідовності генів 16S рРНК, а самі послідовності походять із повністю зібраних геномів прокаріотів, депонуваних у RefSeq. Тому ми постулюємо високу надійність послідовностей, розміщених у RiboGrove.</p>
 <div id="other-databases" class="pad-anchor"></div>
 <h3>RiboGrove і інші бази даних 16S рРНК</h3>
-<p>Таблиця нижче показує, чим (якісно) RiboGrove відрізнювається від подібних баз даних послідовностей РНК, а саме <a href="https://www.arb-silva.de/">Silva</a>, <a href="http://rdp.cme.msu.edu/">RDP</a> та <a href="https://greengenes.secondgenome.com/">Greengenes</a>. Кажучи коротко, RiboGrove менша за аналоги щодо кількості послідовностей та їх різноманітності, але виграє у надійності послідовностей.</p>
+<p>Таблиця нижче показує, чим (якісно) RiboGrove відрізнювається від подібних баз даних послідовностей РНК, а саме <a href="https://rrndb.umms.med.umich.edu/"><i>rrn</i>DB</a>, <a href="https://www.arb-silva.de/">Silva</a>, <a href="http://rdp.cme.msu.edu/">RDP</a> та <a href="https://greengenes.secondgenome.com/">Greengenes</a>. Кажучи коротко, RiboGrove менша за аналоги щодо кількості послідовностей та їх різноманітності, але виграє у надійності послідовностей.</p>
 <table class="sum-table">
 <tbody>
-  <tr class="sumtab-row"><th></th><th class="alcentr">RiboGrove</th><th class="alcentr">Silva</th><th class="alcentr">RDP</th><th class="alcentr">Greengenes</th></tr>
-  <tr class="sumtab-row"><td class="feature-col">Репрезентовані організми</td><td class="alcentr">Бактерії<br>Археї</td><td class="alcentr">Бактерії<br>Археї<br>Еукаріоти</td><td class="alcentr">Бактерії<br>Археї<br>Еукаріоти</td><td class="alcentr">Бактерії<br>Археї</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Репрезентовані субодиниці рибосом</td><td class="alcentr">Мала</td><td class="alcentr">Велика<br>Мала</td><td class="alcentr">Велика<br>Мала</td><td class="alcentr">Мала</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Утримує послідовності зібраних геномів</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Утримує послідовності ампліконів</td><td class="alcentr">Ні</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Утримує неповні послідовності генів</td><td class="alcentr">Ні</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td></tr>
+  <tr class="sumtab-row"><th></th><th class="alcentr">RiboGrove</th><th class="alcentr"><i>rrn</i>DB</th><th class="alcentr">Silva</th><th class="alcentr">RDP</th><th class="alcentr">Greengenes</th></tr>
+  <tr class="sumtab-row"><td class="feature-col">Репрезентовані організми</td><td class="alcentr">Бактерії<br>Археї</td><td class="alcentr">Бактерії<br>Археї</td><td class="alcentr">Бактерії<br>Археї<br>Еукаріоти</td><td class="alcentr">Бактерії<br>Археї<br>Еукаріоти</td><td class="alcentr">Бактерії<br>Археї</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Репрезентовані субодиниці рибосом</td><td class="alcentr">Мала</td><td class="alcentr">Мала</td><td class="alcentr">Велика<br>Мала</td><td class="alcentr">Велика<br>Мала</td><td class="alcentr">Мала</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Утримує послідовності зібраних геномів</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Утримує послідовності ампліконів</td><td class="alcentr">Ні</td><td class="alcentr">Ні</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Утримує неповні послідовності генів</td><td class="alcentr">Ні</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Відрізняє категориї геномів</td><td class="alcentr">Так</td><td class="alcentr">Ні</td><td class="alcentr"><i>Критерій<br>непридатний</i></td><td class="alcentr"><i>Критерій<br>непридатний</i></td><td class="alcentr"><i>Критерій<br>непридатний</i></td></tr>
 </tbody>
 </table>
 <div id="genome-categories" class="pad-anchor"></div>
@@ -95,7 +97,7 @@
 <p>Реліз заснований на базі даних RefSeq {{ refseq_release }}.</p>
 <ul>
 <li>Fasta-файл повнорозмірних послідовностей генів 16S рРНК. <a href="ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Завантажити (&bdquo;ґзіп&rsquo;нутий&ldquo; fasta-файл, {{ final_fasta_fsize_fmt }} Мб)</a></li>
-<li>&bdquo;Сира&ldquo; версія RiboGrove &mdash; у неї часткові послідовності генів залишені. <a href="ribogrove_releases/{{ ribogrove_release_number }}/raw_ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Завантажити (&bdquo;ґзіп&rsquo;нутий&ldquo; fasta-файл, {{ raw_fasta_fsize_fmt }} Мб)</a></li>
+
 <li>Метадані. <a href="ribogrove_releases/{{ ribogrove_release_number }}/metadata_ribogrove_{{ ribogrove_release_number }}.zip">Завантажити (zip-архів {{ metadata_fsize_fmt }} Мб)</a><br>
 <details>
   <summary><small>Яка саме інформація утримується у метаданих?</small></summary>
@@ -103,16 +105,16 @@
     <p>Метадані складаються з наступних файлів:</p>
     <ol>
     <li>
+      <span class="samp-highl">discarded_sequences.fasta.gz</span><br>
+      Це fasta-файл, який утримує послідовності, які були у геномах-джерелах, були при цьому анотувані як гени 16S рРНК, але які були &bdquo;забракувані&ldquo; (discarded) через їхню неповноту, присутність внутрішньогенних повторів і т.д. Отже, ці послідовності не включені до RiboGrove.
+    </li>
+    <li>
       <span class="samp-highl">source_RefSeq_genomes.tsv</span><br>
       Це TSV-файл, який утримує інформацію про те, які геноми выкористовувалися для створення RiboGrove.
     </li>
     <li>
-      <span class="samp-highl">gene_seqs_statistics.tsv</span>, <span class="samp-highl">raw_gene_seqs_statistics.tsv</span><br>
-      Це TSV-файли, які утримують інформацію пра нуклеотидний склад, розмір, геномну і таксономічну приналежність послідовностей генів. &bdquo;Сира&ldquo; (&bdquo;raw&ldquo;) версія додатково утримує інформацію про неповні гени.
-    </li>
-    <li>
-      <span class="samp-highl">per_replicon_statistics.tsv</span>, <span class="samp-highl">raw_per_replicon_statistics.tsv</span><br>
-      Це TSV-файли, які утримують інформацію про кількісць генів 16S рРНК у кожної геномної послідовності з БД RefSeq і про розміри цих генів. &bdquo;Сира&ldquo; (&bdquo;raw&ldquo;) версія додатково утримує інформацію про неповні гени.
+      <span class="samp-highl">gene_seqs_statistics.tsv</span>, <span class="samp-highl">discarded_gene_seqs_statistics.tsv</span><br>
+      Це TSV-файли, які утримують інформацію пра нуклеотидний склад, розмір, геномну і таксономічну приналежність послідовностей генів. Перший файл із оцих двох описує фінальні послідовності, включені до RiboGrove, а другий &mdash; &bdquo;забракувані&ldquo; послідовності.
     </li>
     <li>
       <span class="samp-highl">categories.tsv</span><br>
@@ -142,10 +144,14 @@
 </details>
 </li>
 </ul>
-<p>Файли fasta стиснуті за допомогою програми gzip, а файли метаданих стиснуті у zip-архів. Щоби розпакувати їх, користувачі Linux та Mac OS можуть скористатися саме програмамі gzip та zip; оці програми звичайно установлені разом із операційною системою. Користувачам Windows може придатися безкоштовна програма-архіватор <a href="https://www.7-zip.org/">7-Zip</a>.</p>
+<p>Файл fasta стиснутий за допомогою програми gzip, а файли метаданих стиснуті у zip-архів. Щоби розпакувати їх, користувачі Linux та Mac OS можуть скористатися саме програмамі gzip та zip; оці програми звичайно установлені разом із операційною системою. Користувачам Windows може придатися безкоштовна програма-архіватор <a href="https://www.7-zip.org/">7-Zip</a>.</p>
 <div id="release-archive" class="pad-anchor"></div>
 <h3>Архів релізів RiboGrove</h3>
 <p>Всі попередні релізи можна знайти в <a href="archive/ribogrove_archive_en.html"> архіві релізів RiboGrove</a>. На жаль, він ведеться тільки англійською.</p>
+<div id="release-notes" class="pad-anchor"></div>
+<h3>Коментарі до релізу</h3>
+<p><i>Цей реліз нічим принципово не відрізнюється від попереднього.</i></p>
+<p>Коментарі до всіх релізів RiboGrove можна знайти на <a href="ribogrove_release_notes_en.html">сторінці коментарів до релізів</a>.</p>
 <hr>
 <div id="summary" class="pad-anchor"></div>
 <h2>Статистичний опис</h2>
@@ -398,7 +404,7 @@
 <div id="header-format" class="pad-anchor"></div>
 <h3>Формат заголовку</h3>
 <p>Записи послідовностей RiboGrove у форматі fasta мають наступний формат заголовку:</p>
-<p class="samp-highl samp-vwide">&gt;G_324861:NZ_CP009686.1:8908-10459:plus ;Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Bacillus;cereus; category:1</p>
+<p class="samp-highl samp-vwide" style="font-size:14px">&gt;G_324861:NZ_CP009686.1:8908-10459:plus ;d__Bacteria;p__Firmicutes;c__Bacilli;o__Bacillales;f__Bacillaceae;g__Bacillus;s__cereus; category:1</p>
 <p>Основні частини заголовку відокремлені один від одного пробілами. В заголовку повинні бути три такі частини:</p>
 <ol>
 <li>Ідентифікатор послідовності (SeqID): <span class="samp-highl">G_324861:NZ_CP009686.1:8908-10459:plus</span>. SeqID, у свою чергу, складається з чотирьох частинок, відокремлених двокрапками:

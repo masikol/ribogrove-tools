@@ -7,7 +7,7 @@
 ## Command line arguments
 ### Input files:
 # 1. `-i / --assm-acc-file` -- a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).
-#   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
+#   This file is the output of the script `merge_assIDs_and_accs.py`. Mandatory.
 # 2. `-f / --all-fasta-file` -- a fasta file with all extracted genes sequences.
 #   This file is the output of the script `extract_16S.py`. Mandatory.
 

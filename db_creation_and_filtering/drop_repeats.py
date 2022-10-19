@@ -10,7 +10,7 @@
 # 1. `-f / --input-fasta-file` -- an input fasta file of gene sequences.
 #   This file is the output of the script `drop_aberrant_genes.py`. Mandatory.
 # 2. `-i / --assm-acc-file` -- a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).
-#   This file is the output of the script `merge_assID2acc_and_remove_WGS.py`. Mandatory.
+#   This file is the output of the script `merge_assIDs_and_accs.py`. Mandatory.
 # 3. `-r / --repeats-file` -- a TSV file, which contains information about what sequences
 #   contain repeats, coordinates of these repeats etc.
 #   This file is the output of the script `find_repeats.py`. Mandatory.

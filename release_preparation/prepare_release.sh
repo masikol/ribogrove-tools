@@ -65,20 +65,21 @@ for f in "${BACTERIA_ANNOTATED_FASTA}" "${ARCHAEA_ANNOTATED_FASTA}"; do
 done
 RIBOGROVE_FASTA="${OUTDIR}/ribogrove_${RELEASE_NUMBER}_sequences.fasta.gz"
 
-# Raw fasta
-BACTERIA_RAW_ANNOTATED_FASTA="${BACTERIA_DIR}/gene_seqs/bacteria_raw_gene_seqs_annotated.fasta"
-ARCHAEA_RAW_ANNOTATED_FASTA="${ARCHAEA_DIR}/gene_seqs/archaea_raw_gene_seqs_annotated.fasta"
-for f in "${BACTERIA_RAW_ANNOTATED_FASTA}" "${ARCHAEA_RAW_ANNOTATED_FASTA}"; do
-    check_file "${f}"
-done
-RAW_RIBOGROVE_FASTA="${OUTDIR}/raw_ribogrove_${RELEASE_NUMBER}_sequences.fasta.gz"
 
-# Metadata
+# == Metadata ==
 
 METADATA_DIR="${OUTDIR}/metadata"
 if [[ ! -d "${METADATA_DIR}" ]]; then
     mkdir -v "${METADATA_DIR}"
 fi
+
+# Discarded fasta
+BACTERIA_DISCARDED_ANNOTATED_FASTA="${BACTERIA_DIR}/gene_seqs/bacteria_discarded_gene_seqs_annotated.fasta"
+ARCHAEA_DISCARDED_ANNOTATED_FASTA="${ARCHAEA_DIR}/gene_seqs/archaea_discarded_gene_seqs_annotated.fasta"
+for f in "${BACTERIA_DISCARDED_ANNOTATED_FASTA}" "${ARCHAEA_DISCARDED_ANNOTATED_FASTA}"; do
+    check_file "${f}"
+done
+DISCARDED_FASTA="${METADATA_DIR}/discarded_${RELEASE_NUMBER}_sequences.fasta.gz"
 
 
 # Index file
@@ -104,28 +105,12 @@ done
 RIBOGROVE_PER_GENE_STATS="${METADATA_DIR}/gene_seqs_statistics.tsv"
 
 # Gene sequences statistics (raw)
-BACTERIA_RAW_PER_GENE_STATS="${BACTERIA_DIR}/bacteria_raw_per_gene_stats.tsv"
-ARCHAEA_RAW_PER_GENE_STATS="${ARCHAEA_DIR}/archaea_raw_per_gene_stats.tsv"
-for f in "${BACTERIA_RAW_PER_GENE_STATS}" "${ARCHAEA_RAW_PER_GENE_STATS}"; do
+BACTERIA_DISCARDED_PER_GENE_STATS="${BACTERIA_DIR}/bacteria_discarded_per_gene_stats.tsv"
+ARCHAEA_DISCARDED_PER_GENE_STATS="${ARCHAEA_DIR}/archaea_discarded_per_gene_stats.tsv"
+for f in "${BACTERIA_DISCARDED_PER_GENE_STATS}" "${ARCHAEA_DISCARDED_PER_GENE_STATS}"; do
     check_file "${f}"
 done
-RIBOGROVE_RAW_PER_GENE_STATS="${METADATA_DIR}/raw_gene_seqs_statistics.tsv"
-
-# Per replicon statistics (final)
-BACTERIA_PER_REPLICON_STATS="${BACTERIA_DIR}/gene_seqs/bacteria_final_gene_stats.tsv"
-ARCHAEA_PER_REPLICON_STATS="${ARCHAEA_DIR}/gene_seqs/archaea_final_gene_stats.tsv"
-for f in "${BACTERIA_PER_REPLICON_STATS}" "${ARCHAEA_PER_REPLICON_STATS}"; do
-    check_file "${f}"
-done
-RIBOGROVE_PER_REPLICON_STATS="${METADATA_DIR}/per_replicon_statistics.tsv"
-
-# Per replicon statistics (raw)
-BACTERIA_RAW_PER_REPLICON_STATS="${BACTERIA_DIR}/gene_seqs/bacteria_all_collected_stats.tsv"
-ARCHAEA_RAW_PER_REPLICON_STATS="${ARCHAEA_DIR}/gene_seqs/archaea_all_collected_stats.tsv"
-for f in "${BACTERIA_RAW_PER_REPLICON_STATS}" "${ARCHAEA_RAW_PER_REPLICON_STATS}"; do
-    check_file "${f}"
-done
-RIBOGROVE_RAW_PER_REPLICON_STATS="${METADATA_DIR}/raw_per_replicon_statistics.tsv"
+RIBOGROVE_DISCARDED_PER_GENE_STATS="${METADATA_DIR}/discarded_gene_seqs_statistics.tsv"
 
 # Categories
 BACTERIA_CATEGORIES="${BACTERIA_DIR}/categories/bacteria_categories.tsv"
@@ -195,17 +180,20 @@ cat "${ARCHAEA_ANNOTATED_FASTA}" | seqkit sort -s | gzip >> "${RIBOGROVE_FASTA}"
 echo "${RIBOGROVE_FASTA}"
 
 
-# == Merge raw annotated fasta files ==
+# == Merge annotated fasta files of discarded sequences ==
 # Sort them by sequences so that gzip will compress them even more
 
-echo -n 'Raw fasta...  '
-if [[ -f "${RAW_RIBOGROVE_FASTA}" ]]; then
+# Select discarded sequences
+echo -n 'Discarded fasta...  '
+if [[ -f "${DISCARDED_FASTA}" ]]; then
     # Empty the merged file
-    echo -n '' > "${RAW_RIBOGROVE_FASTA}"
+    echo -n '' > "${DISCARDED_FASTA}"
 fi
-cat "${BACTERIA_RAW_ANNOTATED_FASTA}" | seqkit sort -s | gzip > "${RAW_RIBOGROVE_FASTA}"
-cat "${ARCHAEA_RAW_ANNOTATED_FASTA}" | seqkit sort -s | gzip >> "${RAW_RIBOGROVE_FASTA}"
-echo "${RAW_RIBOGROVE_FASTA}"
+cat "${BACTERIA_DISCARDED_ANNOTATED_FASTA}" \
+    | seqkit sort -s | gzip > "${DISCARDED_FASTA}"
+cat "${ARCHAEA_DISCARDED_ANNOTATED_FASTA}" \
+    | seqkit sort -s | gzip >> "${DISCARDED_FASTA}"
+echo "${DISCARDED_FASTA}"
 
 # ======= METADATA =======
 
@@ -235,35 +223,15 @@ cat "${BACTERIA_PER_GENE_STATS}" > "${RIBOGROVE_PER_GENE_STATS}"
 cat "${ARCHAEA_PER_GENE_STATS}" | csvtk del-header -tT >> "${RIBOGROVE_PER_GENE_STATS}"
 echo "${RIBOGROVE_PER_GENE_STATS}"
 
-# Gene sequences statistics (raw)
-echo -n 'Gene sequences statistics (raw)...  '
-if [[ -f "${RIBOGROVE_RAW_PER_GENE_STATS}" ]]; then
+# Gene sequences statistics (discarded)
+echo -n 'Gene sequences statistics (discarded)...  '
+if [[ -f "${RIBOGROVE_DISCARDED_PER_GENE_STATS}" ]]; then
     # Empty the merged file
-    echo -n '' > "${RIBOGROVE_RAW_PER_GENE_STATS}"
+    echo -n '' > "${RIBOGROVE_DISCARDED_PER_GENE_STATS}"
 fi
-cat "${BACTERIA_RAW_PER_GENE_STATS}" > "${RIBOGROVE_RAW_PER_GENE_STATS}"
-cat "${ARCHAEA_RAW_PER_GENE_STATS}" | csvtk del-header -tT >> "${RIBOGROVE_RAW_PER_GENE_STATS}"
-echo "${RIBOGROVE_RAW_PER_GENE_STATS}"
-
-# Per replicon statistics (final)
-echo -n 'Per replicon statistics (final)...  '
-if [[ -f "${RIBOGROVE_PER_REPLICON_STATS}" ]]; then
-    # Empty the merged file
-    echo -n '' > "${RIBOGROVE_PER_REPLICON_STATS}"
-fi
-cat "${BACTERIA_PER_REPLICON_STATS}" > "${RIBOGROVE_PER_REPLICON_STATS}"
-cat "${ARCHAEA_PER_REPLICON_STATS}" | csvtk del-header -tT >> "${RIBOGROVE_PER_REPLICON_STATS}"
-echo "${RIBOGROVE_PER_REPLICON_STATS}"
-
-# Per replicon statistics (raw)
-echo -n 'Per replicon statistics (raw)...  '
-if [[ -f "${RIBOGROVE_RAW_PER_REPLICON_STATS}" ]]; then
-    # Empty the merged file
-    echo -n '' > "${RIBOGROVE_RAW_PER_REPLICON_STATS}"
-fi
-cat "${BACTERIA_RAW_PER_REPLICON_STATS}" > "${RIBOGROVE_RAW_PER_REPLICON_STATS}"
-cat "${ARCHAEA_RAW_PER_REPLICON_STATS}" | csvtk del-header -tT >> "${RIBOGROVE_RAW_PER_REPLICON_STATS}"
-echo "${RIBOGROVE_RAW_PER_REPLICON_STATS}"
+cat "${BACTERIA_DISCARDED_PER_GENE_STATS}" > "${RIBOGROVE_DISCARDED_PER_GENE_STATS}"
+cat "${ARCHAEA_DISCARDED_PER_GENE_STATS}" | csvtk del-header -tT >> "${RIBOGROVE_DISCARDED_PER_GENE_STATS}"
+echo "${RIBOGROVE_DISCARDED_PER_GENE_STATS}"
 
 # Categories
 echo -n 'Categories...  '

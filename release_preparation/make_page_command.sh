@@ -82,3 +82,15 @@ python3 make_ribogrove_release_page.py \
   --source-genomes /mnt/1.5_drive_0/RiboGrove_releases/7.213/metadata/source_RefSeq_genomes.tsv \
   --outdir /mnt/1.5_drive_0/RiboGrove_pages/7.213/ \
   --seqkit /usr/bin/seqkit
+
+
+python3 make_ribogrove_release_page.py \
+  --release-num 8.214 \
+  --release-date 2022-10-13 \
+  --final-fasta /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/8.214/ribogrove_8.214_sequences.fasta.gz \
+  --metadata /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/8.214/metadata_ribogrove_8.214.zip \
+  --gene-stats-table /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/8.214/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/8.214/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/8.214/metadata/source_RefSeq_genomes.tsv \
+  --outdir /mnt/1.5_drive_0/RiboGrove/RiboGrove_pages/8.214/ \
+  --seqkit /usr/bin/seqkit

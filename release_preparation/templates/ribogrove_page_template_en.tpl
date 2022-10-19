@@ -13,6 +13,7 @@
 <ul class="ribogrove-nested-list">
   <li><a href="#latest-release">Latest RiboGrove release</li>
   <li><a href="#release-archive">RiboGrove release archive</li>
+  <li><a href="#release-notes">Release notes</li>
 </ul>
 </li>
 <li><a href="#summary">Statistical summary</a>
@@ -29,8 +30,8 @@
 <li><a href="#searching-data">Searching data in RiboGrove</a>
 <ul class="ribogrove-nested-list">
 <li><a href="#header-format">Header format</a></li>
-<li><a href="#subset-by-header">Subsetting sequences by header</a></li>
-<li><a href="#subset-by-len">Subsetting sequences by length</a></li>
+<li><a href="#select-by-header">Search sequences by header</a></li>
+<li><a href="#select-by-len">Search sequences by length</a></li>
 <li><a href="#select-head">Selecting header data</a></li>
 </ul>
 </li>
@@ -42,15 +43,16 @@
 <p>RiboGrove is based on the <a href="https://ncbi.nlm.nih.gov/refseq/">RefSeq</a> database. It contains only full-length sequences of 16S rRNA genes, and the sequences are derived from completely assembled prokaryotic genomes deposited in RefSeq. Hence we posit high reliability of RiboGrove sequences.</p>
 <div id="other-databases" class="pad-anchor"></div>
 <h3>RiboGrove and other 16S rRNA databases</h3>
-<p>Here is a summary showing what is the (qualitative) difference between RiboGrove and similar rRNA sequence databases, namely <a href="https://www.arb-silva.de/">Silva</a>, <a href="http://rdp.cme.msu.edu/">RDP</a>, and <a href="https://greengenes.secondgenome.com/">Greengenes</a>. Briefly, RiboGrove is inferior in sequence amount and diversity, but superior in sequence reliability.</p>
+<p>Here is a summary showing what is the (qualitative) difference between RiboGrove and similar rRNA sequence databases, namely <a href="https://rrndb.umms.med.umich.edu/"><i>rrn</i>DB</a>, <a href="https://www.arb-silva.de/">Silva</a>, <a href="http://rdp.cme.msu.edu/">RDP</a>, and <a href="https://greengenes.secondgenome.com/">Greengenes</a>. Briefly, RiboGrove is inferior in sequence amount and diversity, but superior in sequence reliability.</p>
 <table class="sum-table">
 <tbody>
-  <tr class="sumtab-row"><th></th><th class="alcentr">RiboGrove</th><th class="alcentr">Silva</th><th class="alcentr">RDP</th><th class="alcentr">Greengenes</th></tr>
-  <tr class="sumtab-row"><td class="feature-col">Represented organisms</td><td class="alcentr">Bacteria<br>Archaea</td><td class="alcentr">Bacteria<br>Archaea<br>Eukaryotes</td><td class="alcentr">Bacteria<br>Archaea<br>Eukaryotes</td><td class="alcentr">Bacteria<br>Archaea</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Represented ribosome subunits</td><td class="alcentr">Small</td><td class="alcentr">Large<br>Small</td><td class="alcentr">Large<br>Small</td><td class="alcentr">Small</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Contains sequences from assembles genomes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Contains amplicon sequences</td><td class="alcentr">No</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Contains partial gene sequences</td><td class="alcentr">No</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
+  <tr class="sumtab-row"><th></th><th class="alcentr">RiboGrove</th><th class="alcentr"><i>rrn</i>DB</th><th class="alcentr">Silva</th><th class="alcentr">RDP</th><th class="alcentr">Greengenes</th></tr>
+  <tr class="sumtab-row"><td class="feature-col">Represented organisms</td><td class="alcentr">Bacteria<br>Archaea</td><td class="alcentr">Bacteria<br>Archaea</td><td class="alcentr">Bacteria<br>Archaea<br>Eukaryotes</td><td class="alcentr">Bacteria<br>Archaea<br>Eukaryotes</td><td class="alcentr">Bacteria<br>Archaea</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Represented ribosome subunits</td><td class="alcentr">Small</td><td class="alcentr">Small</td><td class="alcentr">Large<br>Small</td><td class="alcentr">Large<br>Small</td><td class="alcentr">Small</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Contains sequences from assembles genomes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Contains amplicon sequences</td><td class="alcentr">No</td><td class="alcentr">No</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Contains partial gene sequences</td><td class="alcentr">No</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Discriminates genome categories</td><td class="alcentr">Yes</td><td class="alcentr">No</td><td class="alcentr"><i>Not<br>applicable</i></td><td class="alcentr"><i>Not<br>applicable</i></td><td class="alcentr"><i>Not<br>applicable</i></td></tr>
 </tbody>
 </table>
 <div id="genome-categories" class="pad-anchor"></div>
@@ -81,7 +83,6 @@
 <p>The release is based on RefSeq release {{ refseq_release }}.</p>
 <ul>
 <li>A fasta file of full-length 16S gene sequences. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Download (gzipped fasta file, {{ final_fasta_fsize_fmt }} MB)</a></li>
-<li>A &ldquo;raw&ldquo; version of the fasta file above. This file contains partial sequences. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/raw_ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Download (gzipped fasta file, {{ raw_fasta_fsize_fmt }} MB)</a></li>
 <li>Metadata <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/metadata_ribogrove_{{ ribogrove_release_number }}.zip">Download (zip archive {{ metadata_fsize_fmt }} MB)</a><br>
   <details>
     <summary><small>What information exactly does the metadata contain?</small></summary>
@@ -89,16 +90,16 @@
       <p>The metadata consists of the following files:</p>
       <ol>
       <li>
+        <span class="samp-highl">discarded_sequences.fasta.gz</span><br>
+        This is a fasta file of sequences, which were present in source RefSeq genomes and were annotated a 16S rRNA genes but which have been discarded according to their incompleteness, internal repeats etc. and thus haven&rsquo;t been included into RiboGrove.
+      </li>
+      <li>
         <span class="samp-highl">source_RefSeq_genomes.tsv</span><br>
         This is a TSV files, which contains information about what genomes were used for the RiboGrove construction.
       </li>
       <li>
-        <span class="samp-highl">gene_seqs_statistics.tsv</span>, <span class="samp-highl">raw_gene_seqs_statistics.tsv</span><br>
-        These are TSV file, which contains nucleotide conposition, size, genomic and taxonomic affiliation of the gene sequences. The &ldquo;raw&rdquo; file also includes information about partial genes.
-      </li>
-      <li>
-        <span class="samp-highl">per_replicon_statistics.tsv</span>, <span class="samp-highl">raw_per_replicon_statistics.tsv</span><br>
-        These are TSV files, which contain information about number of 16S rRNA genes in each RefSeq genomic sequences, and about sizes of these genes. The &ldquo;raw&rdquo; file also includes information about partial genes.
+        <span class="samp-highl">gene_seqs_statistics.tsv</span>, <span class="samp-highl">discarded_gene_seqs_statistics.tsv</span><br>
+        These are TSV files, which contain nucleotide conposition, size, genomic and taxonomic affiliation of the gene sequences. The first file describes final RiboGrove gene sequences, the second file describes discarded sequences.
       </li>
       <li>
         <span class="samp-highl">categories.tsv</span><br>
@@ -128,10 +129,14 @@
   </details>
 </li>
 </ul>
-<p>The fasta files are compressed with gzip, and the metadata file is a zip archive. To uncompress them, Linux and Mac OS users may use gzip and zip programs, they should be built-in. For Windows users, the free and open source (de)compression program <a href="https://www.7-zip.org/">7-Zip</a> is available.</p>
+<p>The fasta file is compressed with gzip, and the metadata file is a zip archive. To uncompress them, Linux and Mac OS users may use gzip and zip programs, they should be built-in. For Windows users, the free and open source (de)compression program <a href="https://www.7-zip.org/">7-Zip</a> is available.</p>
 <div id="release-archive" class="pad-anchor"></div>
 <h3>RiboGrove release archive</h3>
 <p>You can find all releases at the <a href="/cager/en/content/60-ribogrove-archive">RiboGrove release archive</a>.</p>
+<div id="release-notes" class="pad-anchor"></div>
+<h3>Release notes</h3>
+<p><i>No important differences from the previous release.</i></p>
+<p>You can find notes to all RiboGrove releases at the <a href="/cager/en/content/en/content/66-ribogrove-release-notes">release notes page</a>.</p>
 <hr>
 <div id="summary" class="pad-anchor"></div>
 <h2>Statistical summary</h2>
@@ -382,11 +387,11 @@
 <hr>
 <div id="searching-data" class="pad-anchor"></div>
 <h2>Searching data in RiboGrove</h2>
-<p>RiboGrove is a very minimalistic database &mdash; it comprises a collection of plain fasta files with metadata. Thus, extended search instruments are not available for it. We admit this problem and provide a list of suggestions below. The suggestions would help you to explore and subset RiboGrove data.</p>
+<p>RiboGrove is a very minimalistic database &mdash; it comprises a collection of plain fasta files with metadata. Thus, extended search instruments are not available for it. We admit this problem and provide a list of suggestions below. The suggestions would help you to explore and select RiboGrove data.</p>
 <div id="header-format" class="pad-anchor"></div>
 <h3>Header format</h3>
 <p>RiboGrove fasta data has the following format of header:</p>
-<p class="samp-highl samp-vwide">&gt;G_324861:NZ_CP009686.1:8908-10459:plus ;Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Bacillus;cereus; category:1</p>
+<p class="samp-highl samp-vwide" style="font-size:14px">&gt;G_324861:NZ_CP009686.1:8908-10459:plus ;d__Bacteria;p__Firmicutes;c__Bacilli;o__Bacillales;f__Bacillaceae;g__Bacillus;s__cereus; category:1</p>
 <p>Major blocks of a header are separated by spaces. A header consists of three such blocks:</p>
 <ol>
 <li>Sequence ID (seqID): <span class="samp-highl">G_324861:NZ_CP009686.1:8908-10459:plus</span>. SeqID, in turn, consists of four parts separated by semicolons (<span class="samp-highl">:</span>):
@@ -402,11 +407,11 @@ Each name is preceded by a prefix, which denotes rank: <span class="samp-highl">
 The taxonomic names are separated and flanked by semicolons (<span class="samp-highl">;</span>).</li>
 <li>The category of the genome, from which the gene sequence originates: (<span class="samp-highl">category:1</span>).</li>
 </ol>
-<h3>Subsetting sequences</h3>
-<p>You can subset specific sequences from fasta files using the <strong>Seqkit</strong> program (<a href="https://github.com/shenwei356/seqkit">GitHub repo</a>, <a href="https://bioinf.shenwei.me/seqkit/">documentation</a>). It is free, cross-platform, multifunctional and pretty fast and can process both gzipped and uncompressed fasta files. Programs <span class="samp">seqkit grep</span> and <span class="samp">seqkit seq</span> are useful for sequence subsetting.</p>
-<div id="subset-by-header" class="pad-anchor"></div>
-<h4>Subsetting sequences by header</h4>
-<p>Given the downloaded fasta file <span class="samp">ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</span>, consider the following examples of sequence subsetting using <span class="samp">seqkit grep</span>:</p>
+<h3>Sequence selection</h3>
+<p>You can select specific sequences from fasta files using the <strong>Seqkit</strong> program (<a href="https://github.com/shenwei356/seqkit">GitHub repo</a>, <a href="https://bioinf.shenwei.me/seqkit/">documentation</a>). It is free, cross-platform, multifunctional and pretty fast and can process both gzipped and uncompressed fasta files. Programs <span class="samp">seqkit grep</span> and <span class="samp">seqkit seq</span> are useful for sequence selection.</p>
+<div id="select-by-header" class="pad-anchor"></div>
+<h4>Search sequences by header</h4>
+<p>Given the downloaded fasta file <span class="samp">ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</span>, consider the following examples of sequence selection using <span class="samp">seqkit grep</span>:</p>
 <p><strong>Example 1</strong>. Select a single sequence by SeqID.</p>
 <p class="samp-highl samp-vwide">seqkit grep -p "G_324861:NZ_CP009686.1:8908-10459:plus" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">The <span class="samp">-p</span> option sets a pattern to search in fasta headers (only in sequence IDs, actually).</p>
@@ -416,7 +421,7 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
 <p class="samp-comment">To ensure search specificity, surround the Accession.Version with colons (<span class="samp-highl">:</span>).</p>
 <p><strong>Example 3</strong>. Select all gene sequences of a single genome (Assembly ID <a href="https://www.ncbi.nlm.nih.gov/assembly/10577151">10577151</a>).</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp "G_10577151:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p class="samp-comment">To ensure search specificity, Asselbly ID should be preceded by prefix <span class="samp-highl">G_</span> and followed by a colon (<span class="samp-highl">:</span>).</p>
+<p class="samp-comment">To ensure search specificity, Assembly ID should be preceded by prefix <span class="samp-highl">G_</span> and followed by a colon (<span class="samp-highl">:</span>).</p>
 <p><strong>Example 4</strong>. Select all actinobacterial sequences.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp ";p__Actinobacteria;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">To ensure search specificity, surround the taxonomy name with semicolons (<span class="samp-highl">;</span>).</p>
@@ -425,9 +430,9 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
 <p><strong>Example 6</strong>. Select all sequences except for those belonging to <i>Firmicutes</i>.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nvrp ";p__Firmicutes;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Recognize the <span class="samp">-v</span> option within option sequence <span class="samp">-nvrp</span>. This option inverts match, i.e. output will comprise sequences, headers of which do <strong>not</strong> contain substring &ldquo;<span class="samp">;p__Firmicutes;</span>&rdquo;.</p>
-<div id="subset-by-len" class="pad-anchor"></div>
-<h4>Subsetting sequences by length</h4>
-<p>You can use program <span class="samp">seqkit seq</span> to subset sequences by length.</p>
+<div id="select-by-len" class="pad-anchor"></div>
+<h4>Search sequences by length</h4>
+<p>You can use program <span class="samp">seqkit seq</span> to select sequences by length.</p>
 <p><strong>Example 1</strong>. Select all sequences longer than 1600 bp.</p>
 <p class="samp-highl samp-vwide">seqkit seq -m 1601 ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">The <span class="samp">-m</span> option sets the minimum length of a sequence to be printed to output.</p>

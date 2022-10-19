@@ -52,12 +52,6 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '--raw-fasta',
-    help='RiboGrove "raw" fasta file (Archaea + Bacteria)`',
-    required=True
-)
-
-parser.add_argument(
     '--metadata',
     help='RiboGrove metadata archive (Archaea + Bacteria)`',
     required=True
@@ -104,7 +98,6 @@ args = parser.parse_args()
 ribogrove_release_number = args.release_num
 ribogrove_release_date = args.release_date
 final_fasta_fpath = os.path.abspath(args.final_fasta)
-raw_fasta_fpath = os.path.abspath(args.raw_fasta)
 metadata_fpath = os.path.abspath(args.metadata)
 gene_stats_fpath = os.path.abspath(args.gene_stats_table)
 entropy_summary_fpath = os.path.abspath(args.entropy_summary)
@@ -130,7 +123,6 @@ if re.match(r'^[\-0-9]+$', ribogrove_release_date) is None:
 
 input_fpaths = (
     final_fasta_fpath,
-    raw_fasta_fpath,
     metadata_fpath,
     gene_stats_fpath,
     entropy_summary_fpath,
@@ -179,7 +171,6 @@ refseq_release = ribogrove_release_number.partition('.')[2]
 
 # Calculate file sizes
 final_fasta_fsize = get_file_size_MB(final_fasta_fpath)
-raw_fasta_fsize = get_file_size_MB(raw_fasta_fpath)
 metadata_fsize = get_file_size_MB(metadata_fpath)
 
 
@@ -317,12 +308,6 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
         decimal_separator,
         2
     )
-    raw_fasta_fsize_fmt = format_float_number(
-        raw_fasta_fsize,
-        thousand_separator,
-        decimal_separator,
-        2
-    )
     metadata_fsize_fmt = format_float_number(
         metadata_fsize,
         thousand_separator,
@@ -380,7 +365,6 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
                 refseq_release=refseq_release,
                 ribogrove_release_date=ribogrove_release_date,
                 final_fasta_fsize_fmt=final_fasta_fsize_fmt,
-                raw_fasta_fsize_fmt=raw_fasta_fsize_fmt,
                 metadata_fsize_fmt=metadata_fsize_fmt,
                 ribogrove_size_dict=fmt_ribogrove_size_dict,
                 ribogrove_len_dict=fmt_ribogrove_len_dict,

@@ -1,19 +1,24 @@
 In this archive, the metadata for RiboGrove RELEASE_NUMBER_REPLACE are stored.
 
 The metadata consists of the following files:
-1. source_RefSeq_genomes.tsv
-2. gene_seqs_statistics.tsv
-3. raw_gene_seqs_statistics.tsv
-4. per_replicon_statistics.tsv, raw_per_replicon_statistics.tsv
-5. categories.tsv
-6. taxonomy.tsv
-7. intragenic_repeats.tsv
-8. cmscan_output_table.tblout
-9. entropy_summary.tsv
+1.  discarded_sequences.fasta.gz
+2.  source_RefSeq_genomes.tsv
+3.  gene_seqs_statistics.tsv
+4.  discarded_gene_seqs_statistics.tsv
+5.  categories.tsv
+6.  taxonomy.tsv
+7.  intragenic_repeats.tsv
+8.  cmscan_output_table.tblout
+9.  entropy_summary.tsv
 10. QIIME2-compatible-taxonomy.txt
 
 
 |=== File descriptions ===|
+
+
+== discarded_sequences.fasta.gz ==
+
+This is a fasta file of sequences, which were present in source RefSeq genomes and were annotated as 16S rRNA genes but which have been discarded according to their incompleteness, internal repeats etc. and thus haven't been included into RiboGrove.
 
 
 == source_RefSeq_genomes.tsv ==
@@ -29,10 +34,10 @@ Column descriptions:
 
 
 ==   gene_seqs_statistics.tsv   ==
-== raw_gene_seqs_statistics.tsv ==
+== discarded_gene_seqs_statistics.tsv ==
 
 This is a TSV file, which contains nucleotide conposition, size, genomic and taxonomic affiliation of the gene sequences.
-`raw_gene_seqs_statistics.tsv` is the same but for "raw" gene sequence set.
+`discarded_gene_seqs_statistics.tsv` is the same but for discarded gene sequences.
 
 Column descriptions:
 
@@ -44,23 +49,6 @@ Column descriptions:
 - Column `taxID`: the Taxonomy ID from the NCBI Taxonomy database (https://www.ncbi.nlm.nih.gov/taxonomy).
 - Column `tax_name`: the taxonomy name from the NCBI Taxonomy database (https://www.ncbi.nlm.nih.gov/taxonomy).
 - 7 columns `species`, `genus`, `family`, `order`, `class`, `phylum`, `domain`. Each of them contains the name of the taxon at the corresponding taxonomical level.
-
-
-==   per_replicon_statistics.tsv   ==
-== raw_per_replicon_statistics.tsv ==
-
-These are TSV files, which contain information about number of genes in each RefSeq genomic sequences, and about sizes of these genes. The "raw" file contains information about all gene sequences (including partial) extracted from genomic sequences, whereas the file `per_replicon_statistics.tsv` describes the final RiboGrove sequences, which does not contain partial gene sequences.
-
-Column descriptions:
-
-- Column `ass_id`: the Assembly ID of a genome (https://ncbi.nlm.nih.gov/assembly/).
-- Column `acc`: the GenBank ACCESSION.VERSION of a genomic sequence (https://ncbi.nlm.nih.gov/nuccore/).
-- Column `title`: the title of a genomic sequence from RefSeq.
-- Column `num_genes`: number of target genes in the genomic sequence.
-- Column `min_len`: minimum length of a target gene in the genomic sequence.
-- Column `max_len`: maximum length of a target gene in the genomic sequence.
-- Column `mean_len`: average length of a target gene in the genomic sequence.
-- Column `median_len`: median length of a target gene in the genomic sequence.
 
 
 == categories.tsv ==

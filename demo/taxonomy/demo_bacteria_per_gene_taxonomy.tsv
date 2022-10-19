@@ -1,11 +1,11 @@
 ass_id	seqID	taxID	tax_name	species	genus	family	order	class	phylum	domain
-10601601	NZ_CP063063.1:372608-374156_plus	83559	Chlamydia suis	Chlamydia suis	Chlamydia	Chlamydiaceae	Chlamydiales	Chlamydiia	Chlamydiae	Bacteria
-10613051	NZ_CP066836.1:2159197-2160738_minus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
-10613051	NZ_CP066836.1:2975089-2976630_minus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
-10613051	NZ_CP066836.1:3016181-3017722_minus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
-10613051	NZ_CP066836.1:3150038-3151579_minus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
-10613051	NZ_CP066836.1:3243611-3245152_minus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
-10613051	NZ_CP066836.1:3797366-3798907_plus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
-10613051	NZ_CP066836.1:4599904-4601445_plus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
-10601591	NZ_CP063062.1:373574-375122_plus	83559	Chlamydia suis	Chlamydia suis	Chlamydia	Chlamydiaceae	Chlamydiales	Chlamydiia	Chlamydiae	Bacteria
-10601591	NZ_CP063062.1:399242-400790_plus	83559	Chlamydia suis	Chlamydia suis	Chlamydia	Chlamydiaceae	Chlamydiales	Chlamydiia	Chlamydiae	Bacteria
+10601601	G_10601601:NZ_CP063063.1:372608-374156:plus	83559	Chlamydia suis	Chlamydia suis	Chlamydia	Chlamydiaceae	Chlamydiales	Chlamydiia	Chlamydiae	Bacteria
+10613051	G_10613051:NZ_CP066836.1:2159197-2160738:minus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
+10613051	G_10613051:NZ_CP066836.1:2975089-2976630:minus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
+10613051	G_10613051:NZ_CP066836.1:3016181-3017722:minus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
+10613051	G_10613051:NZ_CP066836.1:3150038-3151579:minus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
+10613051	G_10613051:NZ_CP066836.1:3243611-3245152:minus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
+10613051	G_10613051:NZ_CP066836.1:3797366-3798907:plus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
+10613051	G_10613051:NZ_CP066836.1:4599904-4601445:plus	562	Escherichia coli	Escherichia coli	Escherichia	Enterobacteriaceae	Enterobacterales	Gammaproteobacteria	Proteobacteria	Bacteria
+10601591	G_10601591:NZ_CP063062.1:373574-375122:plus	83559	Chlamydia suis	Chlamydia suis	Chlamydia	Chlamydiaceae	Chlamydiales	Chlamydiia	Chlamydiae	Bacteria
+10601591	G_10601591:NZ_CP063062.1:399242-400790:plus	83559	Chlamydia suis	Chlamydia suis	Chlamydia	Chlamydiaceae	Chlamydiales	Chlamydiia	Chlamydiae	Bacteria

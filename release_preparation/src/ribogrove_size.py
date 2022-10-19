@@ -56,7 +56,7 @@ def count_dedup_seqs(fasta_fpath, seqkit_fpath, filter_str=None):
 
     if not filter_str is None:
         cmd = [
-            seqkit_fpath, 'grep', '-nrp', f'";{filter_str};"', fasta_fpath,
+            seqkit_fpath, 'grep', '-nrp', f'";d__{filter_str};"', fasta_fpath,
             '|',
             seqkit_fpath, 'rmdup', '-s', 
             '|',

@@ -1,6 +1,6 @@
 1. assembly2refseq_id.py
 2. gis_to_accs.py
-3. merge_assID2acc_and_remove_WGS.py
+3. merge_assIDs_and_accs.py
 4. download_genomes.py
 5. extract_16S.py
 6. assign_genome_categories.py

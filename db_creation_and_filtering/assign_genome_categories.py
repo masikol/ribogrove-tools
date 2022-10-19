@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-# TODO: update description
-
-# The script assigns categories to downlaoded genomes. Categories are assigned according
+# The script assigns categories to downloaded genomes. Categories are assigned according
 #   to the reliability of a genome assembly.
 # The categories are the following:
 # Category 1. A genome is not of category 3, and it was sequenced using PacBio or ONT+Illumina.
@@ -27,6 +25,10 @@
 # 2. `-l / --seqtech-logfile` -- a log file to track if sequence technology is successfully
 #   extracted from all genomes where it is specified. "Seqtech" means SEQuencing TECHnology. Mandatory.
 
+### "Cached" files:
+# 1. `--prev-categories` -- a file of genome categories from the workdir of the previous RiboGrove release.
+# 2. `--prev-assm-acc-file` -- a file `*_refseq_accs_merged.tsv` from the workdir of the previous RiboGrove release.
+
 ### Dependencies:
 # 1. `--seqkit` -- a `seqkit` executable: github.com/shenwei356/seqkit. Mandatory.
 
@@ -45,6 +47,8 @@ from typing import Dict, List, Sequence, TextIO
 import pandas as pd
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
+
+from ribogrove_seqID import update_seqID_column
 
 
 # == Parse arguments ==
@@ -474,6 +478,7 @@ with open(outfpath, 'wt') as outfile, \
             acc_code = encode_accs(accs)
             if acc_code == acc_code_dict[ass_id]:
                 cached_ass_df = prev_categories_df[prev_categories_df['ass_id'] == ass_id]
+                cached_ass_df = update_seqID_column(cached_ass_df, ass_id)
                 cached_ass_df.to_csv(
                     outfile,
                     sep='\t',

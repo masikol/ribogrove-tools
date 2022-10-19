@@ -9,7 +9,7 @@
 <body>
 <div class="container">
 <div class="lang-section">
-<p>&#127760;&nbsp;<a href="index.html">English</a> / <span class="active-lang">Беларуская</span> / <a href="ribogrove_{{ ribogrove_release_number }}_ua.html">Українська</a> / <a href="ribogrove_{{ ribogrove_release_number }}_ru.html">Русский</a></p>
+<p>&#127760;&nbsp;<a href="index.html">English</a> / <span class="active-lang">Беларуская</span> / <a href="latest_ribogrove_release_ua.html">Українська</a> / <a href="latest_ribogrove_release_ru.html">Русский</a></p>
 </div>
 <p><div class="warn-section"><a href="http://mbio.bas-net.by/cager/en/ribogrove">Асноўны сайт</a>, дзе размяшчаецца база дадзеных RiboGrove, можа быць недасяжным па-за межамі Беларусі праз тэхнічныя прычыны ды агульную катастрофу. Таму існуе гэтае люстэрка, а файлы RiboGrove дасяжныя праз Дропбокс (спасылкі <a href="#downloads">ніжэй</a>).</div></p><br>
 <h1 style="display:none">RiboGrove</h1>
@@ -27,6 +27,7 @@
 <ul class="ribogrove-nested-list">
 <li><a href="#current-release">Актуальны выпуск RiboGrove</li>
 <li><a href="#release-archive">Архіў выпускаў RiboGrove</li>
+<li><a href="#release-notes">Каментары да выпуску</li>
 </ul>
 </li>
 <li><a href="#summary">Статыстычнае апісанне</a>
@@ -55,16 +56,16 @@
 <p>RiboGrove &mdash; гэта база дадзеных паслядоўнасцей генаў 16S рРНК бактэрый і архей.</p>
 <p>RiboGrove асноўваецца на базе дадзеных <a href="https://ncbi.nlm.nih.gov/refseq/">RefSeq</a>. RiboGrove змяшчае толькі поўнапамерныя паслядоўнасці генаў 16S рРНК, а самі паслядоўнасці паходзяць з цалкам сабраных геномаў прокарыёт, дэпанаваных у RefSeq. Таму мы пастулюем высокую надзейнасць паслядоўнасцей, размешчаных у RiboGrove.</p>
 <div id="other-databases" class="pad-anchor"></div>
-<h3>RiboGrove і іншыя базы дадзеных 16S рРНК</h3>
-<p>Табліца ніжэй паказвае, чым (якасна) RiboGrove адрозніваецца ад падобных баз дадзеных паслядоўнасцей РНК, а менавіта <a href="https://www.arb-silva.de/">Silva</a>, <a href="http://rdp.cme.msu.edu/">RDP</a> і <a href="https://greengenes.secondgenome.com/">Greengenes</a>. Кажучы каротка, RiboGrove саступае аналагам у колькасці паслядоўнасцей і іх разнастайнасці, але пераўзыходзіць у надзейнасці паслядоўнасцей.</p>
+<p>Табліца ніжэй паказвае, чым (якасна) RiboGrove адрозніваецца ад падобных баз дадзеных паслядоўнасцей РНК, а менавіта <a href="https://rrndb.umms.med.umich.edu/"><i>rrn</i>DB</a>, <a href="https://www.arb-silva.de/">Silva</a>, <a href="http://rdp.cme.msu.edu/">RDP</a> і <a href="https://greengenes.secondgenome.com/">Greengenes</a>. Кажучы каротка, RiboGrove саступае аналагам у колькасці паслядоўнасцей і іх разнастайнасці, але пераўзыходзіць у надзейнасці паслядоўнасцей.</p>
 <table class="sum-table">
 <tbody>
-  <tr class="sumtab-row"><th></th><th class="alcentr">RiboGrove</th><th class="alcentr">Silva</th><th class="alcentr">RDP</th><th class="alcentr">Greengenes</th></tr>
-  <tr class="sumtab-row"><td class="feature-col">Прадстаўленыя арганізмы</td><td class="alcentr">Бактэрыі<br>Археі</td><td class="alcentr">Бактэрыі<br>Археі<br>Эўкарыёты</td><td class="alcentr">Бактэрыі<br>Археі<br>Эўкарыёты</td><td class="alcentr">Бактэрыі<br>Археі</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Прадстаўленыя субадзінкі рыбасом</td><td class="alcentr">Малая</td><td class="alcentr">Вялікая<br>Малая</td><td class="alcentr">Вялікая<br>Малая</td><td class="alcentr">Малая</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Змяшчае паслядоўнасці сабраных геномаў</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Змяшчае паслядоўнасці ампліконаў</td><td class="alcentr">Не</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Змяшчае няпоўныя паслядоўнасці генаў</td><td class="alcentr">Не</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td></tr>
+  <tr class="sumtab-row"><th></th><th class="alcentr">RiboGrove</th><th class="alcentr"><i>rrn</i>DB</th><th class="alcentr">Silva</th><th class="alcentr">RDP</th><th class="alcentr">Greengenes</th></tr>
+  <tr class="sumtab-row"><td class="feature-col">Прадстаўленыя арганізмы</td><td class="alcentr">Бактэрыі<br>Археі</td><td class="alcentr">Бактэрыі<br>Археі</td><td class="alcentr">Бактэрыі<br>Археі<br>Эўкарыёты</td><td class="alcentr">Бактэрыі<br>Археі<br>Эўкарыёты</td><td class="alcentr">Бактэрыі<br>Археі</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Прадстаўленыя субадзінкі рыбасом</td><td class="alcentr">Малая</td><td class="alcentr">Малая</td><td class="alcentr">Вялікая<br>Малая</td><td class="alcentr">Вялікая<br>Малая</td><td class="alcentr">Малая</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Змяшчае паслядоўнасці сабраных геномаў</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Змяшчае паслядоўнасці ампліконаў</td><td class="alcentr">Не</td><td class="alcentr">Не</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Змяшчае няпоўныя паслядоўнасці генаў</td><td class="alcentr">Не</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td><td class="alcentr">Так</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Адрознівае катэгорыі геномаў</td><td class="alcentr">Так</td><td class="alcentr">Не</td><td class="alcentr"><i>Крытэр<br>непрымянімы</i></td><td class="alcentr"><i>Крытэр<br>непрымянімы</i></td><td class="alcentr"><i>Крытэр<br>непрымянімы</i></td></tr>
 </tbody>
 </table>
 <div id="genome-categories" class="pad-anchor"></div>
@@ -78,7 +79,7 @@
 <p>Прыкметы нізкаякаснай зборкі:</p>
 <ul>
   <li>Геном утрымлівае хаця б адну выраджаную аснову у паслядоўнасцях яго генаў 16S рРНК.</li>
-  <li>Зборка генома утрымлівае хаця б адзін запіс базы дадзеных RefSeq, у назве якой ёсць фраза <q>map unlocalized</q>, і гэты запіс утрымлівае паслядоўнасць гена 16S рРНК або яго частку.</li>
+  <li>Зборка геному утрымлівае хаця б адзін запіс базы дадзеных RefSeq, у назве якой ёсць фраза <q>map unlocalized</q>, і гэты запіс утрымлівае паслядоўнасць гена 16S рРНК або яго частку.</li>
 </ul>
 <br>
 <p>Праграмы, з дапамогай якіх была створана RiboGrove, знаходзяцца ў наступным ГітХаб-рэпазіторыі: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
@@ -95,7 +96,6 @@
 <p>Выпуск заснованы на базе дадзеных RefSeq {{ refseq_release }}.</p>
 <ul>
 <li>Fasta-файл з поўнапамернымі паслядоўнасцямі генаў 16S рРНК. <a href="ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Спампаваць (&bdquo;гзіп&rsquo;нуты&ldquo; fasta-файл, {{ final_fasta_fsize_fmt }} Мб)</a></li>
-<li>&bdquo;Сырая&ldquo; версія RiboGrove &mdash; яна змяшчае ў тым ліку і частковыя паслядоўнасці генаў. <a href="ribogrove_releases/{{ ribogrove_release_number }}/raw_ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Спампаваць (&bdquo;гзіп&rsquo;нуты&ldquo; fasta-файл, {{ raw_fasta_fsize_fmt }} Мб)</a></li>
 <li>Метададзеныя. <a href="ribogrove_releases/{{ ribogrove_release_number }}/metadata_ribogrove_{{ ribogrove_release_number }}.zip">Спампаваць (zip-архіў {{ metadata_fsize_fmt }} Мб)</a><br>
 <details>
   <summary><small>Якая менавіта інфармацыя утрымліваецца ў метададзеных?</small></summary>
@@ -103,16 +103,16 @@
     <p>Метададзеныя складаюцца з наступных файлаў:</p>
     <ol>
     <li>
+      <span class="samp-highl">discarded_sequences.fasta.gz</span><br>
+      Гэта fasta-файл, які змяшчае паслядоўнасці, якія прысутнічалі ў зыходных геномах, былі пры гэтым анатаваныя як гены 16S рРНК, але якія былі &bdquo;забракаваныя&ldquo; (discarded) праз іхнюю непаўнату, прысутнасць унутрыгенных паўтораў і г.д. Такім чынам, гэтыя паслядоўнасці не ўключаныя ў RiboGrove.
+    </li>
+    <li>
       <span class="samp-highl">source_RefSeq_genomes.tsv</span><br>
       Гэта TSV-файл, які змяшчае інфармацыю пра тое, якія геномы выкарыстоўваліся для стварэння RiboGrove.
     </li>
     <li>
-      <span class="samp-highl">gene_seqs_statistics.tsv</span>, <span class="samp-highl">raw_gene_seqs_statistics.tsv</span><br>
-      Гэта TSV-файлы, якія змяшчаюць інфармацыю пра нуклеатыдны склад, памер, геномную і таксанамічную прыналежнасць паслядоўнасцей генаў. &bdquo;Сырая&ldquo; (&bdquo;raw&ldquo;) версія дадаткова ўтрымлівае інфармацыю пра няпоўныя гены.
-    </li>
-    <li>
-      <span class="samp-highl">per_replicon_statistics.tsv</span>, <span class="samp-highl">raw_per_replicon_statistics.tsv</span><br>
-      Гэта TSV-файлы, якія змяшчаюць інфармацыю пра колькасць генаў 16S рРНК у кожнай геномнай паслядоўнасці з БД RefSeq і пра памеры гэтых генаў. &bdquo;Сырая&ldquo; (&bdquo;raw&ldquo;) версія дадаткова ўтрымлівае інфармацыю пра няпоўныя гены.
+      <span class="samp-highl">gene_seqs_statistics.tsv</span>, <span class="samp-highl">discarded_gene_seqs_statistics.tsv</span><br>
+      Гэта TSV-файлы, якія змяшчаюць інфармацыю пра нуклеатыдны склад, памер, геномную і таксанамічную прыналежнасць паслядоўнасцей генаў. Першы файл з гэтых двух апісвае фінальныя паслядоўнасці, уключаныя ў RiboGrove, а другі &mdash; &bdquo;забракаваныя&ldquo; паслядоўнасці.
     </li>
     <li>
       <span class="samp-highl">categories.tsv</span><br>
@@ -142,10 +142,14 @@
 </details>
 </li>
 </ul>
-<p>Файлы fasta сціснутыя з дапамогаю праграмы gzip, а файлы з метададзенымі сціснутыя ў zip-архіў. Каб распакаваць іх, карыстальнікі Linux і Mac OS могуць скарастыцца якраз праграмамі gzip і zip; гэтыя праграмы звычайна ўсталяваныя разам з аперыцыйнай сістэмай. Карыстальнікам Windows можа прыдацца бясплатная праграма-архіватар <a href="https://www.7-zip.org/">7-Zip</a>.</p>
+<p>Файл fasta сціснуты з дапамогаю праграмы gzip, а файлы з метададзенымі сціснутыя ў zip-архіў. Каб распакаваць іх, карыстальнікі Linux і Mac OS могуць скарастыцца якраз праграмамі gzip і zip; гэтыя праграмы звычайна ўсталяваныя разам з аперыцыйнай сістэмай. Карыстальнікам Windows можа прыдацца бясплатная праграма-архіватар <a href="https://www.7-zip.org/">7-Zip</a>.</p>
 <div id="release-archive" class="pad-anchor"></div>
 <h3>Архіў выпускаў RiboGrove</h3>
 <p>Усе папярэднія выпускі можна знайсці ў <a href="archive/ribogrove_archive_en.html"> архіве выпускаў RiboGrove</a>. На жаль, ён вядзецца толькі па-англійску.</p>
+<div id="release-notes" class="pad-anchor"></div>
+<h3>Каментары да выпуску</h3>
+<p><i>Няма прынцыповых адрозненняў ад папярэдняга выпуску.</i></p>
+<p>Каментары да ўсіх выпускаў RiboGrove можна знайсці на <a href="ribogrove_release_notes_en.html">старонцы каментароў да выпускаў</a>.</p>
 <hr>
 <div id="summary" class="pad-anchor"></div>
 <h2>Статыстычнае апісанне</h2>
@@ -389,7 +393,7 @@
 </tbody>
 </table>
 
-<p><sup>*</sup> Энтрапія ў гэтым выпадку &mdash; гэта <a href="https://ru.wikipedia.org/wiki/Информационная_энтропия">энтрапія Шэнана</a>, якую вылічалі для кожнай калонкі множнага выраўноўвання поўнапамерных паслядоўнасцяў генаў 16S рРНК кожнага генома. Пасля гэтага падсумоўвалі энтрапію (калонка <q>Сума энтрапіі</q>) і усярэднівалі (калонка <q>Сярэдняя энтрапія</q>).</p>
+<p><sup>*</sup> Энтрапія ў гэтым выпадку &mdash; гэта <a href="https://ru.wikipedia.org/wiki/Информационная_энтропия">энтрапія Шэнана</a>, якую вылічалі для кожнай калонкі множнага выраўноўвання поўнапамерных паслядоўнасцяў генаў 16S рРНК кожнага геному. Пасля гэтага падсумоўвалі энтрапію (калонка <q>Сума энтрапіі</q>) і усярэднівалі (калонка <q>Сярэдняя энтрапія</q>).</p>
 <p><sup>**</sup> <i>Halomicrobium</i> sp. ZPS1 &mdash; паказальны выпадак. У гэтым геноме два гены 16S рРНК, таму энтрапія роўная колькасці нуклеатыдаў, якія не супадаюць у іхніх паслядоўнасцях. Вылічыўшы адсотак ідэнтычнасці (скарочана АІ) паслядоўнасцяў гэтых двух генаў, атрымаем 90,70%! Нагадаем, што за парог АІ паслядоўнасцяў генаў 16S рРНК для аднясення арганізмаў да адрозных <em>родаў</em> звычайна бярэцца (зрэшты, адвольна) значэнне 95%.</p>
 
 <hr>
@@ -399,7 +403,7 @@
 <div id="header-format" class="pad-anchor"></div>
 <h3>Фармат загалоўка</h3>
 <p>Запісы паслядоўнасцяў RiboGrove у фармаце fasta маюць наступны фармат загалоўка:</p>
-<p class="samp-highl samp-vwide">&gt;G_324861:NZ_CP009686.1:8908-10459:plus ;Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Bacillus;cereus; category:1</p>
+<p class="samp-highl samp-vwide" style="font-size:14px">&gt;G_324861:NZ_CP009686.1:8908-10459:plus ;d__Bacteria;p__Firmicutes;c__Bacilli;o__Bacillales;f__Bacillaceae;g__Bacillus;s__cereus; category:1</p>
 <p>Асноўныя часткі загалоўка адасобленыя адна ад адной прабеламі. У загалоўку павінна быць тры такія часткі:</p>
 <ol>
 <li>Ідэнтыфікатар паслядоўнасці (SeqID): <span class="samp-highl">G_324861:NZ_CP009686.1:8908-10459:plus</span>. SeqID, у сваю чаргу, складаецца з чатырох частак, адасобленых двукроп&rsquo;ямі (<span class="samp-highl">:</span>):
@@ -413,7 +417,7 @@
 <li>Радок таксаноміі, а менавіта назвы дамену (<span class="samp-highl">Bacteria</span>), тыпу (<span class="samp-highl">Firmicutes</span>), класу (<span class="samp-highl">Bacilli</span>), парадку (<span class="samp-highl">Bacillales</span>), сямейства (<span class="samp-highl">Bacillaceae</span>), роду (<span class="samp-highl">Bacillus</span>), а таксама відавы эпітэт (<span class="samp-highl">cereus</span>).<br>
 Перад кожнай назвай пішацца прэфікс, які пазначае ранг: <span class="samp-highl">d__</span> для дамену, <span class="samp-highl">p__</span> для тыпу, <span class="samp-highl">c__</span> для класу, <span class="samp-highl">o__</span> для парадку, <span class="samp-highl">f__</span> для сямейства, <span class="samp-highl">g__</span> для роду і <span class="samp-highl">s__</span> для відавага эпітэту. У прэфіксах пасля літары пішуцца <strong>два</strong> знакі ніжняга падкрэслівання.<br>
 Таксанамічныя назвы адасобленыя і аточаныя кропкамі з коскай (<span class="samp-highl">;</span>).</li>
-<li>Катэгорыя генома, з якога паслядоўнасць гена паходзіць: (<span class="samp-highl">category:1</span>).</li>
+<li>Катэгорыя геному, з якога паслядоўнасць гена паходзіць: (<span class="samp-highl">category:1</span>).</li>
 </ol>
 <h3>Адбор паслядоўнасцяў</h3>
 <p>Адбіраць тыя ці іншыя паслядоўнасці з файлаў fasta можна з дапамогай праграмы <strong>Seqkit</strong> (<a href="https://github.com/shenwei356/seqkit">ГітХаб-рэпазіторый</a>, <a href="https://bioinf.shenwei.me/seqkit/">дакументацыя</a>). Гэта бясплатная, кросплатформавая, шматфункцыянальная і даволі шустрая праграма, якая можа апрацоўваць як &bdquo;гзіп&rsquo;нутыя&ldquo;, так і простыя нясціснутыя файлы fasta. Для адбору паслядоўнасцяў зручна выкарыстоўваць падпраграмы <span class="samp">seqkit grep</span> і <span class="samp">seqkit seq</span> .</p>
@@ -427,7 +431,7 @@
 <p class="samp-highl samp-vwide">seqkit grep -nrp ":NZ_CP009686.1:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Тут спатрэбяцца яшчэ дзве опцыі: <span class="samp">-n</span> і <span class="samp">-r</span>. Першая кажа праграме шукаць падрадкі&#769; у загалоўках цалкам, а не толькі ў ідэнтыфікатарах (SeqID). Другая опцыя кажа праграме, што ёй трэба шукаць не толькі тыя загалоўкі, якія цалкам супадаюць з шуканым радком, а таксама і тыя, якія змяшчаюць шуканы радок як сваю частку.</p>
 <p class="samp-comment">Каб забяспечыць спецыфічнасць пошуку, атачайце код доступу двукроп&rsquo;ямі (<span class="samp-highl">:</span>).</p>
-<p><strong>Прыклад 3</strong>. Выбраць усе паслядоўнасці генаў аднаго генома (ідэнтыфікатар геномнай зборкі <a href="https://ncbi.nlm.nih.gov/assembly/10577151">10577151</a>).</p>
+<p><strong>Прыклад 3</strong>. Выбраць усе паслядоўнасці генаў аднаго геному (ідэнтыфікатар геномнай зборкі <a href="https://ncbi.nlm.nih.gov/assembly/10577151">10577151</a>).</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp "G_10577151:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Каб забяспечыць спецыфічнасць пошуку, пішыце прэфікс <span class="samp-highl">G_</span> перад ідэнтыфікатарам зборкі, а пасля яго &mdash; двукроп&rsquo;е (<span class="samp-highl">:</span>).</p>
 <p><strong>Прыклад 4</strong>. Выбраць усе паслядоўнасці актынабактэрый.</p>

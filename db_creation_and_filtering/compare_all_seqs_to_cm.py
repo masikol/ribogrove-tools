@@ -20,6 +20,10 @@
 #       similariry score, alignment coordinates etc.
 #   - the file `cmscan_output.txt` -- a txt file, which contains complete output of `cmscan`.
 
+### "Cached" files:
+# 1. `--prev-tblout` -- the `.tblout` file, which is the output of this script,
+#   but for the prevoius RiboGrove release. Optional.
+
 ### Dependencies:
 # 1. `--cmscan` -- a `cmscan` executable from Infernal (http://eddylab.org/infernal/).
 #   We prefer to use the latest version of Infernal here (version 1.1.4). Mandatory.
@@ -56,6 +60,8 @@ parser.add_argument(
     help='input fasta file of SSU gene sequences',
     required=True
 )
+
+# "Cached" files
 
 parser.add_argument(
     '--prev-tblout',

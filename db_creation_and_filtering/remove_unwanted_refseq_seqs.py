@@ -1,6 +1,37 @@
 #!/usr/bin/env python3
 
-# TODO: add description
+# The script removes unwanted genomes. RiboGrove will not take 16S sequences
+#   from these removed genomes.
+# The script performs 3 steps:
+#   1) remove sequence whose titles contain string "whole genome shotgun":
+#      they are not parts of completely assembled genomes;
+#   2) remove sequences added to RefSeq after the current release;
+#   3) remove sequences from the blacklist (see option `-b`);
+
+## Command line arguments
+
+### Input files:
+# 1. `-i / --gi-2-acc-file` -- a not-filtered input TSV file mapping RefSeq GI numbers to RefSeq ACCESSION.VERSIONs
+#   and titles. This is the output file of the script `gis_to_accs.py`. Mandatory.
+# 2. `-a / --refseq-catalog` -- A RefSeq "catalog" file of the current release.
+#   This is the file `RefSeq-releaseXXX.catalog.gz` from here:
+#   https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/.
+#   It is better to filter this file with `filter_refseq_catalog.py` before running current script.
+#   Mandatory.
+# 3. `-b / --acc-blacklist` -- A TSV file listing RefSeq Accession numbers (without version) to be discarded.
+#   The file should contain a header.
+#   Also, it should contains at least one column (of accession numbers).
+#   The second column (reason for rejection) is optional.
+#   Optional.
+
+### Output files:
+
+# 1. `--outfile` -- output TSV file of 3 columns:
+#   1) GI number;
+#   2) ACCESSION.VERSION;
+#   3) RefSeq sequence title.
+#   Mandatory.
+
 
 import os
 
@@ -44,8 +75,8 @@ parser.add_argument(
     '--acc-blacklist',
     help="""A TSV file listing RefSeq Accession numbers (without version) to be discarded.
     The file should contain a header.
-    Also, it should contains at least one column (of accession numbers). The second column (reason for rejection) is optional.
-""",
+    Also, it should contains at least one column (of accession numbers).
+    The second column (reason for rejection) is optional.""",
     required=True
 )
 
