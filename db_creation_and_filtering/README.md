@@ -84,13 +84,19 @@ A configuragion file should specify locations of 1) input data; 2) working direc
 
 10. `MUSCLE` -- [MUSCLE](https://www.drive5.com/muscle/) executable for multiple sequence alignment.
 
+1. `MFEPRIMER` -- [MFEprimer](https://www.mfeprimer.com/) executable for primer coverage calculations.
+
 #### 4. Conserved 16S rRNA regions
 
 1. `CONSERVED_REGIONS_FASTA` -- a fasta file of the 16S rDNA conserved regions. We use the bundled file `db_creation_and_filtering/conserved_regions.fasta`. These sequences are adopted from [M. Martinez-Porchas et al](https://doi.org/10.7717/peerj.3036).
 
 2. `CHECK_CONSERV_REGIONS` -- (accepted values: `0`, `1`). `1` -- check the 16S rDNA conserved regions while finding aberrant genes. `0` -- do not check the conserved regions; detect aberrant genes only by deletions instead.
 
-#### 5. "Cached" data from previous RiboGrove release
+#### 5. Primer coverage calculation
+
+1. `CALC_PRIMERS_COVERAGE` -- (accepted values: `0`, `1`). `1` -- calculate primer coverage with MFEprimer. `0` -- do not calculate primer coverage.
+
+#### 6. "Cached" data from previous RiboGrove release
 
 1. `PREV_WORKDIR` -- a working directory of the previous RiboGrove release. If you are running constructing RiboGrove 8.214 for bacteria, your `PREV_WORKDIR` value will be something like `/some/path/RiboGrove_workdirs/7.213/bacteria`.
 
@@ -113,6 +119,8 @@ Standalone programs:
 2. MUSCLE: [https://www.drive5.com/muscle/](https://www.drive5.com/muscle/). Tested on version 3.8.31.
 
 3. Infernal [http://eddylab.org/infernal/](http://eddylab.org/infernal/). Infernal 1.1.1 is used for re-annotation of genomic sequences (for compatibility with [PGAP](https://www.ncbi.nlm.nih.gov/genome/annotation_prok/)), but in further steps newer versions of Infernal may be used for sequence filtering (e.g. version 1.1.4).
+
+3. MFEprimer [https://www.mfeprimer.com/](https://www.mfeprimer.com/). We use MFEprimer version 3.2.2.
 
 Data:
 

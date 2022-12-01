@@ -12,7 +12,7 @@ The [main website](http://mbio.bas-net.by/cager/en/ribogrove) where RiboGrove is
 
 2. Scripts in directory `release_preparation/` are used for making release files (`*.fasta.gz` and `metadata.zip`) and HTML release pages.
 
-3. Scripts in directory `exploration_scripts/` are used for primer coverage calculation, calculation of intragenomic variability of 16S rRNA genes etc.
+3. Scripts in directory `exploration_scripts/` are used for draw some plots and calculate some additional data for the publication etc.
 
 4. Demonstration data in the directory `demo/`. This is how input data and a working directory for the filtering pipeline looks like.
 
@@ -25,6 +25,8 @@ Here is a list of RiboGrove database releases and corresponding ribogrove-tools 
 - RiboGrove database releases 1.207–7.213 -- ribogrove-tools release `1.207`.
 
 - RiboGrove database release 8.214 -- ribogrove-tools release `8.214`.
+
+- RiboGrove database release 9.215 -- ribogrove-tools release `9.215`.
 
 ## Python version
 

@@ -26,10 +26,13 @@ for some_dir in "${WORKDIR}" "${LOGS_DIR}" "${CATEGORIES_DIR}" \
                 "${TAXONOMY_DIR}" "${GENOMES_GBK_DIR}" "${GENES_DIR}" \
                 "${ABERRATIONS_AND_HETEROGENEITY_DIR}";
 do
-  if [[ ! -d "${some_dir}" ]]; then
-    mkdir -pv "${some_dir}"
-  fi
+  mkdir -pv "${some_dir}"
 done
+
+if [[ "${CALC_PRIMERS_COVERAGE}" == 1 ]]; then
+  PRIMERS_DIRPATH="${WORKDIR}/primers_coverage"
+  mkdir -pv "${PRIMERS_DIRPATH}"
+fi
 
 
 # |=== Configure all paths to intermediate and result files ===|
@@ -102,6 +105,8 @@ if [[ ! -z "${PREV_WORKDIR}" ]]; then
   PREV_CATEGORY_FILE="${PREV_WORKDIR}/categories/${PREFIX}_categories.tsv"
   PREV_TBLOUT_FILE="${PREV_WORKDIR}/aberrations_and_heterogeneity/cmscan_output_table.tblout"
   PREV_PERBASE_ENTROPY_FILE="${PREV_WORKDIR}/aberrations_and_heterogeneity/per_base_${PREFIX}_entropy.tsv.gz"
+  PREV_FINAL_GENES_FASTA="${PREV_WORKDIR}/gene_seqs/${PREFIX}_final_gene_seqs_annotated.fasta"
+  PREV_PRIMERS_DIRPATH="${PREV_WORKDIR}/primers_coverage"
 fi
 
 
@@ -424,4 +429,25 @@ else
     --categories-file "${CATEGORIES_FPATH}" \
     --outfile "${ENTROPY_FILE}" \
     --muscle "${MUSCLE}"
+fi
+
+
+# == Calculate PCR primer coverage ==
+
+if [[ "${CALC_PRIMERS_COVERAGE}" == 1 ]]; then
+  if [[ ! -z "${PREV_WORKDIR}" && -f "${PREV_FINAL_GENES_FASTA}" && -f "${PREV_PRIMERS_DIRPATH}" ]]; then
+    python3 "${SCRIPT_DIR}/check_primers_mfeprimer.py" \
+      --fasta-seqs-file "${ANNOTATED_RESULT_FASTA}" \
+      --categories-file "${CATEGORIES_FPATH}" \
+      --outdir "${PRIMERS_DIRPATH}" \
+      --mfeprimer "${MFEPRIMER}" \
+      --prev-final-fasta "${PREV_FINAL_GENES_FASTA}" \
+      --prev-primers-outdir "${PREV_PRIMERS_DIRPATH}"
+  else
+    python3 "${SCRIPT_DIR}/check_primers_mfeprimer.py" \
+      --fasta-seqs-file "${ANNOTATED_RESULT_FASTA}" \
+      --categories-file "${CATEGORIES_FPATH}" \
+      --outdir "${PRIMERS_DIRPATH}" \
+      --mfeprimer "${MFEPRIMER}"
+  fi
 fi

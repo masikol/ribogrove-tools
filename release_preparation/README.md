@@ -21,9 +21,9 @@ bash prepare_release.sh \
 
 ```bash
 bash prepare_release.sh \
-    /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/7.213 \
-    /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/7.213 \
-    7.213
+    /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/9.215 \
+    /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/9.215 \
+    9.215
 ```
 
 `<WORKDIR>` directory should be of the following structure:
@@ -61,6 +61,7 @@ python3 make_ribogrove_release_page.py \
   --gene-stats-table <GENE_STATS_TSV>      \
   --entropy-summary  <ENTROPY_SUMMARY_TSV> \
   --source-genomes   <SOURCE_GENOMES_TSV>  \
+  --primers-dir      <PRIMER_COVERAGE_DIR> \
   --outdir           <OUTDIR>              \
   --seqkit           <SEQKIT_EXECUTABLE>
 ```
@@ -69,14 +70,15 @@ python3 make_ribogrove_release_page.py \
 
 ```bash
 python3 make_ribogrove_release_page.py \
-  --release-num      7.213 \
+  --release-num      9.215 \
   --release-date     2022-07-20 \
-  --final-fasta      /mnt/1.5_drive_0/RiboGrove_releases/7.213/ribogrove_7.213_sequences.fasta.gz \
-  --metadata         /mnt/1.5_drive_0/RiboGrove_releases/7.213/metadata_ribogrove_7.213.zip \
-  --gene-stats-table /mnt/1.5_drive_0/RiboGrove_releases/7.213/metadata/gene_seqs_statistics.tsv \
-  --entropy-summary  /mnt/1.5_drive_0/RiboGrove_releases/7.213/metadata/entropy_summary.tsv \
-  --source-genomes   /mnt/1.5_drive_0/RiboGrove_releases/7.213/metadata/source_RefSeq_genomes.tsv \
-  --outdir           /mnt/1.5_drive_0/RiboGrove_pages/7.213/ \
+  --final-fasta      /mnt/1.5_drive_0/RiboGrove_releases/9.215/ribogrove_9.215_sequences.fasta.gz \
+  --metadata         /mnt/1.5_drive_0/RiboGrove_releases/9.215/metadata_ribogrove_9.215.zip \
+  --gene-stats-table /mnt/1.5_drive_0/RiboGrove_releases/9.215/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary  /mnt/1.5_drive_0/RiboGrove_releases/9.215/metadata/entropy_summary.tsv \
+  --source-genomes   /mnt/1.5_drive_0/RiboGrove_releases/9.215/metadata/source_RefSeq_genomes.tsv \
+  --primers-dir      /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/9.215/bacteria/primers_coverage \
+  --outdir           /mnt/1.5_drive_0/RiboGrove_pages/9.215/ \
   --seqkit           /usr/bin/seqkit
 ```
 

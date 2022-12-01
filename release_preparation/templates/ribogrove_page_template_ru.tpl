@@ -8,10 +8,11 @@
 <li><a href="#genome-categories">Категории геномов</a></li>
 </ul>
 </li>
+<li><a href="#contacts">Контакты</a></li>
 <li><a href="#citing-ribogrove">Цитирование RiboGrove</a></li>
 <li><a href="#downloads">Файлы</a>
 <ul class="ribogrove-nested-list">
-  <li><a href="#latest-release">Актуальный выпуск RiboGrove</li>
+  <li><a href="#current-release">Актуальный выпуск RiboGrove &mdash; {{ ribogrove_release_number }}</li>
   <li><a href="#release-archive">Архив выпусков RiboGrove</li>
   <li><a href="#release-notes">Комментарии к выпуску</li>
 </ul>
@@ -25,6 +26,7 @@
 <li><a href="#top-shortest">Топ-10 самых коротких генов 16S рРНК</a></li>
 <li><a href="#top-copy-num">Tоп-10 геномов с наибольшим числом копий генов 16S рРНК</a></li>
 <li><a href="#top-var">Tоп-10 геномов с наибольшей внутригеномной изменчивостью генов 16S рРНК</a></li>
+<li><a href="#primers-coverages">Спектр действия пар праймеров к разным V-участкам бактериальных генов 16S рРНК</a></li>
 </ul>
 </li>
 <li><a href="#searching-data">Поиск данных в базе данных RiboGrove</a>
@@ -71,6 +73,10 @@
 <br>
 <p>Программы, с помощью которых RiboGrove была создана, доступны в репозитории на ГитХабе: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
 <hr>
+<div id="contacts" class="pad-anchor"></div>
+<h2>Контакты</h2>
+<p>Если у вас есть вопрос про RiboGrove, пожалуйста, обращайтесь к Максиму Сиколенко на эл. адрес sikolenko<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by.</p>
+<hr>
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <h2>Цитирование RiboGrove</h2>
 <p>Если RiboGrove была полезна вам в вашей работе, пожалуйста, цитируйте следующую публикацию:</p>
@@ -78,7 +84,7 @@
 <hr>
 <div id="downloads" class="pad-anchor"></div>
 <h2>Файлы</h2>
-<div id="latest-release" class="pad-anchor"></div>
+<div id="current-release" class="pad-anchor"></div>
 <h3>Актуальный выпуск RiboGrove &mdash; {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
 <p>Выпуск RiboGrove {{ ribogrove_release_number }} основан на данных, полученных из базы данных RefSeq версии {{ refseq_release }}.</p>
 <ul>
@@ -136,7 +142,7 @@
 <div id="release-notes" class="pad-anchor"></div>
 <h3>Комментарии к выпуску</h3>
 <p><i>Нет принципиальных отличий от предыдущего выпуска.</i></p>
-<p>Комментарии ко всем выпускам RiboGrove можно найти на <a href="/cager/en/content/ru/content/66-ribogrove-release-notes">странице каментариев к выпускам</a>.</p>
+<p>Комментарии ко всем выпускам RiboGrove можно найти на <a href="/cager/ru/content/66-ribogrove-release-notes">странице комментариев к выпускам</a>.</p>
 <hr>
 <div id="summary" class="pad-anchor"></div>
 <h2>Статистическое описание</h2>
@@ -384,6 +390,81 @@
 <p><sup>*</sup> Энтропия в данном случае &mdash; это <a href="https://ru.wikipedia.org/wiki/Информационная_энтропия">энтропия Шеннона</a>, вычисленная для каждого столбца множественного выравнивания полноразмерных последовательностей генов 16S рРНК индивидуального генома. Вычисленная энтропия далее суммировалась (столбец &laquo;Сумма энтропии&raquo;) или усреднялась (столбец &laquo;Средняя энтропия&raquo;).</p>
 <p><sup>**</sup> <i>Halomicrobium</i> sp. ZPS1 &mdash; показательный случай. В этом геноме два гена 16S рРНК, поэтому энтропия равна количеству нуклеотидов, которые не совпадают в их последовательностях. Вычислив процент идентичности (сокращённо ПИ) последовательностей этих двух генов, получим 90,70%! Напомним, что за порог ПИ последовательностей генов 16S рРНК для отнесения организмов да отдельных <em>родов</em> обычно принимают (впрочем, произвольно) значение 95%.</p>
 <hr>
+
+<div id="primers-coverages" class="pad-anchor"></div>
+<table class="sum-table"><caption>Спектр действия<sup>*</sup> пар праймеров к разным V-участкам бактериальных генов 16S рРНК</caption>
+<tbody class="primer-cov-tbody">
+<tr>
+  <th class="alnleft" rowspan="2">Отдел<br />бактерий</th>
+  <th class="numcol" rowspan="2">Количество<br />геномов</th>
+  <th class="numcol">Полный<br />ген</th>
+  <th class="numcol">V1&ndash;V2</th>
+  <th class="numcol">V1&ndash;V3</th>
+  <th class="numcol">V3&ndash;V4</th>
+  <th class="numcol">V3&ndash;V5</th>
+  <th class="numcol">V4&ndash;V5</th>
+  <th class="numcol">V4&ndash;V6</th>
+  <th class="numcol">V5&ndash;V6</th>
+  <th class="numcol">V5&ndash;V7</th>
+  <th class="numcol">V6&ndash;V7</th>
+  <th class="numcol">V6&ndash;V8</th>
+</tr>
+<tr>
+  <th class="numcol">27F&ndash;1492R<br />(%)</th>
+  <th class="numcol">27F&ndash;338R<br />(%)</th>
+  <th class="numcol">27F&ndash;534R<br />(%)</th>
+  <th class="numcol">341F&ndash;785R<br />(%)</th>
+  <th class="numcol">341F&ndash;944R<br />(%)</th>
+  <th class="numcol">515F&ndash;944R<br />(%)</th>
+  <th class="numcol">515F&ndash;1100R<br />(%)</th>
+  <th class="numcol">784F&ndash;1100R<br />(%)</th>
+  <th class="numcol">784F&ndash;1193R<br />(%)</th>
+  <th class="numcol">939F&ndash;1193R<br />(%)</th>
+  <th class="numcol">939F&ndash;1378R<br />(%)</th>
+</tr>
+{% for _, row in ribogrove_primers_cov_df.iterrows() %}
+<tr class="sumtab-row">
+  <td><i>{{ row['phylum'] }}</i></td>
+  <td class="numcol">{{ row['num_genomes'] }}</td>
+  <td class="numcol">{{ row['27F-1492R'] }}</td>
+  <td class="numcol">{{ row['27F-338R'] }}</td>
+  <td class="numcol">{{ row['27F-534R'] }}</td>
+  <td class="numcol">{{ row['341F-785R'] }}</td>
+  <td class="numcol">{{ row['341F-944R'] }}</td>
+  <td class="numcol">{{ row['515F-944R'] }}</td>
+  <td class="numcol">{{ row['515F-1100R'] }}</td>
+  <td class="numcol">{{ row['784F-1100R'] }}</td>
+  <td class="numcol">{{ row['784F-1193R'] }}</td>
+  <td class="numcol">{{ row['939F-1193R'] }}</td>
+  <td class="numcol">{{ row['939F-1378R'] }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<p><sup>*</sup> Спектр действия пары праймеров &mdash; это процент геномов, которые содержат как минимум один ген 16S рРНК, который возможно амплифицировать с помощью ПЦР используя эту пару праймеров. Подробности описаны в нашей <a href="#citing-ribogrove">статье про RiboGrove</a>.</p>
+
+<table class="sum-table"><caption>Праймеры, спектр действия которых оценивался</caption>
+<tbody>
+  <tr><th>Название праймера</th><th>Последовательность</th><th>Ссылка</th></tr>
+  <tr class="sumtab-row"><td>27F</td><td>AGAGTTTGATYMTGGCTCAG</td><td><a href="https://doi.org/10.1128/AEM.02272-07">Frank et al., 2008</a></td></tr>
+  <tr class="sumtab-row"><td>338R</td><td>GCTGCCTCCCGTAGGAGT</td><td><a href="https://doi.org/10.1128/aem.62.2.625-630.1996">Suzuki et al., 1996</a></td></tr>
+  <tr class="sumtab-row"><td>341F<sup> *</sup></td><td>CCTACGGGNGGCWGCAG</td><td><a href="https://doi.org/10.1093/nar/gks808">Klindworth et al., 2013</a></td></tr>
+  <tr class="sumtab-row"><td>515F</td><td>GTGCCAGCMGCCGCGGTAA</td><td><a href="https://doi.org/10.1111/j.1550-7408.1999.tb04612.x">Turner et al., 1999</a></td></tr>
+  <tr class="sumtab-row"><td>534R</td><td>ATTACCGCGGCTGCTGG</td><td><a href="https://doi.org/10.1186/s40168-015-0087-4">Walker et al., 2015</a></td></tr>
+  <tr class="sumtab-row"><td>784F</td><td>AGGATTAGATACCCTGGTA</td><td><a href="https://doi.org/10.1371/journal.pone.0002836">Andersson et al., 2008</a></td></tr>
+  <tr class="sumtab-row"><td>785R<sup> *</sup></td><td>GACTACHVGGGTATCTAATCC</td><td><a href="https://doi.org/10.1093/nar/gks808">Klindworth et al., 2013</a></td></tr>
+  <tr class="sumtab-row"><td>939F</td><td>GAATTGACGGGGGCCCGCACAAG</td><td><a href="https://doi.org/10.1016/j.anaerobe.2014.04.006">Lebuhn et al., 2014</a></td></tr>
+  <tr class="sumtab-row"><td>944R</td><td>GAATTAAACCACATGCTC</td><td><a href="https://doi.org/10.1186/s40168-017-0396-x">Fuks et al., 2018</a></td></tr>
+  <tr class="sumtab-row"><td>1100R</td><td>AGGGTTGCGCTCGTTG</td><td><a href="https://doi.org/10.1111/j.1550-7408.1999.tb04612.x">Turner et al., 1999</a></td></tr>
+  <tr class="sumtab-row"><td>1193R</td><td>ACGTCATCCCCACCTTCC</td><td><a href="https://doi.org/10.1371/journal.pone.0056329">Bodenhausen et al, 2013</a></td></tr>
+  <tr class="sumtab-row"><td>1378R</td><td>CGGTGTGTACAAGGCCCGGGAACG</td><td><a href="https://doi.org/10.1016/j.anaerobe.2014.04.006">Lebuhn et al., 2014</a></td></tr>
+  <tr class="sumtab-row"><td>1492R</td><td>TACCTTGTTACGACTT</td><td><a href="https://doi.org/10.1128/AEM.02272-07">Frank et al., 2008</a></td></tr>
+</tbody>
+</table>
+
+<p><sup>*</sup> Праймеры 341F и 785R используются в <a href="https://support.illumina.com/downloads/16s_metagenomic_sequencing_library_preparation.html">протоколе</a> подготовки библиотеки для секвенирования ампликонов участков V3&ndash;V4 генов 16S рРНК на приборе Illumina MiSeq.</p>
+
 <div id="searching-data" class="pad-anchor"></div>
 <h2>Поиск данных в базе данных RiboGrove</h2>
 <p>RiboGrove &mdash; очень минималистичная база данных: она представляет собой несколько файлов в формате fasta, а также метаданные. Поэтому, расширенные средства поиска для неё недоступны. Мы признаём эту проблему и оставляем рекомендации по поиску данных в RiboGrove. Рекомендации помогут вам изучать и делать выборки данных из БД RiboGrove.</p>

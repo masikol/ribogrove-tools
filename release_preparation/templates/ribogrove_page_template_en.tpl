@@ -8,10 +8,11 @@
 <li><a href="#genome-categories">Genome categories</a></li>
 </ul>
 </li>
+<li><a href="#contacts">Contacts</a></li>
 <li><a href="#citing-ribogrove">Citing RiboGrove</a></li>
 <li><a href="#downloads">Downloads</a>
 <ul class="ribogrove-nested-list">
-  <li><a href="#latest-release">Latest RiboGrove release</li>
+  <li><a href="#current-release">Latest RiboGrove release &mdash; {{ ribogrove_release_number }}</li>
   <li><a href="#release-archive">RiboGrove release archive</li>
   <li><a href="#release-notes">Release notes</li>
 </ul>
@@ -25,6 +26,7 @@
 <li><a href="#top-shortest">Top-10 shortest 16S rRNA genes</a></li>
 <li><a href="#top-copy-num">Top-10 genomes with largest 16S rRNA copy numbers</a></li>
 <li><a href="#top-var">Top-10 genomes with highest intragenomic variability of 16S rRNA genes</a></li>
+<li><a href="#primers-coverages">Coverage of primer pairs for different V-regions of bacterial 16S rRNA genes</a></li>
 </ul>
 </li>
 <li><a href="#searching-data">Searching data in RiboGrove</a>
@@ -71,6 +73,10 @@
 <br>
 <p>The software used for the RiboGrove construction can be found in the following GitHub repository: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
 <hr>
+<div id="contacts" class="pad-anchor"></div>
+<h2>Contacts</h2>
+<p>For any questions concerning RiboGrove, please contact Maxim Sikolenko at sikolenko<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by.</p>
+<hr>
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <h2>Citing RiboGrove</h2>
 <p>If you find RiboGrove useful for your research please cite:</p>
@@ -78,7 +84,7 @@
 <hr>
 <div id="downloads" class="pad-anchor"></div>
 <h2>Downloads</h2>
-<div id="latest-release" class="pad-anchor"></div>
+<div id="current-release" class="pad-anchor"></div>
 <h3>Latest RiboGrove release &mdash; {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
 <p>The release is based on RefSeq release {{ refseq_release }}.</p>
 <ul>
@@ -136,7 +142,7 @@
 <div id="release-notes" class="pad-anchor"></div>
 <h3>Release notes</h3>
 <p><i>No important differences from the previous release.</i></p>
-<p>You can find notes to all RiboGrove releases at the <a href="/cager/en/content/en/content/66-ribogrove-release-notes">release notes page</a>.</p>
+<p>You can find notes to all RiboGrove releases at the <a href="/cager/en/content/66-ribogrove-release-notes">release notes page</a>.</p>
 <hr>
 <div id="summary" class="pad-anchor"></div>
 <h2>Statistical summary</h2>
@@ -383,6 +389,80 @@
 
 <p><sup>*</sup> Entropy is <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)">Shannon entropy</a> calculated for each column of the multiple sequence alignment (MSA) of all full-length 16S rRNA genes of a genome. Entropy is then summed up (column &ldquo;Sum of entropy&rdquo;) and averaged (column &ldquo;Mean entropy&rdquo;).</p>
 <p><sup>**</sup> <i>Halomicrobium</i> sp. ZPS1 is a quite remarkable case. This genome harbours two 16S rRNA genes, therefore entropy is equal to the number of mismatching nucleotides between sequences of the genes. Respectively, per cent of identity between these two gene sequences is 90.70%! This is remarkable, because the usual (however arbitrary) <em>genus</em> demarcation threshold of per cent of identity is 95%.</p>
+
+<div id="primers-coverages" class="pad-anchor"></div>
+<table class="sum-table"><caption>Coverage<sup>*</sup> of primer pairs for different V-regions of bacterial 16S rRNA genes</caption>
+<tbody class="primer-cov-tbody">
+<tr>
+  <th class="alnleft" rowspan="2">Phylum</th>
+  <th class="numcol" rowspan="2">Number<br />of genomes</th>
+  <th class="numcol">Full gene</th>
+  <th class="numcol">V1&ndash;V2</th>
+  <th class="numcol">V1&ndash;V3</th>
+  <th class="numcol">V3&ndash;V4</th>
+  <th class="numcol">V3&ndash;V5</th>
+  <th class="numcol">V4&ndash;V5</th>
+  <th class="numcol">V4&ndash;V6</th>
+  <th class="numcol">V5&ndash;V6</th>
+  <th class="numcol">V5&ndash;V7</th>
+  <th class="numcol">V6&ndash;V7</th>
+  <th class="numcol">V6&ndash;V8</th>
+</tr>
+<tr>
+  <th class="numcol">27F&ndash;1492R<br />(%)</th>
+  <th class="numcol">27F&ndash;338R<br />(%)</th>
+  <th class="numcol">27F&ndash;534R<br />(%)</th>
+  <th class="numcol">341F&ndash;785R<br />(%)</th>
+  <th class="numcol">341F&ndash;944R<br />(%)</th>
+  <th class="numcol">515F&ndash;944R<br />(%)</th>
+  <th class="numcol">515F&ndash;1100R<br />(%)</th>
+  <th class="numcol">784F&ndash;1100R<br />(%)</th>
+  <th class="numcol">784F&ndash;1193R<br />(%)</th>
+  <th class="numcol">939F&ndash;1193R<br />(%)</th>
+  <th class="numcol">939F&ndash;1378R<br />(%)</th>
+</tr>
+{% for _, row in ribogrove_primers_cov_df.iterrows() %}
+<tr class="sumtab-row">
+  <td><i>{{ row['phylum'] }}</i></td>
+  <td class="numcol">{{ row['num_genomes'] }}</td>
+  <td class="numcol">{{ row['27F-1492R'] }}</td>
+  <td class="numcol">{{ row['27F-338R'] }}</td>
+  <td class="numcol">{{ row['27F-534R'] }}</td>
+  <td class="numcol">{{ row['341F-785R'] }}</td>
+  <td class="numcol">{{ row['341F-944R'] }}</td>
+  <td class="numcol">{{ row['515F-944R'] }}</td>
+  <td class="numcol">{{ row['515F-1100R'] }}</td>
+  <td class="numcol">{{ row['784F-1100R'] }}</td>
+  <td class="numcol">{{ row['784F-1193R'] }}</td>
+  <td class="numcol">{{ row['939F-1193R'] }}</td>
+  <td class="numcol">{{ row['939F-1378R'] }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+<p><sup>*</sup> Coverage of a primer pair is the per cent of genomes having at least one 16S rRNA gene which can be amplified by PCR using this primer pair. For details, see our <a href="#citing-ribogrove">paper about RiboGrove</a>.</p>
+
+<table class="sum-table"><caption>Primers used for coverage estimation</caption>
+<tbody>
+  <tr><th>Primer name</th><th>Sequence</th><th>Reference</th></tr>
+  <tr class="sumtab-row"><td>27F</td><td>AGAGTTTGATYMTGGCTCAG</td><td><a href="https://doi.org/10.1128/AEM.02272-07">Frank et al., 2008</a></td></tr>
+  <tr class="sumtab-row"><td>338R</td><td>GCTGCCTCCCGTAGGAGT</td><td><a href="https://doi.org/10.1128/aem.62.2.625-630.1996">Suzuki et al., 1996</a></td></tr>
+  <tr class="sumtab-row"><td>341F<sup> *</sup></td><td>CCTACGGGNGGCWGCAG</td><td><a href="https://doi.org/10.1093/nar/gks808">Klindworth et al., 2013</a></td></tr>
+  <tr class="sumtab-row"><td>515F</td><td>GTGCCAGCMGCCGCGGTAA</td><td><a href="https://doi.org/10.1111/j.1550-7408.1999.tb04612.x">Turner et al., 1999</a></td></tr>
+  <tr class="sumtab-row"><td>534R</td><td>ATTACCGCGGCTGCTGG</td><td><a href="https://doi.org/10.1186/s40168-015-0087-4">Walker et al., 2015</a></td></tr>
+  <tr class="sumtab-row"><td>784F</td><td>AGGATTAGATACCCTGGTA</td><td><a href="https://doi.org/10.1371/journal.pone.0002836">Andersson et al., 2008</a></td></tr>
+  <tr class="sumtab-row"><td>785R<sup> *</sup></td><td>GACTACHVGGGTATCTAATCC</td><td><a href="https://doi.org/10.1093/nar/gks808">Klindworth et al., 2013</a></td></tr>
+  <tr class="sumtab-row"><td>939F</td><td>GAATTGACGGGGGCCCGCACAAG</td><td><a href="https://doi.org/10.1016/j.anaerobe.2014.04.006">Lebuhn et al., 2014</a></td></tr>
+  <tr class="sumtab-row"><td>944R</td><td>GAATTAAACCACATGCTC</td><td><a href="https://doi.org/10.1186/s40168-017-0396-x">Fuks et al., 2018</a></td></tr>
+  <tr class="sumtab-row"><td>1100R</td><td>AGGGTTGCGCTCGTTG</td><td><a href="https://doi.org/10.1111/j.1550-7408.1999.tb04612.x">Turner et al., 1999</a></td></tr>
+  <tr class="sumtab-row"><td>1193R</td><td>ACGTCATCCCCACCTTCC</td><td><a href="https://doi.org/10.1371/journal.pone.0056329">Bodenhausen et al, 2013</a></td></tr>
+  <tr class="sumtab-row"><td>1378R</td><td>CGGTGTGTACAAGGCCCGGGAACG</td><td><a href="https://doi.org/10.1016/j.anaerobe.2014.04.006">Lebuhn et al., 2014</a></td></tr>
+  <tr class="sumtab-row"><td>1492R</td><td>TACCTTGTTACGACTT</td><td><a href="https://doi.org/10.1128/AEM.02272-07">Frank et al., 2008</a></td></tr>
+</tbody>
+</table>
+
+<p><sup>*</sup> Primers 341F and 785R are used in the <a href="https://support.illumina.com/downloads/16s_metagenomic_sequencing_library_preparation.html">protocol</a> for library preparation for sequencing of V3&ndash;V4 region of 16S rRNA genes on Illumina MiSeq.</p>
 
 <hr>
 <div id="searching-data" class="pad-anchor"></div>

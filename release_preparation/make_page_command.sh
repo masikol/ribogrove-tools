@@ -94,3 +94,19 @@ python3 make_ribogrove_release_page.py \
   --source-genomes /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/8.214/metadata/source_RefSeq_genomes.tsv \
   --outdir /mnt/1.5_drive_0/RiboGrove/RiboGrove_pages/8.214/ \
   --seqkit /usr/bin/seqkit
+
+
+# New -- with primer coverage table
+
+python3 make_ribogrove_release_page.py \
+  --release-num 9.215 \
+  --release-date 2022-11-30 \
+  --final-fasta /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/9.215/ribogrove_9.215_sequences.fasta.gz \
+  --metadata /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/9.215/metadata_ribogrove_9.215.zip \
+  --gene-stats-table /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/9.215/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/9.215/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/9.215/metadata/source_RefSeq_genomes.tsv \
+  --primers-dir /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/9.215/bacteria/primers_coverage \
+  --outdir /mnt/1.5_drive_0/RiboGrove/RiboGrove_pages/9.215/ \
+  --seqkit /usr/bin/seqkit
+

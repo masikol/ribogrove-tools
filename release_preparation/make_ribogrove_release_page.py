@@ -19,6 +19,7 @@ from src.top_longest_genes import make_ribogrove_top_longest_df, format_longest_
 from src.top_shortest_genes import make_ribogrove_top_shortest_df, format_shortest_genes_df
 from src.top_copy_numbers import make_ribogrove_top_copy_numbers_df, format_top_copy_numbers_df
 from src.top_variability import make_ribogrove_top_intragenomic_var_df, format_top_intragenomic_var_df
+from src.primers_coverage import make_ribogrove_primer_coverage_df, format_primer_coverage_df
 from src.formatting import format_float_number
 from src.strains_names import retrieve_strain_name_en, \
                               retrieve_strain_name_ru, \
@@ -75,6 +76,12 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '--primers-dir',
+    help='a directory with results of the script check_primers_mfeprimer.py',
+    required=True
+)
+
 # Output files
 
 parser.add_argument(
@@ -102,6 +109,7 @@ metadata_fpath = os.path.abspath(args.metadata)
 gene_stats_fpath = os.path.abspath(args.gene_stats_table)
 entropy_summary_fpath = os.path.abspath(args.entropy_summary)
 source_genomes_fpath = os.path.abspath(args.source_genomes)
+primers_dirpath = os.path.abspath(args.primers_dir)
 outdpath = os.path.abspath(args.outdir)
 seqkit_fpath = os.path.abspath(args.seqkit)
 
@@ -144,6 +152,11 @@ if not os.path.isdir(outdpath):
         print(str(err))
         sys.exit(1)
     # end try
+# end if
+
+if not os.path.isdir(primers_dirpath):
+    print(f'Error: directory `{primers_dirpath}` does not exist')
+    sys.exit(1)
 # end if
 
 del input_fpaths, fpath
@@ -238,6 +251,14 @@ print('done\n')
 print('Finding top genomes with highest intragenomic variability of target genes')
 ribogrove_top_intragenomic_var_df = make_ribogrove_top_intragenomic_var_df(
     entropy_summary_df,
+    gene_stats_df
+)
+print('done\n')
+
+# PCR primer coverage per phylum
+print('Calculating PCR primer coverage per phylum')
+ribogrove_primer_coverage_df = make_ribogrove_primer_coverage_df(
+    primers_dirpath,
     gene_stats_df
 )
 print('done\n')
@@ -357,6 +378,12 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
         decimal_separator
     )
 
+    fmt_ribogrove_primers_cov_df = format_primer_coverage_df(
+        ribogrove_primer_coverage_df,
+        thousand_separator,
+        decimal_separator
+    )
+
     # Render the template
     with app.app_context():
         rendered_str = flask.render_template(
@@ -373,7 +400,8 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
                 ribogrove_top_shortest_df=fmt_ribogrove_top_shortest_df,
                 ribogrove_top_copy_numbers_df=fmt_ribogrove_top_copy_numbers_df,
                 ribogrove_top_intragenomic_var_df=fmt_ribogrove_top_intragenomic_var_df,
-                retrieve_strain_name=retrieve_strain_name
+                retrieve_strain_name=retrieve_strain_name,
+                ribogrove_primers_cov_df=fmt_ribogrove_primers_cov_df
         )
     # end with
 

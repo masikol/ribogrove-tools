@@ -607,9 +607,7 @@ def create_acc_seqs_dict(fasta_fpath, cached_accs):
     seq_records = SeqIO.parse(fasta_fpath, 'fasta')
 
     for sr in seq_records:
-        # TODO: uncomment for RiboGrove 9.215+
-        # acc = sr.id.split(':')[1]
-        acc = sr.id.split(':')[0]
+        acc = sr.id.split(':')[1]
         acc_seqs_dict[acc].append(sr)
     # end for
 
