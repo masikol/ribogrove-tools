@@ -2,9 +2,9 @@
 
 This repo contains the software for RiboGrove database constuction and exploration.
 
-[RiboGrove](http://mbio.bas-net.by/cager/en/ribogrove) is a genome-based database of full-length sequences of prokaryotic 16S rRNA genes. Sequences are derived from RefSeq database.
+[RiboGrove](https://mbio.bas-net.by/cager/en/ribogrove) is a genome-based database of full-length sequences of prokaryotic 16S rRNA genes. Sequences are derived from RefSeq database.
 
-The [main website](http://mbio.bas-net.by/cager/en/ribogrove) where RiboGrove is hosted may be unavailable outside Belarus due to technical troubles and the overall disaster. Nevertheless, RiboGrove releases are available at a Github Pages mirror: [https://masikol.github.io/](https://masikol.github.io/). We are sorry for this inconvenience.
+The [main website](https://mbio.bas-net.by/cager/en/ribogrove) where RiboGrove is hosted may be unavailable outside Belarus due to technical troubles and the overall disaster. Nevertheless, RiboGrove releases are available at a Github Pages mirror: [https://masikol.github.io/](https://masikol.github.io/). We are sorry for this inconvenience.
 
 ## Contents:
 
