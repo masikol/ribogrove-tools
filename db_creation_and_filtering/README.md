@@ -2,7 +2,7 @@
 
 Here you can find scripts that are used for RiboGrove construction.
 
-Each Python script can be used on its own using command line interace. At the same time, they are integrated in a pipeline `collect_and_filter_ssu_pipeline.sh`.
+Each Python script can be used on its own using command line interface. At the same time, they are integrated in a pipeline `collect_and_filter_ssu_pipeline.sh`.
 
 ## Description
 
@@ -76,7 +76,7 @@ A configuragion file should specify locations of 1) input data; 2) working direc
 
 6. `CMPRESS_FOR_FILTERING` -- the program `cmpress` from [Infernal](http://eddylab.org/infernal/). The program is used to filter incomplete sequences of 16S rRNA genes. Here, we use the latest version of `cmpress` (1.1.4).
 
-7. `RFAM_FOR_FILTERING` -- [Rfam](https://rfam.xfam.org/) covariance model (uncompressed `.cm` file). It is used to extract 16S rRNA genes from genomic sequences. Here, we use latest version Rfam 14.6: ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.6/Rfam.cm.gz.
+7. `RFAM_FOR_FILTERING` -- [Rfam](https://rfam.xfam.org/) covariance model (uncompressed `.cm` file). It is used to extract 16S rRNA genes from genomic sequences. Here, we use latest version Rfam 14.9: ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.9/Rfam.cm.gz.
 
 8. `CMFETCH` -- the program `cmfetch` from [Infernal](http://eddylab.org/infernal/). The program is used to extract specific Rfam model from from whole Rfam file. Here, we use the latest version of `cmfetch` (1.1.4).
 
@@ -96,7 +96,7 @@ A configuragion file should specify locations of 1) input data; 2) working direc
 
 1. `CALC_PRIMERS_COVERAGE` -- (accepted values: `0`, `1`). `1` -- calculate primer coverage with MFEprimer. `0` -- do not calculate primer coverage.
 
-#### 6. "Cached" data from previous RiboGrove release
+#### 6. “Cached” data from previous RiboGrove release
 
 1. `PREV_WORKDIR` -- a working directory of the previous RiboGrove release. If you are running constructing RiboGrove 8.214 for bacteria, your `PREV_WORKDIR` value will be something like `/some/path/RiboGrove_workdirs/7.213/bacteria`.
 
@@ -124,4 +124,4 @@ Standalone programs:
 
 Data:
 
-1. Rfam database. Versions: 12.0 (ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz) for re-annotation of genomic sequences; 14.6 (ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.6/Rfam.cm.gz) for sequence filtering.
+1. Rfam database. Versions: 12.0 (ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz) for re-annotation of genomic sequences; 14.9 (ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.9/Rfam.cm.gz) for sequence filtering.

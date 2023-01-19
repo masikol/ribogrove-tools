@@ -41,10 +41,10 @@ FILTERED_REFSEQ_CATALOG_FILE="${REFSEQ_CATALOG_FILE/.catalog.gz/_filtered.catalo
 
 ASS_ID_TO_GI_FPATH="${WORKDIR}/${PREFIX}_assembly_2_GI.tsv"
 
-ACC_BLACKLIST_FPATH="${SCRIPT_DIR}/accession_blacklist.tsv"
+ACC_BLACKLIST_FPATH="${SCRIPT_DIR}/ad_hoc/accession_blacklist.tsv"
 GI_ACC_TITLES_FPATH="${WORKDIR}/${PREFIX}_refseq_accs.tsv"
-GI_ACC_TITLES_FILT_FPATH="${WORKDIR}/${PREFIX}_refseq_accs_filtered.tsv"
 
+RAW_ASS_ACC_MERGED_FPATH="${WORKDIR}/${PREFIX}_raw_refseq_accs_merged.tsv"
 ASS_ACC_MERGED_FPATH="${WORKDIR}/${PREFIX}_refseq_accs_merged.tsv"
 
 ALL_GENES_FASTA="${GENES_DIR}/${PREFIX}_all_collected.fasta"
@@ -59,28 +59,23 @@ PER_GENE_TAXID_FPATH="${TAXONOMY_DIR}/${PREFIX}_per_gene_taxIDs.tsv"
 PER_GENOME_TAXONOMY_FPATH="${TAXONOMY_DIR}/${PREFIX}_per_genome_taxonomy.tsv"
 PER_GENE_TAXONOMY_FPATH="${TAXONOMY_DIR}/${PREFIX}_per_gene_taxonomy.tsv"
 
-NO_NNN_FASTA_FPATH="${GENES_DIR}/${PREFIX}_gene_seqs_no_NNN.fasta"
-NO_NNN_STATS_FPATH="${GENES_DIR}/${PREFIX}_gene_stats_no_NNN.tsv"
-NNN_FASTA_FPATH="${GENES_DIR}/${PREFIX}_NNN_gene_seqs.fasta"
+NNN_FAIL_SEQIDS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_NNN_fail_seqIDs.txt"
 
 REPEATS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_repeats.tsv"
+REPEAT_FAIL_SEQIDS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_repeats_fail_seqIDs.txt"
 
-PIVOTAL_GENES_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/${PREFIX}_pivotal_genes.tsv"
 CMSCAN_TBLOUT_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/cmscan_output_table.tblout"
 
 ABERRANT_SEQIDS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/aberrant_seqIDs.txt"
-NON_ABERRANT_SEQIDS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/non_aberrant_seqIDs.txt"
-NON_ABERRANT_GENES_FASTA="${GENES_DIR}/${PREFIX}_non_aberrant_gene_seqs.fasta"
-ABERRANT_GENES_FASTA="${GENES_DIR}/${PREFIX}_aberrant_gene_seqs.fasta"
-NON_ABERRANT_GENES_STATS="${GENES_DIR}/${PREFIX}_non_aberrant_gene_stats.tsv"
-EXCEPTIONS_FOR_REPEAT_REMOVAL="${ABERRATIONS_AND_HETEROGENEITY_DIR}/exception_seqIDs.txt"
+
+BLACKLIST_SEQIDS_FILE="${SCRIPT_DIR}/ad_hoc/blacklist_seqIDs.tsv"
+WHITELIST_SEQIDS_FILE="${SCRIPT_DIR}/ad_hoc/whitelist_seqIDs.tsv"
 
 FINAL_GENES_FASTA="${GENES_DIR}/${PREFIX}_final_gene_seqs.fasta"
 FINAL_GENES_STATS="${GENES_DIR}/${PREFIX}_final_gene_stats.tsv"
-SEQS_WITH_REPEATS_FASTA="${GENES_DIR}/${PREFIX}_gene_seqs_with_repeats.fasta"
 
 ANNOTATED_RESULT_FASTA="${GENES_DIR}/${PREFIX}_final_gene_seqs_annotated.fasta"
-FINAL_SEQIDS="${GENES_DIR}/final_seqIDs.txt"
+DISCARDED_SEQIDS="${GENES_DIR}/discarded_seqIDs.txt"
 DISCARDED_FASTA="${GENES_DIR}/${PREFIX}_discarded_gene_seqs.fasta"
 ANNOTATED_DISCARDED_FASTA="${GENES_DIR}/${PREFIX}_discarded_gene_seqs_annotated.fasta"
 
@@ -133,23 +128,23 @@ python3 "${SCRIPT_DIR}/gis_to_accs.py" \
   --outfile "${GI_ACC_TITLES_FPATH}"
 
 
+# == Merge Assembly IDs to ACCESSION.VERSION's and titles ==
+
+python3 "${SCRIPT_DIR}/merge_assIDs_and_accs.py" \
+  --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
+  --gi-2-acc-file "${GI_ACC_TITLES_FPATH}" \
+  --outfile "${RAW_ASS_ACC_MERGED_FPATH}"
+
+
 # == Remove unreliable and irrelevant genomic sequences ==
 # 1. Remove "whole genome shotgun" sequences.
 # 2. Remove sequences added to RefSeq after the current release.
 # 3. Remove sequences from the blacklist.
 
 python3 "${SCRIPT_DIR}/remove_unwanted_refseq_seqs.py" \
-  --gi-2-acc-file "${GI_ACC_TITLES_FPATH}" \
+  --raw-merged-file "${RAW_ASS_ACC_MERGED_FPATH}" \
   --refseq-catalog "${FILTERED_REFSEQ_CATALOG_FILE}" \
   --acc-blacklist "${ACC_BLACKLIST_FPATH}" \
-  --outfile "${GI_ACC_TITLES_FILT_FPATH}"
-
-
-# == Merge Assembly IDs to ACCESSION.VERSION's and titles ==
-
-python3 "${SCRIPT_DIR}/merge_assIDs_and_accs.py" \
-  --assm-2-gi-file "${ASS_ID_TO_GI_FPATH}" \
-  --gi-2-acc-file "${GI_ACC_TITLES_FILT_FPATH}" \
   --outfile "${ASS_ACC_MERGED_FPATH}"
 
 
@@ -252,13 +247,11 @@ fi
 
 # == Drop genes from genomes containing at least 3 N's in a row ==
 
-python3 "${SCRIPT_DIR}/drop_NNN.py" \
+python3 "${SCRIPT_DIR}/find_NNN.py" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
   --all-fasta-file "${ALL_GENES_FASTA}" \
   --categories-file "${CATEGORIES_FPATH}" \
-  --out-fasta-file "${NO_NNN_FASTA_FPATH}" \
-  --out-stats-file "${NO_NNN_STATS_FPATH}" \
-  --NNN-outfile "${NNN_FASTA_FPATH}"
+  --out-fail-file "${NNN_FAIL_SEQIDS_FPATH}"
 
 
 # == Extract Rfam covariance model for 16S rRNA genes exttaction ==
@@ -272,9 +265,11 @@ fi
 
 
 # == Compare all remainig genes to Rfam covariance model (cm) ==
+
 if [[ ! -z "${PREV_WORKDIR}" ]]; then
   python3 "${SCRIPT_DIR}/compare_all_seqs_to_cm.py" \
-    --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
+    --in-fasta-file "${ALL_GENES_FASTA}" \
+    --NNN-fail-seqIDs "${NNN_FAIL_SEQIDS_FPATH}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
     --cmscan "${CMSCAN_FOR_FILTERING}" \
     --cmpress "${CMPRESS_FOR_FILTERING}" \
@@ -282,7 +277,8 @@ if [[ ! -z "${PREV_WORKDIR}" ]]; then
     --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}"
 else 
   python3 "${SCRIPT_DIR}/compare_all_seqs_to_cm.py" \
-    --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
+    --in-fasta-file "${ALL_GENES_FASTA}" \
+    --NNN-fail-seqIDs "${NNN_FAIL_SEQIDS_FPATH}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
     --cmscan "${CMSCAN_FOR_FILTERING}" \
     --cmpress "${CMPRESS_FOR_FILTERING}" \
@@ -291,10 +287,12 @@ fi
 
 
 # == Find aberrant genes and record long indels ==
+
 if [[ "${CHECK_CONSERV_REGIONS}" == 1 ]]; then
   python3 "${SCRIPT_DIR}/find_aberrant_genes.py" \
-    --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
-    --genes-stats-file "${NO_NNN_STATS_FPATH}" \
+    --fasta-seqs-file "${ALL_GENES_FASTA}" \
+    --NNN-fail-seqIDs "${NNN_FAIL_SEQIDS_FPATH}" \
+    --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
     --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
     --conserved-regions-fasta "${CONSERVED_REGIONS_FASTA}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
@@ -302,8 +300,9 @@ if [[ "${CHECK_CONSERV_REGIONS}" == 1 ]]; then
     --deletion-len-threshold 10
 else
   python3 "${SCRIPT_DIR}/find_aberrant_genes.py" \
-    --fasta-seqs-file "${NO_NNN_FASTA_FPATH}" \
-    --genes-stats-file "${NO_NNN_STATS_FPATH}" \
+    --fasta-seqs-file "${ALL_GENES_FASTA}" \
+    --NNN-fail-seqIDs "${NNN_FAIL_SEQIDS_FPATH}" \
+    --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
     --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
     --muscle "${MUSCLE}" \
@@ -311,37 +310,28 @@ else
 fi
 
 
-# == Drop aberarant genes ==
-
-python3 "${SCRIPT_DIR}/drop_aberrant_genes.py" \
-  --input-fasta-file "${NO_NNN_FASTA_FPATH}" \
-  --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --non-aberrant-seqIDs "${NON_ABERRANT_SEQIDS_FPATH}" \
-  --aberrant-seqIDs "${ABERRANT_SEQIDS_FPATH}" \
-  --non-aberrant-fasta-file "${NON_ABERRANT_GENES_FASTA}" \
-  --out-stats-file "${NON_ABERRANT_GENES_STATS}" \
-  --aberrant-fasta-file "${ABERRANT_GENES_FASTA}"
-
-
 # == Find repeats in genes sequences ==
 
 python3 "${SCRIPT_DIR}/find_repeats.py" \
-  --in-fasta-file "${NO_NNN_FASTA_FPATH}" \
-  --outfile "${REPEATS_FPATH}"
+  --in-fasta-file "${ALL_GENES_FASTA}" \
+  --NNN-fail-seqIDs "${NNN_FAIL_SEQIDS_FPATH}" \
+  --aberrant-seqIDs "${ABERRANT_SEQIDS_FPATH}" \
+  --repeat-len-threshold 25 \
+  --out-fail-file "${REPEAT_FAIL_SEQIDS_FPATH}" \
+  --out-repeats-log "${REPEATS_FPATH}"
 
 
-# == Drop long repeats ==
-
-python3 "${SCRIPT_DIR}/drop_repeats.py" \
-  --input-fasta-file "${NON_ABERRANT_GENES_FASTA}" \
+# == Drop sequences which didn't pass filters ==
+python3 "${SCRIPT_DIR}/make_final_seqs.py" \
+  --all-seqs-file "${ALL_GENES_FASTA}" \
+  --NNN-fail-seqIDs "${NNN_FAIL_SEQIDS_FPATH}" \
+  --aberrant-seqIDs "${ABERRANT_SEQIDS_FPATH}" \
+  --repeats-fail-seqIDs "${REPEAT_FAIL_SEQIDS_FPATH}" \
+  --blacklist-seqIDs "${BLACKLIST_SEQIDS_FILE}" \
+  --whitelist-seqIDs "${WHITELIST_SEQIDS_FILE}" \
   --assm-acc-file "${ASS_ACC_MERGED_FPATH}" \
-  --repeats-file "${REPEATS_FPATH}" \
-  --exception-seqIDs "${EXCEPTIONS_FOR_REPEAT_REMOVAL}" \
   --out-fasta-file "${FINAL_GENES_FASTA}" \
-  --seqs-with-repeats "${SEQS_WITH_REPEATS_FASTA}" \
-  --out-stats-file "${FINAL_GENES_STATS}" \
-  --repeat-len-threshold 25
-
+  --out-stats-file "${FINAL_GENES_STATS}"
 
 
 # == Annotate sequences: add taxonomy and categories to their headers ==
@@ -360,13 +350,18 @@ rm "${tmp_fasta}"
 
 
 # == Make a fasta file of discarded sequences ==
-seqkit seq -ni "${ANNOTATED_RESULT_FASTA}" > "${FINAL_SEQIDS}"
+
+cat "${NNN_FAIL_SEQIDS_FPATH}" "${ABERRANT_SEQIDS_FPATH}" "${REPEAT_FAIL_SEQIDS_FPATH}" > \
+  "${DISCARDED_SEQIDS}"
 cat "${ALL_GENES_FASTA}" \
-    | seqkit grep -vf "${FINAL_SEQIDS}" \
-    | seqkit sort -s > "${DISCARDED_FASTA}"
+  | seqkit grep -f "${DISCARDED_SEQIDS}" \
+  | seqkit sort -s > "${DISCARDED_FASTA}"
 
 if [[ -f "${FINAL_SEQIDS}" ]]; then
   rm -v "${FINAL_SEQIDS}"
+fi
+if [[ -f "${DISCARDED_SEQIDS}" ]]; then
+  rm -v "${DISCARDED_SEQIDS}"
 fi
 
 
@@ -435,7 +430,7 @@ fi
 # == Calculate PCR primer coverage ==
 
 if [[ "${CALC_PRIMERS_COVERAGE}" == 1 ]]; then
-  if [[ ! -z "${PREV_WORKDIR}" && -f "${PREV_FINAL_GENES_FASTA}" && -f "${PREV_PRIMERS_DIRPATH}" ]]; then
+  if [[ ! -z "${PREV_WORKDIR}" && -f "${PREV_FINAL_GENES_FASTA}" && -d "${PREV_PRIMERS_DIRPATH}" ]]; then
     python3 "${SCRIPT_DIR}/check_primers_mfeprimer.py" \
       --fasta-seqs-file "${ANNOTATED_RESULT_FASTA}" \
       --categories-file "${CATEGORIES_FPATH}" \

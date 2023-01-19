@@ -247,7 +247,7 @@
 <table class="sum-table">
 <caption>Число копий генов 16S рРНК</caption>
 <tbody>
-<tr><th class="numcol">Число копий <sup>*</sup></th><th class="numcol" colspan="2">Бактерии</th><th class="numcol" colspan="2">Археи</th></tr>
+<tr><th class="numcol">Число копий <sup>*</sup></th><th class="alncenter" colspan="2">Бактерии</th><th class="alncenter" colspan="2">Археи</th></tr>
 <tr><td></td><td>Количество видов</td><td>Процент видов, %</td><td>Количество видов</td><td>Процент видов, %</td></tr>
 {% for _, row in ribogrove_copy_number_df.iterrows() %}
 <tr class="sumtab-row">

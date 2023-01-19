@@ -8,9 +8,9 @@
 ## Command line arguments
 ### Input files:
 # 1. `-f / --fasta-seqs-file` -- a fasta file of gene sequences to be processed.
-#   This is the file, which is the output of th script `drop_repeats.py`. Mandatory.
+#   This is the file, which is the output of th script `make_final_seqs.py`. Mandatory.
 # 2. `-s / --genes-stats-file` -- a TSV file of per-replicon genes statistics.
-#   This is the file, which is the output of th script `drop_repeats.py`. Mandatory.
+#   This is the file, which is the output of th script `make_final_seqs.py`. Mandatory.
 # 3. `-c / --categories-file` -- a TSV file of categories info.
 #   This is the file, which is the output of th script `assign_genome_categories.py`. Mandatory.
 

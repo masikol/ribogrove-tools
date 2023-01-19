@@ -1,0 +1,5 @@
+seqID	reason
+G_4151551:NZ_CP041676.1:200855-202543:plus	long repeat, but it is confirmed by reads
+G_3195491:NZ_CP040463.1:30185-31700:minus	this gene gets discarded in favor of G_3195491:NZ_CP040463.1:148670-150214:minus, which is apparently HGT'ed from Staphylococcus
+G_3195491:NZ_CP040463.1:352372-353887:plus	this gene gets discarded in favor of G_3195491:NZ_CP040463.1:148670-150214:minus, which is apparently HGT'ed from Staphylococcus
+G_3195491:NZ_CP040463.1:667543-669058:plus	this gene gets discarded in favor of G_3195491:NZ_CP040463.1:148670-150214:minus, which is apparently HGT'ed from Staphylococcus

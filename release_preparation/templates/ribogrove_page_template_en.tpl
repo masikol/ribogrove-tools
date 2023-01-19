@@ -247,7 +247,7 @@
 <table class="sum-table">
 <caption>16S rRNA gene copy number</caption>
 <tbody>
-<tr><th class="numcol">Copy number <sup>*</sup></th><th class="numcol" colspan="2">Bacteria</th><th class="numcol" colspan="2">Archaea</th></tr>
+<tr><th class="numcol">Copy number <sup>*</sup></th><th class="alncenter" colspan="2">Bacteria</th><th class="alncenter" colspan="2">Archaea</th></tr>
 <tr><td></td><td>Number of species</td><td>Per cent of species (%)</td><td>Number of species</td><td>Per cent of species (%)</td></tr>
 
 {% for _, row in ribogrove_copy_number_df.iterrows() %}

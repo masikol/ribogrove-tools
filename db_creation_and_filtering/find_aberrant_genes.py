@@ -1,16 +1,14 @@
 #!/usr/bin/env python3
 
-# The script does multiple things:
-# 1. It finds aberrant genes: truncated genes and genes with large deletions.
-# 2. It records all intragenomic gene variability (indels, percents of identity).
+# The script finds aberrant genes: truncated genes and genes with large deletions.
 
 ## Command line arguments
 
 ### Input files:
-# 1. `-f / --fasta-seqs-file` -- an input fasta file of SSU gene sequences.
-#   This file is the output of the script `drop_NNN.py`. Mandatory.
-# 2. `-s / --genes-stats-file` -- a TSV file of per-replicon genes statistics.
-#   This file is the output of the script `drop_NNN.py`. Mandatory.
+# 1. `-f / --fasta-seqs-file` -- an input fasta file of all collected SSU gene sequences.
+#   This file is the output of the script `extract_16S.py`. Mandatory.
+# 2. `--NNN-fail-seqIDs` -- a file of seqIDs which didn't pass NNN filter, one per line.
+#   This file is the output of the script `find_NNN.py`. Mandatory.
 # 3. `-t / --cmscan-tblout` -- a TSV file (`.tblout`) of comparison statistics.
 #   This file is the output of the script `compare_all_seqs_to_cm.py`. Mandatory.
 # 4. `-c / --conserved-regions-fasta` -- a fasta file of 16S rDNA conserved regions
@@ -59,6 +57,8 @@ from Bio import SeqIO
 from Bio import SeqUtils
 from Bio.SeqRecord import SeqRecord
 
+from read_and_filter_fasta import read_and_filter_fasta
+
 
 # == Parse arguments ==
 
@@ -74,9 +74,15 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '-s',
-    '--genes-stats-file',
-    help='TSV file (with header) containing per-replicon SSU gene statistics',
+    '--NNN-fail-seqIDs',
+    help='input file of seqIDs which didn\'t pass NNN filter',
+    required=True
+)
+
+parser.add_argument(
+    '-a',
+    '--assm-acc-file',
+    help='a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).',
     required=True
 )
 
@@ -130,9 +136,9 @@ args = parser.parse_args()
 
 # For convenience
 fasta_seqs_fpath = os.path.abspath(args.fasta_seqs_file)
-genes_stats_fpath = os.path.abspath(args.genes_stats_file)
+NNN_fail_fpath = os.path.abspath(args.NNN_fail_seqIDs)
+assm_acc_fpath = os.path.abspath(args.assm_acc_file)
 tblout_fpath = os.path.abspath(args.cmscan_tblout)
-# pivotal_genes_fpath = os.path.abspath(args.pivotal_genes_file)
 muscle_fpath = os.path.abspath(args.muscle)
 outdpath = os.path.abspath(args.outdir)
 
@@ -164,7 +170,7 @@ except ValueError:
 
 
 # Check existance of all input files and dependencies
-for fpath in (fasta_seqs_fpath, genes_stats_fpath, tblout_fpath, muscle_fpath):
+for fpath in (fasta_seqs_fpath, assm_acc_fpath, tblout_fpath, muscle_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
@@ -188,7 +194,8 @@ if not os.path.isdir(outdpath):
 # end if
 
 print(fasta_seqs_fpath)
-print(genes_stats_fpath)
+print(NNN_fail_fpath)
+print(assm_acc_fpath)
 print(tblout_fpath)
 print(conserved_regions_fpath)
 print(muscle_fpath)
@@ -255,13 +262,13 @@ def pairwise_align(
     aln_record = next(filter(lambda r: r.id != pivotal_seq_record.id, aln_records))
 
     return pivotal_aln_record, aln_record
-# end def pairwise_align
+# end def
 
 
 def bases_identical(b1: str, b2: str) -> bool:
     # Function checks if two bases are identical
     return 1 if b1 == b2 else 0
-# end def bases_identical
+# end def
 
 
 def pairwise_percent_identity(aln_record_1: SeqRecord, aln_record_2: SeqRecord) -> float:
@@ -285,13 +292,13 @@ def pairwise_percent_identity(aln_record_1: SeqRecord, aln_record_2: SeqRecord) 
     # Calculate and return pident
     return sum( (bases_identical(b1, b2) for b1, b2 in zip(seq_1, seq_2)) ) \
            / min_len
-# end def pairwise_percent_identity
+# end def
 
 
 def count_gaps(seq_record: SeqRecord) -> int:
     # Function counts gaps in an anigned sequence
     return str(seq_record.seq).count('-')
-# end def count_gaps
+# end def
 
 
 
@@ -331,18 +338,19 @@ def find_insertions_and_deletions(
     deletions = [(obj.start()+1, obj.end()) for obj in deletion_matchobjs]
 
     return insertions, deletions
-# end def find_insertions_and_deletions
+# end def
 
 
 def set_acc(row):
     row['acc'] = row['query_name'].split(':')[1]
     return row
-# end def set_acc
+# end def
 
 
 if not conserved_regions_fpath is None:
 
-    def find_conserved_regions(seq_record: SeqRecord, conserved_seq_records: Sequence[SeqRecord]) -> None:
+    def find_conserved_regions(seq_record: SeqRecord,
+                               conserved_seq_records: Sequence[SeqRecord]) -> None:
         # Function returns seqIDs of those conserved regions, which are present in
         #   sequence of record `seq_record.
 
@@ -365,7 +373,7 @@ if not conserved_regions_fpath is None:
                 present_conserved_regions
             )
         )
-    # end def find_conserved_regions
+    # end def
 # end if
 
 
@@ -375,7 +383,6 @@ pident_outfpath = os.path.join(outdpath, 'pident_pivotal_genes.tsv')
 insertions_outfpath = os.path.join(outdpath, 'insertions.tsv')
 deletions_outfpath = os.path.join(outdpath, 'deletions.tsv')
 aberrant_seqIDs_fpath = os.path.join(outdpath, 'aberrant_seqIDs.txt')
-non_aberrant_seqIDs_fpath = os.path.join(outdpath, 'non_aberrant_seqIDs.txt')
 
 
 
@@ -390,7 +397,7 @@ if not conserved_regions_fpath is None:
 # pivotal_genes_df = pd.read_csv(pivotal_genes_fpath, sep='\t')
 
 # Reade per-replicon genes statistics
-stats_df = pd.read_csv(genes_stats_fpath, sep='\t')
+assm_acc_df = pd.read_csv(assm_acc_fpath, sep='\t')
 
 # Read cmscan's tblout file
 tblout_df = pd.read_csv(tblout_fpath, sep='\t')
@@ -399,25 +406,26 @@ tblout_df['acc'] = np.repeat(None, tblout_df.shape[0])
 tblout_df = tblout_df.apply(set_acc, axis=1)
 
 tblout_df = tblout_df.merge(
-    stats_df[['acc', 'ass_id']],
+    assm_acc_df[['acc', 'ass_id']],
     on='acc',
     how='left'
 )
 
 # Get unique Assembly IDs
-ass_ids = tuple(set(stats_df['ass_id']))
-
+ass_ids = tuple(set(assm_acc_df['ass_id']))
 
 # Read input genes sequences
-seq_records = tuple(SeqIO.parse(fasta_seqs_fpath, 'fasta'))
+seq_records = read_and_filter_fasta(
+    fasta_seqs_fpath,
+    filter_fpaths=[NNN_fail_fpath,]
+)
 
 
 with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
      open(pident_outfpath, 'wt') as pident_outfile, \
      open(insertions_outfpath, 'wt') as insertions_outfile, \
      open(deletions_outfpath, 'wt') as deletions_outfile, \
-     open(aberrant_seqIDs_fpath, 'wt') as aberrant_seqIDs_outfile, \
-     open(non_aberrant_seqIDs_fpath, 'wt') as non_aberrant_seqIDs_outfile:
+     open(aberrant_seqIDs_fpath, 'wt') as aberrant_seqIDs_outfile:
 
     # Write headers to output files
     pivotal_genes_outfile.write('ass_id\tpivotal_seqID\tmax_score\n')
@@ -566,10 +574,6 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
         for seqID in final_aberrant_seqIDs:
             aberrant_seqIDs_outfile.write(f'{seqID}\n')
         # end for
-        # Record seqIDs of non-aberrant genes
-        for seqID in non_aberrant_seqIDs:
-            non_aberrant_seqIDs_outfile.write(f'{seqID}\n')
-        # end for
     # end for
 # end with
 
@@ -579,6 +583,5 @@ print(pident_outfpath)
 print(insertions_outfpath)
 print(deletions_outfpath)
 print(aberrant_seqIDs_fpath)
-print(non_aberrant_seqIDs_fpath)
 
 print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')

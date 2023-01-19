@@ -7,18 +7,29 @@
 
 ### Input files:
 # 1. `-f / --in-fasta-file` -- an input fasta file of gene sequences.
-#   This file is the output of the script `drop_aberrant_genes.py`. Mandatory.
+#   This file is the output of the script `extract_16S.py`. Mandatory.
+# 2. `--NNN-fail-seqIDs` -- a file of seqIDs which didn't pass NNN filter, one per line.
+#   This file is the output of the script `find_NNN.py`. Mandatory.
+# 3. `--aberrant-seqIDs` -- a file of seqIDs which didn't pass "find aberrant genes" filter, one per line.
+#   This file is the output of the script `find_aberrant_genes.py`. Mandatory.
 
 ### Output files:
-# 1. `-o / --outfile` -- an output TSV file.
-# The output file contains the following columns:
+# 1. `--out-fail-file` -- a file of seqIDs which don't pass the filter, one per line.
+#   Mandatory.
+# 2. `--out-repeats-log` -- an output TSV listing all repets found in the input sequences.
+# The file contains the following columns:
 # - `seqID` -- RiboGrove sequence identifier;
 # - `r1_start`, `r1_end`, `r2_start`, `r2_end` -- cordinates of repeats within RiboGrove sequences;
 # - `rep_len` -- repeat length;
 # - `rep_seq` -- repeat sequence;
+#   Mandatory.
 
 ## Dependencies:
 # 1. RepeatFinder must be installed. See https://github.com/deprekate/RepeatFinder
+
+### Parameters:
+# 1. `--repeat-len-threshold` -- a repeat length threshold.
+#   Sequences having repeats longer than this value will be discarded. Mandatory.
 
 import os
 
@@ -31,6 +42,8 @@ from typing import Tuple
 
 import repeatfinder as rf # https://github.com/deprekate/RepeatFinder
 from Bio import SeqIO
+
+from read_and_filter_fasta import read_and_filter_fasta
 
 
 # == Parse arguments ==
@@ -46,12 +59,38 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '--NNN-fail-seqIDs',
+    help='input file of seqIDs which didn\'t pass NNN filter',
+    required=True
+)
+
+parser.add_argument(
+    '--aberrant-seqIDs',
+    help='input file of seqIDs which didn\'t pass the "find aberrant" filter',
+    required=True
+)
+
 # Output files
 
 parser.add_argument(
-    '-o',
-    '--outfile',
-    help='TSV file for saving information about discovered repeats in genes sequences',
+    '--out-fail-file',
+    help='output file of seqIDs which don\'t pass the filter, one per line',
+    required=True
+)
+
+parser.add_argument(
+    '--out-repeats-log',
+    help='a file listing all repets found in the input sequences',
+    required=True
+)
+
+# Params
+
+parser.add_argument(
+    '--repeat-len-threshold',
+    help="""repeat length threshold (int > 0). Sequences with repeats longer than
+  this threshold will be discarded""",
     required=True
 )
 
@@ -60,26 +99,47 @@ args = parser.parse_args()
 
 # For convenience
 seqs_fpath = os.path.abspath(args.in_fasta_file)
-# conserved_regions_fpath = os.path.abspath(args.conserved_regions_fasta)
-outfpath = os.path.abspath(args.outfile)
+NNN_fail_fpath = os.path.abspath(args.NNN_fail_seqIDs)
+aberrant_fpath = os.path.abspath(args.aberrant_seqIDs)
+out_fail_fpath = os.path.abspath(args.out_fail_file)
+out_repeats_log_fpath = os.path.abspath(args.out_repeats_log)
 
 
-if not os.path.exists(seqs_fpath):
-    print(f'Error: file `{seqs_fpath}` does not exist!')
-    sys.exit(1)
-# end if
+for f in (seqs_fpath, NNN_fail_fpath, aberrant_fpath):
+    if not os.path.exists(f):
+        print(f'Error: file `{f}` does not exist!')
+        sys.exit(1)
+    # end if
+# end for
 
 # Create output directory if needed
-if not os.path.isdir(os.path.dirname(outfpath)):
-    try:
-        os.makedirs(os.path.dirname(outfpath))
-    except OSError as err:
-        print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
-        sys.exit(1)
-    # end try
-# end if
+for d in map(os.path.dirname, [out_fail_fpath, out_repeats_log_fpath]):
+    if not os.path.isdir(d):
+        try:
+            os.makedirs(d)
+        except OSError as err:
+            print(f'Error: cannot create directory `{d}`')
+            sys.exit(1)
+        # end try
+    # end if
+# end for
+
+# Parse and validate repeat_len_threshold
+try:
+    repeat_len_threshold = int(args.repeat_len_threshold)
+    if repeat_len_threshold < 0:
+        raise ValueError
+    # end if
+except ValueError:
+    print(f'Invalid value of --repeat-len-threshold: `{args.repeat_len_threshold}`')
+    print('It must be integer > 0.')
+    sys.exit(1)
+# end try
 
 print(seqs_fpath)
+print(NNN_fail_fpath)
+print(aberrant_fpath)
+print(f'Repeats length threshold = {repeat_len_threshold}')
 print()
 
 
@@ -87,22 +147,28 @@ print()
 next_report = 499
 inc = 500
 
-num_seqs = len(tuple(SeqIO.parse(seqs_fpath, 'fasta'))) # tally input sequences
-seq_records = SeqIO.parse(seqs_fpath, 'fasta') # read input sequences
+# Read input sequences
+seq_records = read_and_filter_fasta(
+    seqs_fpath,
+    filter_fpaths=[NNN_fail_fpath, aberrant_fpath,]
+)
+
+num_seqs = len(seq_records) # tally input sequences
 
 
 def get_repeat_len(repeat_out: Tuple[int, int, int, int]):
     # Function for calculating length of a repeat
     return repeat_out[1] - repeat_out[0] + 1
-# end def get_repeat_len
+# end def
 
 
 # == Proceed ==
 
-with open(outfpath, 'wt') as outfile:
+with open(out_repeats_log_fpath, 'wt') as out_log_file, \
+     open(out_fail_fpath, 'wt')        as out_seqID_file:
 
     # Write header
-    outfile.write('seqID\tgene_len\tr1_start\tr1_end\tr2_start\tr2_end\trep_len\trep_seq\n')
+    out_log_file.write('seqID\tgene_len\tr1_start\tr1_end\tr2_start\tr2_end\trep_len\trep_seq\n')
 
 
     # Iterate over input seq records
@@ -123,15 +189,20 @@ with open(outfpath, 'wt') as outfile:
             # Get repeat sequence
             rep_seq = str(record.seq)[r[0]-1 : r[1]]
 
-            rep_len = get_repeat_len(r) # get length of repeat
+            rep_len = get_repeat_len(r)
 
             # Write output line
-            outfile.write(f'{record.id}\t{len(record.seq)}\t{r[0]}\t{r[1]}\t{r[2]}\t{r[3]}\t{rep_len}\t{rep_seq}\n')
+            out_log_file.write(f'{record.id}\t{len(record.seq)}\t{r[0]}\t{r[1]}\t{r[2]}\t{r[3]}\t{rep_len}\t{rep_seq}\n')
+
+            if rep_len > repeat_len_threshold:
+                out_seqID_file.write('{}\n'.format(record.id))
+            # end if
         # end for
     # end for
 # end with
 
 print(f'\r{i+1}/{num_seqs}')
 print('Completed!')
-print(outfpath)
+print(out_fail_fpath)
+print(out_repeats_log_fpath)
 print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')

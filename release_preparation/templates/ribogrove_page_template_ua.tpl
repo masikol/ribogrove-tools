@@ -11,7 +11,7 @@
 <div class="lang-section">
 <p>&#127760;&nbsp;<a href="index.html">English</a> / <a href="latest_ribogrove_release_be.html">Беларуская</a> / <span class="active-lang">Українська</span> / <a href="latest_ribogrove_release_ru.html">Русский</a></p>
 </div>
-<p><div class="warn-section"><a href="http://mbio.bas-net.by/cager/en/ribogrove">Головний сайт</a>, де ми розміщуємо базу даних RiboGrove, може бути недосяжним поза межами Білорусі через технічні проблеми та біду взагалі. Актуальний реліз RiboGrove можна знайти тут &mdash; нехай база даних буде досяжна принаймни такою мірою.</div></p><br>
+<p><div class="warn-section"><a href="https://mbio.bas-net.by/cager/en/ribogrove">Головний сайт</a>, де ми розміщуємо базу даних RiboGrove, може бути недосяжним поза межами Білорусі через технічні проблеми та біду взагалі. Актуальний реліз RiboGrove можна знайти тут &mdash; нехай база даних буде досяжна принаймни такою мірою.</div></p><br>
 <h1 style="display:none">RiboGrove</h1>
 <img src="img/RiboGrove_logo.png"><br><br>
 <h2>Зміст</h2>
@@ -262,7 +262,7 @@
 <table class="sum-table">
 <caption>Кількість копій генів 16S рРНК</caption>
 <tbody>
-<tr><th class="numcol">Кількість копій <sup>*</sup></th><th class="numcol" colspan="2">Бактерії</th><th class="numcol" colspan="2">Археї</th></tr>
+<tr><th class="numcol">Кількість копій <sup>*</sup></th><th class="alncenter" colspan="2">Бактерії</th><th class="alncenter" colspan="2">Археї</th></tr>
 <tr><td></td><td>Кількість видів</td><td>Відсоток видів, %</td><td>Кількість видів</td><td>Відсоток видів, %</td></tr>
 {% for _, row in ribogrove_copy_number_df.iterrows() %}
 <tr class="sumtab-row">

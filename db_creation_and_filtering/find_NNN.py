@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# The script discards gene sequences, which originate from the genomes containing at least
+# The script finds gene sequences, which originate from the genomes containing at least
 #   3 Ns (undefined bases) in a row in theis sequences.
 
 ## Command line arguments
@@ -8,16 +8,14 @@
 ### Input files:
 # 1. `-i / --assm-acc-file` -- a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).
 #   This file is the output of the script `merge_assIDs_and_accs.py`. Mandatory.
-# 2. `-f / --all-fasta-file` -- a fasta file with all extracted genes sequences.
+# 2. `-f / --all-fasta-file` -- a fasta file with all collected genes sequences.
 #   This file is the output of the script `extract_16S.py`. Mandatory.
 # 3. `-c / --categories-file` -- a TSV file with genome categories.
 #   This file is the output of the script `assign_genome_categories.py`. Mandatory.
 
 ### Output files:
-# 1. `--out-fasta-file` -- a fasta file containing no sequences with NNN. Mandatory.
-# 2. `--out-stats-file` -- a TSV file containing per-replicon statistics for
-#   the output fasta file ("no NNN" one). Mandatory.
-# 3. `--NNN-outfile` -- a fasta file containing sequences with NNN. Mandatory.
+# 1. `--out-fail-file` -- output file of seqIDs which don't pass the filter, one per line.
+#   Mandatory.
 
 import os
 
@@ -29,8 +27,6 @@ import argparse
 
 import pandas as pd
 from Bio import SeqIO
-
-from gene_seqs_2_stats import gene_seqs_2_stats
 
 
 # == Parse arguments ==
@@ -64,20 +60,8 @@ parser.add_argument(
 # Output files
 
 parser.add_argument(
-    '--out-fasta-file',
-    help='output fasta file containing genes sequences without NNNs',
-    required=True
-)
-
-parser.add_argument(
-    '--out-stats-file',
-    help='output per-replicon statistics file of sequences without NNNs',
-    required=True
-)
-
-parser.add_argument(
-    '--NNN-outfile',
-    help='output fasta file containing genes sequences with NNNs',
+    '--out-fail-file',
+    help='output file of seqIDs which don\'t pass the filter, one per line',
     required=True
 )
 
@@ -88,9 +72,7 @@ args = parser.parse_args()
 assm_acc_fpath = os.path.abspath(args.assm_acc_file)
 seqs_fpath = os.path.abspath(args.all_fasta_file)
 category_fpath = os.path.abspath(args.categories_file)
-out_fasta_fpath = os.path.abspath(args.out_fasta_file)
-out_stats_fpath = os.path.abspath(args.out_stats_file)
-nnn_seqs_fpath = os.path.abspath(args.NNN_outfile)
+out_fail_fpath = os.path.abspath(args.out_fail_file)
 
 
 # Check existance of all input files
@@ -102,15 +84,13 @@ for fpath in (assm_acc_fpath, seqs_fpath, category_fpath):
 # enb for
 
 # Create output directories if needed
-for some_dir in map(os.path.dirname, [out_fasta_fpath, nnn_seqs_fpath, out_stats_fpath]):
-    if not os.path.isdir(some_dir):
-        try:
-            os.makedirs(some_dir)
-        except OSError as err:
-            print(f'Error: cannot create directory `{some_dir}`')
-            sys.exit(1)
-        # end try
-    # end if
+if not os.path.isdir(os.path.dirname(out_fail_fpath)):
+    try:
+        os.makedirs(os.path.dirname(out_fail_fpath))
+    except OSError as err:
+        print(f'Error: cannot create directory `{os.path.dirname(out_fail_fpath)}`')
+        sys.exit(1)
+    # end try
 # end if
 
 
@@ -136,9 +116,7 @@ NNN_seqIDs = set(
 )
 
 
-with open(out_fasta_fpath, 'wt') as out_fasta_file, \
-     open(nnn_seqs_fpath, 'wt') as outfile_nnn:
-
+with open(out_fail_fpath, 'wt') as out_fail_file:
     # Iterate over genes sequences
     for i, record in enumerate(seq_records):
 
@@ -148,27 +126,16 @@ with open(out_fasta_fpath, 'wt') as out_fasta_file, \
             next_report += inc
         # end if
 
-        if not record.id in NNN_seqIDs:
-            # Write no "no NNN" file
-            out_fasta_file.write(f'>{record.description}\n{str(record.seq)}\n')
-        else:
-            # Write no "NNN" file
+        if record.id in NNN_seqIDs:
             nnn_count += 1
-            outfile_nnn.write(f'>{record.description}\n{str(record.seq)}\n')
+            out_fail_file.write(f'{record.id}\n')
         # end if
     # end for
 # end with
 
 print(f'\r{i+1}/{num_seqs}\n')
 print(f'{nnn_count} genes from genomes with NNN found')
-print(out_fasta_fpath)
-print(nnn_seqs_fpath)
-
-# Calculate statistics
-print('Calculating statistics')
-gene_seqs_2_stats(out_fasta_fpath, assm_acc_fpath, out_stats_fpath)
-print()
-print(out_stats_fpath)
+print(out_fail_fpath)
 
 print('Completed!')
 print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')

@@ -12,7 +12,7 @@
 ## Command line arguments
 ### Input files:
 # 1. `-s / --assm-2-gi-file` -- an input TSV file mapping Assembly IDs to RefSeq GI numbers. Mandatory.
-# 2. `-c / --gi-2-acc-file` -- a filtered input TSV file mapping RefSeq GI numbers to RefSeq ACCESSION.VERSIONs
+# 2. `-c / --gi-2-acc-file` -- an input TSV file mapping RefSeq GI numbers to RefSeq ACCESSION.VERSIONs
 #   and titles. Mandatory.
 
 ### Output files:

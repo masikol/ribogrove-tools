@@ -7,9 +7,11 @@
 ## Command line arguments
 ### Input files:
 # 1. `-f / --fasta-seqs-file` -- an input fasta file of template sequences.
-#   This is the file, which is the output of th script `drop_repeats.py`. Mandatory.
+#   This is the file, which is the output of th script `make_final_seqs.py`.
+#   Mandatory.
 # 2. `-c / --categories-file` -- the per-gene categories file.
-#   This is the file, which is the output of th script `assign_genome_categories.py`. Mandatory.
+#   This is the file, which is the output of th script `assign_genome_categories.py`.
+#   Mandatory.
 
 ### Output files:
 # 1. `-o / --outdir` -- an output directory, where output TSV files

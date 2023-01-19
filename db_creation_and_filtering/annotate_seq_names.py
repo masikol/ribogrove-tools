@@ -6,7 +6,7 @@
 
 ### Input files:
 # 1. `-f/--fasta-seqs-file` -- input fasta file to be annotated.
-#   This file is the output of the script `drop_repeats.py`. Mandatory.
+#   This file is the output of the script `make_final_seqs.py`. Mandatory.
 # 2. `-t / --per-gene-taxonomy-file` -- a TSV file mapping RiboGrove seqIDs to taxonomy.
 #   This file is the output of the script `add_taxonomy_names.py`. Mandatory.
 # 3. `-c / --categories-file` -- a TSV file mapping RiboGrove seqIDs to categories.
@@ -152,15 +152,17 @@ n_seqs = len(tuple(SeqIO.parse(in_fasta_fpath, 'fasta')))
 # In order to select sequences quickly
 tax_df.index = tax_df['seqID']
 
+step = 1000
+next_report_i = step
+print(f'0/{n_seqs}', end='')
+sys.stdout.flush()
+
 
 with open(outfpath, 'wt') as outfile:
 
     seq_records = SeqIO.parse(in_fasta_fpath, 'fasta')
 
     for i, seq_record in enumerate(seq_records):
-
-        print(f'\r Doing {i+1}/{n_seqs}: {seq_record.id}', end=' '*10)
-
         # Select line of taxonomy DF for current sequence
         curr_tax_record = tax_df.loc[seq_record.id, ]
 
@@ -197,7 +199,14 @@ with open(outfpath, 'wt') as outfile:
         seq_record.description = f'{seq_record.id} {tax_sep}{taxonomy}{tax_sep} category:{category}'
 
         outfile.write(f'>{seq_record.description}\n{seq_record.seq}\n')
+
+        if i + 1 == next_report_i:
+            print(f'\r{i+1}/{n_seqs}', end=' '*10)
+            sys.stdout.flush()
+            next_report_i += step
+        # end if
     # end for
+    print(f'{i+1}/{n_seqs}', end=' '*10)
 # end with
 
 print('\nCompleted!')

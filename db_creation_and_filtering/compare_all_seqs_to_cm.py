@@ -7,9 +7,11 @@
 ## Command line arguments
 
 ### Input files:
-# 1. `-f / --in-fasta-file` -- an input fasta file of SSU gene sequences.
-#   This file is the output of the script `drop_NNN.py`. Mandatory.
-# 2. `--prev-tblout` -- a file that is the output of this script, but for previous RiboGrove release.
+# 1. `-f / --in-fasta-file` -- an input fasta file of all collected SSU gene sequences.
+#   This file is the output of the script `extract_16S.py`. Mandatory.
+# 2. `--NNN-fail-seqIDs` -- a file of seqIDs which didn't pass NNN filter, one per line.
+#   This file is the output of the script `find_NNN.py`. Mandatory.
+# 3. `--prev-tblout` -- a file that is the output of this script, but for previous RiboGrove release.
 #   Use of previous data will speed up this script dramatically.
 #   If you a creating RiboGrove 8.214, then specify `--prev-tblout <TBLOUT_FILE_FOR_RIBOGROVE_7.213>`.
 #   Optional.
@@ -29,9 +31,9 @@
 #   We prefer to use the latest version of Infernal here (version 1.1.4). Mandatory.
 # 2. `--cmpress` -- a `cmpress` executable from Infernal (http://eddylab.org/infernal/).
 #   We prefer to use the latest version of Infernal here (version 1.1.4). Mandatory.
-# 3. `-r / --rfam-family-cm` -- an (uncompressed) `.cm` file containing a Rfam's (version 14.6)
-#   covariance models: ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.6/Rfam.cm.gz.
-#   Here, we prefer to use the latest verison of Rfam (version 14.6). Mandatory.
+# 3. `-r / --rfam-family-cm` -- an (uncompressed) `.cm` file containing a Rfam's (version 14.9)
+#   covariance models: ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.9/Rfam.cm.gz.
+#   Here, we prefer to use the latest verison of Rfam (version 14.9). Mandatory.
 
 
 import os
@@ -47,6 +49,8 @@ import subprocess as sp
 import pandas as pd
 from Bio import SeqIO
 
+from read_and_filter_fasta import read_and_filter_fasta
+
 
 # == Parse arguments ==
 
@@ -58,6 +62,12 @@ parser.add_argument(
     '-f',
     '--in-fasta-file',
     help='input fasta file of SSU gene sequences',
+    required=True
+)
+
+parser.add_argument(
+    '--NNN-fail-seqIDs',
+    help='input file of seqIDs which didn\'t pass NNN filter',
     required=True
 )
 
@@ -105,6 +115,7 @@ args = parser.parse_args()
 
 # For convenience
 fasta_seqs_fpath = os.path.abspath(args.in_fasta_file)
+NNN_fail_fpath = os.path.abspath(args.NNN_fail_seqIDs)
 if not args.prev_tblout is None:
     prev_tblout_fpath = os.path.abspath(args.prev_tblout)
 else:
@@ -117,7 +128,7 @@ cmpress_fpath = os.path.abspath(args.cmpress)
 
 
 # Check existance of all input files and dependencies
-for fpath in (fasta_seqs_fpath, rfam_fpath, cmscan_fpath, cmpress_fpath):
+for fpath in (fasta_seqs_fpath, NNN_fail_fpath, rfam_fpath, cmscan_fpath, cmpress_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
@@ -158,6 +169,7 @@ else:
 
 
 print(fasta_seqs_fpath)
+print(NNN_fail_fpath)
 if cached_tblout:
     print(f'Previous .tblout file: `{prev_tblout_fpath}`')
 # end if
@@ -261,7 +273,12 @@ def run_cmpress(cmpress_fpath: str, rfam_fpath: str) -> None:
 run_cmpress(cmpress_fpath, rfam_fpath)
 
 
-fasta_seqs_fpath_for_cmscan = fasta_seqs_fpath
+input_seq_records = read_and_filter_fasta(
+    fasta_seqs_fpath,
+    filter_fpaths=[NNN_fail_fpath,]
+)
+# A temp file for sequences for cmscan to process
+fasta_seqs_fpath_for_cmscan = os.path.join(outdpath, 'tmp.fasta')
 
 if cached_tblout:
 
@@ -271,9 +288,7 @@ if cached_tblout:
     prev_tblout_df = pd.read_csv(prev_tblout_fpath, sep='\t')
     cached_seqIDs = set(prev_tblout_df['query_name'])
 
-    # Read all input sequences, without cached sequences
-    seq_records = tuple(SeqIO.parse(fasta_seqs_fpath, 'fasta'))
-    seqIDs = set(map(lambda r: r.id, seq_records))
+    seqIDs = set(map(lambda r: r.id, input_seq_records))
 
     # Find seqIDs of sequences to be processed now by cmscan
     seqIDs_for_cmscan = set(
@@ -285,7 +300,7 @@ if cached_tblout:
     seq_records_for_cmscan = tuple(
         filter(
             lambda r: r.id in seqIDs_for_cmscan,
-            seq_records
+            input_seq_records
         )
     )
 
@@ -296,25 +311,33 @@ if cached_tblout:
     print(
         '{}/{} sequences are cached in the previous .tblout file' \
             .format(
-                len(seq_records) - len(seq_records_for_cmscan),
-                len(seq_records)
+                len(input_seq_records) - len(seq_records_for_cmscan),
+                len(input_seq_records)
             )
     )
     print('{} sequences left to be processed by cmscan'.format(len(seq_records_for_cmscan)))
 
     # Write unprocessed sequences to temporary fasta file
-    tmp_fasta_fpath = os.path.join(outdpath, 'tmp.fasta')
-    with open(tmp_fasta_fpath, 'wt') as tmp_fasta:
-        for record in seq_records_for_cmscan:
-            tmp_fasta.write(f'>{record.description}\n{str(record.seq)}\n')
-        # end for
+    with open(fasta_seqs_fpath_for_cmscan, 'wt') as tmpfile:
+        SeqIO.write(
+            seq_records_for_cmscan,
+            tmpfile,
+            'fasta'
+        )
     # end with
 
-    fasta_seqs_fpath_for_cmscan = tmp_fasta_fpath
-
     # Let the garbage collector devour this objects
-    del seq_records, seqIDs, seqIDs_for_cmscan, prev_tblout_df, cached_seqIDs
+    del seqIDs, seqIDs_for_cmscan, prev_tblout_df, cached_seqIDs
+else:
+    with open(fasta_seqs_fpath_for_cmscan, 'wt') as tmpfile:
+        SeqIO.write(
+            input_seq_records,
+            tmpfile,
+            'fasta'
+        )
+    # end with
 # end if
+del input_seq_records
 
 
 # Configure paths to output files
@@ -341,7 +364,7 @@ if not all_seqs_are_cached:
     print('Running cmscan command:')
     print(command)
     print('It will take a while: single sequence is processed for ~3 seconds')
-    print('To check progress, run this command (it will list all seqIDs of processed sequences):')
+    print('To check progress, run this command (it will print number of already aligned sequences):')
     print(f'  grep -c "Query:" {output_file}')
 
     exit_code = os.system(command)
@@ -351,16 +374,18 @@ if not all_seqs_are_cached:
     # end if
 # end if
 
-if cached_tblout:
-    # Remove temporary fasta file
-    try:
-        os.unlink(tmp_fasta_fpath)
-    except OSError as err:
-        print(f'Cannot remove temporary file `{tmp_fasta_fpath}`')
-        print(err)
-        print('Proceeding anyway\n')
-    # end try
 
+# Remove temporary fasta file
+try:
+    os.unlink(fasta_seqs_fpath_for_cmscan)
+except OSError as err:
+    print(f'Cannot remove temporary file `{fasta_seqs_fpath_for_cmscan}`')
+    print(err)
+    print('Continue anyway\n')
+# end try
+
+
+if cached_tblout:
     mode = 'w' if all_seqs_are_cached else 'a'
 
     # Add cached .tblout dataframe rows

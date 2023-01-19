@@ -3,7 +3,8 @@
 # The script removes unwanted genomes. RiboGrove will not take 16S sequences
 #   from these removed genomes.
 # The script performs 3 steps:
-#   1) remove sequence whose titles contain string "whole genome shotgun":
+#   1) remove genomes which contain at least one sequence
+#      with title containing string "whole genome shotgun":
 #      they are not parts of completely assembled genomes;
 #   2) remove sequences added to RefSeq after the current release;
 #   3) remove sequences from the blacklist (see option `-b`);
@@ -11,8 +12,9 @@
 ## Command line arguments
 
 ### Input files:
-# 1. `-i / --gi-2-acc-file` -- a not-filtered input TSV file mapping RefSeq GI numbers to RefSeq ACCESSION.VERSIONs
-#   and titles. This is the output file of the script `gis_to_accs.py`. Mandatory.
+# 1. `-i / --raw-merged-file` -- a not-filtered input TSV file mapping Assembly IDs to
+#   RefSeq GI numbers, RefSeq ACCESSION.VERSIONs and titles.
+#   This is the output file of the script `merge_assIDs_and_accs.py`. Mandatory.
 # 2. `-a / --refseq-catalog` -- A RefSeq "catalog" file of the current release.
 #   This is the file `RefSeq-releaseXXX.catalog.gz` from here:
 #   https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/.
@@ -26,10 +28,11 @@
 
 ### Output files:
 
-# 1. `--outfile` -- output TSV file of 3 columns:
-#   1) GI number;
-#   2) ACCESSION.VERSION;
-#   3) RefSeq sequence title.
+# 1. `--outfile` -- output TSV file of 4 columns:
+#   1) Assembly ID;
+#   2) GI number;
+#   3) ACCESSION.VERSION;
+#   4) RefSeq sequence title.
 #   Mandatory.
 
 
@@ -53,9 +56,9 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument(
     '-i',
-    '--gi-2-acc-file',
+    '--raw-merged-file',
     help="""TSV file (with header) with
-    GI numbers, ACCESSION.VERSION's and titles separated by tabs""",
+    Assembly IDs, GI numbers, ACCESSION.VERSION's and titles separated by tabs""",
     required=True
 )
 
@@ -93,7 +96,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-infpath = os.path.realpath(args.gi_2_acc_file)
+infpath = os.path.realpath(args.raw_merged_file)
 filtered_catalog_fpath = os.path.realpath(args.refseq_catalog)
 blacklist_fpath = os.path.realpath(args.acc_blacklist)
 outfpath = os.path.realpath(args.outfile)
@@ -141,13 +144,20 @@ def set_is_WGS(row):
     return row
 # end def
 
-print(f'number of rows before rm WGS = {input_df.shape[0]}')
+print(
+    'number of genomes before rm WGS = {}'.format(input_df['ass_id'].nunique())
+)
 
 input_df['is_WGS'] = np.repeat(None, input_df.shape[0])
 input_df = input_df.apply(set_is_WGS, axis=1)
-output_df = input_df[input_df['is_WGS'] == False]
+ass_ids_with_wgs_seqs = set(
+    input_df[input_df['is_WGS'] == True]['ass_id']
+)
+output_df = input_df.query('ass_id not in @ass_ids_with_wgs_seqs')
 
-print(f'number of rows after rm WGS = {output_df.shape[0]}')
+print(
+    'number of genomes after rm WGS = {}'.format(output_df['ass_id'].nunique())
+)
 
 
 # == Remove sequences added to RefSeq after the current release ==
@@ -242,7 +252,7 @@ output_df.to_csv(
     header=True,
     na_rep='NA',
     encoding='utf-8',
-    columns=['gi_number', 'acc', 'title',]
+    columns=['ass_id', 'gi_number', 'acc', 'title',]
 )
 
 print('\nCompleted!')
