@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# TODO: update description (NNN)
+# TODO: update description (NNN and tblout -> long)
 
 # The script finds aberrant genes: truncated genes and genes with large deletions.
 
@@ -89,8 +89,8 @@ parser.add_argument(
 
 parser.add_argument(
     '-t',
-    '--cmscan-tblout',
-    help='TSV file (.tblout) outputed by the script `compare_all_seqs_to_cm.py`',
+    '--ribotyper-long-out-tsv',
+    help='TODO: add help',
     required=True
 )
 
@@ -145,7 +145,7 @@ args = parser.parse_args()
 fasta_seqs_fpath = os.path.abspath(args.fasta_seqs_file)
 ribotyper_fail_fpath = os.path.abspath(args.ribotyper_fail_seqIDs)
 asm_sum_fpath = os.path.abspath(args.in_asm_sum)
-tblout_fpath = os.path.abspath(args.cmscan_tblout)
+ribotyper_long_fpath = os.path.abspath(args.ribotyper_long_out_tsv)
 muscle_fpath = os.path.abspath(args.muscle)
 if not args.prev_final_fasta is None \
    and not args.prev_aberrant_seqIDs is None:
@@ -173,7 +173,7 @@ except ValueError:
 
 
 # Check existance of all input files and dependencies
-for fpath in (fasta_seqs_fpath, asm_sum_fpath, tblout_fpath, muscle_fpath):
+for fpath in (fasta_seqs_fpath, asm_sum_fpath, ribotyper_long_fpath, muscle_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
@@ -196,7 +196,7 @@ if not os.path.isdir(outdpath):
     # end try
 # end if
 
-# Check if prev_tblout is specified
+# Check if cache files are specified
 if not prev_final_fasta_fpath is None \
    and not prev_aberrant_seqIDs_fpath is None:
     # A flag variable for convenience
@@ -214,7 +214,7 @@ else:
 print(fasta_seqs_fpath)
 print(ribotyper_fail_fpath)
 print(asm_sum_fpath)
-print(tblout_fpath)
+print(ribotyper_long_fpath)
 print(muscle_fpath)
 if cache_mode:
     print(prev_final_fasta_fpath)
@@ -395,8 +395,21 @@ def find_insertions_and_deletions(pivotal_aln_record: SeqRecord,
 
 
 def set_asm_acc(row):
-    row['asm_acc'] = parse_asm_acc(row['query_name'])
+    row['asm_acc'] = parse_asm_acc(row['target'])
     return row
+# end def
+
+
+def read_ribotyper_failed_seqIDs(ribotyper_fail_fpath):
+    with open(ribotyper_fail_fpath, 'rt') as infile:
+        fail_seqIDs = set(
+            map(
+                str.strip,
+                infile.readlines()
+            )
+        )
+    # end with
+    return fail_seqIDs
 # end def
 
 
@@ -414,14 +427,17 @@ aberrant_seqIDs_fpath = os.path.join(outdpath, 'aberrant_seqIDs.txt')
 # Reade per-replicon genes statistics
 asm_sum_df = rgIO.read_ass_sum_file(asm_sum_fpath)
 
-# Read cmscan's tblout file
-tblout_df = pd.read_csv(tblout_fpath, sep='\t')
+# Read ribotyper's long.out.tsv file
+rt_long_df = pd.read_csv(ribotyper_long_fpath, sep='\t')
 
-tblout_df['asm_acc'] = np.repeat('', tblout_df.shape[0])
-tblout_df = tblout_df.apply(set_asm_acc, axis=1)
+rt_long_df['asm_acc'] = np.repeat('', rt_long_df.shape[0])
+rt_long_df = rt_long_df.apply(set_asm_acc, axis=1)
 
 # Get unique Assembly accessions
 asm_accs = set(asm_sum_df['asm_acc'])
+
+# TODO: remove?
+# rt_failed_seqIDs = read_ribotyper_failed_seqIDs(ribotyper_fail_fpath)
 
 # Read input genes sequences
 seq_records = rgIO.read_and_filter_fasta(
@@ -434,7 +450,6 @@ if cache_mode:
     cached_aberrant_seqIDs = get_cached_aberrant_seqIDs(seq_records, prev_aberrant_seqIDs)
     cached_asm_accs = make_cached_asm_accs(cached_aberrant_seqIDs, prev_final_fasta_fpath, asm_accs)
     print('{}/{} genomes are cached'.format(len(cached_asm_accs), len(asm_accs)))
-    print('{}/{} aberrant gene sequences are cached'.format(len(cached_aberrant_seqIDs), len(seq_records)))
     print('{} genomes left to_process'.format(len(asm_accs - cached_asm_accs)))
     del prev_aberrant_seqIDs
 else:
@@ -468,29 +483,23 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
         # end if
 
         # Get all seqIDs of genes from current genome
-        seqIDs = set(selected_seq_records.keys())
+        curr_seqIDs = set(selected_seq_records.keys())
 
         # Select rows corresponding to current assembly
-        curr_ass_df = tblout_df[tblout_df['asm_acc'] == asm_acc]
+        curr_ass_df = rt_long_df[rt_long_df['asm_acc'] == asm_acc]
         # Save seqIDs of aligned sequences into a set for faster search
-        aligned_seqIDs = set(curr_ass_df['query_name'])
+        # TODO: remove?
+        # passed_seqIDs = set(curr_ass_df['target']) - rt_failed_seqIDs
 
-        # Select a priori aberrant genes: truncated and analigned ones
-        apriori_aberrant_seqIDs = set(
-            curr_ass_df[curr_ass_df['trunc'] != 'no']['query_name']
-        ) | set(
-            filter(
-                lambda x: not x in aligned_seqIDs,
-                seqIDs
-            )
-        )
-
+        # TODO: remove?
         # Remove a priori aberrant genes from `curr_ass_df`
-        curr_ass_df = curr_ass_df.query('not query_name in @apriori_aberrant_seqIDs')
+        # curr_ass_df = curr_ass_df.query('target in @apriori_aberrant_seqIDs')
 
         # Select pivotal genes
-        max_score = curr_ass_df['score'].max()
-        pivotal_seqIDs = set(curr_ass_df[curr_ass_df['score'] > (max_score - 1e-6)]['query_name'])
+        max_score = curr_ass_df['tscore'].max()
+        pivotal_seqIDs = set(
+            curr_ass_df[curr_ass_df['tscore'] > (max_score - 1e-6)]['target']
+        )
 
         # Record seqIDs of pivotal genes
         for pivotal_seqID in pivotal_seqIDs:
@@ -510,7 +519,7 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
             curr_aberrant_seqIDs = set()
 
             # Iterate over all genes i nthe genome, except for current pivotal gene
-            for seqID in seqIDs - {pivotal_seqID}:
+            for seqID in curr_seqIDs - {pivotal_seqID}:
 
                 seq_record = selected_seq_records[seqID]
 
@@ -561,7 +570,7 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
 
         # Aberrant genes will be those genes, which are aberrant in comparison to
         #   all pivotal genes
-        final_aberrant_seqIDs = apriori_aberrant_seqIDs
+        final_aberrant_seqIDs = set()
         if len(aberrant_seqIDs_setlist) != 0:
             final_aberrant_seqIDs = final_aberrant_seqIDs | reduce(operator.and_, aberrant_seqIDs_setlist)
         # end if

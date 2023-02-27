@@ -63,7 +63,8 @@ TAXONOMY_FILE="${TAXONOMY_DIR}/taxonomy.tsv"
 CATEGORIES_FILE="${CATEGORIES_DIR}/categories.tsv"
 
 RIBOTYPER_OUTDIR="${ABERRATIONS_AND_HETEROGENEITY_DIR}/ribotyper_out"
-RIBOTYPER_OUT_TSV="${RIBOTYPER_OUTDIR}/ribotyper_out.ribotyper.short.out.tsv"
+RIBOTYPER_SHORT_OUT_TSV="${RIBOTYPER_OUTDIR}/ribotyper_out.ribotyper.short.out.tsv"
+RIBOTYPER_LONG_OUT_TSV="${RIBOTYPER_OUTDIR}/ribotyper_out.ribotyper.long.out.tsv"
 RIBOTYPER_FAIL_SEQIDS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/ribotyper_fail_seqIDs.txt"
 RIBOTYPER_ACCEPT_FILE="${SCRIPTS_DATA_DIR}/${DOMAIN}.accept"
 
@@ -100,7 +101,8 @@ if [[ ! -z "${PREV_WORKDIR}" ]]; then
   prev_aberr_dir="${PREV_WORKDIR}/aberrations_and_heterogeneity"
   PREV_ASM_SUM_FINAL="${PREV_WORKDIR}/assembly_summary_final.txt.gz"
   PREV_ASM_ACCS_NNN="${PREV_WORKDIR}/genomes_data/asm_accs_NNN.txt.gz"
-  PREV_RIBOTYPER_OUT_TSV="${prev_aberr_dir}/ribotyper_out/ribotyper_out.ribotyper.short.out.tsv"
+  PREV_RIBOTYPER_SHORT_OUT_TSV="${prev_aberr_dir}/ribotyper_out/ribotyper_out.ribotyper.short.out.tsv"
+  PREV_RIBOTYPER_LONG_OUT_TSV="${prev_aberr_dir}/ribotyper_out/ribotyper_out.ribotyper.long.out.tsv"
   PREV_TBLOUT_FILE="${prev_aberr_dir}/cmscan_output_table.tblout"
   PREV_ALL_GENES_FASTA="${PREV_WORKDIR}/gene_seqs/all_collected.fasta"
   PREV_ALL_GENES_STATS="${PREV_WORKDIR}/gene_seqs/all_collected_stats.tsv"
@@ -226,16 +228,6 @@ python3 "${SCRIPTS_DIR}/assign_genome_categories.py" \
   --seqkit "${SEQKIT}"
 
 
-# == Extract Rfam covariance model for 16S rRNA genes exttaction ==
-
-"${CMFETCH}" "${RFAM_FOR_FILTERING}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_FILTERING}"
-if [[ $? != 0 ]]; then
-  echo 'Error!'
-  echo "Cannot extract model for family ${RFAM_FAMILY_ID} from file ${RFAM_FOR_FILTERING}"
-  exit 1
-fi
-
-
 # == Find inappropriate sequences with ribotyper ==
 
 if [[ "${CACHE_MODE}" == 1 ]]; then
@@ -243,7 +235,8 @@ if [[ "${CACHE_MODE}" == 1 ]]; then
     --in-fasta-file "${ALL_GENES_FASTA}" \
     --outdir "${RIBOTYPER_OUTDIR}" \
     --ribotyper "${RIBOTYPER}" \
-    --prev-short-out-tsv "${PREV_RIBOTYPER_OUT_TSV}" \
+    --prev-short-out-tsv "${PREV_RIBOTYPER_SHORT_OUT_TSV}" \
+    --prev-long-out-tsv "${PREV_RIBOTYPER_LONG_OUT_TSV}" \
     --acccept-file "${RIBOTYPER_ACCEPT_FILE}"
 else
   python3 "${SCRIPTS_DIR}/check_seqs_with_ribotyper.py" \
@@ -254,30 +247,8 @@ else
 fi
 
 python3 "${SCRIPTS_DIR}/find_ribotyper_fail_seqs.py" \
-  --in-short-out-tsv "${RIBOTYPER_OUT_TSV}" \
+  --in-short-out-tsv "${RIBOTYPER_SHORT_OUT_TSV}" \
   --out-fail-file "${RIBOTYPER_FAIL_SEQIDS_FPATH}"
-
-
-# == Compare all remaining genes to Rfam covariance model (cm) ==
-
-if [[ "${CACHE_MODE}" == 1 ]]; then
-  python3 "${SCRIPTS_DIR}/compare_all_seqs_to_cm.py" \
-    --in-fasta-file "${ALL_GENES_FASTA}" \
-    --ribotyper-fail-seqIDs "${RIBOTYPER_FAIL_SEQIDS_FPATH}" \
-    --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
-    --cmscan "${CMSCAN_FOR_FILTERING}" \
-    --cmpress "${CMPRESS_FOR_FILTERING}" \
-    --prev-tblout "${PREV_TBLOUT_FILE}" \
-    --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}"
-else 
-  python3 "${SCRIPTS_DIR}/compare_all_seqs_to_cm.py" \
-    --in-fasta-file "${ALL_GENES_FASTA}" \
-    --ribotyper-fail-seqIDs "${RIBOTYPER_FAIL_SEQIDS_FPATH}" \
-    --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
-    --cmscan "${CMSCAN_FOR_FILTERING}" \
-    --cmpress "${CMPRESS_FOR_FILTERING}" \
-    --rfam-family-cm "${RFAM_FAMILY_FOR_FILTERING}"
-fi
 
 
 # == Find aberrant genes and record long indels ==
@@ -287,7 +258,7 @@ if [[ "${CACHE_MODE}" == 1 ]]; then
     --fasta-seqs-file "${ALL_GENES_FASTA}" \
     --ribotyper-fail-seqIDs "${RIBOTYPER_FAIL_SEQIDS_FPATH}" \
     --in-asm-sum "${ASS_SUM_FINAL}" \
-    --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
+    --ribotyper-long-out-tsv "${RIBOTYPER_LONG_OUT_TSV}" \
     --prev-final-fasta "${PREV_FINAL_GENES_FASTA}" \
     --prev-aberrant-seqIDs "${PREV_ABERRANT_SEQIDS}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
@@ -298,7 +269,7 @@ else
     --fasta-seqs-file "${ALL_GENES_FASTA}" \
     --ribotyper-fail-seqIDs "${RIBOTYPER_FAIL_SEQIDS_FPATH}" \
     --in-asm-sum "${ASS_SUM_FINAL}" \
-    --cmscan-tblout "${CMSCAN_TBLOUT_FPATH}" \
+    --ribotyper-long-out-tsv "${RIBOTYPER_LONG_OUT_TSV}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
     --muscle "${MUSCLE}" \
     --deletion-len-threshold 10

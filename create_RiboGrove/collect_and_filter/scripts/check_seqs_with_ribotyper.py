@@ -40,6 +40,12 @@ parser.add_argument(
     required=False
 )
 
+parser.add_argument(
+    '--prev-long-out-tsv',
+    help='TODO: add help',
+    required=False
+)
+
 # Output files
 
 parser.add_argument(
@@ -68,10 +74,15 @@ args = parser.parse_args()
 
 # For convenience
 fasta_seqs_fpath = os.path.abspath(args.in_fasta_file)
-if not args.prev_short_out_tsv is None:
+if not args.prev_short_out_tsv is None \
+   and not args.prev_long_out_tsv is None:
+    cache_mode = True
     prev_short_out_fpath = os.path.abspath(args.prev_short_out_tsv)
+    prev_long_out_fpath  = os.path.abspath(args.prev_long_out_tsv)
 else:
+    cache_mode = False
     prev_short_out_fpath = None
+    prev_long_out_fpath  = None
 # end if
 outdpath = os.path.abspath(args.outdir)
 ribotyper_fpath = os.path.abspath(args.ribotyper)
@@ -102,17 +113,14 @@ if not os.path.isdir(outdpath):
     # end try
 # end if
 
-# Check if prev_short_out_fpath is specified
-if not prev_short_out_fpath is None and prev_short_out_fpath != '':
-    # A flag variable for convenience
-    cache_mode = True
-
-    if not os.path.exists(prev_short_out_fpath):
-        print(f'Error: file `{prev_short_out_fpath}` does not exist!')
-        sys.exit(1)
-    # end if
-else:
-    cache_mode = False
+# Check if prev files exist
+if cache_mode:
+    for f in (prev_short_out_fpath, prev_long_out_fpath):
+        if not os.path.exists(f):
+            print(f'Error: file `{f}` does not exist')
+            sys.exit(1)
+        # end if
+    # end for
 # end if
 
 
@@ -120,6 +128,7 @@ else:
 print(fasta_seqs_fpath)
 if cache_mode:
     print(f'Previous .short.out.tsv file: `{prev_short_out_fpath}`')
+    print(f'Previous .long.out.tsv file: `{prev_long_out_fpath}`')
 # end if
 print(ribotyper_fpath)
 print(acccept_fpath)
@@ -127,7 +136,8 @@ print()
 
 
 # Header for reformatted .short.out.tsv files
-short_out_colnames = [
+# and .long.out.tsv
+SHORT_OUT_COLNAMES = [
     'target',
     'classification',
     'strnd',
@@ -135,9 +145,36 @@ short_out_colnames = [
     'unexpected_features',
 ]
 
+LONG_OUT_COLNAMES = [
+    'target',
+    'pass_fail',
+    'length',
+    'fm',
+    'fam',
+    'domain',
+    'model',
+    'strnd',
+    'ht',
+    'tscore',
+    'bscore',
+    's_per_nt',
+    'bevalue',
+    'tcov',
+    'bcov',
+    'bfrom',
+    'bto',
+    'mfrom',
+    'mto',
+    'scdiff',
+    'scd_per_nt',
+    'model',
+    'tscore',
+    'unexpected_features',
+]
 
-def reformat_short_out(raw_short_out_fpath: str,
-                       short_out_colnames: List[str],
+
+def reformat_out_file(raw_short_out_fpath: str,
+                       out_colnames: List[str],
                        out_short_out_fpath: str) -> None:
     # Read all lines except of those starting with #
     with open(raw_short_out_fpath, 'rt') as raw_short_out_file:
@@ -162,7 +199,7 @@ def reformat_short_out(raw_short_out_fpath: str,
 
     # Write result lines to original file
     with open(out_short_out_fpath, 'wt') as out_short_out_file:
-        out_short_out_file.write('\t'.join(short_out_colnames))
+        out_short_out_file.write('\t'.join(out_colnames))
         out_short_out_file.write('\n')
         out_short_out_file.write('\n'.join(lines))
         out_short_out_file.write('\n')
@@ -298,11 +335,23 @@ def count_seqs_fasta(fpath):
 # end def
 
 
+def get_cached_out_long_df(prev_long_out_fpath, cached_short_out_df):
+    cached_seqIDs = set(
+        cached_short_out_df['target']
+    )
+    prev_long_df = pd.read_csv(prev_long_out_fpath, sep='\t')
+    cached_long_df = prev_long_df.query('target in @cached_seqIDs').copy()
+    return cached_long_df
+# end def
+
+
 # == Proceed ==
 
 # Configure paths to output files
 raw_short_out_fpath = os.path.join(outdpath, 'ribotyper_out.ribotyper.short.out')
 final_short_out_fpath = raw_short_out_fpath + '.tsv'
+raw_long_out_fpath = os.path.join(outdpath, 'ribotyper_out.ribotyper.long.out')
+final_long_out_fpath = raw_long_out_fpath + '.tsv'
 
 query_seqs_fpath, cached_short_out_df = make_query_file(
     fasta_seqs_fpath,
@@ -323,13 +372,34 @@ print(
     'Reformatting output file `{}` -> `{}`' \
         .format(raw_short_out_fpath, final_short_out_fpath)
 )
-reformat_short_out(raw_short_out_fpath, short_out_colnames, final_short_out_fpath)
+reformat_out_file(raw_short_out_fpath, SHORT_OUT_COLNAMES, final_short_out_fpath)
+print('Done')
+# Reformat output .long.out.tsv table
+print(
+    'Reformatting output file `{}` -> `{}`' \
+        .format(raw_long_out_fpath, final_long_out_fpath)
+)
+reformat_out_file(raw_long_out_fpath, LONG_OUT_COLNAMES, final_long_out_fpath)
 print('Done')
 
 if cache_mode:
     # Add cached .short.out.tsv dataframe rows
     cached_short_out_df.to_csv(
         final_short_out_fpath,
+        sep='\t',
+        index=False,
+        header=False,
+        mode='a',
+        na_rep='NA'
+    )
+
+    # Add cached .long.out.tsv dataframe rows
+    cached_long_out_df = get_cached_out_long_df(
+        prev_long_out_fpath,
+        cached_short_out_df
+    )
+    cached_long_out_df.to_csv(
+        final_long_out_fpath,
         sep='\t',
         index=False,
         header=False,

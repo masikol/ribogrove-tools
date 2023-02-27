@@ -135,10 +135,6 @@ merged_df = merged_df[
     ]
 ]
 
-print('Merged dataframe:')
-print(merged_df.shape)
-print(merged_df.head())
-
 merged_df.to_csv(
     outfpath,
     sep='\t',

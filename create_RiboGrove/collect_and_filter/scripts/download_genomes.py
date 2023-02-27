@@ -150,3 +150,9 @@ print('  {:,}/{:,} genomes failed to get downloaded (see the log file for detail
 print(outdir)
 print(log_fpath)
 print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+
+if failed_count == 0:
+    sys.exit(0)
+else:
+    sys.exit(1)
+# end if
