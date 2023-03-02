@@ -151,11 +151,15 @@ class GenomeDownloader:
     # end def
 
     def _seqannot_file_is_404(self):
-        with gzip.open(self.asm_seqannot_fpath, 'rt') as infile:
-            if 'Error 404' in infile.read():
-                return True
-            # end if
-        # end with
+        try:
+            with gzip.open(self.asm_seqannot_fpath, 'rt') as infile:
+                if 'Error 404' in infile.read():
+                    return True
+                # end if
+            # end with
+        except gzip.BadGzipFile:
+            return True
+        # end try
         return False
     # end def
 
@@ -203,10 +207,13 @@ class GenomeDownloader:
         # E.g.
         # Dir url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/762/265/GCF_000762265.1_ASM76226v1
         # File name: GCF_000762265.1_ASM76226v1_assembly_report.txt
+        # Or
+        # Dir url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/900/012/635/GCF_900012635.1_Pyrococcus_chitonophagus_genome_sequence
+        # File name: GCF_900012635.1_Pyrococcus_chitonophagus_genome_sequence_assembly_report.txt
         return '{}/{}_{}_assembly_report.txt'.format(
             self.asm_basedir_url,
             self.assembly_accession,
-            self.asm_name
+            self.asm_name.replace(' ', '_')
         )
     # end def
 
@@ -243,10 +250,13 @@ class GenomeDownloader:
         # E.g.
         # Dir url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/762/265/GCF_000762265.1_ASM76226v1
         # File name: GCF_000762265.1_ASM76226v1_genomic.gbff.gz
+        # Or
+        # Dir url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/900/012/635/GCF_900012635.1_Pyrococcus_chitonophagus_genome_sequence
+        # File name: GCF_900012635.1_Pyrococcus_chitonophagus_genome_sequence_genomic.gbff.gz
         return '{}/{}_{}_genomic.gbff.gz'.format(
             self.asm_basedir_url,
             self.assembly_accession,
-            self.asm_name
+            self.asm_name.replace(' ', '_')
         )
     # end def
 # end class

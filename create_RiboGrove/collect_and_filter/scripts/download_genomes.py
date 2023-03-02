@@ -79,7 +79,7 @@ def download_genomes(ass_sum_df, outdir, log_fpath):
     total_genome_count = ass_sum_df.shape[0]
     downloaded_count, already_here_count, failed_count = 0, 0, 0
 
-    sys.stdout.write('{} -- 0/{:,} genomes are downloaded' \
+    sys.stdout.write('{} -- 0/{:,} genomes done: 0 already here, 0 downloaded, 0 failed' \
         .format(get_time(), total_genome_count)
     )
     sys.stdout.flush()
@@ -117,8 +117,8 @@ def download_genomes(ass_sum_df, outdir, log_fpath):
             # end if
 
             sys.stdout.write(
-                '\r{} -- {:,}/{:,} genomes are downloaded' \
-                    .format(get_time(), i+1, total_genome_count)
+                '\r{} -- {:,}/{:,} genomes done: {:,} already here, {:,} downloaded, {:,} failed' \
+                    .format(get_time(), i+1, total_genome_count, already_here_count, downloaded_count, failed_count)
             )
             sys.stdout.flush()
             time.sleep(1)

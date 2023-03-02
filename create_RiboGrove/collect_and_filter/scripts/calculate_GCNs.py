@@ -126,8 +126,6 @@ def make_primers_gcn_dfs(primer_pairs,
             .rename(columns={'seqID': 'gcn'}) \
             .merge(fake_total_df, on='asm_acc', how='right')
         primers_gcn_df['gcn'] = primers_gcn_df['gcn'].fillna(0).map(int)
-        # TODO: remove
-        # primers_gcn_df = primers_gcn_df.apply(amend_zero_gcn, axis=1)
 
         primer_gcn_outfpath = os.path.join(
             outdir_path,
@@ -137,15 +135,6 @@ def make_primers_gcn_dfs(primer_pairs,
         print('{}: `{}`'.format(primer_pair_key, primer_gcn_outfpath))
     # end for
 # end def
-
-# TODO: remove
-# def amend_zero_gcn(row):
-#     if row['gcn'] == 0:
-#         row['gcn'] = int(4e9)
-#     # end if
-#     return row
-# # end def
-
 
 
 # == Get primer data ==
@@ -172,6 +161,7 @@ basic_gcn_outfpath = os.path.join(outdir_path, 'basic_GCNs.tsv')
 output_gcn_df(basic_gcn_df, basic_gcn_outfpath)
 print('Basic GCNs: `{}`'.format(basic_gcn_outfpath))
 
+# GCNs for different primer pairs
 make_primers_gcn_dfs(
     primer_pairs,
     primers_dirpath,

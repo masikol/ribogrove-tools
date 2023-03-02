@@ -1,12 +1,55 @@
 set -e
 
-# Load configuration file
+function print_help {
+  echo 'Usage:' >&2
+  echo "  bash ${0} <CONFIG_FILE> [-ta]" >&2
+  echo '-t: Test mode. The script will not use entire RefSeq' >&2
+  echo '  but just some genomes from the file' >&2
+  echo '  scripts/data/test/test_bacteria_assembly_summary.txt.gz or' >&2
+  echo '  scripts/data/test/test_archaea_assembly_summary.txt.gz' >&2
+  echo '-a: RefSeq catalog file is already filtered.' >&2
+  echo '  If you already have file RefSeq-release216_filtered.catalog.gz' >&2
+  echo '  created from file RefSeq-release216.catalog.gz,' >&2
+  echo '  the script will not filter it again and thus save some time.' >&2
+  echo 'Example:' >&2
+  echo "  bash ${0} ../demo/demo.conf -a" >&2
+}
+
+
+if [[ ${#} -eq 0 || $1 == '-h' || $1 == '-help' || $1 == '--help' ]]; then
+   print_help
+   exit 1
+fi
+
+
+# Check configuration file existance
 CONF_FILE="$1"
 if [[ ! -f "${CONF_FILE}" ]]; then
-  echo -e "\nError: file ${CONF_FILE} does not exist!"
+  echo -e "Error: configuration file ${CONF_FILE} does not exist!" >&2
+  print_help
   exit 1
 fi
 
+
+# Parse options
+TEST_MODE=false
+REFSEQ_CATALOG_ALREADY_FILTERED=false
+
+shift
+while getopts ":ta" opt; do
+  case "${opt}" in
+  t)
+      TEST_MODE=true
+      echo 'INFO: Running in test mode' >&2
+      ;;
+  a)
+      REFSEQ_CATALOG_ALREADY_FILTERED=true
+      echo 'INFO: Assuming that RefSeq catalog is already filtered.' >&2
+      ;;
+  esac
+done
+
+# Load configuration
 source "${CONF_FILE}"
 
 # Get directory where scripts are located
@@ -19,6 +62,7 @@ SCRIPTS_DATA_DIR="${SCRIPTS_DIR}/data"
 # Directories for different sorts of data
 GENOMES_DATA_DIR="${WORKDIR}/genomes_data"
 GENES_DIR="${WORKDIR}/gene_seqs"
+GENES_STATS_DIR="${WORKDIR}/gene_stats"
 CATEGORIES_DIR="${WORKDIR}/categories"
 TAXONOMY_DIR="${WORKDIR}/taxonomy"
 LOGS_DIR="${WORKDIR}/logs"
@@ -27,9 +71,9 @@ ABERRATIONS_AND_HETEROGENEITY_DIR="${WORKDIR}/aberrations_and_heterogeneity"
 dirs_to_create=(
   "${WORKDIR}" "${LOGS_DIR}" "${CATEGORIES_DIR}" \
   "${TAXONOMY_DIR}" "${GENOMES_DATA_DIR}" "${GENOMES_GBK_DIR}" \
-  "${GENES_DIR}" "${ABERRATIONS_AND_HETEROGENEITY_DIR}"
+  "${GENES_DIR}" "${GENES_STATS_DIR}" "${ABERRATIONS_AND_HETEROGENEITY_DIR}"
 )
-if [[ "${CALC_PRIMERS_COVERAGE}" == 1 ]]; then
+if [[ "${CALC_PRIMERS_COVERAGE}" == true ]]; then
   PRIMERS_DIRPATH="${WORKDIR}/primers_coverage"
   dirs_to_create+=( "${PRIMERS_DIRPATH}" )
 fi
@@ -43,13 +87,16 @@ done
 
 FILTERED_REFSEQ_CATALOG_FILE="${REFSEQ_CATALOG_FILE/.catalog.gz/_filtered.catalog.gz}"
 
-ASS_SUM_LINK="https://ftp.ncbi.nlm.nih.gov/genomes/refseq/${DOMAIN}/assembly_summary.txt"
-# TODO: add test demo mode
-# ASS_SUM="${WORKDIR}/assembly_summary.gz"
-ASS_SUM='/mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/TEST/bacteria/test_assembly_summary.txt.gz'
-ASS_SUM_FILT_1="${WORKDIR}/assembly_summary_filt1.txt.gz"
-ASS_SUM_FINAL="${WORKDIR}/assembly_summary_final.txt.gz"
-REPLICON_MAP="${WORKDIR}/replicon_map.tsv.gz"
+if [[ "${TEST_MODE}" == false ]]; then
+  ASS_SUM_LINK="https://ftp.ncbi.nlm.nih.gov/genomes/refseq/${DOMAIN}/assembly_summary.txt"
+  ASS_SUM="${GENOMES_DATA_DIR}/assembly_summary.gz"
+else
+  ASS_SUM="${SCRIPTS_DATA_DIR}/test/test_${DOMAIN}_assembly_summary.txt.gz"
+fi
+
+ASS_SUM_FILT_1="${GENOMES_DATA_DIR}/assembly_summary_filt1.txt.gz"
+ASS_SUM_FINAL="${GENOMES_DATA_DIR}/assembly_summary_final.txt.gz"
+REPLICON_MAP="${GENOMES_DATA_DIR}/replicon_map.tsv.gz"
 
 ASM_BLACKLIST_FPATH="${SCRIPTS_DATA_DIR}/ad_hoc/assembly_blacklist.tsv"
 BLACKLIST_SEQIDS_FILE="${SCRIPTS_DATA_DIR}/ad_hoc/blacklist_seqIDs.tsv"
@@ -88,29 +135,29 @@ RFAM_FAMILY_FOR_EXTRACT_16S="${rfam_dir_for_extract_16s}/${RFAM_FAMILY_ID}_for_e
 rfam_dir_for_filtering=`dirname "${RFAM_FOR_EXTRACT_16S}"`
 RFAM_FAMILY_FOR_FILTERING="${rfam_dir_for_filtering}/${RFAM_FAMILY_ID}_for_filtering.cm"
 
-COUNT_BASES_TABLE="${WORKDIR}/bases_count.tsv"
-DISCARDED_COUNT_BASES_TABLE="${WORKDIR}/discarded_bases_count.tsv"
+COUNT_BASES_TABLE="${GENES_STATS_DIR}/bases_count.tsv"
+DISCARDED_COUNT_BASES_TABLE="${GENES_STATS_DIR}/discarded_bases_count.tsv"
 
-PER_GENE_STATS="${WORKDIR}/per_gene_stats.tsv"
-DISCARDED_PER_GENE_STATS="${WORKDIR}/discarded_per_gene_stats.tsv"
+PER_GENE_STATS="${GENES_STATS_DIR}/per_gene_stats.tsv"
+DISCARDED_PER_GENE_STATS="${GENES_STATS_DIR}/discarded_per_gene_stats.tsv"
 
 ENTROPY_FILE="${ABERRATIONS_AND_HETEROGENEITY_DIR}/entropy.tsv"
 
 if [[ ! -z "${PREV_WORKDIR}" ]]; then
-  CACHE_MODE=1
+  CACHE_MODE=true
   prev_aberr_dir="${PREV_WORKDIR}/aberrations_and_heterogeneity"
-  PREV_ASM_SUM_FINAL="${PREV_WORKDIR}/assembly_summary_final.txt.gz"
+  PREV_ASM_SUM_FINAL="${PREV_WORKDIR}/genomes_data/assembly_summary_final.txt.gz"
   PREV_ASM_ACCS_NNN="${PREV_WORKDIR}/genomes_data/asm_accs_NNN.txt.gz"
   PREV_RIBOTYPER_SHORT_OUT_TSV="${prev_aberr_dir}/ribotyper_out/ribotyper_out.ribotyper.short.out.tsv"
   PREV_RIBOTYPER_LONG_OUT_TSV="${prev_aberr_dir}/ribotyper_out/ribotyper_out.ribotyper.long.out.tsv"
   PREV_TBLOUT_FILE="${prev_aberr_dir}/cmscan_output_table.tblout"
   PREV_ALL_GENES_FASTA="${PREV_WORKDIR}/gene_seqs/all_collected.fasta"
-  PREV_ALL_GENES_STATS="${PREV_WORKDIR}/gene_seqs/all_collected_stats.tsv"
+  PREV_ALL_GENES_STATS="${PREV_WORKDIR}/gene_stats/all_collected_stats.tsv"
   PREV_FINAL_GENES_FASTA="${PREV_WORKDIR}/gene_seqs/final_gene_seqs_annotated.fasta"
   PREV_PERBASE_ENTROPY_FILE="${prev_aberr_dir}/per_base_entropy.tsv.gz"
-  PREV_PRIMERS_DIRPATH="${PREV_WORKDIR}/primers_coverage"
+  PREV_PRIMERS_DIR="${PREV_WORKDIR}/primers_coverage"
 else
-  CACHE_MODE=0
+  CACHE_MODE=false
 fi
 
 
@@ -118,17 +165,20 @@ fi
 
 # == Filter RefSeq .catalog file ==
 
-# python3 "${SCRIPTS_DIR}/filter_refseq_catalog.py" \
-#   --raw-refseq-catalog "${REFSEQ_CATALOG_FILE}" \
-#   --outfile "${FILTERED_REFSEQ_CATALOG_FILE}"
+if [[ "${REFSEQ_CATALOG_ALREADY_FILTERED}" == false ]]; then
+  python3 "${SCRIPTS_DIR}/filter_refseq_catalog.py" \
+    --raw-refseq-catalog "${REFSEQ_CATALOG_FILE}" \
+    --outfile "${FILTERED_REFSEQ_CATALOG_FILE}"
+fi
 
 
 # == Download assembly_summary.txt ==
 
-# TODO: add test demo mode
-# curl \
-#   "${ASS_SUM_LINK}" \
-#   | gzip > "${ASS_SUM}"
+if [[ "${TEST_MODE}" == false ]]; then
+  curl \
+    "${ASS_SUM_LINK}" \
+    | gzip > "${ASS_SUM}"
+fi
 
 
 # == Filter assembly summary ==
@@ -157,7 +207,7 @@ python3 "${SCRIPTS_DIR}/make_replicon_map.py" \
 
 
 # == Make final Assembly summary file ==
-if [[ "${CACHE_MODE}" == 1 ]]; then
+if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/filter_asm_summary_step2.py" \
     --in-asm-sum "${ASS_SUM_FILT_1}" \
     --replicon-map "${REPLICON_MAP}" \
@@ -180,14 +230,14 @@ fi
 
 "${CMFETCH}" "${RFAM_FOR_EXTRACT_16S}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_EXTRACT_16S}"
 if [[ $? != 0 ]]; then
-  echo 'Error!'
-  echo "Cannot extract model for family ${RFAM_FAMILY_ID} from file ${RFAM_FOR_EXTRACT_16S}"
+  echo 'Error!' >&2
+  echo "Cannot extract model for family ${RFAM_FAMILY_ID} from file ${RFAM_FOR_EXTRACT_16S}" >&2
   exit 1
 fi
 
 
 # == Extract 16S genes from downloaded genomes ==
-if [[ "${CACHE_MODE}" == 1 ]]; then
+if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/extract_16S.py" \
     --asm-sum "${ASS_SUM_FINAL}" \
     --genomes-dir "${GENOMES_GBK_DIR}" \
@@ -230,7 +280,7 @@ python3 "${SCRIPTS_DIR}/assign_genome_categories.py" \
 
 # == Find inappropriate sequences with ribotyper ==
 
-if [[ "${CACHE_MODE}" == 1 ]]; then
+if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/check_seqs_with_ribotyper.py" \
     --in-fasta-file "${ALL_GENES_FASTA}" \
     --outdir "${RIBOTYPER_OUTDIR}" \
@@ -253,7 +303,7 @@ python3 "${SCRIPTS_DIR}/find_ribotyper_fail_seqs.py" \
 
 # == Find aberrant genes and record long indels ==
 
-if [[ "${CACHE_MODE}" == 1 ]]; then
+if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/find_aberrant_genes.py" \
     --fasta-seqs-file "${ALL_GENES_FASTA}" \
     --ribotyper-fail-seqIDs "${RIBOTYPER_FAIL_SEQIDS_FPATH}" \
@@ -372,7 +422,7 @@ python3 "${SCRIPTS_DIR}/merge_bases_categories_taxonomy.py" \
 
 # == Calculate entropy -- intragenomic variability ==
 
-if [[ "${CACHE_MODE}" == 1 ]]; then
+if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/calculate_entropy.py" \
     --fasta-seqs-file "${ANNOTATED_RESULT_FASTA}" \
     --categories-file "${CATEGORIES_FILE}" \
@@ -390,14 +440,14 @@ fi
 
 # == Calculate PCR primer coverage ==
 
-if [[ "${CALC_PRIMERS_COVERAGE}" == 1 ]]; then
-  if [[ "${CACHE_MODE}" == 1 ]]; then
+if [[ "${CALC_PRIMERS_COVERAGE}" == true ]]; then
+  if [[ "${CACHE_MODE}" == true ]]; then
     python3 "${SCRIPTS_DIR}/check_primers_mfeprimer.py" \
       --fasta-seqs-file "${ALL_GENES_FASTA}" \
       --outdir "${PRIMERS_DIRPATH}" \
       --mfeprimer "${MFEPRIMER}" \
       --prev-final-fasta "${PREV_FINAL_GENES_FASTA}" \
-      --prev-primers-outdir "${PREV_PRIMERS_DIRPATH}"
+      --prev-primers-outdir "${PREV_PRIMERS_DIR}"
   else
     python3 "${SCRIPTS_DIR}/check_primers_mfeprimer.py" \
       --fasta-seqs-file "${ALL_GENES_FASTA}" \

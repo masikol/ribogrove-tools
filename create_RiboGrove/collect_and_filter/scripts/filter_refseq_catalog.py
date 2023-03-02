@@ -98,7 +98,7 @@ def is_target_organism(dir_column_val):
             target_organisms
         )
     )
-# end def is_target_organism
+# end def
 
 
 # == Proceed ==

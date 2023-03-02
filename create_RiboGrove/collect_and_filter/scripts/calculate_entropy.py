@@ -204,7 +204,7 @@ def do_msa(seq_records: Sequence[SeqRecord], muscle_fpath: str) -> List[SeqRecor
     msa_io.close()
 
     return msa_records
-# end def do_msa
+# end def
 
 
 def get_aln_column(i: int, seqs: Sequence[str]) -> Sequence[str]:
@@ -252,7 +252,7 @@ def calc_entropy(msa_records: Sequence[SeqRecord]) -> Sequence[float]:
     # end for
 
     return entropy_arr
-# end def calc_entropy
+# end def
 
 
 def encode_accs(acc_list):
@@ -375,14 +375,23 @@ count_var_positions = lambda entropy_arr: len(
     )
 )
 
-summary_entropy_df = per_base_entropy_df.groupby('asm_acc', as_index=False) \
-    .agg({'entropy': ('sum', 'mean', count_var_positions)})
 
-summary_entropy_df.columns = ['asm_acc', 'sum_entropy', 'mean_entropy', 'num_var_cols']
-
-del per_base_entropy_df
-
-summary_entropy_df['num_var_cols'] = summary_entropy_df['num_var_cols'].map(int)
+if per_base_entropy_df.shape[0] != 0:
+    summary_entropy_df = per_base_entropy_df.groupby('asm_acc', as_index=False) \
+        .agg({'entropy': ('sum', 'mean', count_var_positions)})
+    summary_entropy_df.columns = ['asm_acc', 'sum_entropy', 'mean_entropy', 'num_var_cols']
+    del per_base_entropy_df
+    summary_entropy_df['num_var_cols'] = summary_entropy_df['num_var_cols'].map(int)
+else:
+    summary_entropy_df = pd.DataFrame(
+        {
+            'asm_acc': [],
+            'sum_entropy': [],
+            'mean_entropy': [],
+            'num_var_cols': [],
+        }
+    )
+# end if
 
 
 # Overwrite the per-base file: it is barely informative

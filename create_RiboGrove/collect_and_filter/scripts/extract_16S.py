@@ -58,7 +58,7 @@ from Bio.SeqRecord import SeqRecord
 import src.rg_tools_IO as rgIO
 from src.rg_tools_time import get_time
 from src.file_navigation import get_genome_seqannot_fpath
-from src.ribogrove_seqID import make_seqID, update_seqID_v2_to_v3, parse_asm_acc, parse_ass_id_v2
+from src.ribogrove_seqID import make_seqID, parse_asm_acc
 
 # == Parse arguments ==
 
@@ -285,7 +285,7 @@ def is_ssu(feature: SeqFeature):
     # end if
 
     return norm_ssu or maybe_trunc_ssu
-# end def is_ssu
+# end def
 
 
 def filter_ssu_genes(features: List[SeqFeature]):
@@ -296,7 +296,7 @@ def filter_ssu_genes(features: List[SeqFeature]):
             features
         )
     )
-# end def filter_ssu_genes
+# end def
 
 
 def is_annotated_with_pgap(seq_record: SeqRecord):
@@ -350,7 +350,7 @@ def seq_start_may_truncate_ssu(seq_record: SeqRecord, features: List[SeqFeature]
         # end if
     # end for
     return False
-# end def seq_start_may_truncate_ssu
+# end def
 
 
 def extract_gene_as_is(feature: SeqFeature, seq_record: SeqRecord, asm_acc: int):
@@ -382,7 +382,7 @@ def extract_gene_as_is(feature: SeqFeature, seq_record: SeqRecord, asm_acc: int)
     header = f'{seqID} {seq_record.description}'
 
     return header, seq
-# end def extract_gene_as_is
+# end def
 
 
 def run_cmsearch(fasta_fpath: str):
@@ -400,7 +400,7 @@ def run_cmsearch(fasta_fpath: str):
         raise OSError(f'exit code {exit_code}')
     # end if
     return tblout_fpath
-# end def run_cmsearch
+# end def
 
 
 def reformat_tblout(tblout_fpath: str):
@@ -442,7 +442,7 @@ def reformat_tblout(tblout_fpath: str):
         tblout_file.write(f'{tblout_header}\n')
         tblout_file.write('\n'.join(lines) + '\n')
     # end with
-# end def reformat_tblout
+# end def
 
 
 def amend_coordinates_on_extended_seq(tblout_df: pd.DataFrame, original_len: int) -> pd.DataFrame:
@@ -458,11 +458,11 @@ def amend_coordinates_on_extended_seq(tblout_df: pd.DataFrame, original_len: int
             row['seq_to'] -= original_len
         # end if
         return row
-    # end def amend_length
+    # end def
 
     tblout_df = tblout_df.apply(amend_length, axis=1)
     return tblout_df
-# end def amend_coordinates_on_extended_seq
+# end def
 
 
 def remove_sestart_truncated_gene(tblout_df: pd.DataFrame) -> pd.DataFrame:
@@ -486,7 +486,7 @@ def remove_sestart_truncated_gene(tblout_df: pd.DataFrame) -> pd.DataFrame:
             # end if
         # end if
         return row
-    # end def set_remove_flag
+    # end def
 
     # Set flag `remove` to 1 on those genes, which should be removed
     tblout_df['remove'] = np.repeat(0, tblout_df.shape[0])
@@ -497,7 +497,7 @@ def remove_sestart_truncated_gene(tblout_df: pd.DataFrame) -> pd.DataFrame:
     # tblout_df.drop(['remove'], axis=1, inplace=True)
 
     return tblout_df
-# end def remove_sestart_truncated_gene
+# end def
 
 
 def extract_gene_seq_after_cmsearch(
@@ -527,7 +527,7 @@ def extract_gene_seq_after_cmsearch(
     # end if
 
     return seq
-# end def extract_gene_seq_1based_coords
+# end def
 
 
 def extract_reannotated_genes(seq_record: SeqRecord, topology: str, asm_acc: int):
@@ -599,38 +599,7 @@ def extract_reannotated_genes(seq_record: SeqRecord, topology: str, asm_acc: int
     # end for
 
     return genes
-# end def extract_reannotated_genes
-
-# TODO: remove?
-# def get_seq_lengths(extracted_genes: List[Tuple[str, str]]):
-#     # Function returns lengths of genes passed to it.
-#     # `extracted_genes` is an object retuned by `extract_reannotated_genes`
-#     lengths = [len(gene[1]) for gene in extracted_genes]
-#     return lengths
-# # end def get_seq_lengths
-
-
-# TODO: remove?
-# def calc_gene_stats(extracted_genes: List[Tuple[str, str]]):
-#     # Function calculates statistics for gene set passed to it:
-#     #  number of genes
-#     #  min length
-#     #  max length
-#     #  mean length
-#     #  median length
-#     lengths = get_seq_lengths(extracted_genes)
-
-#     if len(lengths) == 0:
-#         return 0, 'NA', 'NA', 'NA', 'NA'
-#     # end if
-
-#     min_len = min(lengths)
-#     max_len = max(lengths)
-#     mean_len = float(sts.mean(lengths))
-#     median_len = float(sts.median(lengths))
-
-#     return len(lengths), min_len, max_len, mean_len, median_len
-# # end def calc_gene_stats
+# end def
 
 
 def make_cache_dict(fasta_fpath, cached_asm_accs):
@@ -639,23 +608,6 @@ def make_cache_dict(fasta_fpath, cached_asm_accs):
 
     for sr in seq_records:
         asm_acc = parse_asm_acc(sr.id)
-        cache_dict[asm_acc].append(sr)
-    # end for
-
-    return cache_dict
-# end def
-
-
-def make_cache_dict_trans_to_11_217(fasta_fpath, cached_asm_accs, cached_stats_df):
-    ass_asm_dict = {
-        int(row['ass_id']): row['asm_acc'] for _, row in cached_stats_df.iterrows()
-    }
-    cache_dict = {asm_acc: list() for asm_acc in cached_asm_accs}
-    seq_records = tuple(SeqIO.parse(fasta_fpath, 'fasta'))
-
-    for sr in seq_records:
-        ass_id = int(parse_ass_id_v2(sr.id))
-        asm_acc = ass_asm_dict[ass_id]
         cache_dict[asm_acc].append(sr)
     # end for
 
@@ -684,25 +636,11 @@ if cache_mode:
     )
     cached_asm_accs = set(cached_stats_df['asm_acc'])
 
-    # TODO: switch after 11.217
-    # cached_dict = make_cache_dict(prev_all_fasta_fpath, cached_asm_accs)
-    cached_dict = make_cache_dict_trans_to_11_217(
-        prev_all_fasta_fpath,
-        cached_asm_accs,
-        cached_stats_df
-    )
+    cached_dict = make_cache_dict(prev_all_fasta_fpath, cached_asm_accs)
     print('{} -- done'.format(get_time()))
 else:
     cached_asm_accs = set()
 # end if
-
-# For testing purposes
-# accs_select = {
-#     'NZ_CP013210.1',
-#     'NZ_CP008696.1',
-#     # 'NZ_CP050525.1',
-# }
-# acc_df = acc_df.query('acc in @accs_select')
 
 n_asms = asm_sum_df.shape[0] # number of Assembly ACCESSION.VESRIONs to process
 
@@ -728,8 +666,6 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, \
         if asm_acc in cached_asm_accs:
             curr_seq_records = cached_dict[asm_acc]
             for sr in curr_seq_records:
-                # TODO: remove updating after 11.217
-                sr.id = update_seqID_v2_to_v3(sr.id, asm_acc)
                 sr.description = '{} {}'.format(
                     sr.id, sr.description.partition(' ')[2]
                 )
@@ -737,13 +673,6 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, \
             # end for
 
             curr_cached_stats_df = cached_stats_df[cached_stats_df['asm_acc'] == asm_acc].copy()
-            # TODO: remove after 11.217
-            curr_cached_stats_df = curr_cached_stats_df[stats_header]
-
-            # TODO: remove
-            # # Assembly ID may be outdated in cached_acc_stats_df.
-            # # We need to update it here
-            # cached_acc_stats_df['ass_id'] = np.repeat(ass_id, cached_acc_stats_df.shape[0])
 
             curr_cached_stats_df.to_csv(
                 stats_outfile,
@@ -798,13 +727,9 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, \
             # end if
 
             # Write statistics to stats file
-            # TODO: remove commented
-            # stats_outfile.write(f'{asm_acc}\t{seq_acc}\t{title}\t')
             stats_outfile.write(f'{asm_acc}\t{seq_acc}\t{title}\t')
             stats_outfile.write(f'{1 if seq_start_truncation else 0}\t{1 if improper_16S_annotation else 0}\t{topology}\t')
             stats_outfile.write('{}\n'.format(len(extracted_genes)))
-            # num_genes, min_len, max_len, mean_len, median_len = calc_gene_stats(extracted_genes)
-            # stats_outfile.write(f'{num_genes}\t{min_len}\t{max_len}\t{mean_len}\t{median_len}\n')
         # end for
     # end for
 # end with

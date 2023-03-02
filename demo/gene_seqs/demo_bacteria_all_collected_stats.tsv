@@ -1,6 +1,0 @@
-ass_id	gi_number	acc	title	seq_start_truncation	improper_16S_annotation	topology	num_genes	min_len	max_len	mean_len	median_len
-10601591	2075061612	NZ_CP063062.1	Chlamydia suis strain 111 Ry chromosome, complete genome	0	0	circular	2	1549	1549	1549.0	1549.0
-10601601	2075061623	NZ_CP063063.1	Chlamydia suis strain 94 Ry chromosome	0	0	circular	1	1549	1549	1549.0	1549.0
-10613051	2075043534	NZ_CP066838.1	Escherichia coli strain Ec-FL1-1X plasmid pIncI1_STnovel, complete sequence	0	0	circular	0	NA	NA	NA	NA
-10613051	2075043519	NZ_CP066837.1	Escherichia coli strain Ec-FL1-1X plasmid pIncFIB_IncFII, complete sequence	0	0	circular	0	NA	NA	NA	NA
-10613051	2075042922	NZ_CP066836.1	Escherichia coli strain Ec-FL1-1X chromosome, complete genome	0	0	circular	7	1542	1542	1542.0	1542.0

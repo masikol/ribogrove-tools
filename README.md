@@ -8,15 +8,13 @@ The [main website](https://mbio.bas-net.by/cager/en/ribogrove) where RiboGrove i
 
 ## Contents:
 
-1. Scripts in directory `db_creation_and_filtering/` are used for collection of 16S rRNA genes from RefSeq, and for further removal (i.e. filtering) of partial gene sequencing.
+1. `create_RiboGrove/`: here are the pipeline which creates a RiboGrove release.
 
-2. Scripts in directory `release_preparation/` are used for making release files (`*.fasta.gz` and `metadata.zip`) and HTML release pages.
+2. Scripts in directory `data_transformation_scripts/` can help you convert RiboGrove release files to several external formats (e.g. to QIIME2-compatible taxonomy file).
 
 3. Scripts in directory `exploration_scripts/` are used for draw some plots and calculate some additional data for the publication etc.
 
-4. Demonstration data in the directory `demo/`. This is how input data and a working directory for the filtering pipeline looks like.
-
-5. (scripts in directory `_trash/` are deprecated)
+4. (scripts in directory `_trash/` are deprecated)
 
 ## Releases of ribogrove-tools
 
@@ -29,6 +27,8 @@ Here is a list of RiboGrove database releases and corresponding ribogrove-tools 
 - RiboGrove database release 9.215 -- ribogrove-tools release `9.215`.
 
 - RiboGrove database release 10.216 -- ribogrove-tools release `10.216`.
+
+- RiboGrove database release 11.217 -- ribogrove-tools release `11.217`.
 
 ## Python version
 

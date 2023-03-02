@@ -207,6 +207,7 @@ with open(outfpath, 'wt') as outfile:
 
     seq_records = SeqIO.parse(in_fasta_fpath, 'fasta')
 
+    i = 0
     for i, seq_record in enumerate(seq_records):
         asm_acc = parse_asm_acc(seq_record.id)
 

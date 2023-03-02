@@ -22,8 +22,6 @@
 
 ### Output files:
 # 1. `-o / --outfile` -- an output file mapping seqIDs (and Assembly IDs) to categories. Mandatory.
-# 2. `-l / --seqtech-logfile` -- a log file to track if sequence technology is successfully
-#   extracted from all genomes where it is specified. "Seqtech" means SEQuencing TECHnology. Mandatory.
 
 ### "Cached" files:
 # 1. `--prev-categories` -- a file of genome categories from the workdir of the previous RiboGrove release.
@@ -326,7 +324,6 @@ print(
 
 print('Starting assigning categories for genomes')
 
-# TODO: remove log, it's not necessary
 with open(outfpath, 'wt') as outfile:
 
     # Write header

@@ -436,9 +436,6 @@ rt_long_df = rt_long_df.apply(set_asm_acc, axis=1)
 # Get unique Assembly accessions
 asm_accs = set(asm_sum_df['asm_acc'])
 
-# TODO: remove?
-# rt_failed_seqIDs = read_ribotyper_failed_seqIDs(ribotyper_fail_fpath)
-
 # Read input genes sequences
 seq_records = rgIO.read_and_filter_fasta(
     fasta_seqs_fpath,
@@ -487,13 +484,6 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
 
         # Select rows corresponding to current assembly
         curr_ass_df = rt_long_df[rt_long_df['asm_acc'] == asm_acc]
-        # Save seqIDs of aligned sequences into a set for faster search
-        # TODO: remove?
-        # passed_seqIDs = set(curr_ass_df['target']) - rt_failed_seqIDs
-
-        # TODO: remove?
-        # Remove a priori aberrant genes from `curr_ass_df`
-        # curr_ass_df = curr_ass_df.query('target in @apriori_aberrant_seqIDs')
 
         # Select pivotal genes
         max_score = curr_ass_df['tscore'].max()
