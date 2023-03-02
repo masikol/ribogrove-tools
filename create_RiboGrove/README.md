@@ -1,3 +1,8 @@
-    1.1. `collect_and_filter/`: are used for collection of 16S rRNA genes from RefSeq, and for further removal (i.e. filtering) of partial gene sequencing.
 
-    1.2. `prepare_release/`: are used for making release files (`*.fasta.gz` and `metadata.zip`) and HTML release pages.
+# Create RiboGrove
+
+The process of RiboGrove release creation consists of two major steps:
+
+1. `collect_and_filter/` -- collect 16S rRNA gene sequences and filter them. This must be done separately for bacteria and archaea.
+
+2. `prepare_release/` -- combine bacterial and archaeal data into a RiboGrove release, namely into files `ribogrove_XX.XXX_sequences.fasta.gz` and `metadata.zip` (`XX.XXX` is RiboGrove release number, e.g. 10.216).

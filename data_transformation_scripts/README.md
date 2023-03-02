@@ -22,6 +22,14 @@ python3 make_qiime_taxonomy_file.py \
     -o qiime2_compatible_taxonomy.tsv
 ```
 
+### Dependencies
+
+#### Python packages
+
+1. numpy. Installation: `pip3 install numpy`. Tested on version TODO: add version.
+
+2. pandas. Installation: `pip3 install pandas`. Tested on version 1.1.3.
+
 ## make_dada2_train_set_file.py
 
 ### Input
@@ -30,15 +38,7 @@ This script takes RiboGrove fasta file `ribogrove_XX.XXX_sequences.fasta.gz` as 
 
 ### Usage:
 
-Without specific epithets:
-
-```
-python3 make_dada2_train_set_file.py \
-    -i ribogrove_10.216_sequences.fasta.gz \
-    -o ribogrove_10.216_dada2_train_set.fasta.gz
-```
-
-With specific epithets (set `-w` option):
+Make a dada2-train-set file and include specific epithets in taxonomy strings:
 
 ```
 python3 make_dada2_train_set_file.py \
@@ -46,3 +46,17 @@ python3 make_dada2_train_set_file.py \
     -o ribogrove_10.216_dada2_train_set.fasta.gz \
     -w
 ```
+
+Without specific epithets -- simply don’t set `-w` option:
+
+```
+python3 make_dada2_train_set_file.py \
+    -i ribogrove_10.216_sequences.fasta.gz \
+    -o ribogrove_10.216_dada2_train_set.fasta.gz \
+```
+
+### Dependencies
+
+#### Python packages
+
+1. Biopython. Installation: `pip3 install biopython`. Tested on version TODO: add version.

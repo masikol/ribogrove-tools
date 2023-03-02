@@ -12,9 +12,11 @@ The [main website](https://mbio.bas-net.by/cager/en/ribogrove) where RiboGrove i
 
 2. Scripts in directory `data_transformation_scripts/` can help you convert RiboGrove release files to several external formats (e.g. to QIIME2-compatible taxonomy file).
 
-3. Scripts in directory `exploration_scripts/` are used for draw some plots and calculate some additional data for the publication etc.
+3. `ribogrove_html_pages`: this should be used to create HTML pages for RiboGrove releases.
 
-4. (scripts in directory `_trash/` are deprecated)
+4. Scripts in directory `exploration_scripts/` are used for draw some plots and calculate some additional data for the publication etc.
+
+5. (scripts in directory `_trash/` are deprecated)
 
 ## Releases of ribogrove-tools
 
