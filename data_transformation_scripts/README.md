@@ -26,7 +26,7 @@ python3 make_qiime_taxonomy_file.py \
 
 #### Python packages
 
-1. numpy. Installation: `pip3 install numpy`. Tested on version TODO: add version.
+1. numpy. Installation: `pip3 install numpy`. Tested on version 1.19.2.
 
 2. pandas. Installation: `pip3 install pandas`. Tested on version 1.1.3.
 
@@ -59,4 +59,4 @@ python3 make_dada2_train_set_file.py \
 
 #### Python packages
 
-1. Biopython. Installation: `pip3 install biopython`. Tested on version TODO: add version.
+1. Biopython. Installation: `pip3 install biopython`. Tested on version 1.81.

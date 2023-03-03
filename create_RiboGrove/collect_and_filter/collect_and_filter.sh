@@ -52,7 +52,14 @@ done
 # Load configuration
 source "${CONF_FILE}"
 
-# Get directory where scripts are located
+if [[ "${DOMAIN}" != 'bacteria' && "${DOMAIN}" != 'archaea' ]]; then
+  echo "Error: unrecognized domain: '${DOMAIN}'." >&2
+  echo "It must be either 'bacteria' or 'archaea'." >&2
+  exit 1
+fi
+
+
+# Get directory where scripts and their data are located
 script_abspath=`realpath $0`
 pipeline_sh_dir=`dirname "${script_abspath}"`
 SCRIPTS_DIR="${pipeline_sh_dir}/scripts"
@@ -226,6 +233,14 @@ else
 fi
 
 
+# == Make taxonomy ==
+
+python3 "${SCRIPTS_DIR}/make_taxonomy.py" \
+    --asm-sum "${ASS_SUM_FINAL}" \
+    --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
+    --out "${TAXONOMY_FILE}"
+
+
 # == Extract Rfam covariance model for 16S rRNA genes extraction ==
 
 "${CMFETCH}" "${RFAM_FOR_EXTRACT_16S}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_EXTRACT_16S}"
@@ -258,14 +273,6 @@ else
     --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
     --seqkit "${SEQKIT}"
 fi
-
-
-# == Make taxonomy ==
-
-python3 "${SCRIPTS_DIR}/make_taxonomy.py" \
-    --asm-sum "${ASS_SUM_FINAL}" \
-    --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
-    --out "${TAXONOMY_FILE}"
 
 
 # == Assign categories to downloaded genomes ==
@@ -313,7 +320,7 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --prev-aberrant-seqIDs "${PREV_ABERRANT_SEQIDS}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
     --muscle "${MUSCLE}" \
-    --deletion-len-threshold 10
+    --deletion-len-threshold "${DELETION_LEN_THRESHOLD}"
 else
   python3 "${SCRIPTS_DIR}/find_aberrant_genes.py" \
     --fasta-seqs-file "${ALL_GENES_FASTA}" \
@@ -322,7 +329,7 @@ else
     --ribotyper-long-out-tsv "${RIBOTYPER_LONG_OUT_TSV}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
     --muscle "${MUSCLE}" \
-    --deletion-len-threshold 10
+    --deletion-len-threshold "${DELETION_LEN_THRESHOLD}"
 fi
 
 
@@ -332,7 +339,7 @@ python3 "${SCRIPTS_DIR}/find_repeats.py" \
   --in-fasta-file "${ALL_GENES_FASTA}" \
   --ribotyper-fail-seqIDs "${RIBOTYPER_FAIL_SEQIDS_FPATH}" \
   --aberrant-seqIDs "${ABERRANT_SEQIDS_FPATH}" \
-  --repeat-len-threshold 25 \
+  --repeat-len-threshold "${REPEAT_LEN_THRESHOLD}" \
   --out-fail-file "${REPEAT_FAIL_SEQIDS_FPATH}" \
   --out-repeats-log "${REPEATS_FPATH}"
 

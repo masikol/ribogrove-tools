@@ -46,7 +46,7 @@ python3 make_ribogrove_release_page.py \
 
 ### Python packages
 
-1. numpy. Installation: `pip3 install numpy`. Tested on version TODO: add version.
+1. numpy. Installation: `pip3 install numpy`. Tested on version 1.19.2.
 
 2. pandas. Installation: `pip3 install pandas`. Tested on version 1.1.3.
 

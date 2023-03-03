@@ -12,7 +12,7 @@ The pipeline consists of 5 major steps:
 
 2. Extract 16S rRNA gene sequences from downloaded genomes.
 
-3. Assign categories to the genomes accorging to their reliability.
+3. Assign categories to the genomes according to their reliability.
 
 4. Filter gene sequences: remove partial sequences, sequences containing long repeats etc.
 
@@ -48,24 +48,32 @@ The pipeline requires the following files downloaded:
 
 ## Usage
 
-Usage of the pipeline script:
+The pipeline should be run as follows:
 
 ```
 bash collect_and_filter.sh <CONFIG_FILE> [-at]
 ```
 
-Example:
-
-```
-bash collect_and_filter.sh config/bacteria_config.conf -t
-```
-
 ### Options
 
 ```
--t: TODO: add help
+-t: Test mode. If specified, the script will not use entire RefSeq,
+    but just some genomes from the file
+    scripts/data/test/test_bacteria_assembly_summary.txt.gz
+    or
+    scripts/data/test/test_archaea_assembly_summary.txt.gz
 
--a: TODO: add help
+-a: RefSeq catalog file is already filtered.
+    If you already have file RefSeq-release216_filtered.catalog.gz
+    created from file RefSeq-release216.catalog.gz,
+    the script will not run the script filter_refseq_catalog.py again
+    and thus save some time.
+```
+
+### Example:
+
+```
+bash collect_and_filter.sh config/bacteria_config.conf -t
 ```
 
 ## Dependencies
@@ -76,15 +84,15 @@ bash collect_and_filter.sh config/bacteria_config.conf -t
 
 2. pandas. Installation: `pip3 install pandas`. Tested on version 1.1.3.
 
-3. Biopython. Installation: `pip3 install biopython`. Tested on version 1.78.
+3. Biopython. Installation: `pip3 install biopython`. Tested on version 1.81.
 
-4. repeatfinder ([repo](https://github.com/deprekate/RepeatFinder)). Installation: `pip3 install repeatfinder`. Tested on version 1.5.
+4. [repeatfinder](https://github.com/deprekate/RepeatFinder). Installation: `pip3 install repeatfinder`. Tested on version 1.5.
 
 ### Standalone programs:
 
 1. Seqkit: [https://github.com/shenwei356/seqkit](https://github.com/shenwei356/seqkit). Tested on version 2.2.0.
 
-2. `ribotyper` program from [Ribovore](https://github.com/ncbi/ribovore) suite. Tested on version TODO: add version.
+2. `ribotyper` program from [Ribovore](https://github.com/ncbi/ribovore) suite. Tested on Ribovore version 1.0.2.
 
 2. MUSCLE: [https://www.drive5.com/muscle/](https://www.drive5.com/muscle/). Tested on version 3.8.31.
 
@@ -94,4 +102,4 @@ bash collect_and_filter.sh config/bacteria_config.conf -t
 
 ### Data:
 
-1. Rfam database. Versions: 12.0 (ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz) for re-annotation of genomic sequences.
+1. Rfam database version 12.0 (ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz) for re-annotation of genomic sequences.

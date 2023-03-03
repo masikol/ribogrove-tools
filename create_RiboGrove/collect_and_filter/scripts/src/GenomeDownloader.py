@@ -20,7 +20,9 @@ class GenomeDownloader:
     def __init__(self, asm_sum_row: Series, outdir):
         self.assembly_accession = asm_sum_row['asm_acc']
         self.asm_basedir_url    = asm_sum_row['ftp_path']
-        self.asm_name           = asm_sum_row['asm_name']
+        self.asm_name           = self._parse_asm_name(
+            asm_sum_row['ftp_path'], asm_sum_row['asm_acc']
+        )
         self.genome_dirpath = os.path.join(outdir, self.assembly_accession)
         self.asm_report_fpath = get_asm_report_fpath(
             self.assembly_accession,
@@ -30,6 +32,18 @@ class GenomeDownloader:
             self.assembly_accession,
             outdir
         )
+    # end def
+
+
+    def _parse_asm_name(self, ftp_path, asm_acc):
+        # Dir url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/900/012/635/GCF_900012635.1_Pyrococcus_chitonophagus_genome_sequence
+        #  We need this:                                                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # We get asm_name from ftp_path because asm_sum_row['asm_name'] is sometimes inconsistent with actual URLs.
+        #  Some examples of inconsistency:
+        #    GCF_902166805.1, GCF_000577895.1, GCF_900095285.1, GCF_905187425.1
+        return ftp_path \
+            .split('/')[-1] \
+            .replace('{}_'.format(asm_acc), '')
     # end def
 
 
@@ -213,7 +227,7 @@ class GenomeDownloader:
         return '{}/{}_{}_assembly_report.txt'.format(
             self.asm_basedir_url,
             self.assembly_accession,
-            self.asm_name.replace(' ', '_')
+            self.asm_name
         )
     # end def
 
@@ -256,7 +270,7 @@ class GenomeDownloader:
         return '{}/{}_{}_genomic.gbff.gz'.format(
             self.asm_basedir_url,
             self.assembly_accession,
-            self.asm_name.replace(' ', '_')
+            self.asm_name
         )
     # end def
 # end class

@@ -1,6 +1,12 @@
 # RiboGrove tools
 
-This repo contains the software for RiboGrove database constuction and exploration.
+![](img/RiboGrove_logo.png "RiboGrove logo")
+
+This repo contains the software for:
+
+1. RiboGrove database creation and maintenance.
+
+2. Conversion of RiboGrove files to files of several external formats, e.g. to a QIIME2 taxonomy file.
 
 [RiboGrove](https://mbio.bas-net.by/cager/en/ribogrove) is a genome-based database of full-length sequences of prokaryotic 16S rRNA genes. Sequences are derived from RefSeq database.
 
