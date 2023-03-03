@@ -8,15 +8,9 @@ import os
 print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
 
 
-import re
-import sys
-import gzip
-import argparse
-
-from Bio import SeqIO
-
-
 # == Parse arguments ==
+
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -49,6 +43,13 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
+
+
+import re
+import sys
+import gzip
+
+from Bio import SeqIO
 
 
 # For convenience
