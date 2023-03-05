@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-# TODO: update description
 # The script extracts sequences of 16S genes from the downloaded genomes in GenBank format.
 # If the GenBank file of a genomic sequence does not include the statement that it
 #   was annotated with the PGAP (https://www.ncbi.nlm.nih.gov/genome/annotation_prok/),
@@ -12,21 +11,26 @@
 
 ## Command line arguments
 ### Input files:
-# 1. `-i / --assm-acc-file` -- a TSV file of 4 columns:(`ass_id`, `gi_number`, `acc`, `title`).
-#   This file is the output of the script `merge_assIDs_and_accs.py`. Mandatory.
-# 2. `-g/--gbk-dir` -- the directory where the downloaded `.gbk.gz` files are located
-#   (see script `download_genomes.py`). Mandatory.
+# 1. `-i / --asm-sum` -- an assembly summary file after the 2nd step of filtering.
+#   Mandatory.
+# 2. `-g / --genomes-dir` -- the directory where the downloaded `.gbk.gz` files are located
+#   (see script `download_genomes.py`).
+#   Mandatory.
 
 ### Output files:
-# 1. `-o / --out-fasta` -- a fasta file containing sequences of extracted genes. Mandatory.
+# 1. `-o / --out-fasta` -- a fasta file containing sequences of extracted genes.
+#   Mandatory.
 # 2. `-s / --out-stats` -- a file with per-replicon statistics of extracted 16S genes:
-#   how many genes, minimum/maximum length etc. Mandatory.
+#   how many genes, minimum/maximum length etc.
+#   Mandatory.
 
 ### "Cached" files:
 # 1. `--prev-all-genes-fasta` -- a fasta file, which is the output of this script,
-#   but for the previous RefSeq release. Optional.
+#   but for the previous RefSeq release.
+#   Optional.
 # 2. `--prev-all-genes-stats` -- a file with per-replicon statistics,
-#   which is the output of this script, but for the previous RefSeq release. Optional.
+#   which is the output of this script, but for the previous RefSeq release.#
+#   Optional.
 
 ### Dependencies:
 # 1. `--cmsearch` -- a `cmsearch` program executable from Infernal (http://eddylab.org/infernal/).
@@ -38,29 +42,18 @@
 
 
 import os
-
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-
-import sys
-import gzip
-import argparse
-import statistics as sts
-from typing import List, Tuple
-
-import numpy as np
-import pandas as pd
-from Bio import SeqIO
-from Bio.Seq import Seq
-from Bio.SeqFeature import SeqFeature
-from Bio.SeqRecord import SeqRecord
-
-import src.rg_tools_IO as rgIO
 from src.rg_tools_time import get_time
-from src.file_navigation import get_genome_seqannot_fpath
-from src.ribogrove_seqID import make_seqID, parse_asm_acc
+
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
+
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -68,7 +61,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     '-i',
     '--asm-sum',
-    help="""TODO: add help""",
+    help='an assembly summary file after the 2nd step of filtering',
     required=True
 )
 
@@ -130,6 +123,25 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
+
+
+# == Import them now ==
+import sys
+import gzip
+import statistics as sts
+from typing import List, Tuple
+
+import numpy as np
+import pandas as pd
+from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqFeature import SeqFeature
+from Bio.SeqRecord import SeqRecord
+
+import src.rg_tools_IO as rgIO
+from src.rg_tools_time import get_time
+from src.file_navigation import get_genome_seqannot_fpath
+from src.ribogrove_seqID import make_seqID, parse_asm_acc
 
 
 asm_sum_fpath = os.path.realpath(args.asm_sum)
@@ -750,4 +762,9 @@ print('{} -- Done'.format(get_time()))
 print('\n{} -- Completed!'.format(get_time()))
 print(fasta_outfpath)
 print(outstats_fpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

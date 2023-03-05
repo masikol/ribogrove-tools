@@ -1,21 +1,34 @@
 #!/usr/bin/env python3
 
-# TODO: add description
+# The script makes a taxonomy file for the downloaded genomes.
+
+## Command line arguments
+
+### Input files:
+# 1. `-i / --asm-sum` -- an assembly summary file after the 2nd step of filtering.
+#   Mandatory.
+# 2. `-l / --ranked-lineage` -- file rankedlineage.tsv from NCBI's new_taxdump archive
+#   see https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz
+#   Mandatory.
+
+### Output files:
+# 1. `-o / --out` -- output taxonomy file.
+#   Mandatory.
+
 
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-
-import sys
-import argparse
-
-import pandas as pd
-
-import src.rg_tools_IO as rgIO
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -24,11 +37,12 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     '-i',
     '--asm-sum',
-    help="""TODO: add help""",
+    help='an assembly summary file after the 2nd step of filtering',
     required=True
 )
 
 parser.add_argument(
+    '-l',
     '--ranked-lineage',
     help="""file rankedlineage.tsv from NCBI\'s new_taxdump archive
     see https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz""",
@@ -38,13 +52,22 @@ parser.add_argument(
 # Output file
 
 parser.add_argument(
+    '-o',
     '--out',
-    help='TODO: add help',
+    help='output taxonomy file',
     required=True
 )
 
 
 args = parser.parse_args()
+
+
+# == Import them now ==
+import sys
+
+import pandas as pd
+
+import src.rg_tools_IO as rgIO
 
 
 # For convenience
@@ -440,4 +463,9 @@ taxonomy_df.to_csv(
 
 print('\nCompleted!')
 print(outfpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

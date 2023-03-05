@@ -12,16 +12,18 @@
 
 
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-import sys
-import argparse
-
-from Bio import SeqIO
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -44,6 +46,13 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
+
+
+# == Import them now ==
+import sys
+
+from Bio import SeqIO
+
 
 # For convenience
 infpath = os.path.abspath(args.input_fasta)
@@ -98,4 +107,9 @@ with open(infpath, 'rt') as infile, open(outfpath, 'w') as outfile:
 
 print('\nCompleted!')
 print(outfpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

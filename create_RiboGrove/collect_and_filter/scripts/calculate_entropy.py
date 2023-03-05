@@ -24,13 +24,66 @@
 
 
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
+
+# == Parse arguments ==
+import argparse
+
+parser = argparse.ArgumentParser()
+
+# Input files
+parser.add_argument(
+    '-f',
+    '--fasta-seqs-file',
+    help='fasta file of SSU gene sequences without aberrant genes',
+    required=True
+)
+
+parser.add_argument(
+    '-c',
+    '--categories-file',
+    help='file mapping assembly accessions to genome categories',
+    required=True
+)
+
+parser.add_argument(
+    '--prev-per-base-entropy-file',
+    help="""TSV file (with header: asm_acc,pos,entropy)
+    containing per-base intragenomic entropy. For example, file `per_base_demo_bacteria_entropy.tsv.gz`.
+    The file may be gzipped.""",
+    required=False
+)
+
+# Output files
+parser.add_argument(
+    '-o',
+    '--outfile',
+    help='output TSV file',
+    required=True
+)
+
+# Dependencies
+parser.add_argument(
+    '--muscle',
+    help='muscle executable',
+    required=True
+)
+
+args = parser.parse_args()
+
+
+# == Import them now ==
 import sys
 import gzip
 import math
-import argparse
 import operator
 from array import array
 import subprocess as sp
@@ -44,59 +97,6 @@ from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
 from src.ribogrove_seqID import parse_asm_acc
-
-
-
-# == Parse arguments ==
-
-parser = argparse.ArgumentParser()
-
-
-# Input files
-
-parser.add_argument(
-    '-f',
-    '--fasta-seqs-file',
-    help='fasta file of SSU gene sequences without aberrant genes',
-    required=True
-)
-
-parser.add_argument(
-    '-c',
-    '--categories-file',
-    help='TODO: add help',
-    required=True
-)
-
-parser.add_argument(
-    '--prev-per-base-entropy-file',
-    help="""TSV file (with header: asm_acc,pos,entropy)
-    containing per-base intragenomic entropy. For example, file `per_base_demo_bacteria_entropy.tsv.gz`.
-    The file may be gzipped.""",
-    required=False
-)
-
-
-# Output files
-
-parser.add_argument(
-    '-o',
-    '--outfile',
-    help='output TSV file',
-    required=True
-)
-
-
-# Dependencies
-
-parser.add_argument(
-    '--muscle',
-    help='muscle executable',
-    required=True
-)
-
-
-args = parser.parse_args()
 
 
 # For convenience
@@ -406,4 +406,9 @@ summary_entropy_df.to_csv(
 
 print('\nCompleted!')
 print(outfpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

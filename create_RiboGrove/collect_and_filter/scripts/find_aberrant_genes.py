@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# TODO: update description (NNN and tblout -> long)
-
 # The script finds aberrant genes: truncated genes and genes with large deletions.
 
 ## Command line arguments
@@ -9,13 +7,17 @@
 ### Input files:
 # 1. `-f / --fasta-seqs-file` -- an input fasta file of all collected SSU gene sequences.
 #   This file is the output of the script `extract_16S.py`. Mandatory.
-# 2. `--NNN-fail-seqIDs` -- a file of seqIDs which didn't pass NNN filter, one per line.
-#   This file is the output of the script `find_NNN.py`. Mandatory.
-# 3. `-t / --cmscan-tblout` -- a TSV file (`.tblout`) of comparison statistics.
-#   This file is the output of the script `compare_all_seqs_to_cm.py`. Mandatory.
+# 2. `--ribotyper-fail-seqIDs` -- a file outputted by the script `find_ribotyper_fail_seqs.py`.
+#   It lists seqIDs of sequences which failed the ribotyper filter, one per line.
+#   Mandatory.
+# 3. `-a / --in-asm-sum` -- an assembly summary file after the 2nd step of filtering
+#   Mandatory.
+# 4. `-l / --ribotyper-long-out-tsv` -- input .long.out.tsv file
+#   outputted by the script `check_seqs_with_ribotyper.py`.
+#   Mandatory.
 
 ### Output files:
-# 1. `-o / --outdir` -- output directory, where all output files will be stored. Mandatory.
+# 1. `-o / --outdir` -- output directory, where all output files will be stored.
 # This directory will contain the following files:
 # - `pivotal_genes.tsv` -- a TSV file, with seqIDs of pivotal genes and corresponding cmscan scores.
 # - `pident_pivotal_genes.tsv` -- a TSV file containing perpents of identity
@@ -24,8 +26,8 @@
 #   longer than `--deletion-len-threshold`. Quite counterintuitive but anyway.
 # - `deletions.tsv` -- a TSV file containing information about discovered deletions
 #   longer than `--deletion-len-threshold`.
-# - `non_aberrant_seqIDs.txt` -- seqIDs of discovered non-aberrant genes, one per line.
 # - `aberrant_seqIDs.txt` -- seqIDs of discovered aberrant genes, one per line.
+#   Mandatory.
 
 ### Dependencies:
 # 1. `--muscle` -- [MUSCLE](https://www.drive5.com/muscle/) aligner executable
@@ -36,32 +38,28 @@
 #   If deletion has length higher than this value, gene having this deletion will
 #   be regarded as an aberrant gene. Integer number > 0. Mandatory.
 
+### "Cached" files:
+# 1. `--prev-final-fasta` -- a final fasta file of 16S rRNA gene sequences
+#   from the previous RiboGrove release.
+#   Optional.
+# 2. `--prev-aberrant-seqIDs` -- file `aberrant_seqIDs.txt`
+#   from the previous RiboGrove release.
+#   Optional.
+
+
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-
-import re
-import sys
-import argparse
-import operator
-from io import StringIO
-import subprocess as sp
-from functools import reduce
-from typing import Sequence, Dict, Tuple
-
-import numpy as np
-import pandas as pd
-from Bio import SeqIO
-from Bio import SeqUtils
-from Bio.SeqRecord import SeqRecord
-
-import src.rg_tools_IO as rgIO
-from src.ribogrove_seqID import parse_asm_acc
-
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -70,27 +68,29 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     '-f',
     '--fasta-seqs-file',
-    help='fasta file of SSU gene sequences',
+    help='fasta file of 16S rRNA gene sequences',
     required=True
 )
 
 parser.add_argument(
     '--ribotyper-fail-seqIDs',
-    help='TODO: add help',
+    help="""a file outputted by the script `find_ribotyper_fail_seqs.py`.
+   It lists seqIDs of sequences which failed the ribotyper filter, one per line.""",
     required=True
 )
 
 parser.add_argument(
     '-a',
     '--in-asm-sum',
-    help='TODO: add help',
+    help='an assembly summary file after the 2nd step of filtering',
     required=True
 )
 
 parser.add_argument(
-    '-t',
+    '-l',
     '--ribotyper-long-out-tsv',
-    help='TODO: add help',
+    help="""input .long.out.tsv file
+    outputted by the script `check_seqs_with_ribotyper.py`""",
     required=True
 )
 
@@ -98,13 +98,15 @@ parser.add_argument(
 
 parser.add_argument(
     '--prev-final-fasta',
-    help='TODO: ad help',
+    help="""a final fasta file of 16S rRNA gene sequences
+    from the previous RiboGrove release""",
     required=False
 )
 
 parser.add_argument(
     '--prev-aberrant-seqIDs',
-    help='TODO: ad help',
+    help="""file `aberrant_seqIDs.txt`
+    from the previous RiboGrove release""",
     required=False
 )
 
@@ -137,8 +139,26 @@ parser.add_argument(
     required=True
 )
 
-
 args = parser.parse_args()
+
+
+# == Import them now ==
+import re
+import sys
+import operator
+from io import StringIO
+import subprocess as sp
+from functools import reduce
+from typing import Sequence, Dict, Tuple
+
+import numpy as np
+import pandas as pd
+from Bio import SeqIO
+from Bio import SeqUtils
+from Bio.SeqRecord import SeqRecord
+
+import src.rg_tools_IO as rgIO
+from src.ribogrove_seqID import parse_asm_acc
 
 
 # For convenience
@@ -583,5 +603,9 @@ print(pident_outfpath)
 print(insertions_outfpath)
 print(deletions_outfpath)
 print(aberrant_seqIDs_fpath)
-
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

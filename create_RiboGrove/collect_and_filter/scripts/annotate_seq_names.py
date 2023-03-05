@@ -5,7 +5,7 @@
 ## Command line arguments
 
 ### Input files:
-# 1. `-f/--fasta-seqs-file` -- input fasta file to be annotated.
+# 1. `-f / --fasta-seqs-file` -- input fasta file to be annotated.
 #   This file is the output of the script `make_final_seqs.py`. Mandatory.
 # 2. `-t / --taxonomy` -- a TSV file mapping RiboGrove seqIDs to taxonomy.
 #   This file is the output of the script `add_taxonomy_names.py`. Mandatory.
@@ -17,20 +17,19 @@
 
 
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-
-import sys
-import argparse
-
-import pandas as pd
-from Bio import SeqIO
-
-from src.ribogrove_seqID import parse_asm_acc
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -67,6 +66,15 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
+
+
+# == Import them now ==
+import sys
+
+import pandas as pd
+from Bio import SeqIO
+
+from src.ribogrove_seqID import parse_asm_acc
 
 
 # For convenience
@@ -238,4 +246,9 @@ with open(outfpath, 'wt') as outfile:
 
 print('\nCompleted!')
 print(outfpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

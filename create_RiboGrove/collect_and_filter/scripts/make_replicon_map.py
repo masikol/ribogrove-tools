@@ -1,49 +1,77 @@
 #!/usr/bin/env python3
 
-# TODO: add description
+# The script makes a helper file in which Assembly acceession numbers
+#   are mapped to corresponding RefSeq accession numbers.
+# For example `GCF_000005825.2` is mapped to `NC_013791.2`, `NC_013792.1` and `NC_013793.1`.
+
+## Command line arguments
+
+### Input files:
+# 1. `-i / --asm-sum` -- an assembly summary file after the 1st step of filtering.
+#   Mandatory.
+# 2. `-g / --genomes-dir` -- a directory where the downlaoded genomes are located.
+#   It is the output of the script `download_genomes.py`.
+#   Mandatory.
+
+### Output files:
+# 1. `-o / --out` -- a file in which Assembly acceession numbers
+#   are mapped to corresponding RefSeq accession numbers.
+#   Mandatory.
+
 
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-
-import sys
-import gzip
-import argparse
-
-import pandas as pd
-
-import src.rg_tools_IO as rgIO
-from src.file_navigation import get_asm_report_fpath
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
+# Input
 parser.add_argument(
     '-i',
     '--asm-sum',
-    help="""TODO: add help""",
-    required=True
-)
-
-parser.add_argument(
-    '-o',
-    '--out',
-    help='TODO: add help',
+    help='an assembly summary file after the 1st step of filtering',
     required=True
 )
 
 parser.add_argument(
     '-g',
     '--genomes-dir',
-    help='TODO: add help',
+    help="""A directory where the downlaoded genomes are located.
+    It is the output of the script `download_genomes.py`.""",
+    required=True
+)
+
+# Output
+parser.add_argument(
+    '-o',
+    '--out',
+    help="""A file in which Assembly acceession numbers
+    are mapped to corresponding RefSeq accession numbers""",
     required=True
 )
 
 
 args = parser.parse_args()
+
+
+# == Import them now ==
+import sys
+import gzip
+
+import pandas as pd
+
+import src.rg_tools_IO as rgIO
+from src.file_navigation import get_asm_report_fpath
 
 
 asm_sum_fpath = os.path.realpath(args.asm_sum)
@@ -147,4 +175,9 @@ write_output(replicon_map_df, outfpath)
 
 
 print(outfpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

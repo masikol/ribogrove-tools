@@ -1,25 +1,45 @@
 #!/usr/bin/env python3
 
-# TODO: add descrition
+# The script processes extracted gene sequences with ribotyper program from Ribovore suite.
+
+## Command line arguments
+
+### Input files:
+# 1. `-f / --in-fasta-file` -- input fasta file of 16S rRNA gene sequences.
+#   Mandatory.
+
+### Output files:
+# 1. `-o / --outdir` -- output directory.
+#   Mandatory.
+
+### Dependencies:
+# 1. `--ribotyper` -- path to ribotyper executable.
+#   Mandatory.
+# 2. `--acccept-file` -- file .accept for ribotyper.
+#   It should be one of the followong files:
+#   `data/archaea.accept`
+#   `data/bacteria.accept`
+#   Mandatory.
+
+### "Cached" files:
+# 1. `--prev-short-out-tsv` -- file `ribotyper_out.ribotyper.short.out` from the
+#   previous RiboGrove release.
+# 2. `--prev-long-out-tsv`` -- file `ribotyper_out.ribotyper.long.out` from the
+#   previous RiboGrove release.
 
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-
-import re
-import sys
-import argparse
-import subprocess as sp
-from typing import List
-
-import pandas as pd
-from Bio import SeqIO
-
-import src.rg_tools_IO as rgIO
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -36,19 +56,22 @@ parser.add_argument(
 
 parser.add_argument(
     '--prev-short-out-tsv',
-    help='TODO: add help',
+    help="""file `ribotyper_out.ribotyper.short.out` from the
+    previous RiboGrove release""",
     required=False
 )
 
 parser.add_argument(
     '--prev-long-out-tsv',
-    help='TODO: add help',
+    help="""file `ribotyper_out.ribotyper.long.out` from the
+    previous RiboGrove release""",
     required=False
 )
 
 # Output files
 
 parser.add_argument(
+    '-o',
     '--outdir',
     help='output directory',
     required=True
@@ -58,19 +81,33 @@ parser.add_argument(
 
 parser.add_argument(
     '--ribotyper',
-    help='TODO: add help',
+    help='path to ribotyper executable',
     required=True
 )
 
 parser.add_argument(
     '--acccept-file',
-    help='TODO: add help',
+    help="""file .accept for ribotyper.
+    It should be one of the followong files:
+    `data/archaea.accept`
+    `data/bacteria.accept`""",
     required=True
 )
 
-
-
 args = parser.parse_args()
+
+
+# == Import them now ==
+import re
+import sys
+import subprocess as sp
+from typing import List
+
+import pandas as pd
+from Bio import SeqIO
+
+import src.rg_tools_IO as rgIO
+
 
 # For convenience
 fasta_seqs_fpath = os.path.abspath(args.in_fasta_file)
@@ -410,4 +447,9 @@ if cache_mode:
 
 print('\nCompleted!')
 print(final_short_out_fpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

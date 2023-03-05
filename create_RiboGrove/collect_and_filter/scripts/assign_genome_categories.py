@@ -14,43 +14,36 @@
 
 ### Input files:
 # 1. `-f / --all-fasta-file` -- a fasta file with all extracted genes sequences.
-#   This file is the output of the script `extract_16S.py`. Mandatory.
+#   This file is the output of the script `extract_16S.py`.
+#   Mandatory.
 # 2. `-s / --all-stats-file` -- a file with per-replicon statistics of input 16S gene sequences.
-#   This file is the output of the script `extract_16S.py`, too. Mandatory.
-# 3. `-g / --gbk-dir` -- the directory where the downloaded `.gbk.gz` files are located
-#   (see script `download_genomes.py`). Mandatory.
+#   This file is the output of the script `extract_16S.py`, too.
+#   Mandatory.
+# 3. `-g / --genomes-dir` -- the directory where the downloaded genome files are located
+#   (see script `download_genomes.py`).
+#   Mandatory.
 
 ### Output files:
-# 1. `-o / --outfile` -- an output file mapping seqIDs (and Assembly IDs) to categories. Mandatory.
-
-### "Cached" files:
-# 1. `--prev-categories` -- a file of genome categories from the workdir of the previous RiboGrove release.
-# 2. `--prev-assm-acc-file` -- a file `*_refseq_accs_merged.tsv` from the workdir of the previous RiboGrove release.
+# 1. `-o / --outfile` -- output file mapping genes Assembly accession numbers to categories.
+#   Mandatory.
 
 ### Dependencies:
 # 1. `--seqkit` -- a `seqkit` executable: github.com/shenwei356/seqkit. Mandatory.
 
 
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-import re
-import sys
-import gzip
-import argparse
-import subprocess as sp
-from typing import Dict, List, Sequence, TextIO
-
-import pandas as pd
-from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
-
-from src.ribogrove_seqID import update_seqID_column_v2_to_v3
-from src.file_navigation import get_asm_report_fpath
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -83,7 +76,7 @@ parser.add_argument(
 parser.add_argument(
     '-o',
     '--outfile',
-    help='output file mapping genes seqIDs and Assembly IDs to categories',
+    help='output file mapping genes Assembly accession numbers to categories',
     required=True
 )
 
@@ -97,6 +90,22 @@ parser.add_argument(
 
 
 args = parser.parse_args()
+
+
+# == Import them now ==
+import re
+import sys
+import gzip
+import subprocess as sp
+from typing import Dict, List, Sequence, TextIO
+
+import pandas as pd
+from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
+
+from src.ribogrove_seqID import update_seqID_column_v2_to_v3
+from src.file_navigation import get_asm_report_fpath
+
 
 # For convenience
 fasta_seqs_fpath = os.path.abspath(args.all_fasta_file)
@@ -403,4 +412,9 @@ with open(outfpath, 'wt') as outfile:
 
 print('\n\nCompleted!')
 print(outfpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

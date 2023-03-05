@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# TODO: update description (--assm-acc-file)
-
 # This script produces a final (yet unannotated) file of target genes sequences.
 # It takes "all collected" file and several filter files (of seqIDs, one eper line)
 #   and filters these seqIDs out.
@@ -15,17 +13,24 @@
 ## Command line arguments
 ### Input files:
 # 1. `-i / --all-seqs-file` -- an input fasta file of gene sequences.
-#   This file is the output of the script `extract_16S.py`. Mandatory.
-# 2. `--NNN-fail-seqIDs` -- a file of seqIDs which didn't pass NNN filter, one per line.
-#   This file is the output of the script `find_NNN.py`. Mandatory.
+#   This file is the output of the script `extract_16S.py`.
+#   Mandatory.
+# 2. `--ribotyper-fail-seqIDs` -- a file of seqIDs which didn't pass ribotyper filter, one per line.
+#   This file is the output of the script `find_ribotyper_fail_seqs.py`.
+#   Mandatory.
 # 3. `--aberrant-seqIDs` -- a file of seqIDs which didn't pass "find aberrant genes" filter, one per line.
-#   This file is the output of the script `find_aberrant_genes.py`. Mandatory.
+#   This file is the output of the script `find_aberrant_genes.py`.
+#   Mandatory.
 # 4. `--repeats-fail-seqIDs` -- a file of seqIDs which didn't pass "repeats" filter, one per line.
-#   This file is the output of the script `find_repeats.py`. Mandatory.
-# 5. `--blacklist-seqIDs` -- a file of seqIDs you know should be discarded. Mandatory.
-# 6. `--whitelist-seqIDs` -- a file of seqIDs you know should not be discarded. Mandatory.
-# 7. `-a / --assm-acc-file` -- a TSV file of 4 columns: (`ass_id`, `gi_number`, `acc`, `title`).
-#   This file is the output of the script `merge_assIDs_and_accs.py`. Mandatory.
+#   This file is the output of the script `find_repeats.py`.
+#   Mandatory.
+# 5. `--blacklist-seqIDs` -- a file of seqIDs you know should be discarded.
+#   Mandatory.
+# 6. `--whitelist-seqIDs` -- a file of seqIDs you know should not be discarded.
+#   Mandatory.
+# 7. `-m / --replicon-map` -- a replicon map file.
+#   This is the output of the script `make_replicon_map.py`.
+#   Mandatory.
 
 ### Output files:
 # 1. `--out-fasta-file` -- output fasta file of final sequences.
@@ -34,20 +39,18 @@
 
 
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-
-import sys
-import argparse
-
-import pandas as pd
-from Bio import SeqIO
-
-import src.rg_tools_IO as rgIO
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -62,7 +65,7 @@ parser.add_argument(
 
 parser.add_argument(
     '--ribotyper-fail-seqIDs',
-    help='TODO: add help',
+    help='a file of seqIDs which didn\'t pass ribotyper filter, one per line',
     required=True
 )
 
@@ -93,7 +96,8 @@ parser.add_argument(
 parser.add_argument(
     '-m',
     '--replicon-map',
-    help='TODO: add help',
+    help="""a replicon map file.
+    This is the output of the script `make_replicon_map.py`""",
     required=True
 )
 
@@ -106,6 +110,15 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
+
+
+# == Import them now ==
+import sys
+
+import pandas as pd
+from Bio import SeqIO
+
+import src.rg_tools_IO as rgIO
 
 
 # For convenience
@@ -185,5 +198,9 @@ with open(out_fasta_fpath, 'wt') as out_fasta_file:
 print(out_fasta_fpath)
 print('Done')
 
-
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

@@ -12,7 +12,7 @@ Here you can find scripts implementing individual steps of RiboGrove creation pi
 
 4. `download_genomes.py` downloads genomes: 1) `.gbff.gz` files of annotated genomic sequences; 2) `_assembly_report.txt` files with brief info such as sequencing technologies.
 
-5. `make_replicon_map.py` makes a helper file in which Assembly acceession numbers (for example `GCF_000005825.2`) are mapped to corresponding RefSeq accession numbers (in the example, `NC_013791.2`, `NC_013792.1` `NC_013793.1`).
+5. `make_replicon_map.py` makes a helper file in which Assembly acceession numbers (for example `GCF_000005825.2`) are mapped to corresponding RefSeq accession numbers (in the example, `NC_013791.2`, `NC_013792.1` and `NC_013793.1`).
 
 6. `filter_asm_summary_step2.py`, having genome sequences and RefSeq accessions, filters downloaded Assembly Summary again: 1) removes genomes which don’t belong to the current RefSeq release using the `.catalog` file; 2) removes genomes with sequences containing at least 3 Ns in row.
 
@@ -49,3 +49,5 @@ Here you can find scripts implementing individual steps of RiboGrove creation pi
 18. `calculate_entropy.py` calculates intragenomic variability of final gene sequences.
 
 19. `check_primers_mfeprimer.py` calculates coverage of different primer pairs to different V-regions of bacterial 16S rRNA genes.
+
+20. `calculate_GCNs.py` calculates 16S rRNA Gene Copy Numbers per genome. Also, it can calculate "primer-wise" GCNs. In this mode, the script also tests if PCR primers anneal to gene sequences. Thus, the script will give a genome +1 copy only if the gene sequence can form a PCR product with a primer pair.

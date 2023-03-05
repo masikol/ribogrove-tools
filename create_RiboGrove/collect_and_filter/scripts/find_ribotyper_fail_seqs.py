@@ -1,21 +1,35 @@
 #!/usr/bin/env python3
 
-# TODO: add description
+# The script records which gene sequences didn’t pass the `ribotyper` filter,
+#   i.e. sequences with the following unexpected features:
+#   "NoHits", "UnacceptableModel", "MinusStrand", "LowScore", "LowCoverage".
+
+## Command line arguments
+
+### Input files:
+# 1. `-i / --in-short-out-tsv` -- input .short.out.tsv file
+#   outputted by the script `check_seqs_with_ribotyper.py`.
+#   Mandatory.
+
+### Output files:
+# 1. `-o / --out-fail-file` -- output file of seqIDs which don't pass the filter,
+#   one per line.
+#   Mandatory
+
 
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-
-import sys
-import argparse
-from typing import Tuple
-
-import numpy as np
-import pandas as pd
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -24,7 +38,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     '-i',
     '--in-short-out-tsv',
-    help='input .short.out.tsv file',
+    help="""input .short.out.tsv file
+    outputted by the script `check_seqs_with_ribotyper.py`""",
     required=True
 )
 
@@ -37,8 +52,15 @@ parser.add_argument(
     required=True
 )
 
-
 args = parser.parse_args()
+
+
+# == Import them now ==
+import sys
+from typing import Tuple
+
+import numpy as np
+import pandas as pd
 
 
 # For convenience
@@ -120,4 +142,9 @@ with open(out_fail_fpath, 'w') as outfile:
 
 print('Completed!')
 print(out_fail_fpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

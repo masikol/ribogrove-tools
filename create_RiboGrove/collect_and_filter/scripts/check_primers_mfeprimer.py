@@ -26,26 +26,18 @@
 
 
 import os
-
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-import sys
-import glob
-import json
-import shutil
-import argparse
-import subprocess as sp
-
-from Bio import SeqIO
-import pandas as pd
-
 from src.rg_tools_time import get_time
-from src.primers import make_primer_pair_key
-from src.ribogrove_seqID import parse_asm_acc
-from src.file_navigation import primer_pair_key_2_outfpath
+
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -93,6 +85,22 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
+
+
+# == Import them now ==
+import sys
+import glob
+import json
+import shutil
+import subprocess as sp
+
+from Bio import SeqIO
+import pandas as pd
+
+from src.rg_tools_time import get_time
+from src.primers import make_primer_pair_key
+from src.ribogrove_seqID import parse_asm_acc
+from src.file_navigation import primer_pair_key_2_outfpath
 
 
 # For convenience
@@ -522,4 +530,9 @@ except OSError as err:
 
 print('\n{} -- Completed!'.format(get_time()))
 print(outdir_path)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

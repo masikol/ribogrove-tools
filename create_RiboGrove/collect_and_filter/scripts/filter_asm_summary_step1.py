@@ -1,23 +1,47 @@
 #!/usr/bin/env python3
 
-# TODO: add description
+# This script filters raw file assembly_summary.txt from RefSeq.
+# The only thing is that the file must be gzipped.
+# The file is for example this one: https://ftp.ncbi.nlm.nih.gov/genomes/refseq/archaea/assembly_summary.txt
+# "Filters" means that the script:
+#   1) retains only genomes of “Complete Genome” and “Chromosome” completeness;
+#   2) removes “Whole genome shotgun” sequences, since they don’t represent completely assembled genomes;
+#   3) removes genomes from the blacklist (`data/ad_hoc/assembly_blacklist.tsv`).
+
+## Command line arguments
+
+### Input files:
+# 1. `-i / --in-ass-sum` -- a gzipped file "assembly_summary.txt.gz" from RefSeq.
+#   Mandatory.
+# 2. `-a / --refseq-catalog` -- A RefSeq "catalog" file of the current release.
+#   This is the file `RefSeq-releaseXXX.catalog.gz` from here:
+#   https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/.
+#   It is better to filter this file with `filter_refseq_catalog.py` before running current script
+#   Mandatory.
+# 3. `-b / --acc-blacklist` -- A TSV file listing Assembly accession numbers (without version) to be discarded.
+#   The file should contain a header.
+#   Also, it should contains at least one column (of accession numbers).
+#   The second column (reason for rejection) is optional.
+#   Mandatory.
+
+### Output files:
+# 1. `-o / --out-ass-sum` -- a filtered assembly summary file.
+#   Mandatory.
 
 
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-import sys
-import gzip
-import argparse
-
-import numpy as np
-import pandas as pd
-
-import src.rg_tools_IO as rgIO
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -27,8 +51,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     '-i',
     '--in-ass-sum',
-    help="""TSV file (with header) with
-    Assembly IDs, GI numbers, ACCESSION.VERSION's and titles separated by tabs""",
+    help='a gzipped file "assembly_summary.txt.gz" from RefSeq.',
     required=True
 )
 
@@ -46,7 +69,7 @@ It is better to filter this file with `filter_refseq_catalog.py` before running 
 parser.add_argument(
     '-b',
     '--acc-blacklist',
-    help="""A TSV file listing RefSeq Accession numbers (without version) to be discarded.
+    help="""A TSV file listing Assembly accession numbers (without version) to be discarded.
     The file should contain a header.
     Also, it should contains at least one column (of accession numbers).
     The second column (reason for rejection) is optional.""",
@@ -58,12 +81,21 @@ parser.add_argument(
 parser.add_argument(
     '-o',
     '--out-ass-sum',
-    help="""a filtered TSV file (with header) with
-    GI numbers, ACCESSION.VERSION's and titles separated by tabs""",
+    help='a filtered assembly summary file',
     required=True
 )
 
 args = parser.parse_args()
+
+
+# == Import them now ==
+import sys
+import gzip
+
+import numpy as np
+import pandas as pd
+
+import src.rg_tools_IO as rgIO
 
 
 infpath = os.path.realpath(args.in_ass_sum)
@@ -212,4 +244,9 @@ write_output(ass_sum_df, outfpath)
 
 print('\nCompleted!')
 print(outfpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

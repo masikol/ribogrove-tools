@@ -32,21 +32,18 @@
 #   Sequences having repeats longer than this value will be discarded. Mandatory.
 
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-
-import sys
-import argparse
-from typing import Tuple
-
-import repeatfinder as rf # https://github.com/deprekate/RepeatFinder
-from Bio import SeqIO
-
-import src.rg_tools_IO as rgIO
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -95,6 +92,16 @@ parser.add_argument(
 )
 
 args = parser.parse_args()
+
+
+# == Import them now ==
+import sys
+from typing import Tuple
+
+import repeatfinder as rf # https://github.com/deprekate/RepeatFinder
+from Bio import SeqIO
+
+import src.rg_tools_IO as rgIO
 
 
 # For convenience
@@ -205,4 +212,9 @@ print(f'\r{i+1}/{num_seqs}')
 print('Completed!')
 print(out_fail_fpath)
 print(out_repeats_log_fpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)

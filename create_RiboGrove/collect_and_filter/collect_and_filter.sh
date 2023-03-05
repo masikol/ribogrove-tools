@@ -74,9 +74,10 @@ CATEGORIES_DIR="${WORKDIR}/categories"
 TAXONOMY_DIR="${WORKDIR}/taxonomy"
 LOGS_DIR="${WORKDIR}/logs"
 ABERRATIONS_AND_HETEROGENEITY_DIR="${WORKDIR}/aberrations_and_heterogeneity"
+GCNS_DIR="${WORKDIR}/GCNs"
 
 dirs_to_create=(
-  "${WORKDIR}" "${LOGS_DIR}" "${CATEGORIES_DIR}" \
+  "${WORKDIR}" "${LOGS_DIR}" "${CATEGORIES_DIR}" "${GCNS_DIR}" \
   "${TAXONOMY_DIR}" "${GENOMES_DATA_DIR}" "${GENOMES_GBK_DIR}" \
   "${GENES_DIR}" "${GENES_STATS_DIR}" "${ABERRATIONS_AND_HETEROGENEITY_DIR}"
 )
@@ -461,4 +462,18 @@ if [[ "${CALC_PRIMERS_COVERAGE}" == true ]]; then
       --outdir "${PRIMERS_DIRPATH}" \
       --mfeprimer "${MFEPRIMER}"
   fi
+fi
+
+
+# == Calculate Gene Copy Numbers ==
+
+if [[ "${CALC_PRIMERS_COVERAGE}" == true ]]; then
+  python3 "${SCRIPTS_DIR}/calculate_GCNs.py" \
+    --final-gene-stats "${PER_GENE_STATS}" \
+    --primers-dir "${PRIMERS_DIRPATH}" \
+    --outdir "${GCNS_DIR}"
+else
+  python3 "${SCRIPTS_DIR}/calculate_GCNs.py" \
+    --final-gene-stats "${PER_GENE_STATS}" \
+    --outdir "${GCNS_DIR}"
 fi

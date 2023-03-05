@@ -1,51 +1,77 @@
 #!/usr/bin/env python3
 
-# TODO: add description
+# The script downloads annotated genome sequences in GenBank format from the GenBank
+#   database and saves them all to a local directory.
+# The script downloads 1) assembly_report.txt; and 2) .gbff.gz files.
+# Requires Internet connection.
+
+## Command line arguments
+
+### Input files:
+# 1. `-i / --asm-sum` -- an assembly summary file after the 1st step of filtering.
+#   Mandatory.
+
+### Output files:
+# 1. `-o / --outdir` -- a directory where output files will be located.
+#   Mandatory.
+# 2. `-l / --log-file` -- a log file, which will contain information about errors.
+#   If a record is successfully downloaded, the the script will write "ok" to the
+#   correcponding line of log file.
+#   Mandatory.
 
 
 import os
+from src.rg_tools_time import get_time
 
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-
-import sys
-import time
-import argparse
-
-import pandas as pd
-
-import src.rg_tools_IO as rgIO
-from src.GenomeDownloader import GenomeDownloader, DownloadStatus
-from src.rg_tools_time import print_time, get_time
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
+# Input
 parser.add_argument(
     '-i',
     '--asm-sum',
-    help="""TODO: add help""",
+    help='an assembly summary file after the 1st step of filtering',
     required=True
 )
 
+# Output
 parser.add_argument(
     '-o',
     '--outdir',
-    help='output directory that will contain downloaded gbff.gz files',
+    help="""A directory where output files will be located.
+    If a genome is already downloaded, the script will just skip it.""",
     required=True
 )
 
 parser.add_argument(
     '-l',
     '--log-file',
-    help='log file to track if all genomes are successfully downloaded',
+    help='a log file, which will contain information about errors',
     required=True
 )
 
-
 args = parser.parse_args()
+
+
+# == Import them now ==
+import sys
+import time
+
+import pandas as pd
+
+import src.rg_tools_IO as rgIO
+from src.rg_tools_time import get_time
+from src.GenomeDownloader import GenomeDownloader, DownloadStatus
 
 
 asm_sum_fpath = os.path.realpath(args.asm_sum)
@@ -149,7 +175,12 @@ print('  {:,}/{:,} other genomes have been already downloaded earlier.'.format(a
 print('  {:,}/{:,} genomes failed to get downloaded (see the log file for details).\n'.format(failed_count, total_genome_count))
 print(outdir)
 print(log_fpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 if failed_count == 0:
     sys.exit(0)

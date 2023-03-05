@@ -1,59 +1,53 @@
 #!/usr/bin/env python3
 
-# TODO: update description
-# The script removes unwanted genomes. RiboGrove will not take 16S sequences
-#   from these removed genomes.
-# The script performs 3 steps:
-#   1) remove genomes which contain at least one sequence
-#      with title containing string "whole genome shotgun":
-#      they are not parts of completely assembled genomes;
-#   2) remove sequences added to RefSeq after the current release;
-#   3) remove sequences from the blacklist (see option `-b`);
+# The script filters downloaded Assembly Summary again:
+#   1) removes genomes which don’t belong to the current RefSeq release
+#     using the `.catalog` file;
+#   2) removes genomes with sequences containing at least 3 Ns in row.
 
 ## Command line arguments
 
 ### Input files:
-# 1. `-i / --raw-merged-file` -- a not-filtered input TSV file mapping Assembly IDs to
-#   RefSeq GI numbers, RefSeq ACCESSION.VERSIONs and titles.
-#   This is the output file of the script `merge_assIDs_and_accs.py`. Mandatory.
-# 2. `-a / --refseq-catalog` -- A RefSeq "catalog" file of the current release.
+# 1. `-i / --in-asm-sum` -- an assembly summary file after the 1st step of filtering.
+#   Mandatory.
+# 2. `-m / --replicon-map` -- a replicon map file.
+#   This is the output of the script `make_replicon_map.py`
+#   Mandatory.
+# 3. `-a / --refseq-catalog` -- A RefSeq "catalog" file of the current release.
 #   This is the file `RefSeq-releaseXXX.catalog.gz` from here:
 #   https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/.
 #   It is better to filter this file with `filter_refseq_catalog.py` before running current script.
 #   Mandatory.
-# 3. `-b / --acc-blacklist` -- A TSV file listing RefSeq Accession numbers (without version) to be discarded.
-#   The file should contain a header.
-#   Also, it should contains at least one column (of accession numbers).
-#   The second column (reason for rejection) is optional.
+# 4. `-g / --genomes-dir` -- a directory where the downlaoded genomes are located.
+#   It is the output of the script `download_genomes.py`.
+#   Mandatory.
+
+### Cache files:
+# 1. `--prev-asm-sum-final` -- an assembly summary file after the 2nd step of filtering
+#   from the previous RiboGrove release.
+#   Optional.
+# 2. `--prev-NNN-asm-accs` -- a file `asm_accs_NNN.txt.gz` from the previous RiboGrove release.
 #   Optional.
 
 ### Output files:
 
-# 1. `--outfile` -- output TSV file of 4 columns:
-#   1) Assembly ID;
-#   2) GI number;
-#   3) ACCESSION.VERSION;
-#   4) RefSeq sequence title.
+# 1. `--outfile` -- an assembly summary file after the 2nd filtering step.
 #   Mandatory.
 
 
 import os
-
-print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
-
-import sys
-import gzip
-import argparse
-
-import pandas as pd
-from Bio import SeqIO
-
-import src.rg_tools_IO as rgIO
 from src.rg_tools_time import get_time
-from src.file_navigation import get_genome_seqannot_fpath
+
+print(
+    '\n|=== {} STARTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
 
 
 # == Parse arguments ==
+import argparse
 
 parser = argparse.ArgumentParser()
 
@@ -62,14 +56,15 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     '-i',
     '--in-asm-sum',
-    help="""TODO: add help""",
+    help='an assembly summary file after the 1st step of filtering',
     required=True
 )
 
 parser.add_argument(
     '-m',
     '--replicon-map',
-    help="""TODO: add help""",
+    help="""a replicon map file.
+    This is the output of the script `make_replicon_map.py`""",
     required=True
 )
 
@@ -95,13 +90,14 @@ parser.add_argument(
 
 parser.add_argument(
     '--prev-asm-sum-final',
-    help='TOTO: add help',
+    help="""an assembly summary file after the 2nd step of filtering
+    from the previous RiboGrove release""",
     required=False
 )
 
 parser.add_argument(
     '--prev-NNN-asm-accs',
-    help='TOTO: add help',
+    help='a file `asm_accs_NNN.txt.gz` from the previous RiboGrove release',
     required=False
 )
 
@@ -110,11 +106,23 @@ parser.add_argument(
 parser.add_argument(
     '-o',
     '--out-asm-sum',
-    help="""TODO: add help""",
+    help='an assembly summary file after the 2nd filtering step',
     required=True
 )
 
 args = parser.parse_args()
+
+
+# == Import them now ==
+import sys
+import gzip
+
+import pandas as pd
+from Bio import SeqIO
+
+import src.rg_tools_IO as rgIO
+from src.rg_tools_time import get_time
+from src.file_navigation import get_genome_seqannot_fpath
 
 
 infpath = os.path.realpath(args.in_asm_sum)
@@ -411,4 +419,9 @@ with gzip.open(outfpath, 'wt') as outfile:
 
 print('\n{} -- Completed!'.format(get_time()))
 print(outfpath)
-print(f'\n|=== EXITTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
+print(
+    '\n|=== {} EXITTING SCRIPT `{}` ===|\n' \
+    .format(
+        get_time(), os.path.basename(__file__)
+    )
+)
