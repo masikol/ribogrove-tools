@@ -124,6 +124,7 @@ def download_genomes(ass_sum_df, outdir, log_fpath):
                     '{} -- {}: genome is already here\n'.format(get_time(), asm_acc)
                 )
             elif status_code == DownloadStatus.DOWNLOADED:
+                time.sleep(1) # sleep a bit
                 downloaded_count += 1
                 logfile.write(
                     '{} -- {}: ok, downloaded\n'.format(get_time(), asm_acc)
@@ -147,7 +148,6 @@ def download_genomes(ass_sum_df, outdir, log_fpath):
                     .format(get_time(), i+1, total_genome_count, already_here_count, downloaded_count, failed_count)
             )
             sys.stdout.flush()
-            time.sleep(1)
         # end for
     # end with
 

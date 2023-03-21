@@ -17,7 +17,7 @@ fi
 # Get work directory
 WORKDIR="$1"
 if [[ ! -d "${WORKDIR}" ]]; then
-  echo -e "\nError: direcotry ${WORKDIR} does not exist!" >&2
+  echo -e "\nError: directory ${WORKDIR} does not exist!" >&2
   print_help
   exit 1
 fi
@@ -27,8 +27,8 @@ OUTDIR="$2"
 if [[ ! -d "${OUTDIR}" ]]; then
   mkdir -vp "${OUTDIR}"
   if [[ $? != 0 ]]; then
-  echo "Error: cannot reate output dir '${OUTDIR}'" >&2
-  exit 1
+    echo "Error: cannot reate output dir '${OUTDIR}'" >&2
+    exit 1
   fi
 fi
 

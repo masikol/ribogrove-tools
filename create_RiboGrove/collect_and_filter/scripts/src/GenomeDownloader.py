@@ -28,10 +28,12 @@ class GenomeDownloader:
             self.assembly_accession,
             outdir
         )
+        self.asm_report_check_time_fpath = self.asm_report_fpath + '.modify_timestamp'
         self.asm_seqannot_fpath = get_genome_seqannot_fpath(
             self.assembly_accession,
             outdir
         )
+        self.asm_seqannot_check_time_fpath = self.asm_seqannot_fpath + '.modify_timestamp'
     # end def
 
 
@@ -134,25 +136,65 @@ class GenomeDownloader:
     # end def
 
     def _check_asm_report_content(self):
-        with open(self.asm_report_fpath, 'rt') as infile:
-            if 'Error 404' in infile.read():
-                raise Error404('Assembly report file not found at NCBI server: 404.')
-            # end if
+        if self._asm_report_modified():
+            with open(self.asm_report_fpath, 'rt') as infile:
+                if 'Error 404' in infile.read():
+                    raise Error404('Assembly report file not found at NCBI server: 404.')
+                # end if
+            # end with
+            self._rewrite_asm_report_timestamp()
+        # end if
+    # end def
+
+    def _asm_report_modified(self):
+        if not os.path.exists(self.asm_report_check_time_fpath):
+            return True
+        # end if
+        return os.path.getmtime(self.asm_report_check_time_fpath) \
+               < os.path.getmtime(self.asm_report_fpath)
+    # end def
+
+    def _rewrite_asm_report_timestamp(self):
+        if os.path.exists(self.asm_report_check_time_fpath):
+            os.unlink(self.asm_report_check_time_fpath)
+        # end if
+        with open(self.asm_report_check_time_fpath, 'wt') as file:
+            pass
         # end with
     # end def
 
     def _check_seqannot_content(self):
-        try:
-            self._test_gb_gz_file(self.asm_seqannot_fpath)
-        except gzip.BadGzipFile as err:
-            if self._seqannot_file_is_404():
-                raise Error404('.gbff.gz file not found at NCBI server: 404.')
-            else:
-                raise gzip.BadGzipFile('.gbff.gz file is not a gzip file')
-            # end if
-        except NoSeqsError as err:
-            raise NoSeqsError('.gbff.gz file is not a GenBank file.')
-        # end try
+        if self._asm_seqannot_modified():
+            try:
+                self._test_gb_gz_file(self.asm_seqannot_fpath)
+            except gzip.BadGzipFile as err:
+                if self._seqannot_file_is_404():
+                    raise Error404('.gbff.gz file not found at NCBI server: 404.')
+                else:
+                    raise gzip.BadGzipFile('.gbff.gz file is not a gzip file')
+                # end if
+            except NoSeqsError as err:
+                raise NoSeqsError('.gbff.gz file is not a GenBank file.')
+            # end try
+            self._rewrite_asm_seqannot_timestamp()
+        # end if
+    # end def
+
+    def _asm_seqannot_modified(self):
+        if not os.path.exists(self.asm_seqannot_check_time_fpath):
+            return True
+        # end if
+        return os.path.getmtime(self.asm_seqannot_check_time_fpath) \
+               < os.path.getmtime(self.asm_seqannot_fpath)
+    # end def
+
+    def _rewrite_asm_seqannot_timestamp(self):
+        if os.path.exists(self.asm_seqannot_check_time_fpath):
+            os.unlink(self.asm_seqannot_check_time_fpath)
+        # end if
+        with open(self.asm_seqannot_check_time_fpath, 'wt') as file:
+            pass
+        # end with
     # end def
 
     def _test_gb_gz_file(self, fpath):

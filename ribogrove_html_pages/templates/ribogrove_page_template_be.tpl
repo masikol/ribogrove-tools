@@ -538,7 +538,7 @@
 <p><strong>Прыклад 2</strong>. Выбраць усе ідэнтыфікатары паслядоўнасцяў (то бок часткі загалоўкаў да першага прабела).</p>
 <p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Опцыя <span class="samp">-i</span> кажа праграме, каб тая падавала на выхад толькі ідэнтыфікатары.</p>
-<p><strong>Прыклад 3</strong>. Выбраць усе (RefSeqʼаўскія) коды доступу.</p>
+<p><strong>Прыклад 3</strong>. Выбраць усе коды доступу геномных паслядоўнасцяў з БД RefSeq.</p>
 <p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | cut -f2 -d':' | sort | uniq</p>
 <p class="samp-comment">Такая команда спрацуе, толькі калі на кампʼютары ўсталяваныя ўтыліты <span class="samp">cut</span>, <span class="samp">sort</span>, і <span class="samp">uniq</span> (на Linux і Mac OS гэтыя праграмы звычайна ўсталяваныя разам з аперацыйная сістэмай).</p>
 <p><strong>Прыклад 4</strong>. Выбраць усе коды доступу геномных зборак.</p>

@@ -12,7 +12,7 @@ function print_help {
   echo '  created from file RefSeq-release216.catalog.gz,' >&2
   echo '  the script will not filter it again and thus save some time.' >&2
   echo 'Example:' >&2
-  echo "  bash ${0} ../demo/demo.conf -a" >&2
+  echo "  bash ${0} config/archaea_example.conf -a" >&2
 }
 
 
@@ -111,7 +111,7 @@ BLACKLIST_SEQIDS_FILE="${SCRIPTS_DATA_DIR}/ad_hoc/blacklist_seqIDs.tsv"
 WHITELIST_SEQIDS_FILE="${SCRIPTS_DATA_DIR}/ad_hoc/whitelist_seqIDs.tsv"
 
 ALL_GENES_FASTA="${GENES_DIR}/all_collected.fasta"
-ALL_GENES_STATS="${GENES_DIR}/all_collected_stats.tsv"
+ALL_GENES_STATS="${GENES_STATS_DIR}/all_collected_stats.tsv"
 
 TAXONOMY_FILE="${TAXONOMY_DIR}/taxonomy.tsv"
 
@@ -293,6 +293,7 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --in-fasta-file "${ALL_GENES_FASTA}" \
     --outdir "${RIBOTYPER_OUTDIR}" \
     --ribotyper "${RIBOTYPER}" \
+    --ribotyper-threads "${RIBOTYPER_THREADS}" \
     --prev-short-out-tsv "${PREV_RIBOTYPER_SHORT_OUT_TSV}" \
     --prev-long-out-tsv "${PREV_RIBOTYPER_LONG_OUT_TSV}" \
     --acccept-file "${RIBOTYPER_ACCEPT_FILE}"
@@ -301,6 +302,7 @@ else
     --in-fasta-file "${ALL_GENES_FASTA}" \
     --outdir "${RIBOTYPER_OUTDIR}" \
     --ribotyper "${RIBOTYPER}" \
+    --ribotyper-threads "${RIBOTYPER_THREADS}" \
     --acccept-file "${RIBOTYPER_ACCEPT_FILE}"
 fi
 
@@ -368,6 +370,7 @@ python3 "${SCRIPTS_DIR}/annotate_seq_names.py" \
 
 
 # == Make result sequences pretty: 70 bp per line ==
+
 tmp_fasta="${WORKDIR}/tmp.fasta"
 cat "${ANNOTATED_RESULT_FASTA}" | "${SEQKIT}" seq -uw 70 > "${tmp_fasta}"
 cat "${tmp_fasta}" > "${ANNOTATED_RESULT_FASTA}"
@@ -388,6 +391,7 @@ fi
 
 
 # == Annotate discarded sequences: add taxonomy and categories to their headers ==
+
 python3 "${SCRIPTS_DIR}/annotate_seq_names.py" \
   --fasta-seqs-file "${DISCARDED_FASTA}" \
   --taxonomy-file "${TAXONOMY_FILE}" \
@@ -396,6 +400,7 @@ python3 "${SCRIPTS_DIR}/annotate_seq_names.py" \
 
 
 # == Make result sequences pretty: 70 bp per line ==
+
 tmp_fasta="${WORKDIR}/tmp.fasta"
 cat "${ANNOTATED_DISCARDED_FASTA}" | "${SEQKIT}" seq -uw 70 > "${tmp_fasta}"
 cat "${tmp_fasta}" > "${ANNOTATED_DISCARDED_FASTA}"

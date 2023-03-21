@@ -126,7 +126,7 @@ def make_basic_gcn_df(final_stats_fpath):
     stats_df = pd.read_csv(final_stats_fpath, sep='\t')
     basic_gcn_df = stats_df.groupby('asm_acc', as_index=False) \
         .agg({'seqID': lambda x: x.nunique()}) \
-        .rename(columns={'seqID': 'gcn'})
+        .rename(columns={'seqID': '16S_rRNA_gcn'})
     return basic_gcn_df
 # end def
 
@@ -160,9 +160,9 @@ def make_primers_gcn_dfs(primer_pairs,
 
         primers_gcn_df = primers_anneal_df.groupby('asm_acc', as_index=False) \
             .agg({'seqID': lambda x: x.nunique()}) \
-            .rename(columns={'seqID': 'gcn'}) \
+            .rename(columns={'seqID': '16S_rRNA_gcn'}) \
             .merge(fake_total_df, on='asm_acc', how='right')
-        primers_gcn_df['gcn'] = primers_gcn_df['gcn'].fillna(0).map(int)
+        primers_gcn_df['16S_rRNA_gcn'] = primers_gcn_df['16S_rRNA_gcn'].fillna(0).map(int)
 
         primer_gcn_outfpath = os.path.join(
             outdir_path,

@@ -171,7 +171,7 @@ print()
 
 
 print("Started")
-print('1. Filtering sequences...')
+print('Filtering sequences...')
 
 blacklist = set(
     pd.read_csv(blacklist_fpath, sep='\t')['seqID']

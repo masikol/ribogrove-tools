@@ -55,7 +55,13 @@ def make_ribogrove_top_shortest_df(gene_stats_df, top_num=10):
             )
 
             # Append selected rows to the output dataframe
-            top_df = top_df.append(series_to_append, ignore_index=True)
+            top_df = pd.concat(
+                [
+                    top_df,
+                    series_to_append.to_frame().T,
+                ],
+                ignore_index=True
+            )
 
             if top_genome_counter == min_len_domain_df.shape[0] - 1:
                 break

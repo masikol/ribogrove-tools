@@ -96,7 +96,7 @@ FAIL_FEATURES = (
     'UnacceptableModel',
     'MinusStrand',
     'LowScore',
-    'LowCoverage',
+    # 'LowCoverage', # TODO: remove?
 )
 
 
@@ -134,6 +134,7 @@ print(
 )
 
 failed_seqIDs = find_failed_seqIDs(in_short_out_fpath)
+print('{:,} sequences have failed this filter'.format(len(failed_seqIDs)))
 
 with open(out_fail_fpath, 'w') as outfile:
     outfile.write('\n'.join(failed_seqIDs))

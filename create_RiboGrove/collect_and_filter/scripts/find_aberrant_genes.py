@@ -414,11 +414,50 @@ def find_insertions_and_deletions(pivotal_aln_record: SeqRecord,
 # end def
 
 
-def set_asm_acc(row):
-    row['asm_acc'] = parse_asm_acc(row['target'])
-    return row
-# end def
+def read_rt_long_df(ribotyper_long_fpath, ribotyper_fail_fpath):
+    rt_long_df = pd.read_csv(
+        ribotyper_long_fpath,
+        sep='\t',
+        dtype={
+            'target': str,
+            'pass_fail': str,
+            'length': pd.Int32Dtype(),
+            'fm': str,
+            'fam': str,
+            'domain': str,
+            'model': str,
+            'strnd': str,
+            'ht': str,
+            'tscore': str,
+            'bscore': str,
+            's_per_nt': str,
+            'bevalue': str,
+            'tcov': str,
+            'bcov': str,
+            'bfrom': str,
+            'bto': str,
+            'mfrom': str,
+            'mto': str,
+            'scdiff': str,
+            'scd_per_nt': str,
+            'model': str,
+            'tscore': str,
+            'unexpected_features': str,
+        }
+    )
 
+    # Remove sequences which failed ribotyper filter
+    ribotyper_fail_seqIDs = read_ribotyper_failed_seqIDs(ribotyper_fail_fpath)
+    rt_long_df = rt_long_df.query('not target in @ribotyper_fail_seqIDs').copy()
+
+    # for NoHist, whose `tscore` is '-'
+    rt_long_df['tscore'] = rt_long_df['tscore'].replace({'-': 0.0})
+    rt_long_df['tscore'] = rt_long_df['tscore'].map(float)
+
+    rt_long_df['asm_acc'] = np.repeat('', rt_long_df.shape[0])
+    rt_long_df = rt_long_df.apply(set_asm_acc, axis=1)
+    return rt_long_df
+# end def
 
 def read_ribotyper_failed_seqIDs(ribotyper_fail_fpath):
     with open(ribotyper_fail_fpath, 'rt') as infile:
@@ -430,6 +469,11 @@ def read_ribotyper_failed_seqIDs(ribotyper_fail_fpath):
         )
     # end with
     return fail_seqIDs
+# end def
+
+def set_asm_acc(row):
+    row['asm_acc'] = parse_asm_acc(row['target'])
+    return row
 # end def
 
 
@@ -448,10 +492,8 @@ aberrant_seqIDs_fpath = os.path.join(outdpath, 'aberrant_seqIDs.txt')
 asm_sum_df = rgIO.read_ass_sum_file(asm_sum_fpath)
 
 # Read ribotyper's long.out.tsv file
-rt_long_df = pd.read_csv(ribotyper_long_fpath, sep='\t')
+rt_long_df = read_rt_long_df(ribotyper_long_fpath, ribotyper_fail_fpath)
 
-rt_long_df['asm_acc'] = np.repeat('', rt_long_df.shape[0])
-rt_long_df = rt_long_df.apply(set_asm_acc, axis=1)
 
 # Get unique Assembly accessions
 asm_accs = set(asm_sum_df['asm_acc'])
@@ -490,7 +532,11 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
     # Iterate over assemblies
     asm_accs_left = asm_accs - cached_asm_accs
     for i, asm_acc in enumerate(asm_accs_left):
-        print(f'\rDoing genome #{i+1}/{len(asm_accs_left)}: {asm_acc}', end=' '*10)
+        print(
+            '\r{} -- Doing genome #{}/{}: {}' \
+                .format(get_time(), i+1, len(asm_accs_left), asm_acc),
+            end=' '*10
+        )
 
         # Select SSU genes from current genome
         selected_seq_records = select_gene_seqs(asm_acc, seq_records)

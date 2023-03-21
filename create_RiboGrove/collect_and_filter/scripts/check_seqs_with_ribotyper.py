@@ -94,6 +94,14 @@ parser.add_argument(
     required=True
 )
 
+# Parameters
+parser.add_argument(
+    '--ribotyper-threads',
+    help='number of threads for ribotyper to use',
+    required=False,
+    default=1
+)
+
 args = parser.parse_args()
 
 
@@ -158,6 +166,21 @@ if cache_mode:
             sys.exit(1)
         # end if
     # end for
+# end if
+
+if args.ribotyper_threads is None:
+    ribotyper_threads = 1
+else:
+    try:
+        ribotyper_threads = int(args.ribotyper_threads)
+        if ribotyper_threads < 1:
+            raise ValueError
+        # end if
+    except ValueError:
+        print('Error: `--ribotyper-threads` is invalid: `{}`'.format(args.ribotyper_threads))
+        print('  It must be a positive integer number.')
+        sys.exit(1)
+    # end try
 # end if
 
 
@@ -311,7 +334,8 @@ def run_ribotyper(query_seqs_fpath: str,
                   ribotyper_fpath: str,
                   acccept_fpath: str,
                   outdpath: str,
-                  cache_mode: bool):
+                  cache_mode: bool,
+                  ribotyper_threads: int):
     all_seqs_are_cached = cache_mode \
                           and count_seqs_fasta(query_seqs_fpath) == 0
 
@@ -320,7 +344,7 @@ def run_ribotyper(query_seqs_fpath: str,
         command = ' '.join([
             ribotyper_fpath,
             '-f',
-            '-n 6',
+            '-n {}'.format(ribotyper_threads),
             '--minusfail',
             '--scfail',
             '--covfail',
@@ -401,7 +425,8 @@ run_ribotyper(
     ribotyper_fpath,
     acccept_fpath,
     outdpath,
-    cache_mode
+    cache_mode,
+    ribotyper_threads
 )
 
 # Reformat output .short.out.tsv table

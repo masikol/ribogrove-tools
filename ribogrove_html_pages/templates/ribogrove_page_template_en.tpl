@@ -526,7 +526,7 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
 <p><strong>Example 2</strong>. Select all SeqIDs (header parts before the first space).</p>
 <p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">The <span class="samp">-i</span> option tells the program to output only sequence IDs.</p>
-<p><strong>Example 3</strong>. Select all “Assession.Version”s.</p>
+<p><strong>Example 3</strong>. Select all RefSeq “Assession.Version”s.</p>
 <p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | cut -f2 -d':' | sort | uniq</p>
 <p class="samp-comment">This might be done only if you have <span class="samp">cut</span>, <span class="samp">sort</span> and <span class="samp">uniq</span> utilities installed (Linux and Mac OS systems should have them built-in).</p>
 <p><strong>Example 4</strong>. Select all Assembly accessions.</p>

@@ -181,12 +181,20 @@ def get_file_size_MB(fpath):
 
 def set_strain_name(row):
     global STRAIN_DESIGNATION_PATTERN
+    if pd.isnull(row['infraspecific_name']):
+        row['infraspecific_name'] = ''
+    # end if
     strain_name_reobj = STRAIN_DESIGNATION_PATTERN.search(row['infraspecific_name'])
     if not strain_name_reobj is None:
-        row['strain_name'] = '{} strain {}'.format(
-            row['organism_name'],
-            strain_name_reobj.group(1)
-        )
+        strain_designation = strain_name_reobj.group(1)
+        if not row['organism_name'].endswith(strain_designation):
+            row['strain_name'] = '{} strain {}'.format(
+                row['organism_name'],
+                strain_designation
+            )
+        else:
+            row['strain_name'] = row['organism_name']
+        # end if
     else:
         row['strain_name'] = row['organism_name']
     # end if
@@ -214,6 +222,7 @@ gene_stats_df = pd.read_csv(gene_stats_fpath, sep='\t')
 source_genomes_df = pd.read_csv(source_genomes_fpath, sep='\t')
 source_genomes_df['strain_name'] = np.repeat('', source_genomes_df.shape[0])
 source_genomes_df = source_genomes_df.apply(set_strain_name, axis=1)
+
 # Combine the two
 init_columns = gene_stats_df.columns
 gene_stats_df = gene_stats_df.merge(

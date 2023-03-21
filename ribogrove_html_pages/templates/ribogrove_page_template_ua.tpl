@@ -540,7 +540,7 @@
 <p><strong>Приклад 2</strong>. Вибрати всі ідентифікатори послідовностей (тобто частини заголовків до першого пробіла).</p>
 <p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Опція <span class="samp">-i</span> каже програмі, щоби вона подавала на вихід тільки ідентифікатори.</p>
-<p><strong>Приклад 3</strong>. Вибрати всі (RefSeqʼовські) коди доступу.</p>
+<p><strong>Приклад 3</strong>. Вибрати всі коди доступу геномних послідовностей з БД RefSeq.</p>
 <p class="samp-highl samp-vwide">seqkit seq -ni ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | cut -f2 -d':' | sort | uniq</p>
 <p class="samp-comment">Така команда спрацює, тільки якщо на компʼютері установлені утиліти <span class="samp">cut</span>, <span class="samp">sort</span>, та <span class="samp">uniq</span> (на Linux та Mac OS оці програми звичайно встановлені разом із сістемою).</p>
 
