@@ -16,6 +16,7 @@ _PRIMER_KEYS = (
     '27F-534R',
     '341F-785R',
     '341F-944R',
+    '515F-806R',
     '515F-1100R',
     '515F-944R',
     '784F-1100R',
@@ -50,6 +51,7 @@ def _get_path_to_raw_tables(input_dirpath):
         '27F-534R'   : '27F-534R.tsv',
         '341F-785R'  : '341F-785R.tsv',
         '341F-944R'  : '341F-944R.tsv',
+        '515F-806R'  : '515F-806R.tsv',
         '515F-1100R' : '515F-1100R.tsv',
         '515F-944R'  : '515F-944R.tsv',
         '784F-1100R' : '784F-1100R.tsv',
@@ -193,6 +195,8 @@ def _sort_rows_and_columns(primer_df):
         '341F-785R',
         # V3-V5
         '341F-944R',
+        # V4
+        '515F-806R',
         # V4-V5
         '515F-944R',
         # V4-V6

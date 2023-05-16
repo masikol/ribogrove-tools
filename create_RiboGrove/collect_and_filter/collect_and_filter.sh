@@ -133,7 +133,7 @@ ABERRANT_SEQIDS_FPATH="${ABERRATIONS_AND_HETEROGENEITY_DIR}/aberrant_seqIDs.txt"
 FINAL_GENES_FASTA="${GENES_DIR}/final_gene_seqs.fasta"
 
 ANNOTATED_RESULT_FASTA="${GENES_DIR}/final_gene_seqs_annotated.fasta"
-DISCARDED_SEQIDS="${GENES_DIR}/discarded_seqIDs.txt"
+FINAL_SEQIDS="${GENES_DIR}/final_seqIDs.txt"
 DISCARDED_FASTA="${GENES_DIR}/discarded_gene_seqs.fasta"
 ANNOTATED_DISCARDED_FASTA="${GENES_DIR}/discarded_gene_seqs_annotated.fasta"
 
@@ -164,6 +164,7 @@ if [[ ! -z "${PREV_WORKDIR}" ]]; then
   PREV_FINAL_GENES_FASTA="${PREV_WORKDIR}/gene_seqs/final_gene_seqs_annotated.fasta"
   PREV_PERBASE_ENTROPY_FILE="${prev_aberr_dir}/per_base_entropy.tsv.gz"
   PREV_PRIMERS_DIR="${PREV_WORKDIR}/primers_coverage"
+  PREV_ABERRANT_SEQIDS="${prev_aberr_dir}/aberrant_seqIDs.txt"
 else
   CACHE_MODE=false
 fi
@@ -335,7 +336,6 @@ else
     --deletion-len-threshold "${DELETION_LEN_THRESHOLD}"
 fi
 
-
 # == Find repeats in genes sequences ==
 
 python3 "${SCRIPTS_DIR}/find_repeats.py" \
@@ -379,14 +379,14 @@ rm -v "${tmp_fasta}"
 
 # == Make a fasta file of discarded sequences ==
 
-cat "${RIBOTYPER_FAIL_SEQIDS_FPATH}" "${ABERRANT_SEQIDS_FPATH}" "${REPEAT_FAIL_SEQIDS_FPATH}" > \
-  "${DISCARDED_SEQIDS}"
+cat "${ANNOTATED_RESULT_FASTA}" \
+  | seqkit seq -ni > "${FINAL_SEQIDS}"
 cat "${ALL_GENES_FASTA}" \
-  | seqkit grep -f "${DISCARDED_SEQIDS}" \
+  | seqkit grep -vf "${FINAL_SEQIDS}" \
   | seqkit sort -s > "${DISCARDED_FASTA}"
 
-if [[ -f "${DISCARDED_SEQIDS}" ]]; then
-  rm -v "${DISCARDED_SEQIDS}"
+if [[ -f "${FINAL_SEQIDS}" ]]; then
+  rm -v "${FINAL_SEQIDS}"
 fi
 
 

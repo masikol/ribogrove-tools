@@ -316,7 +316,6 @@ with gzip.open(per_base_entropy_fpath, 'wt') as per_base_entropy_outfile:
     # Iterate over assemblies
     for i, asm_acc in enumerate(asm_accs):
         print(f'\rDoing {i+1}/{len(asm_accs)}: {asm_acc}', end=' '*10)
-
         if asm_acc in cached_asm_accs:
             cached_perbase_ass_df = prev_perbase_entropy_df[
                 prev_perbase_entropy_df['asm_acc'] == asm_acc

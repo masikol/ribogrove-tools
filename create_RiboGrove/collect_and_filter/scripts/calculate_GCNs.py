@@ -163,6 +163,9 @@ def make_primers_gcn_dfs(primer_pairs,
             .rename(columns={'seqID': '16S_rRNA_gcn'}) \
             .merge(fake_total_df, on='asm_acc', how='right')
         primers_gcn_df['16S_rRNA_gcn'] = primers_gcn_df['16S_rRNA_gcn'].fillna(0).map(int)
+        primers_gcn_df = primers_gcn_df[
+            ['asm_acc', '16S_rRNA_gcn',]
+        ]
 
         primer_gcn_outfpath = os.path.join(
             outdir_path,

@@ -5,3 +5,4 @@ GCF_005843985.1:NZ_CP040463.1:352372-353878:plus	this gene gets discarded in fav
 GCF_005843985.1:NZ_CP040463.1:667543-669049:plus	this gene gets discarded in favor of GCF_005843985.1:NZ_CP040463.1:148670-150214:minus, which is apparently HGT'ed from Staphylococcus
 GCF_005843985.1:NZ_CP040463.1:148670-150214:minus	apparently HGT'ed from Staphylococcus
 GCF_009498015.1:NZ_CP034058.1:5578637-5580087:minus	it gets discarded in favor of GCF_009498015.1:NZ_CP034058.1:6920299-6921699:minus but it's ok
+GCF_000404245.1:NC_021350.1:3156106-3157575:minus	it is kindof ok (despite 74-bp deletion compared to other L. pneumophila seqs) but the pipeline spuriously discards it in favor of GCF_000404245.1:NC_021350.1:359857-360850:plus (see the blacklist)

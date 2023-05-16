@@ -236,6 +236,7 @@ print(ribotyper_fail_fpath)
 print(asm_sum_fpath)
 print(ribotyper_long_fpath)
 print(muscle_fpath)
+print('deletion_len_threshold = {}'.format(deletion_len_threshold))
 if cache_mode:
     print(prev_final_fasta_fpath)
     print(prev_aberrant_seqIDs_fpath)
@@ -450,9 +451,9 @@ def read_rt_long_df(ribotyper_long_fpath, ribotyper_fail_fpath):
     ribotyper_fail_seqIDs = read_ribotyper_failed_seqIDs(ribotyper_fail_fpath)
     rt_long_df = rt_long_df.query('not target in @ribotyper_fail_seqIDs').copy()
 
-    # for NoHist, whose `tscore` is '-'
-    rt_long_df['tscore'] = rt_long_df['tscore'].replace({'-': 0.0})
-    rt_long_df['tscore'] = rt_long_df['tscore'].map(float)
+    # for NoHist, whose `bscore` is '-'
+    rt_long_df['bscore'] = rt_long_df['bscore'].replace({'-': 0.0})
+    rt_long_df['bscore'] = rt_long_df['bscore'].map(float)
 
     rt_long_df['asm_acc'] = np.repeat('', rt_long_df.shape[0])
     rt_long_df = rt_long_df.apply(set_asm_acc, axis=1)
@@ -552,9 +553,9 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
         curr_ass_df = rt_long_df[rt_long_df['asm_acc'] == asm_acc]
 
         # Select pivotal genes
-        max_score = curr_ass_df['tscore'].max()
+        max_score = curr_ass_df['bscore'].max()
         pivotal_seqIDs = set(
-            curr_ass_df[curr_ass_df['tscore'] > (max_score - 1e-6)]['target']
+            curr_ass_df[curr_ass_df['bscore'] > (max_score - 1e-6)]['target']
         )
 
         # Record seqIDs of pivotal genes
