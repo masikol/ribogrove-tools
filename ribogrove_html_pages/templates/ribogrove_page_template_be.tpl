@@ -409,6 +409,7 @@
   <th class="numcol">V1–V3</th>
   <th class="numcol">V3–V4</th>
   <th class="numcol">V3–V5</th>
+  <th class="numcol">V4</th>
   <th class="numcol">V4–V5</th>
   <th class="numcol">V4–V6</th>
   <th class="numcol">V5–V6</th>
@@ -422,6 +423,7 @@
   <th class="numcol">27F–534R<br />(%)</th>
   <th class="numcol">341F–785R<br />(%)</th>
   <th class="numcol">341F–944R<br />(%)</th>
+  <th class="numcol">515F–806R<br />(%)</th>
   <th class="numcol">515F–944R<br />(%)</th>
   <th class="numcol">515F–1100R<br />(%)</th>
   <th class="numcol">784F–1100R<br />(%)</th>
@@ -438,6 +440,7 @@
   <td class="numcol">{{ row['27F-534R'] }}</td>
   <td class="numcol">{{ row['341F-785R'] }}</td>
   <td class="numcol">{{ row['341F-944R'] }}</td>
+  <td class="numcol">{{ row['515F-806R'] }}</td>
   <td class="numcol">{{ row['515F-944R'] }}</td>
   <td class="numcol">{{ row['515F-1100R'] }}</td>
   <td class="numcol">{{ row['784F-1100R'] }}</td>

@@ -24,8 +24,8 @@
 <li><a href="#copy-number">16S rRNA gene copy number</a></li>
 <li><a href="#top-longest">Top-10 longest 16S rRNA genes</a></li>
 <li><a href="#top-shortest">Top-10 shortest 16S rRNA genes</a></li>
-<li><a href="#top-copy-num">Top-10 genomes with largest 16S rRNA copy numbers</a></li>
-<li><a href="#top-var">Top-10 genomes with highest intragenomic variability of 16S rRNA genes</a></li>
+<li><a href="#top-copy-num">Top-10 genomes with the largest 16S rRNA copy numbers</a></li>
+<li><a href="#top-var">Top-10 genomes with the highest intragenomic variability of 16S rRNA genes</a></li>
 <li><a href="#primers-coverages">Coverage of primer pairs for different V-regions of bacterial 16S rRNA genes</a></li>
 </ul>
 </li>
@@ -51,7 +51,7 @@
   <tr class="sumtab-row"><th></th><th class="alcentr">RiboGrove</th><th class="alcentr"><i>rrn</i>DB</th><th class="alcentr">Silva</th><th class="alcentr">RDP</th><th class="alcentr">Greengenes</th></tr>
   <tr class="sumtab-row"><td class="feature-col">Represented organisms</td><td class="alcentr">Bacteria<br>Archaea</td><td class="alcentr">Bacteria<br>Archaea</td><td class="alcentr">Bacteria<br>Archaea<br>Eukaryotes</td><td class="alcentr">Bacteria<br>Archaea<br>Eukaryotes</td><td class="alcentr">Bacteria<br>Archaea</td></tr>
   <tr class="sumtab-row"><td class="feature-col">Represented ribosome subunits</td><td class="alcentr">Small</td><td class="alcentr">Small</td><td class="alcentr">Large<br>Small</td><td class="alcentr">Large<br>Small</td><td class="alcentr">Small</td></tr>
-  <tr class="sumtab-row"><td class="feature-col">Contains sequences from assembles genomes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
+  <tr class="sumtab-row"><td class="feature-col">Contains sequences from assembled genomes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
   <tr class="sumtab-row"><td class="feature-col">Contains amplicon sequences</td><td class="alcentr">No</td><td class="alcentr">No</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
   <tr class="sumtab-row"><td class="feature-col">Contains partial gene sequences</td><td class="alcentr">No</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td><td class="alcentr">Yes</td></tr>
   <tr class="sumtab-row"><td class="feature-col">Discriminates genome categories</td><td class="alcentr">Yes</td><td class="alcentr">No</td><td class="alcentr"><i>Not<br>applicable</i></td><td class="alcentr"><i>Not<br>applicable</i></td><td class="alcentr"><i>Not<br>applicable</i></td></tr>
@@ -61,13 +61,13 @@
 <h3>Genome categories</h3>
 <p>All genomes used for RiboGrove construction were divided into three categories according to their expected reliability:</p>
 <ol style="list-style:none;">
-  <li><strong>Category 1</strong> (the highest reliability). Genomes showing no signs of a low-quality assembly and sequenced either with PacBio technology or with combination (Oxford&nbsp;Nanopore&nbsp;+&nbsp;Illumina).</li>
+  <li><strong>Category 1</strong> (the highest reliability). Genomes showing no signs of a low-quality assembly and sequenced either with PacBio technology or with a combination “Oxford&nbsp;Nanopore&nbsp;+&nbsp;Illumina”.</li>
   <li><strong>Category 2.</strong> Genomes showing no signs of a low-quality assembly and sequenced with any other technology (or the technology is not specified).</li>
   <li><strong>Category 3</strong> (the lowest reliability). Genomes showing at least one sign of a low-quality assembly.</li>
 </ol>
 <p>Signs of a low-quality assembly are the following:</p>
 <ul>
-  <li>The genome contains degenerate base(s) in 16S rRNA genes sequences.</li>
+  <li>The genome contains degenerate base(s) in 16S rRNA gene sequences.</li>
   <li>The assembly includes at least one RefSeq record whose title contains the phrase “map unlocalized” and this record contains a 16S rRNA gene or a part of it.</li>
 </ul>
 <br>
@@ -131,14 +131,14 @@
   </details>
 </li>
 </ul>
-<p>The fasta file is compressed with gzip, and the metadata file is a zip archive. To uncompress them, Linux and Mac OS users may use gzip and zip programs, they should be built-in. For Windows users, the free and open source (de)compression program <a href="https://www.7-zip.org/">7-Zip</a> is available.</p>
+<p>The fasta file is compressed with gzip, and the metadata file is a zip archive. To uncompress them, Linux and Mac OS users may use gzip and zip programs, they should be built-in. For Windows users, the free and open-source (de)compression program <a href="https://www.7-zip.org/">7-Zip</a> is available.</p>
 <div id="release-archive" class="pad-anchor"></div>
 <h3>RiboGrove release archive</h3>
-<p>You can find all releases at the <a href="/cager/en/content/60-ribogrove-archive">RiboGrove release archive</a>.</p>
+<p>You can find all releases in the <a href="/cager/en/content/60-ribogrove-archive">RiboGrove release archive</a>.</p>
 <div id="release-notes" class="pad-anchor"></div>
 <h3>Release notes</h3>
 <p><i>No important differences from the previous release.</i></p>
-<p>You can find notes to all RiboGrove releases at the <a href="/cager/en/content/66-ribogrove-release-notes">release notes page</a>.</p>
+<p>You can find notes to all RiboGrove releases on the <a href="/cager/en/content/66-ribogrove-release-notes">release notes page</a>.</p>
 <hr>
 <div id="summary" class="pad-anchor"></div>
 <h2>Statistical summary</h2>
@@ -238,7 +238,7 @@
 </tr>
 </tbody>
 </table>
-<p><sup>*</sup> Metrics marked with an asterisk were calculated with preliminary normalization, i.e. median within-species gene length were used for the summary.</p>
+<p><sup>*</sup> Metrics marked with an asterisk were calculated with preliminary normalization, i.e. median within-species gene length was used for the summary.</p>
 <div id="copy-number" class="pad-anchor"></div>
 <table class="sum-table">
 <caption>16S rRNA gene copy number</caption>
@@ -321,7 +321,7 @@
 </table>
 
 <div id="top-copy-num" class="pad-anchor"></div>
-<table class="sum-table"><caption>Top-10 genomes with largest 16S rRNA copy numbers
+<table class="sum-table"><caption>Top-10 genomes with the largest 16S rRNA copy numbers
 </caption>
 <tbody>
 <tr><th class="alnleft">Organism</th><th class="numcol">Copy number</th><th class="alnleft">Assembly<br>accession</th></tr>
@@ -349,7 +349,7 @@
 </table>
 
 <div id="top-var" class="pad-anchor"></div>
-<table class="sum-table"><caption>Top-10 genomes with highest intragenomic variability of 16S rRNA genes
+<table class="sum-table"><caption>Top-10 genomes with the highest intragenomic variability of 16S rRNA genes
 </caption>
 <tbody>
 <tr><th class="alnleft">Organism</th><th class="numcol">Sum of entropy<sup> *</sup> (bits)</th><th class="numcol">Mean entropy<sup> *</sup> (bits)</th><th class="numcol">Number of variable positions</th><th class="numcol">Gene copy number</th><th class="alnleft">Assembly<br>accession</th></tr>
@@ -384,7 +384,7 @@
 </table>
 
 <p><sup>*</sup> Entropy is <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)">Shannon entropy</a> calculated for each column of the multiple sequence alignment (MSA) of all full-length 16S rRNA genes of a genome. Entropy is then summed up (column “Sum of entropy”) and averaged (column “Mean entropy”).</p>
-<p><sup>**</sup> <i>Halomicrobium</i> sp. ZPS1 is a quite remarkable case. This genome harbours two 16S rRNA genes, therefore entropy is equal to the number of mismatching nucleotides between sequences of the genes. Respectively, per cent of identity between these two gene sequences is 90.70%! This is remarkable, because the usual (however arbitrary) <em>genus</em> demarcation threshold of per cent of identity is 95%.</p>
+<p><sup>**</sup> <i>Halomicrobium</i> sp. ZPS1 is a quite remarkable case. This genome harbours two 16S rRNA genes, therefore entropy is equal to the number of mismatching nucleotides between sequences of the genes. Respectively, per cent of identity between these two gene sequences is 90.70%! This is remarkable because the usual (however arbitrary) <em>genus</em> demarcation threshold of per cent of identity is 95%.</p>
 
 <div id="primers-coverages" class="pad-anchor"></div>
 <table class="sum-table"><caption>Coverage<sup>*</sup> of primer pairs for different V-regions of bacterial 16S rRNA genes</caption>
@@ -397,6 +397,7 @@
   <th class="numcol">V1–V3</th>
   <th class="numcol">V3–V4</th>
   <th class="numcol">V3–V5</th>
+  <th class="numcol">V4</th>
   <th class="numcol">V4–V5</th>
   <th class="numcol">V4–V6</th>
   <th class="numcol">V5–V6</th>
@@ -410,6 +411,7 @@
   <th class="numcol">27F–534R<br />(%)</th>
   <th class="numcol">341F–785R<br />(%)</th>
   <th class="numcol">341F–944R<br />(%)</th>
+  <th class="numcol">515F–806R<br />(%)</th>
   <th class="numcol">515F–944R<br />(%)</th>
   <th class="numcol">515F–1100R<br />(%)</th>
   <th class="numcol">784F–1100R<br />(%)</th>
@@ -426,6 +428,7 @@
   <td class="numcol">{{ row['27F-534R'] }}</td>
   <td class="numcol">{{ row['341F-785R'] }}</td>
   <td class="numcol">{{ row['341F-944R'] }}</td>
+  <td class="numcol">{{ row['515F-806R'] }}</td>
   <td class="numcol">{{ row['515F-944R'] }}</td>
   <td class="numcol">{{ row['515F-1100R'] }}</td>
   <td class="numcol">{{ row['784F-1100R'] }}</td>
@@ -493,7 +496,7 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
 <p class="samp-comment">The <span class="samp">-p</span> option sets a pattern to search in fasta headers (only in sequence IDs, actually).</p>
 <p><strong>Example 2</strong>. Select all gene sequences of a single RefSeq genomic sequence by accession number <span class="samp">NZ_CP009686.1</span>.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp ":NZ_CP009686.1:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p class="samp-comment">Here, two more options are required: <span class="samp">-n</span> and <span class="samp">-r</span>. The former tells the program to match the whole headers instead of IDs only. The latter tells the program not to exclude partial matches from output, i.e. if the pattern is a substring of a header, the header will be printed to output.</p>
+<p class="samp-comment">Here, two more options are required: <span class="samp">-n</span> and <span class="samp">-r</span>. The former tells the program to match the whole headers instead of IDs only. The latter tells the program to include partial matches into output, i.e. if the pattern is a substring of a header, the header will be printed to output.</p>
 <p class="samp-comment">To ensure search specificity, surround the Accession.Version with colons (<span class="samp-highl">:</span>).</p>
 <p><strong>Example 3</strong>. Select all gene sequences of a single genome (Assembly accession <a href="https://www.ncbi.nlm.nih.gov/assembly/GCF_019357495.1">GCF_019357495.1</a>).</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp "GCF_019357495.1:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
@@ -505,10 +508,10 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
 <p class="samp-highl samp-vwide">seqkit grep -nrp "category:1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p><strong>Example 6</strong>. Select all sequences except for those belonging to <i>Firmicutes</i>.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nvrp ";p__Firmicutes;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p class="samp-comment">Recognize the <span class="samp">-v</span> option within option sequence <span class="samp">-nvrp</span>. This option inverts match, i.e. output will comprise sequences, headers of which do <strong>not</strong> contain substring “<span class="samp">;p__Firmicutes;</span>”.</p>
+<p class="samp-comment">Recognize the <span class="samp">-v</span> option within the option sequence <span class="samp">-nvrp</span>. This option inverts match, i.e. output will comprise sequences, headers of which do <strong>not</strong> contain the substring “<span class="samp">;p__Firmicutes;</span>”.</p>
 <div id="select-by-len" class="pad-anchor"></div>
 <h4>Search sequences by length</h4>
-<p>You can use program <span class="samp">seqkit seq</span> to select sequences by length.</p>
+<p>You can use the <span class="samp">seqkit seq</span> program to select sequences by length.</p>
 <p><strong>Example 1</strong>. Select all sequences longer than 1600 bp.</p>
 <p class="samp-highl samp-vwide">seqkit seq -m 1601 ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">The <span class="samp">-m</span> option sets the minimum length of a sequence to be printed to output.</p>
@@ -519,7 +522,7 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
 <p class="samp-highl samp-vwide">seqkit seq -m 1500 -M 1600 ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <div id="select-head" class="pad-anchor"></div>
 <h4>Selecting header data</h4>
-<p>It is sometimes useful to retrieve only header information from a fasta file. You can use program <span class="samp">seqkit seq</span> for it.</p>
+<p>It is sometimes useful to retrieve only header information from a fasta file. You can use the <span class="samp">seqkit seq</span> program for it.</p>
 <p><strong>Example 1</strong>. Select all headers.</p>
 <p class="samp-highl samp-vwide">seqkit seq -n ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">The <span class="samp">-n</span> option tells the program to output only headers.</p>
