@@ -126,17 +126,17 @@ python3 make_ribogrove_release_page.py \
 
 # TEST
 
-python3 make_ribogrove_release_page.py \
-  --release-num 10.555 \
-  --release-date 2023-03-02 \
-  --final-fasta /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/TEST/ribogrove_10.555_sequences.fasta.gz \
-  --metadata /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/TEST/metadata_ribogrove_10.555.zip \
-  --gene-stats-table /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/TEST/metadata/gene_seqs_statistics.tsv \
-  --entropy-summary /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/TEST/metadata/entropy_summary.tsv \
-  --source-genomes /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/TEST/metadata/source_RefSeq_genomes.tsv \
-  --primers-dir /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/TEST2/bacteria/primers_coverage \
-  --outdir /mnt/1.5_drive_0/RiboGrove/RiboGrove_pages/TEST_10.555/ \
-  --seqkit /usr/bin/seqkit
+# python3 make_ribogrove_release_page.py \
+#   --release-num 10.555 \
+#   --release-date 2023-03-02 \
+#   --final-fasta /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/TEST/ribogrove_10.555_sequences.fasta.gz \
+#   --metadata /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/TEST/metadata_ribogrove_10.555.zip \
+#   --gene-stats-table /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/TEST/metadata/gene_seqs_statistics.tsv \
+#   --entropy-summary /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/TEST/metadata/entropy_summary.tsv \
+#   --source-genomes /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/TEST/metadata/source_RefSeq_genomes.tsv \
+#   --primers-dir /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/TEST2/bacteria/primers_coverage \
+#   --outdir /mnt/1.5_drive_0/RiboGrove/RiboGrove_pages/TEST_10.555/ \
+#   --seqkit /usr/bin/seqkit
 
 
 python3 make_ribogrove_release_page.py \
