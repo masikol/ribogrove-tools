@@ -8,8 +8,6 @@
 <li><a href="#genome-categories">Genome categories</a></li>
 </ul>
 </li>
-<li><a href="#contacts">Contacts</a></li>
-<li><a href="#citing-ribogrove">Citing RiboGrove</a></li>
 <li><a href="#downloads">Downloads</a>
 <ul class="ribogrove-nested-list">
   <li><a href="#current-release">Latest RiboGrove release — {{ ribogrove_release_number }}</li>
@@ -37,6 +35,9 @@
 <li><a href="#select-head">Selecting header data</a></li>
 </ul>
 </li>
+<li><a href="#contacts">Contacts</a></li>
+<li><a href="#citing-ribogrove">Citing RiboGrove</a></li>
+<li><a href="#faq">Questions people ask about RiboGrove</a></li>
 </ul>
 <hr>
 <div id="overview" class="pad-anchor"></div>
@@ -72,15 +73,6 @@
 </ul>
 <br>
 <p>The software used for the RiboGrove construction can be found in the following GitHub repository: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
-<hr>
-<div id="contacts" class="pad-anchor"></div>
-<h2>Contacts</h2>
-<p>For any questions concerning RiboGrove, please contact Maxim Sikolenko at sikolenko<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by.</p>
-<hr>
-<div id="citing-ribogrove" class="pad-anchor"></div>
-<h2>Citing RiboGrove</h2>
-<p>If you find RiboGrove useful for your research please cite:</p>
-<p>Maxim A. Sikolenko, Leonid N. Valentovich. “RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes” // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br> (DOI: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>).</p>
 <hr>
 <div id="downloads" class="pad-anchor"></div>
 <h2>Downloads</h2>
@@ -440,7 +432,7 @@
 </tbody>
 </table>
 
-<p><sup>*</sup> Coverage of a primer pair is the per cent of genomes having at least one 16S rRNA gene which can be amplified by PCR using this primer pair. For details, see our <a href="#citing-ribogrove">paper about RiboGrove</a>.</p>
+<p><sup>*</sup> Coverage of a primer pair is the per cent of genomes having at least one 16S rRNA gene which can be amplified by PCR using this primer pair. For details, see our <a href="/cager/en/ribogrove#citing-ribogrove">paper about RiboGrove</a>.</p>
 
 <table class="sum-table"><caption>Primers used for coverage estimation</caption>
 <tbody>
@@ -452,6 +444,7 @@
   <tr class="sumtab-row"><td>534R</td><td>ATTACCGCGGCTGCTGG</td><td><a href="https://doi.org/10.1186/s40168-015-0087-4">Walker et al., 2015</a></td></tr>
   <tr class="sumtab-row"><td>784F</td><td>AGGATTAGATACCCTGGTA</td><td><a href="https://doi.org/10.1371/journal.pone.0002836">Andersson et al., 2008</a></td></tr>
   <tr class="sumtab-row"><td>785R<sup> *</sup></td><td>GACTACHVGGGTATCTAATCC</td><td><a href="https://doi.org/10.1093/nar/gks808">Klindworth et al., 2013</a></td></tr>
+  <tr class="sumtab-row"><td>806R</td><td>GGACTACHVGGGTWTCTAAT</td><td><a href="https://doi.org/10.1073/pnas.1000080107">Caporaso et al., 2010</a></td></tr>
   <tr class="sumtab-row"><td>939F</td><td>GAATTGACGGGGGCCCGCACAAG</td><td><a href="https://doi.org/10.1016/j.anaerobe.2014.04.006">Lebuhn et al., 2014</a></td></tr>
   <tr class="sumtab-row"><td>944R</td><td>GAATTAAACCACATGCTC</td><td><a href="https://doi.org/10.1186/s40168-017-0396-x">Fuks et al., 2018</a></td></tr>
   <tr class="sumtab-row"><td>1100R</td><td>AGGGTTGCGCTCGTTG</td><td><a href="https://doi.org/10.1111/j.1550-7408.1999.tb04612.x">Turner et al., 1999</a></td></tr>
@@ -538,3 +531,27 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
 <p><strong>Example 5</strong>. Select all phylum names.</p>
 <p class="samp-highl samp-vwide">seqkit seq -n ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | grep -Eo ';p__[^;]+' | sed -E 's/;|p__//g' | sort | uniq</p>
 <p class="samp-comment">This might be done only if you have <span class="samp">grep</span>, <span class="samp">sed</span>, <span class="samp">sort</span> and <span class="samp">uniq</span> utilities installed (Linux and Mac OS systems should have them built-in).</p>
+<hr>
+<div id="contacts" class="pad-anchor"></div>
+<h2>Contacts</h2>
+<p>For any questions concerning RiboGrove, please contact Maxim Sikolenko at sikolenko<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by.</p>
+<hr>
+<div id="citing-ribogrove" class="pad-anchor"></div>
+<h2>Citing RiboGrove</h2>
+<p>If you find RiboGrove useful for your research please cite:</p>
+<p>Maxim A. Sikolenko, Leonid N. Valentovich. “RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes” // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br> (DOI: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>).</p>
+<hr>
+<div id="faq" class="pad-anchor"></div>
+<h2>Questions people ask about RiboGrove</h2>
+<div><details>
+  <summary><b>1. How do I create QIIME2-compatible taxonomy file from RiboGrove data?</b></summary>
+  <p>Please use the <a href="https://github.com/masikol/ribogrove-tools/blob/main/data_transformation_scripts/make_qiime_taxonomy_file.py"><span class="samp">make_qiime_taxonomy_file.py</span> script</a> to convert the RiboGrove file <span class="samp">metadata/taxonomy.tsv</span> to a QIIME2-compatible file. You can find out how to use this script in the corresponding <a href="https://github.com/masikol/ribogrove-tools/blob/main/data_transformation_scripts/README.md">README file</a>.</p>
+</details></div><br>
+<div><details>
+  <summary><b>2. How do I save selected sequences in Seqkit to a file?</b></summary>
+  <p>People have already provided several useful answers in the corresponding discussion: <a href="https://bioinformatics.stackexchange.com/questions/20915/how-do-i-save-selected-sequences-in-seqkit-to-a-file">https://bioinformatics.stackexchange.com/questions/20915/how-do-i-save-selected-sequences-in-seqkit-to-a-file</a>.</p>
+</details></div><br>
+<div><details>
+  <summary><b>3. How do I search a FASTA database by sequence in Seqkit?</b></summary>
+  <p>People have already provided several useful answers in the corresponding discussion: <a href="https://www.biostars.org/p/9561418">https://www.biostars.org/p/9561418</a>.</p>
+</details></div>

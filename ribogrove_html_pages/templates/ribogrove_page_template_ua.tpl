@@ -22,8 +22,6 @@
 <li><a href="#genome-categories">Категорії геномів</a></li>
 </ul>
 </li>
-<li><a href="#contacts">Контакти</a></li>
-<li><a href="#citing-ribogrove">Цитування RiboGrove</a></li>
 <li><a href="#downloads">Файли</a>
 <ul class="ribogrove-nested-list">
   <li><a href="#current-release">Актуальний реліз RiboGrove — {{ ribogrove_release_number }}</li>
@@ -51,6 +49,9 @@
 <li><a href="#select-head">Вибір даних заголовків</a></li>
 </ul>
 </li>
+<li><a href="#contacts">Контакти</a></li>
+<li><a href="#citing-ribogrove">Цитування RiboGrove</a></li>
+<li><a href="#faq">Питання, які люди задають про RiboGrove</a></li>
 </ul>
 <hr>
 <div id="overview" class="pad-anchor"></div>
@@ -86,15 +87,6 @@
 </ul>
 <br>
 <p>Програми, за допомогую яких RiboGrove була створена, знаходиться у наступному ҐітХаб-репозиторії: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
-<hr>
-<div id="contacts" class="pad-anchor"></div>
-<h2>Контакти</h2>
-<p>Якщо ви маєте питання щодо RiboGrove, будь ласка, звертайтеся до Максима Сиколенка на ел. адресу sikolenko<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by.</p>
-<hr>
-<div id="citing-ribogrove" class="pad-anchor"></div>
-<h2>Цитування RiboGrove</h2>
-<p>Якщо база даних RiboGrove сталася корисною для ваших досліджень, посилайтеся, будь ласка, на наступну публікацію:</p>
-<p>Maxim A. Sikolenko, Leonid N. Valentovich. “RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes” // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br> (ЦІО: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>).</p>
 <hr>
 <div id="downloads" class="pad-anchor"></div>
 <h2>Завантаження</h2>
@@ -454,7 +446,7 @@
 </tbody>
 </table>
 
-<p><sup>*</sup> Спектр диї пары праймерів — це видсоток геномів, які мають принаймні один ген 16S рРНК, який можливо заампліфікувати за допомогою ПЦР і з застосуванням цієї пари праймерів. Деталі описані у нашому <a href="#citing-ribogrove">артикулі про RiboGrove</a>.</p>
+<p><sup>*</sup> Спектр диї пары праймерів — це видсоток геномів, які мають принаймні один ген 16S рРНК, який можливо заампліфікувати за допомогою ПЦР і з застосуванням цієї пари праймерів. Деталі описані у нашому <a href="https://masikol.github.io/latest_ribogrove_release_ua.html#citing-ribogrove">артикулі про RiboGrove</a>.</p>
 
 <table class="sum-table"><caption>Праймери, спектр диї яких оцінювався</caption>
 <tbody>
@@ -466,6 +458,7 @@
   <tr class="sumtab-row"><td>534R</td><td>ATTACCGCGGCTGCTGG</td><td><a href="https://doi.org/10.1186/s40168-015-0087-4">Walker et al., 2015</a></td></tr>
   <tr class="sumtab-row"><td>784F</td><td>AGGATTAGATACCCTGGTA</td><td><a href="https://doi.org/10.1371/journal.pone.0002836">Andersson et al., 2008</a></td></tr>
   <tr class="sumtab-row"><td>785R<sup> *</sup></td><td>GACTACHVGGGTATCTAATCC</td><td><a href="https://doi.org/10.1093/nar/gks808">Klindworth et al., 2013</a></td></tr>
+  <tr class="sumtab-row"><td>806R</td><td>GGACTACHVGGGTWTCTAAT</td><td><a href="https://doi.org/10.1073/pnas.1000080107">Caporaso et al., 2010</a></td></tr>
   <tr class="sumtab-row"><td>939F</td><td>GAATTGACGGGGGCCCGCACAAG</td><td><a href="https://doi.org/10.1016/j.anaerobe.2014.04.006">Lebuhn et al., 2014</a></td></tr>
   <tr class="sumtab-row"><td>944R</td><td>GAATTAAACCACATGCTC</td><td><a href="https://doi.org/10.1186/s40168-017-0396-x">Fuks et al., 2018</a></td></tr>
   <tr class="sumtab-row"><td>1100R</td><td>AGGGTTGCGCTCGTTG</td><td><a href="https://doi.org/10.1111/j.1550-7408.1999.tb04612.x">Turner et al., 1999</a></td></tr>
@@ -553,6 +546,30 @@
 <p><strong>Приклад 5</strong>. Вибрати всі назви типів організмів.</p>
 <p class="samp-highl samp-vwide">seqkit seq -n ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | grep -Eo ';p__[^;]+' | sed -E 's/;|p__//g' | sort | uniq</p>
 <p class="samp-comment">Така команда спрацює, тільки якщо на компʼютері установлені утиліти <span class="samp">grep</span>, <span class="samp">sed</span>, <span class="samp">sort</span> і <span class="samp">uniq</span> (на Linux та Mac OS оці програми звичайно встановлені разом із сістемою).</p>
+<hr>
+<div id="contacts" class="pad-anchor"></div>
+<h2>Контакти</h2>
+<p>Якщо ви маєте питання щодо RiboGrove, будь ласка, звертайтеся до Максима Сиколенка на ел. адресу sikolenko<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by.</p>
+<hr>
+<div id="citing-ribogrove" class="pad-anchor"></div>
+<h2>Цитування RiboGrove</h2>
+<p>Якщо база даних RiboGrove сталася корисною для ваших досліджень, посилайтеся, будь ласка, на наступну публікацію:</p>
+<p>Maxim A. Sikolenko, Leonid N. Valentovich. “RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes” // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br> (ЦІО: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>).</p>
+<hr>
+<div id="faq" class="pad-anchor"></div>
+<h2>Питання, які люди задають про RiboGrove</h2>
+<div><details>
+  <summary><b>1. Як зробити файл з таксономією, з яким могли б працювати програми з пакета QIIME2?</b></summary>
+  <p>Для цього можете скористатися скриптом <a href="https://github.com/masikol/ribogrove-tools/blob/main/data_transformation_scripts/make_qiime_taxonomy_file.py"><span class="samp">make_qiime_taxonomy_file.py</span></a>: він трансформує файл <span class="samp">metadata/taxonomy.tsv</span> в файл, з яким змогуть працювати програми QIIME2. Довідку-керівництво для цього скрипта можете знайти у відповідним <a href="https://github.com/masikol/ribogrove-tools/blob/main/data_transformation_scripts/README.md">файле README</a>.</p>
+</details></div><br>
+<div><details>
+  <summary><b>2. Як зберегти у файлі дані, відібрані за допомогою Seqkit?</b></summary>
+  <p>У відповідної дискусії на форумі вже дали декілька корисних відповідей та порад: <a href="https://bioinformatics.stackexchange.com/questions/20915/how-do-i-save-selected-sequences-in-seqkit-to-a-file">https://bioinformatics.stackexchange.com/questions/20915/how-do-i-save-selected-sequences-in-seqkit-to-a-file</a>.</p>
+</details></div><br>
+<div><details>
+  <summary><b>3. Як знайти потрібні записи у fasta-файлі по послідовності за допомогою Seqkit?</b></summary>
+  <p>У відповідної дискусії на форумі вже дали декілька корисних відповідей та порад: <a href="https://www.biostars.org/p/9561418">https://www.biostars.org/p/9561418</a>.</p>
+</details></div>
 <br>
 <hr>
 <p>RiboGrove, {{ ribogrove_release_date }}</p>
