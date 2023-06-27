@@ -131,8 +131,8 @@
       Це TSV-файл, який утримує інформацію про внутрішньогеномну мінливість генів 16S рРНК. Внутрішньогеномну мінливість розраховували тільки для геномів категорії&nbsp;1, у яких є принаймні два гени 16S рРНК. Для оцінки мінливості выкористовували ентропію Шенона: вирівнювали послідовності генів кожного геному за допомогою програми <a href="https://drive5.com/muscle5/">MUSCLE</a>, і після розраховували ентропію для кожної колонки множинного вирівнювання.
     </li>
     <li>
-      <span class="samp-highl">QIIME2-compatible-taxonomy.txt</span><br>
-      Це TSV-файл, який можна використовувати для того, щоб навчити класіфікатор QIIME2 (гл. <a href="https://docs.qiime2.org">інструкцію</a> ).
+      <span class="samp-highl">primer_pair_genomic_coverage.tsv</span><br>
+      Це TSV-файл, який утримує геномне покриття пар ПЛР-праймерів до різних V-регіонів генів 16S рРНК. Наприклад, для родини <i>Enterobacteriaceae</i> геномне покриття пари праймерів — це відсоток геномів <i>Enterobacteriaceae</i>, які утримують принаймні один ген 16S рРНК, на матриці якого (теоретично) може сформуватися ПЛР-продукт за допомогою цієї пари праймерів.
     </li>
   </ol></small>
 </details>
@@ -447,6 +447,7 @@
 </table>
 
 <p><sup>*</sup> Спектр диї пары праймерів — це видсоток геномів, які мають принаймні один ген 16S рРНК, який можливо заампліфікувати за допомогою ПЦР і з застосуванням цієї пари праймерів. Деталі описані у нашому <a href="https://masikol.github.io/latest_ribogrove_release_ua.html#citing-ribogrove">артикулі про RiboGrove</a>.</p>
+<p>Є більш детальна таблиця — у файлі <span class="samp">primer_pair_genomic_coverage.tsv</span> у метаданих <a href="#downloads">metadata</a>. Та таблиця утримує покриття не тільки для типів бактерий, але і для кожного класу, ряду, родини, роду та виду. Крім того, та таблиця утримує покриття для пари праймерів 1115F–1492R (регіон V7–V9). У цієї таблиці нема цієї пари, щоб таблиця не була занадто великою.</p>
 
 <table class="sum-table"><caption>Праймери, спектр диї яких оцінювався</caption>
 <tbody>
@@ -488,8 +489,8 @@
 <li>Ланцюг геномної послідовності, на якій ген знаходиться: <span class="samp-highl">plus</span> (або <span class="samp-highl">minus</span>).</li>
 </ol>
 </li>
-<li>Рядок таксономії, а саме назви домену (<span class="samp-highl">Bacteria</span>), типу (<span class="samp-highl">Firmicutes</span>), класу (<span class="samp-highl">Bacilli</span>), ряду (<span class="samp-highl">Bacillales</span>), родини (<span class="samp-highl">Bacillaceae</span>) та ріду (<span class="samp-highl">Bacillus</span>), а також видовий епітет (<span class="samp-highl">cereus</span>).<br>
-Перед кожній назвою пишеться префікс, який позначує ранг: <span class="samp-highl">d__</span> для домену, <span class="samp-highl">p__</span> для типу, <span class="samp-highl">c__</span> для класу, <span class="samp-highl">o__</span> для ряду, <span class="samp-highl">f__</span> для родини, <span class="samp-highl">g__</span> для ріду і <span class="samp-highl">s__</span> для видового епітету. У префіксах після літеры пишуться <strong>два</strong> знаки нижнього підкресливання.<br>
+<li>Рядок таксономії, а саме назви домену (<span class="samp-highl">Bacteria</span>), типу (<span class="samp-highl">Firmicutes</span>), класу (<span class="samp-highl">Bacilli</span>), ряду (<span class="samp-highl">Bacillales</span>), родини (<span class="samp-highl">Bacillaceae</span>) та роду (<span class="samp-highl">Bacillus</span>), а також видовий епітет (<span class="samp-highl">cereus</span>).<br>
+Перед кожній назвою пишеться префікс, який позначує ранг: <span class="samp-highl">d__</span> для домену, <span class="samp-highl">p__</span> для типу, <span class="samp-highl">c__</span> для класу, <span class="samp-highl">o__</span> для ряду, <span class="samp-highl">f__</span> для родини, <span class="samp-highl">g__</span> для роду і <span class="samp-highl">s__</span> для видового епітету. У префіксах після літеры пишуться <strong>два</strong> знаки нижнього підкресливання.<br>
 Таксономічні назви відокремлені та оточені крапками з комою (<span class="samp-highl">;</span>).</li>
 <li>Категорія геному, із якого послідовність гену походить: (<span class="samp-highl">category:1</span>).</li>
 </ol>

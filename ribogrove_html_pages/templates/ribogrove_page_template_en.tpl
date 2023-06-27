@@ -116,8 +116,8 @@
         This is a TSV file, which contains summary of instragenomic variability of the 16S rRNA genes. Intragenomic variability are calculated only for the category&nbsp;1 genomes having more than one 16S rRNA gene. Intragenomic variability is evaluated using Shannon entropy. We align gene sequences from each genome using <a href="https://drive5.com/muscle5/">MUSCLE</a>, and then we calculate Shannon entropy for each multiple alignment column (i.e. base).
       </li>
       <li>
-        <span class="samp-highl">QIIME2-compatible-taxonomy.txt</span><br>
-        This is a TSV file, which can be used to train a QIIME2 classifier (see the <a href="https://docs.qiime2.org">tutorial</a>).
+        <span class="samp-highl">primer_pair_genomic_coverage.tsv</span><br>
+        This is a TSV file which contains genomic coverage of primer pairs targeting different V-regions of 16S rRNA genes. For example, for <i>Enterobacteriaceae</i>, genomic coverage of a primer pair is the per cent of <i>Enterobacteriaceae</i> genomes which contain at least one 16S rRNA gene that can (theoretically) produce a PCR product using the primer pair.
       </li>
     </ol></small>
   </details>
@@ -433,6 +433,7 @@
 </table>
 
 <p><sup>*</sup> Coverage of a primer pair is the per cent of genomes having at least one 16S rRNA gene which can be amplified by PCR using this primer pair. For details, see our <a href="/cager/en/ribogrove#citing-ribogrove">paper about RiboGrove</a>.</p>
+<p>You can find a more detailed table in the file <span class="samp">primer_pair_genomic_coverage.tsv</span> in the <a href="#downloads">metadata</a>. That table contains coverage not just for phyla, but also for each bacterial class, order, family, genus, and species. Moreover, that table contains coverage values for primer pair 1115F–1492R (V7–V9 region). In this table, it is omitted for brevity.</p>
 
 <table class="sum-table"><caption>Primers used for coverage estimation</caption>
 <tbody>

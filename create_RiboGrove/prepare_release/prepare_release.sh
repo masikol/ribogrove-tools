@@ -171,6 +171,13 @@ for f in "${BACTERIA_ENTROPY_SUMMARY}" "${ARCHAEA_ENTROPY_SUMMARY}"; do
 done
 RIBOGROVE_ENTROPY_SUMMARY="${METADATA_DIR}/entropy_summary.tsv"
 
+# Total primer coverage
+BACTERIA_PRIMER_COV_DIR="${BACTERIA_DIR}/primers_coverage"
+this_file_relative_dirpath=`dirname "$0"`
+this_file_abs_dirpath=`realpath "${this_file_relative_dirpath}"`
+MAKE_COV_TABLE_SCRIPT="${this_file_abs_dirpath}/make_total_primer_cov_table.py"
+RIBOGROVE_PRIMER_COVERAGE_TABLE="${METADATA_DIR}/primer_pair_genomic_coverage.tsv"
+
 
 # |======= PROCEED =======|
 
@@ -305,6 +312,14 @@ cat "${ARCHAEA_ENTROPY_SUMMARY}" \
   | csvtk del-header -tT \
   >> "${RIBOGROVE_ENTROPY_SUMMARY}"
 echo "${RIBOGROVE_ENTROPY_SUMMARY}"
+
+# Total primer coverage
+echo 'Primer coverage...  '
+python3 "${MAKE_COV_TABLE_SCRIPT}" \
+  --primers-dir "${BACTERIA_PRIMER_COV_DIR}" \
+  --gene-stats "${RIBOGROVE_PER_GENE_STATS}" \
+  --outfile "${RIBOGROVE_PRIMER_COVERAGE_TABLE}"
+echo "${RIBOGROVE_PRIMER_COVERAGE_TABLE}"
 
 # Zip the metadata
 echo "Zipping the metadata directory: '${METADATA_DIR}/'"

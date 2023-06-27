@@ -4,7 +4,6 @@ import gzip
 from functools import partial
 
 import pandas as pd
-from Bio import SeqIO
 
 from src.formatting import format_int_number, format_float_number
 
