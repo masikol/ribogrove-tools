@@ -163,3 +163,17 @@ python3 make_ribogrove_release_page.py \
   --primers-dir /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/12.218/bacteria/primers_coverage \
   --outdir /mnt/1.5_drive_0/RiboGrove/RiboGrove_pages/12.218/ \
   --seqkit /usr/bin/seqkit
+
+
+python3 make_ribogrove_release_page.py \
+  --release-num 13.219 \
+  --release-date 2023-07-19 \
+  --final-fasta /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/13.219/ribogrove_13.219_sequences.fasta.gz \
+  --metadata /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/13.219/metadata_ribogrove_13.219.zip \
+  --gene-stats-table /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/13.219/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/13.219/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/13.219/metadata/source_RefSeq_genomes.tsv \
+  --primers-dir /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/13.219/bacteria/primers_coverage \
+  --outdir /mnt/1.5_drive_0/RiboGrove/RiboGrove_pages/13.219/ \
+  --seqkit /usr/bin/seqkit
+  

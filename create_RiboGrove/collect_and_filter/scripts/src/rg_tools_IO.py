@@ -32,6 +32,21 @@ def read_ass_sum_file(infpath, raw_summary=False):
         'excluded_from_refseq',
         'relation_to_type_material',
         'asm_not_live_date',
+        # 'assembly_type',
+        # 'group',
+        # 'genome_size',
+        # 'genome_size_ungapped',
+        # 'gc_percent',
+        # 'replicon_count',
+        # 'scaffold_count',
+        # 'contig_count',
+        # 'annotation_provider',
+        # 'annotation_name',
+        # 'annotation_date',
+        # 'total_gene_count',
+        # 'protein_coding_gene_count',
+        # 'non_coding_gene_count',
+        # 'pubmed_id',
     ]
 
     colDTypes = {
@@ -58,6 +73,21 @@ def read_ass_sum_file(infpath, raw_summary=False):
         'excluded_from_refseq': str,
         'relation_to_type_material': str,
         'asm_not_live_date': str,
+        # 'assembly_type': str,
+        # 'group': str,
+        # 'genome_size': str,
+        # 'genome_size_ungapped': str,
+        # 'gc_percent': str,
+        # 'replicon_count': str,
+        # 'scaffold_count': str,
+        # 'contig_count': str,
+        # 'annotation_provider': str,
+        # 'annotation_name': str,
+        # 'annotation_date': str,
+        # 'total_gene_count': str,
+        # 'protein_coding_gene_count': str,
+        # 'non_coding_gene_count': str,
+        # 'pubmed_id': str,
     }
 
     # If the summary file is raw (freshly downloaded),
@@ -72,7 +102,9 @@ def read_ass_sum_file(infpath, raw_summary=False):
             # engine='c',
             header=0,
             names=colNames,
-            dtype=colDTypes
+            usecols=colNames,
+            dtype=colDTypes,
+            na_values=['NA', 'na', '']
         )
     # end with
     return ass_sum_df
