@@ -42,6 +42,8 @@ Here is a list of RiboGrove database releases and corresponding ribogrove-tools 
 
 - RiboGrove database release 13.219 -- ribogrove-tools release `13.219`.
 
+- RiboGrove database release 14.220–17.223 -- ribogrove-tools release `14.220`.
+
 ## Python version
 
 All Python scripts in this repo are written for Python 3 (version 3.6 or later).

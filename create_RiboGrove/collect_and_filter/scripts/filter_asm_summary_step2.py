@@ -201,7 +201,8 @@ def remove_nonrelease_genomes(in_asm_sum_df,
         replicon_map_df.query('seq_acc in @nonrelease_seq_accs')['asm_acc']
     )
     # Filter remaining sequences
-    filt_asm_sum_df = in_asm_sum_df.query('not asm_acc in @nonrelease_asm_accs')
+    filt_asm_sum_df = in_asm_sum_df.query('not asm_acc in @nonrelease_asm_accs') \
+        .reset_index(drop=True)
 
     # Save "nonrelease" accessions
     with gzip.open(nonrelease_outfpath, 'wt') as nonrelease_file:
@@ -290,7 +291,8 @@ def remove_NNN_genomes(asm_sum_df,
     )
     sys.stdout.flush()
 
-    filt_asm_sum_df = asm_sum_df.query('not asm_acc in @NNN_asm_accs')
+    filt_asm_sum_df = asm_sum_df.query('not asm_acc in @NNN_asm_accs') \
+        .reset_index(drop=True)
 
     # Save "NNN" accessions
     with gzip.open(NNN_outfpath, 'wt') as NNN_file:

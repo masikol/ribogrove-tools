@@ -197,7 +197,7 @@ with open(primer_pairs_fpath, 'rt') as infile:
 
 # Basic GCN df
 basic_gcn_df = make_basic_gcn_df(final_stats_fpath)
-basic_gcn_outfpath = os.path.join(outdir_path, 'basic_GCNs.tsv')
+basic_gcn_outfpath = os.path.join(outdir_path, '16S_GCNs.tsv')
 output_gcn_df(basic_gcn_df, basic_gcn_outfpath)
 print('Basic GCNs: `{}`'.format(basic_gcn_outfpath))
 

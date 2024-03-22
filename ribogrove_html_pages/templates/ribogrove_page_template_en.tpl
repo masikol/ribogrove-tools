@@ -2,15 +2,21 @@
 <img src="/cager/img/RiboGrove_logo.png"><br><br>
 <h2>Contents</h2>
 <ul>
+{% if not archive %}
 <li><a href="#overview">What is RiboGrove</a>
 <ul class="ribogrove-nested-list">
 <li><a href="#other-databases">RiboGrove and other 16S rRNA databases</a></li>
 <li><a href="#genome-categories">Genome categories</a></li>
 </ul>
 </li>
+{% endif %}
 <li><a href="#downloads">Downloads</a>
 <ul class="ribogrove-nested-list">
+  {% if not archive %}
   <li><a href="#current-release">Latest RiboGrove release — {{ ribogrove_release_number }}</li>
+  {% else %}
+  <li><a href="#current-release">RiboGrove release {{ ribogrove_release_number }}</li>
+  {% endif %}
   <li><a href="#release-archive">RiboGrove release archive</li>
   <li><a href="#release-notes">Release notes</li>
 </ul>
@@ -35,11 +41,14 @@
 <li><a href="#select-head">Selecting header data</a></li>
 </ul>
 </li>
+{% if not archive %}
 <li><a href="#contacts">Contacts</a></li>
 <li><a href="#citing-ribogrove">Citing RiboGrove</a></li>
 <li><a href="#faq">Questions people ask about RiboGrove</a></li>
+{% endif %}
 </ul>
 <hr>
+{% if not archive %}
 <div id="overview" class="pad-anchor"></div>
 <h2>What is RiboGrove</h2>
 <p>RiboGrove is a database of 16S rRNA gene sequences of bacteria and archaea.</p>
@@ -74,10 +83,16 @@
 <br>
 <p>The software used for the RiboGrove construction can be found in the following GitHub repository: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
 <hr>
+{% endif %}
 <div id="downloads" class="pad-anchor"></div>
 <h2>Downloads</h2>
 <div id="current-release" class="pad-anchor"></div>
+
+{% if not archive %}
 <h3>Latest RiboGrove release — {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
+{% else %}
+<h3>RiboGrove release {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
+{% endif %}
 <p>The release is based on RefSeq release {{ refseq_release }}.</p>
 <ul>
 <li>A fasta file of full-length 16S gene sequences. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Download (gzipped fasta file, {{ final_fasta_fsize_fmt }} MB)</a></li>
@@ -114,6 +129,10 @@
       <li>
         <span class="samp-highl">entropy_summary.tsv</span><br>
         This is a TSV file, which contains summary of instragenomic variability of the 16S rRNA genes. Intragenomic variability are calculated only for the category&nbsp;1 genomes having more than one 16S rRNA gene. Intragenomic variability is evaluated using Shannon entropy. We align gene sequences from each genome using <a href="https://drive5.com/muscle5/">MUSCLE</a>, and then we calculate Shannon entropy for each multiple alignment column (i.e. base).
+      </li>
+      <li>
+        <span class="samp-highl">16S_GCNs.tsv</span><br>
+        This is a TSV file of 16S rRNA Gene Copy Numbers for each genome in the release.
       </li>
       <li>
         <span class="samp-highl">primer_pair_genomic_coverage.tsv</span><br>
@@ -265,7 +284,7 @@
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 <tr>
@@ -276,7 +295,7 @@
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 </tbody>
@@ -295,7 +314,7 @@
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 <tr>
@@ -306,7 +325,7 @@
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 </tbody>
@@ -324,7 +343,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 <tr>
@@ -334,7 +353,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 </tbody>
@@ -432,7 +451,7 @@
 </tbody>
 </table>
 
-<p><sup>*</sup> Coverage of a primer pair is the per cent of genomes having at least one 16S rRNA gene which can be amplified by PCR using this primer pair. For details, see our <a href="/cager/en/ribogrove#citing-ribogrove">paper about RiboGrove</a>.</p>
+<p><sup>*</sup> Coverage of a primer pair is the per cent of genomes having at least one 16S rRNA gene which can be amplified by PCR using this primer pair. For details, see our <a href="https://doi.org/10.1016/j.resmic.2022.103936">paper about RiboGrove</a>.</p>
 <p>You can find a more detailed table in the file <span class="samp">primer_pair_genomic_coverage.tsv</span> in the <a href="#downloads">metadata</a>. That table contains coverage not just for phyla, but also for each bacterial class, order, family, genus, and species. Moreover, that table contains coverage values for primer pair 1115F–1492R (V7–V9 region). In this table, it is omitted for brevity.</p>
 
 <table class="sum-table"><caption>Primers used for coverage estimation</caption>
@@ -532,10 +551,11 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
 <p><strong>Example 5</strong>. Select all phylum names.</p>
 <p class="samp-highl samp-vwide">seqkit seq -n ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | grep -Eo ';p__[^;]+' | sed -E 's/;|p__//g' | sort | uniq</p>
 <p class="samp-comment">This might be done only if you have <span class="samp">grep</span>, <span class="samp">sed</span>, <span class="samp">sort</span> and <span class="samp">uniq</span> utilities installed (Linux and Mac OS systems should have them built-in).</p>
+{% if not archive %}
 <hr>
 <div id="contacts" class="pad-anchor"></div>
 <h2>Contacts</h2>
-<p>For any questions concerning RiboGrove, please contact Maxim Sikolenko at sikolenko<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by.</p>
+<p>For any questions concerning RiboGrove, please contact Maksim Sikolenko at sikolenko<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by or maximdeynonih<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">gmail.com.</p>
 <hr>
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <h2>Citing RiboGrove</h2>
@@ -556,3 +576,4 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
   <summary><b>3. How do I search a FASTA database by sequence in Seqkit?</b></summary>
   <p>People have already provided several useful answers in the corresponding discussion: <a href="https://www.biostars.org/p/9561418">https://www.biostars.org/p/9561418</a>.</p>
 </details></div>
+{% endif %}

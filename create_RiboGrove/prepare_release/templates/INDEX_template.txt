@@ -9,7 +9,8 @@ The metadata consists of the following files:
 6. taxonomy.tsv
 7. intragenic_repeats.tsv
 8. entropy_summary.tsv
-9. primer_pair_genomic_coverage.tsv
+9. 16S_GCNs.tsv
+10. primer_pair_genomic_coverage.tsv
 
 
 |=== File descriptions ===|
@@ -107,7 +108,7 @@ This is a TSV file which contains nucleotide conposition, size, genomic and taxo
 Column descriptions:
 
 - Column `seqID`: RiboGrove sequence ID of a gene.
-- Column `asm_acc`: the Assembly ID of a genome (https://ncbi.nlm.nih.gov/assembly/).
+- Column `asm_acc`: the Assembly ID of a genome (https://www.ncbi.nlm.nih.gov/datasets/genome).
 - Column `taxID`: the Taxonomy ID from the NCBI Taxonomy database (https://www.ncbi.nlm.nih.gov/taxonomy).
 - Column `organism_name`: the taxonomy name from the NCBI Taxonomy database (https://www.ncbi.nlm.nih.gov/taxonomy).
 - Column `category`: the category of the genome, from which the gene originates.
@@ -122,7 +123,7 @@ This is a TSV file which contains information about what genome cetagories were 
 
 Column descriptions:
 
-- Column `asm_acc`: the Assembly ID of a genome (https://ncbi.nlm.nih.gov/assembly/).
+- Column `asm_acc`: the Assembly ID of a genome (https://www.ncbi.nlm.nih.gov/datasets/genome).
 - Column `category`: [1,2,3] genome category (1 -- the highest reliability, 3 -- the lowest reliability).
 - Column `seqtech`: sequencing technology.
 - Column `degenerate_in_16S`: [1/0] 1 -- the genome contains degenerate bases in target genes; 0 -- the genome does not.
@@ -135,7 +136,7 @@ This is a TSV file which contains taxonomic affiliation of each genome (Assembly
 
 Column descriptions:
 
-- Column `asm_acc`: the Assembly ID of a genome (https://ncbi.nlm.nih.gov/assembly/).
+- Column `asm_acc`: the Assembly ID of a genome (https://www.ncbi.nlm.nih.gov/datasets/genome).
 - Column `taxID`: the Taxonomy ID from the NCBI Taxonomy database (https://www.ncbi.nlm.nih.gov/taxonomy).
 - Column `organism_name`: the taxonomy name from the NCBI Taxonomy database (https://www.ncbi.nlm.nih.gov/taxonomy).
 - 7 columns `Species`, `Genus`, `Family`, `Order`, `Class`, `Phylum`, `Domain`. Each of them contains the name of the taxon at the corresponding taxonomical level.
@@ -163,10 +164,20 @@ This is a TSV file which contains summary of instragenomic variability of the ta
 
 Column descriptions:
 
-- Column `asm_acc`: the Assembly ID of a genome (https://ncbi.nlm.nih.gov/assembly/).
+- Column `asm_acc`: the Assembly ID of a genome (https://www.ncbi.nlm.nih.gov/datasets/genome).
 - Column `sum_entropy`: sum of per-base entropy for a particular genome (bp).
 - Column `mean_entropy`: mean per-base entropy for a particular genome (bp).
 - Column `num_var_cols`: number of variable positions in the multiple sequence alignment.
+
+
+== 16S_GCNs.tsv ==
+
+This is a TSV file of 16S rRNA Gene Copy Numbers for each genome in the release.
+
+Column descriptions:
+
+- Column `asm_acc`: the Assembly ID of a genome (https://www.ncbi.nlm.nih.gov/datasets/genome).
+- Column `16S_rRNA_gcn`: number of 16S rRNA genes in the genome.
 
 
 == primer_pair_genomic_coverage.tsv ==

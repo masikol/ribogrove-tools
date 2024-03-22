@@ -2,15 +2,21 @@
 <img src="/cager/img/RiboGrove_logo.png"><br><br>
 <h2>Содержание</h2>
 <ul>
+{% if not archive %}
 <li><a href="#overview">Что такое RiboGrove</a>
 <ul class="ribogrove-nested-list">
 <li><a href="#other-databases">RiboGrove и другие базы данных 16S рРНК</a></li>
 <li><a href="#genome-categories">Категории геномов</a></li>
 </ul>
 </li>
+{% endif %}
 <li><a href="#downloads">Файлы</a>
 <ul class="ribogrove-nested-list">
+  {% if not archive %}
   <li><a href="#current-release">Актуальный выпуск RiboGrove — {{ ribogrove_release_number }}</li>
+  {% else %}
+  <li><a href="#current-release">Выпуск RiboGrove {{ ribogrove_release_number }}</li>
+  {% endif %}
   <li><a href="#release-archive">Архив выпусков RiboGrove</li>
   <li><a href="#release-notes">Комментарии к выпуску</li>
 </ul>
@@ -35,11 +41,14 @@
 <li><a href="#select-head">Извлечение информации из заголовков последовательностей</a></li>
 </ul>
 </li>
+{% if not archive %}
 <li><a href="#contacts">Контакты</a></li>
 <li><a href="#citing-ribogrove">Цитирование RiboGrove</a></li>
 <li><a href="#faq">Вопросы, которые возникают у людей про RiboGrove</a></li>
+{% endif %}
 </ul>
 <hr>
+{% if not archive %}
 <div id="overview" class="pad-anchor"></div>
 <h2>Что такое RiboGrove</h2>
 <p>RiboGrove — это база данных последовательностей генов 16S рРНК бактерий и архей.</p>
@@ -74,10 +83,15 @@
 <br>
 <p>Программы, с помощью которых RiboGrove была создана, доступны в репозитории на ГитХабе: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
 <hr>
+{% endif %}
 <div id="downloads" class="pad-anchor"></div>
 <h2>Файлы</h2>
 <div id="current-release" class="pad-anchor"></div>
+{% if not archive %}
 <h3>Актуальный выпуск RiboGrove — {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
+{% else %}
+<h3>Выпуск RiboGrove {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
+{% endif %}
 <p>Выпуск RiboGrove {{ ribogrove_release_number }} основан на данных, полученных из базы данных RefSeq версии {{ refseq_release }}.</p>
 <ul>
 <li>Fasta-файл полноразмерных последовательностей генов 16S рРНК. <a href="/cager/ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Скачать (gzipʼнутый fasta-файл, {{ final_fasta_fsize_fmt }} Мб)</a></li>
@@ -263,7 +277,7 @@
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 <tr>
@@ -274,7 +288,7 @@
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 </tbody>
@@ -294,7 +308,7 @@
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 <tr>
@@ -305,7 +319,7 @@
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 </tbody>
@@ -324,7 +338,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 <tr>
@@ -334,7 +348,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 </tbody>
@@ -433,7 +447,7 @@
 </tbody>
 </table>
 
-<p><sup>*</sup> Спектр действия пары праймеров — это процент геномов, которые содержат как минимум один ген 16S рРНК, который возможно амплифицировать с помощью ПЦР используя эту пару праймеров. Подробности описаны в нашей <a href="/cager/ru/ribogrove#citing-ribogrove">статье про RiboGrove</a>.</p>
+<p><sup>*</sup> Спектр действия пары праймеров — это процент геномов, которые содержат как минимум один ген 16S рРНК, который возможно амплифицировать с помощью ПЦР используя эту пару праймеров. Подробности описаны в нашей <a href="https://doi.org/10.1016/j.resmic.2022.103936">статье про RiboGrove</a>.</p>
 <p>Есть более подробная таблица — в файле <span class="samp">primer_pair_genomic_coverage.tsv</span> в метаданных <a href="#downloads">metadata</a>. Та таблица содержит покрытие не только для отделов бактерий, но и для каждого класса, порядка, семейства, рода и вида. Кроме того, та таблица содержит покрытие для пары праймеров 1115F–1492R (участок V7–V9). В этой таблице нет этой пары, чтобы таблица не была слишком большой.</p>
 
 <table class="sum-table"><caption>Праймеры, спектр действия которых оценивался</caption>
@@ -532,6 +546,7 @@
 <p><strong>Пример 5</strong>. Выбрать все названия отделов организмов.</p>
 <p class="samp-highl samp-vwide">seqkit seq -n ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz | grep -Eo ';p__[^;]+' | sed -E 's/;|p__//g' | sort | uniq</p>
 <p class="samp-comment">Такая команда сработает успешно, если в вашей системе установлены программы <span class="samp">grep</span>, <span class="samp">sed</span>, <span class="samp">sort</span> и <span class="samp">uniq</span> (в системах Linux и Mac OS эти программы обычно предустановлены).</p>
+{% if not archive %}
 <hr>
 <div id="contacts" class="pad-anchor"></div>
 <h2>Контакты</h2>
@@ -556,3 +571,4 @@
   <summary><b>3. Как найти нужные записи в fasta-файле по последовательности с помощью Seqkit?</b></summary>
   <p>В соответствующей дискуссии на форуме уже дали несколько полезных ответов и рекомендаций: <a href="https://www.biostars.org/p/9561418">https://www.biostars.org/p/9561418</a>.</p>
 </details></div>
+{% endif %}

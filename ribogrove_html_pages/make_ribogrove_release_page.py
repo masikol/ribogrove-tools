@@ -83,6 +83,12 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '--archive',
+    help='make pages for an archive realease, i.e. they shall be reduced',
+    action='store_true'
+)
+
 # Output files
 
 parser.add_argument(
@@ -111,6 +117,7 @@ gene_stats_fpath = os.path.abspath(args.gene_stats_table)
 entropy_summary_fpath = os.path.abspath(args.entropy_summary)
 source_genomes_fpath = os.path.abspath(args.source_genomes)
 primers_dirpath = os.path.abspath(args.primers_dir)
+archive = args.archive
 outdpath = os.path.abspath(args.outdir)
 seqkit_fpath = os.path.abspath(args.seqkit)
 
@@ -421,6 +428,7 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
     with app.app_context():
         rendered_str = flask.render_template(
                 template_fpath,
+                archive=archive,
                 ribogrove_release_number=ribogrove_release_number,
                 refseq_release=refseq_release,
                 ribogrove_release_date=ribogrove_release_date,

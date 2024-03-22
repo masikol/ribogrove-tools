@@ -176,4 +176,58 @@ python3 make_ribogrove_release_page.py \
   --primers-dir /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/13.219/bacteria/primers_coverage \
   --outdir /mnt/1.5_drive_0/RiboGrove/RiboGrove_pages/13.219/ \
   --seqkit /usr/bin/seqkit
-  
+
+
+python3 make_ribogrove_release_page.py \
+  --release-num 14.220 \
+  --release-date 2024-03-19 \
+  --final-fasta /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/14.220/ribogrove_14.220_sequences.fasta.gz \
+  --metadata /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/14.220/metadata_ribogrove_14.220.zip \
+  --gene-stats-table /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/14.220/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/14.220/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/14.220/metadata/source_RefSeq_genomes.tsv \
+  --primers-dir /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/14.220/bacteria/primers_coverage \
+  --outdir /mnt/1.5_drive_0/RiboGrove/RiboGrove_pages/14.220/ \
+  --seqkit /usr/bin/seqkit \
+  --archive
+
+python3 make_ribogrove_release_page.py \
+  --release-num 15.221 \
+  --release-date 2024-03-20 \
+  --final-fasta /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/15.221/ribogrove_15.221_sequences.fasta.gz \
+  --metadata /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/15.221/metadata_ribogrove_15.221.zip \
+  --gene-stats-table /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/15.221/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/15.221/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/15.221/metadata/source_RefSeq_genomes.tsv \
+  --primers-dir /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/15.221/bacteria/primers_coverage \
+  --outdir /mnt/1.5_drive_0/RiboGrove/RiboGrove_pages/15.221/ \
+  --seqkit /usr/bin/seqkit \
+  --archive
+
+
+python3 make_ribogrove_release_page.py \
+  --release-num 16.222 \
+  --release-date 2024-03-20 \
+  --final-fasta /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/16.222/ribogrove_16.222_sequences.fasta.gz \
+  --metadata /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/16.222/metadata_ribogrove_16.222.zip \
+  --gene-stats-table /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/16.222/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/16.222/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/16.222/metadata/source_RefSeq_genomes.tsv \
+  --primers-dir /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/16.222/bacteria/primers_coverage \
+  --outdir /mnt/1.5_drive_0/RiboGrove/RiboGrove_pages/16.222/ \
+  --seqkit /usr/bin/seqkit \
+  --archive
+
+python3 make_ribogrove_release_page.py \
+  --release-num 17.223 \
+  --release-date 2024-03-21 \
+  --final-fasta /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/17.223/ribogrove_17.223_sequences.fasta.gz \
+  --metadata /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/17.223/metadata_ribogrove_17.223.zip \
+  --gene-stats-table /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/17.223/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/17.223/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/1.5_drive_0/RiboGrove/RiboGrove_releases/17.223/metadata/source_RefSeq_genomes.tsv \
+  --primers-dir /mnt/1.5_drive_0/RiboGrove/RiboGrove_workdirs/17.223/bacteria/primers_coverage \
+  --outdir /mnt/1.5_drive_0/RiboGrove/RiboGrove_pages/17.223/ \
+  --seqkit /usr/bin/seqkit
+
+

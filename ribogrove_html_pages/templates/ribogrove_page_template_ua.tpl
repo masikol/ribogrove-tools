@@ -16,15 +16,21 @@
 <img src="img/RiboGrove_logo.png"><br><br>
 <h2>Зміст</h2>
 <ul>
+{% if not archive %}
 <li><a href="#overview">Що таке RiboGrove</a>
 <ul class="ribogrove-nested-list">
 <li><a href="#other-databases">RiboGrove і інші бази даних 16S рРНК</a></li>
 <li><a href="#genome-categories">Категорії геномів</a></li>
 </ul>
 </li>
+{% endif %}
 <li><a href="#downloads">Файли</a>
 <ul class="ribogrove-nested-list">
+  {% if not archive %}
   <li><a href="#current-release">Актуальний реліз RiboGrove — {{ ribogrove_release_number }}</li>
+  {% else %}
+  <li><a href="#current-release">Реліз RiboGrove {{ ribogrove_release_number }}</li>
+  {% endif %}
   <li><a href="#release-archive">Архів релізів RiboGrove</li>
   <li><a href="#release-notes">Коментарі до релізу</li>
 </ul>
@@ -49,11 +55,14 @@
 <li><a href="#select-head">Вибір даних заголовків</a></li>
 </ul>
 </li>
+{% if not archive %}
 <li><a href="#contacts">Контакти</a></li>
 <li><a href="#citing-ribogrove">Цитування RiboGrove</a></li>
 <li><a href="#faq">Питання, які люди задають про RiboGrove</a></li>
+{% endif %}
 </ul>
 <hr>
+{% if not archive %}
 <div id="overview" class="pad-anchor"></div>
 <h2>Що таке RiboGrove</h2>
 <p>RiboGrove — це база даних послідовностей генів 16S рРНК бактерій та архей.</p>
@@ -88,10 +97,15 @@
 <br>
 <p>Програми, за допомогую яких RiboGrove була створена, знаходиться у наступному ҐітХаб-репозиторії: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
 <hr>
+{% endif %}
 <div id="downloads" class="pad-anchor"></div>
 <h2>Завантаження</h2>
 <div id="current-release" class="pad-anchor"></div>
+{% if not archive %}
 <h3>Актуальний реліз RiboGrove — {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
+{% else %}
+<h3>Реліз RiboGrove {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
+{% endif %}
 <p>Реліз заснований на базі даних RefSeq {{ refseq_release }}.</p>
 <ul>
 <li>Fasta-файл повнорозмірних послідовностей генів 16S рРНК. <a href="ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Завантажити („ґзіпʼнутий“ fasta-файл, {{ final_fasta_fsize_fmt }} Мб)</a></li>
@@ -278,7 +292,7 @@
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 <tr>
@@ -289,7 +303,7 @@
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 </tbody>
@@ -309,7 +323,7 @@
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 <tr>
@@ -320,7 +334,7 @@
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 </tbody>
@@ -339,7 +353,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 <tr>
@@ -349,7 +363,7 @@
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
-<td><a href="https://ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+<td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
 </tbody>
@@ -506,7 +520,7 @@
 <p class="samp-highl samp-vwide">seqkit grep -nrp ":NZ_CP009686.1:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Тут потрібні ще дві опціі: <span class="samp">-n</span> та <span class="samp">-r</span>. Перша вказує програмі шукати підрядки в заголовках цілком, а не тільки в ідентифікаторах (SeqID). Друга опція вказує програмі, що їй треба шукати не тільки ті заголовки, які цілком співпадають із шуканим рядком, а також і ті, які утримують шуканий рядок як свою частину.</p>
 <p class="samp-comment">Щоб забезпечити специфичність пошуку, оточюйте код доступу двокрапками (<span class="samp-highl">:</span>).</p>
-<p><strong>Приклад 3</strong>. Вибрати всі послідовності генів одного геному (код доступу геномної збірки <a href="https://ncbi.nlm.nih.gov/assembly/GCF_019357495.1">GCF_019357495.1</a>).</p>
+<p><strong>Приклад 3</strong>. Вибрати всі послідовності генів одного геному (код доступу геномної збірки <a href="https://ncbi.nlm.nih.gov/datasets/genome/GCF_019357495.1">GCF_019357495.1</a>).</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp "GCF_019357495.1:" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p class="samp-comment">Щоб забезпечити специфичність пошуку, пишіть двокрапку (<span class="samp-highl">:</span>) після коду доступу збірки.</p>
 <p><strong>Приклад 4</strong>. Вибрати всі послідовності актинобактерий.</p>
@@ -550,7 +564,8 @@
 <hr>
 <div id="contacts" class="pad-anchor"></div>
 <h2>Контакти</h2>
-<p>Якщо ви маєте питання щодо RiboGrove, будь ласка, звертайтеся до Максима Сиколенка на ел. адресу sikolenko<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by.</p>
+<p>Якщо ви маєте питання щодо RiboGrove, будь ласка, звертайтеся до Максима Сиколенка на ел. адресу sikolenko<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by або maximdeynonih<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">gmail.com.</p>
+{% if not archive %}
 <hr>
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <h2>Цитування RiboGrove</h2>
@@ -571,6 +586,7 @@
   <summary><b>3. Як знайти потрібні записи у fasta-файлі по послідовності за допомогою Seqkit?</b></summary>
   <p>У відповідної дискусії на форумі вже дали декілька корисних відповідей та порад: <a href="https://www.biostars.org/p/9561418">https://www.biostars.org/p/9561418</a>.</p>
 </details></div>
+{% endif %}
 <br>
 <hr>
 <p>RiboGrove, {{ ribogrove_release_date }}</p>

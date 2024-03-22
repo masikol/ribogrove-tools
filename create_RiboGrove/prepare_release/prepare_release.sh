@@ -171,6 +171,14 @@ for f in "${BACTERIA_ENTROPY_SUMMARY}" "${ARCHAEA_ENTROPY_SUMMARY}"; do
 done
 RIBOGROVE_ENTROPY_SUMMARY="${METADATA_DIR}/entropy_summary.tsv"
 
+# 16S GCN
+BACTERIA_16S_GCN="${BACTERIA_DIR}/GCNs/16S_GCNs.tsv"
+ARCHAEA_16S_GCN="${ARCHAEA_DIR}/GCNs/16S_GCNs.tsv"
+for f in "${BACTERIA_16S_GCN}" "${ARCHAEA_16S_GCN}"; do
+  check_file "${f}"
+done
+RIBOGROVE_16S_GCN="${METADATA_DIR}/16S_GCNs.tsv"
+
 # Total primer coverage
 BACTERIA_PRIMER_COV_DIR="${BACTERIA_DIR}/primers_coverage"
 this_file_relative_dirpath=`dirname "$0"`
@@ -312,6 +320,18 @@ cat "${ARCHAEA_ENTROPY_SUMMARY}" \
   | csvtk del-header -tT \
   >> "${RIBOGROVE_ENTROPY_SUMMARY}"
 echo "${RIBOGROVE_ENTROPY_SUMMARY}"
+
+# 16S GCNs
+echo -n '16S GCNs...  '
+if [[ -f "${RIBOGROVE_16S_GCN}" ]]; then
+  # Empty the merged file
+  echo -n '' > "${RIBOGROVE_16S_GCN}"
+fi
+cat "${BACTERIA_16S_GCN}" > "${RIBOGROVE_16S_GCN}"
+cat "${ARCHAEA_16S_GCN}" \
+  | csvtk del-header -tT \
+  >> "${RIBOGROVE_16S_GCN}"
+echo "${RIBOGROVE_16S_GCN}"
 
 # Total primer coverage
 echo 'Primer coverage...  '
