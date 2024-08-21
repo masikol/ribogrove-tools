@@ -17,6 +17,8 @@
 ### Dependencies:
 # 1. --mfeprimer -- an [MFEprimer](https://www.mfeprimer.com/) executable.
 #   Mandatory.
+# 2. --mfe-tmp-dir -- a directory for MFEPrimer temporary files.
+#   Default value: --outdir/tmp
 
 ### "Cached" files:
 # 1. `--prev-final-fasta` -- a fasta file of final RiboGrove sequences
@@ -84,10 +86,17 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '--mfe-tmp-dir',
+    help='mfeprimer temporary directory',
+    required=False
+)
+
 args = parser.parse_args()
 
 
 # == Import them now ==
+import re
 import sys
 import glob
 import json
@@ -127,15 +136,25 @@ for fpath in (fasta_fpath, mfeprimer_fpath):
     # end if
 # enb for
 
-# Create output directory if needed
-if not os.path.isdir(outdir_path):
-    try:
-        os.makedirs(outdir_path)
-    except OSError as err:
-        print(f'Error: cannot create directory `{outdir_path}`')
-        sys.exit(1)
-    # end try
+if not args.mfe_tmp_dir is None:
+    tmp_dirpath = os.path.abspath(args.mfe_tmp_dir)
+else:
+    tmp_dirpath = os.path.join(outdir_path, 'tmp')
 # end if
+
+
+# Create output and tmp directories if needed
+for d in (outdir_path, tmp_dirpath):
+    if not os.path.isdir(d):
+        try:
+            os.makedirs(d)
+        except OSError as err:
+            print(f'Error: cannot create directory `{d}`: {err}')
+            sys.exit(1)
+        # end try
+    # end if
+# end for
+del d
 
 # Check if mfeprimer executable is actually executable
 if not os.access(mfeprimer_fpath, os.X_OK):
@@ -170,7 +189,7 @@ K_MER_SIZE = 8
 
 
 def prepare_pcr_template(seq_str):
-    tmp_fasta = os.path.join(tmp_dir, 'tmpQ.fasta')
+    tmp_fasta = os.path.join(tmp_dirpath, 'tmpQ.fasta')
 
     # Write current sequence to fasta file. This will be input for mfeprimer.
     with open(tmp_fasta, 'wt') as tmp_fasta_file:
@@ -192,8 +211,7 @@ def index_fasta_for_mfeprimer(fasta_fpath):
 
 def simulate_pcr_for_single_template(template_fpath, primers_fpath):
 
-
-    tmp_out_base = os.path.join(tmp_dir, 'tmpOUT')
+    tmp_out_base = os.path.join(tmp_dirpath, 'tmpOUT')
 
     cmd = ' '.join(
         [
@@ -203,75 +221,126 @@ def simulate_pcr_for_single_template(template_fpath, primers_fpath):
             '-c 2',
             f'-i {primers_fpath}',
             f'-d {template_fpath}',
-            '-j',
-            f'-o {tmp_out_base}'
+            # JSON mode remnant
+            # '-j',
+            # f'-o {tmp_out_base}'
         ]
     )
-    pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
-    stdout_stderr = pipe.communicate()
+    pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE, encoding='utf-8')
+    stdout, stderr = pipe.communicate()
     if pipe.returncode != 0:
-        print(f'MFEprimer exited with error (exit code {pipe.returncode}):')
-        print(stdout_stderr[1].decode('utf-8'))
+        print(f'MFEprimer exited with an error (exit code {pipe.returncode}):')
+        print(stderr)
         sys.exit(1)
     # end if
 
+    # JSON mode remnant
     # Clean
-    os.unlink(tmp_out_base)
+    # os.unlink(tmp_out_base)
 
-    out_json_fpath = f'{tmp_out_base}.json'
-    return out_json_fpath
+    # JSON mode remnant
+    # out_json_fpath = f'{tmp_out_base}.json'
+    return stdout
 # end def
 
+# JSON mode remnant
+# def parse_pcr_json_result(json_fpath):
+#     # Read mfeprimer's output
+#     mfe_json = json.loads(open(json_fpath, 'rt').read())
 
-def parse_pcr_json_result(json_fpath):
-    # Read mfeprimer's output
-    mfe_json = json.loads(open(json_fpath, 'rt').read())
+#     # Get list of possible amplicons (products)
+#     amp_list = mfe_json['AmpList']
 
-    # Get list of possible amplicons (products)
-    amp_list = mfe_json['AmpList']
+#     if not amp_list is None:
+#         for amp in amp_list:
+#             # Collect all appropriate data about primer annealing
+#             product_size = amp['P']['Size']
+#             ppc = amp['PPC'] # what's this?
 
-    if not amp_list is None:
-        for amp in amp_list:
-            # Collect all appropriate data about primer annealing
-            product_size = amp['P']['Size']
-            ppc = amp['PPC'] # what's this?
+#             f_size = amp['F']['Size'] # size of forw primer
+#             f_start = amp['F']['Start'] # start pos of forw primer annealing
+#             f_end = amp['F']['End'] # start pos of forw primer annealing
+#             f_tm = amp['F']['Tm'] # melting temperature for forw primer
+#             f_dg = amp['F']['Dg'] # free energy for forw primer
+#             f_bind_len = len(amp['F']['Sseq']) # product sequence
+#             f_pident = amp['F']['Aseq'].count(':') / len(amp['F']['Aseq']) # pident for forw primer
+#             f_cover = f_bind_len / f_size # coverage for forw primer
 
-            f_size = amp['F']['Size'] # size of forw primer
-            f_start = amp['F']['Start'] # start pos of forw primer annealing
-            f_end = amp['F']['End'] # start pos of forw primer annealing
-            f_tm = amp['F']['Tm'] # melting temperature for forw primer
-            f_dg = amp['F']['Dg'] # free energy for forw primer
-            f_bind_len = len(amp['F']['Sseq']) # product sequence
-            f_pident = amp['F']['Aseq'].count(':') / len(amp['F']['Aseq']) # pident for forw primer
-            f_cover = f_bind_len / f_size # coverage for forw primer
+#             r_size = amp['R']['Size'] # size of rev primer
+#             r_start = amp['R']['Start'] # start pos of rev primer annealing
+#             r_end = amp['R']['End'] # start pos of rev primer annealing
+#             r_tm = amp['R']['Tm'] # melting temperature for rev primer
+#             r_dg = amp['R']['Dg'] # free energy for rev primer
+#             r_bind_len = len(amp['R']['Sseq']) # product sequence
+#             r_pident = amp['R']['Aseq'].count(':') / len(amp['R']['Aseq']) # pident for rev primer
+#             r_cover = r_bind_len / r_size # coverage for rev primer
 
-            r_size = amp['R']['Size'] # size of rev primer
-            r_start = amp['R']['Start'] # start pos of rev primer annealing
-            r_end = amp['R']['End'] # start pos of rev primer annealing
-            r_tm = amp['R']['Tm'] # melting temperature for rev primer
-            r_dg = amp['R']['Dg'] # free energy for rev primer
-            r_bind_len = len(amp['R']['Sseq']) # product sequence
-            r_pident = amp['R']['Aseq'].count(':') / len(amp['R']['Aseq']) # pident for rev primer
-            r_cover = r_bind_len / r_size # coverage for rev primer
+#             output_values = list(
+#                 map(
+#                     str,
+#                     [
+#                         product_size, ppc,
+#                         f_size, f_start, f_end, f_tm, f_dg, f_bind_len, f_pident, f_cover,
+#                         r_size, r_start, r_end, r_tm, r_dg, r_bind_len, r_pident, r_cover,
+#                     ]
+#                 )
+#             )
 
-            output_values = list(
-                map(
-                    str,
-                    [
-                        product_size, ppc,
-                        f_size, f_start, f_end, f_tm, f_dg, f_bind_len, f_pident, f_cover,
-                        r_size, r_start, r_end, r_tm, r_dg, r_bind_len, r_pident, r_cover,
-                    ]
-                )
-            )
+#             yield output_values
+#         # end for
+#     # end if
 
-            yield output_values
-        # end for
+#     # Clean
+#     os.unlink(json_fpath)
+
+#     return
+# # end def
+
+
+def parse_pcr_plain_result(plain_text_str):
+    num_ampl_reobj = re.search(
+        r'Descriptions of \[ ([0-9]+) \] potential amplicons',
+        plain_text_str
+    )
+    if num_ampl_reobj is None:
+        print('ERROR')
+        print('Cannot parse MFEPrimer stdout: cannot find number of found amplicons')
+        sys.exit(1)
+    else:
+        num_amplicons = int(num_ampl_reobj.group(1))
     # end if
 
-    # Clean
-    os.unlink(json_fpath)
+    if num_amplicons == 0:
+        return
+    # end if
 
+    for i_ampl in range(1, num_amplicons+1):
+        pattern = PATTERN_DRAFT.format(i_ampl)
+        re_obj = re.search(pattern, plain_text_str)
+
+        if re_obj is None:
+            print('ERROR')
+            print('Cannot parse MFEPrimer stdout: cannot find PCR results')
+            sys.exit(1)
+        # end if
+
+        output_values = [
+            # TODO: remove
+            # re_obj.group(1),  # t_start
+            # re_obj.group(2),  # t_end
+            re_obj.group(1),  # product_size
+            re_obj.group(2),  # f_tm
+            re_obj.group(3),  # f_dg
+            re_obj.group(4),  # f_start
+            re_obj.group(5),  # f_end
+            re_obj.group(6),  # r_tm
+            re_obj.group(7),  # r_dg
+            re_obj.group(8), # r_start
+            re_obj.group(9), # r_end
+        ]
+
+        yield output_values
+    # end for
     return
 # end def
 
@@ -291,7 +360,7 @@ def write_output_for_dedup_seq(output_row, seq_id_list, outfile):
 
 def clean_tmp_dir():
     # Remove all files from temporary directory
-    for f in glob.iglob(f'{tmp_dir}/*'):
+    for f in glob.iglob(f'{tmp_dirpath}/*'):
         if not os.path.isdir(f):
             os.unlink(f)
         # end if
@@ -387,11 +456,10 @@ with open(primer_pairs_fpath, 'rt') as infile:
 
 
 # Configure paths to temporary files
-tmp_dir = os.path.join(outdir_path, 'tmp')
-tmp_primers_dpath = os.path.join(tmp_dir, 'tmp_primers')
+tmp_primers_dpath = os.path.join(tmp_dirpath, 'tmp_primers')
 
 
-for some_dir in (tmp_dir, tmp_primers_dpath):
+for some_dir in (tmp_dirpath, tmp_primers_dpath):
     if not os.path.isdir(some_dir):
         try:
             os.makedirs(some_dir)
@@ -404,13 +472,29 @@ for some_dir in (tmp_dir, tmp_primers_dpath):
 # end for
 
 # Columns for output files
+# JSON mode remnant
+# OUT_COLNAMES = [
+#     'asm_acc', 'seqID', 'product_size', 'ppc',
+#     'f_size', 'f_start', 'f_end', 'f_tm', 'f_dg', 'f_bind_len', 'f_pident', 'f_cover',
+#     'r_size', 'r_start', 'r_end', 'r_tm', 'r_dg', 'r_bind_len', 'r_pident', 'r_cover',
+# ]
 OUT_COLNAMES = [
-    'asm_acc', 'seqID', 'product_size', 'ppc',
-    'f_size', 'f_start', 'f_end', 'f_tm', 'f_dg', 'f_bind_len', 'f_pident', 'f_cover',
-    'r_size', 'r_start', 'r_end', 'r_tm', 'r_dg', 'r_bind_len', 'r_pident', 'r_cover',
+    'asm_acc', 'seqID',
+    # TODO: remove
+    # 't_start', 't_end',
+    'product_size', 
+    'f_tm', 'f_dg', 'f_start', 'f_end', 
+    'r_tm', 'r_dg', 'r_start', 'r_end', 
 ]
 
 PARTIAL_OUT_COLNAMES = OUT_COLNAMES[2:]
+
+# A regex pattern for searching PCR results parameters
+PATTERN_DRAFT = r'''Amp {}: .+ \+ .+ ==> .+:[0-9]+-[0-9]+[ ]*
+[ ]*
+[ ]*Size = ([0-9]+) bp, GC content = [0-9\.]+%, Tm = [0-9\.-]+ .C, Ta = [0-9\.-]+ .C[ ]*
+[ ]*F: Tm = ([0-9\.-]+) .C, Delta G = ([0-9\.-]+) kcal/mol, Start = ([0-9]+), End = ([0-9]+)[ ]*
+[ ]*R: Tm = ([0-9\.-]+) .C, Delta G = ([0-9\.-]+) kcal/mol, Start = ([0-9]+), End = ([0-9]+)'''
 
 
 print('{} -- Creating auxiliary data structures...'.format(get_time()))
@@ -498,12 +582,14 @@ for i, (seq, curr_seq_id_list) in enumerate(uniq_seq_records.items()):
             tmp_primers_fpath = primer_pair_fasta_dict[primer_pair_key]
 
             # Run mfeprimer
-            tmp_out_json = simulate_pcr_for_single_template(
+            tmp_out = simulate_pcr_for_single_template(
                 template_fpath,
                 tmp_primers_fpath
             )
 
-            output_rows_list = parse_pcr_json_result(tmp_out_json)
+            # JSON mode remnant
+            # output_rows_list = parse_pcr_json_result(tmp_out)
+            output_rows_list = parse_pcr_plain_result(tmp_out)
         # end if
 
         # Form path to current output file (corresponding to current primer pair)
@@ -520,9 +606,9 @@ for i, (seq, curr_seq_id_list) in enumerate(uniq_seq_records.items()):
 
 # Remove temporary directory
 try:
-    shutil.rmtree(tmp_dir)
+    shutil.rmtree(tmp_dirpath)
 except OSError as err:
-    print(f'Warning: Cannot delete temporary directory: `{tmp_dir}`')
+    print(f'Warning: Cannot delete temporary directory: `{tmp_dirpath}`')
     print(err)
     print()
 # end try

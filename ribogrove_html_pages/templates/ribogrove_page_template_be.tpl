@@ -562,7 +562,7 @@
 <hr>
 <div id="contacts" class="pad-anchor"></div>
 <h2>Кантакты</h2>
-<p>Калі вы маеце пытанне пра RiboGrove, калі ласка, звяртайцеся да Максіма Сікаленкі на эл. адрас sikolenko<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by або maximdeynonih<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">gmail.com.</p>
+<p>Калі вы маеце пытанне пра RiboGrove, калі ласка, звяртайцеся да Максіма Сікаленкі на эл. адрас sikolenko<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">mbio.bas-net.by або maximdeynonih<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">gmail.com.</p>
 <hr>
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <h2>Цытаванне RiboGrove</h2>

@@ -13,6 +13,10 @@
 #   It is the output of the script `download_genomes.py`.
 #   Mandatory.
 
+### "Cached" files:
+# 1. `--prev-replicon-map` -- a replicon map
+#   of the previous RiboGrove release (replicon_map.tsv.gz).
+
 ### Output files:
 # 1. `-o / --out` -- a file in which Assembly acceession numbers
 #   are mapped to corresponding RefSeq accession numbers.
@@ -49,6 +53,13 @@ parser.add_argument(
     help="""A directory where the downlaoded genomes are located.
     It is the output of the script `download_genomes.py`.""",
     required=True
+)
+
+# "Chache" files
+parser.add_argument(
+    '--prev-replicon-map',
+    help="""a replicon map of the previous RiboGrove release""",
+    required=False
 )
 
 # Output
@@ -100,33 +111,69 @@ if not os.path.isdir(os.path.dirname(outfpath)):
     # end try
 # end if
 
+cache_mode = not args.prev_replicon_map is None
+if cache_mode:
+    prev_repl_map_fpath = os.path.abspath(args.prev_replicon_map)
+    if not os.path.isfile(prev_repl_map_fpath):
+        print('Error!')
+        print('File `{}` does not exist'.format(prev_repl_map_fpath))
+        sys.exit(1)
+    # end if
+else:
+    prev_repl_map_fpath = None
+# end if
+
 print(asm_sum_fpath)
 print(genomes_dirpath)
+if cache_mode:
+    print(prev_repl_map_fpath)
+# end if
 print()
 
 
-def make_replicon_map(asm_sum_fpath, genomes_dirpath):
+def make_replicon_map(asm_sum_fpath, genomes_dirpath, prev_repl_map_fpath):
     asm_sum_df = rgIO.read_ass_sum_file(asm_sum_fpath)
     all_accs = set(asm_sum_df['asm_acc'])
-    asm_accs, seq_accs = list(), list()
-    for i, asm_acc in enumerate(all_accs):
-        seq_accessions = get_sequence_accessions(asm_acc, genomes_dirpath)
+
+    if cache_mode:
+        cached_df = load_prev_repl_map(all_accs, prev_repl_map_fpath)
+        cached_asm_accs = set(cached_df['asm_acc'])
+    # end if
+
+    final_asm_accs, final_seq_accs = list(), list()
+    for _, asm_acc in enumerate(all_accs):
+        if cache_mode and asm_acc in cached_asm_accs:
+            seq_accessions = tuple(
+                cached_df[cached_df['asm_acc'] == asm_acc]['seq_acc']
+            )
+        else:
+            seq_accessions = extract_sec_accessions(asm_acc, genomes_dirpath)
+        # end if
         for seq_acc in seq_accessions:
-            asm_accs.append(asm_acc)
-            seq_accs.append(seq_acc)
+            final_asm_accs.append(asm_acc)
+            final_seq_accs.append(seq_acc)
         # end for
     # end for
 
     replicon_map_df = pd.DataFrame(
         {
-            'asm_acc': asm_accs,
-            'seq_acc': seq_accs
+            'asm_acc': final_asm_accs,
+            'seq_acc': final_seq_accs,
         }
     )
     return replicon_map_df
 # end def
 
-def get_sequence_accessions(asm_acc, genomes_dirpath):
+
+def load_prev_repl_map(all_curr_accs, prev_repl_map_fpath):
+    with gzip.open(prev_repl_map_fpath, 'rt') as infile:
+        prev_df = pd.read_csv(infile, sep='\t')
+    # end with
+    prev_df = prev_df.query('asm_acc in @all_curr_accs')
+    return prev_df
+# end def
+
+def extract_sec_accessions(asm_acc, genomes_dirpath):
     asm_report_fpath = get_asm_report_fpath(asm_acc, genomes_dirpath)
     with open(asm_report_fpath, 'rt') as infile:
         lines = remove_comment_lines(infile.readlines())
@@ -170,7 +217,11 @@ def write_output(replicon_map_df, outfpath):
 
 # == Proceed ==
 
-replicon_map_df = make_replicon_map(asm_sum_fpath, genomes_dirpath)
+replicon_map_df = make_replicon_map(
+    asm_sum_fpath,
+    genomes_dirpath,
+    prev_repl_map_fpath
+)
 write_output(replicon_map_df, outfpath)
 
 

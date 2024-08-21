@@ -564,7 +564,7 @@
 <hr>
 <div id="contacts" class="pad-anchor"></div>
 <h2>Контакти</h2>
-<p>Якщо ви маєте питання щодо RiboGrove, будь ласка, звертайтеся до Максима Сиколенка на ел. адресу sikolenko<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by або maximdeynonih<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">gmail.com.</p>
+<p>Якщо ви маєте питання щодо RiboGrove, будь ласка, звертайтеся до Максима Сиколенка на ел. адресу sikolenko<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">mbio.bas-net.by або maximdeynonih<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">gmail.com.</p>
 {% if not archive %}
 <hr>
 <div id="citing-ribogrove" class="pad-anchor"></div>

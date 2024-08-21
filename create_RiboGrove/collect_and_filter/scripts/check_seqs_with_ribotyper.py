@@ -364,11 +364,11 @@ def run_ribotyper(query_seqs_fpath: str,
             stderr=sp.PIPE,
             encoding='utf-8'
         )
-        pipe.communicate()
+        out, err = pipe.communicate()
 
         if pipe.returncode != 0:
             print('Error: ribotyper exited with a non-zero status!')
-            print('See the error message somewhere above')
+            print(err)
             sys.exit(1)
         # end if
     else:

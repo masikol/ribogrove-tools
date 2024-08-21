@@ -1,6 +1,5 @@
 
-import os
-import gzip
+# import os
 from functools import partial
 
 import pandas as pd
@@ -25,127 +24,175 @@ _PRIMER_KEYS = (
 )
 
 
-def make_ribogrove_primer_coverage_df(input_dirpath,
-                                      gene_stats_df):
-    path_to_raw_tables = _get_path_to_raw_tables(input_dirpath)
-    per_phylum_genome_count_df = _count_genomes_per_phylum(
-        gene_stats_df
-    )
-    primers_coverage_df = _count_coverage_per_phylum(
-        path_to_raw_tables,
-        per_phylum_genome_count_df,
-        gene_stats_df
-    )
+def make_ribogrove_primer_coverage_df(input_fpath):
+    df = pd.read_csv(input_fpath, sep='\t')
+    df = df[df['Rank'] == 'Phylum']
 
-    print(primers_coverage_df)
-    return primers_coverage_df
-# end def
+    df = df.drop(['Rank'], axis=1)
 
-
-def _get_path_to_raw_tables(input_dirpath):
-    primer_keys_to_final_names = {
-        '1115F-1492R': '1115F-1492R.tsv',
-        '27F-1492R'  : '27F-1492R.tsv',
-        '27F-338R'   : '27F-338R.tsv',
-        '27F-534R'   : '27F-534R.tsv',
-        '341F-785R'  : '341F-785R.tsv',
-        '341F-944R'  : '341F-944R.tsv',
-        '515F-806R'  : '515F-806R.tsv',
-        '515F-1100R' : '515F-1100R.tsv',
-        '515F-944R'  : '515F-944R.tsv',
-        '784F-1100R' : '784F-1100R.tsv',
-        '784F-1193R' : '784F-1193R.tsv',
-        '939F-1193R' : '939F-1193R.tsv',
-        '939F-1378R' : '939F-1378R.tsv',
-    }
-
-    primer_keys_to_fpaths = {
-        k : os.path.join(input_dirpath, v) for k, v in primer_keys_to_final_names.items()
-    }
-
-    for f in primer_keys_to_fpaths.values():
-        if not os.path.exists(f):
-            err_msg = 'Error: file `{}` does not exist'.format(f)
-            raise OSError(err_msg)
-        # end def
-    # end for
-
-    return primer_keys_to_fpaths
-# end def
-
-
-def _count_genomes_per_phylum(gene_stats_df):
-
-    bacterial_seqIDs = set(
-        gene_stats_df[
-            gene_stats_df['Domain'] == 'Bacteria'
-        ]['seqID']
+    df = df.rename(
+        columns={
+            'Taxon'                   : 'Phylum',
+            'Number of genomes'       : 'num_genomes',
+            '27F-1492R; Full gene (%)': '27F-1492R',
+            '27F-338R; V1-V2 (%)'     : '27F-338R',
+            '27F-534R; V1-V3 (%)'     : '27F-534R',
+            '341F-785R; V3-V4 (%)'    : '341F-785R',
+            '341F-944R; V3-V5 (%)'    : '341F-944R',
+            '515F-806R; V4 (%)'       : '515F-806R',
+            '515F-944R; V4-V5 (%)'    : '515F-944R',
+            '515F-1100R; V4-V6 (%)'   : '515F-1100R',
+            '784F-1100R; V5-V6 (%)'   : '784F-1100R',
+            '784F-1193R; V5-V7 (%)'   : '784F-1193R',
+            '939F-1193R; V6-V7 (%)'   : '939F-1193R',
+            '939F-1378R; V6-V8 (%)'   : '939F-1378R',
+            '1115F-1492R; V7-V9 (%)'  : '1115F-1492R',
+        }
     )
 
-    seqID_df = pd.DataFrame({'seqID': tuple(bacterial_seqIDs)})
-    del bacterial_seqIDs
-
-    per_phylum_genome_count_df = seqID_df \
-        .merge(
-            gene_stats_df[['seqID', 'asm_acc', 'Phylum']],
-            on='seqID',
-            how='left'
-        ) \
-        .groupby('Phylum', as_index=False) \
-        .agg({'asm_acc': lambda x: x.nunique()}) \
-        .rename(columns={'asm_acc': 'num_genomes'}) \
-        .sort_values(by='num_genomes', ascending=False)
-
-
-    return per_phylum_genome_count_df
+    return df[
+        [
+            'Phylum',
+            'num_genomes',
+            '27F-1492R',
+            '27F-338R',
+            '27F-534R',
+            '341F-785R',
+            '341F-944R',
+            '515F-806R',
+            '515F-944R',
+            '515F-1100R',
+            '784F-1100R',
+            '784F-1193R',
+            '939F-1193R',
+            '939F-1378R',
+            '1115F-1492R',
+        ]
+    ]
 # end def
 
 
-def _count_coverage_per_phylum(path_to_raw_tables,
-                               per_phylum_genome_count_df,
-                               gene_stats_df):
-    primers_coverage_df = per_phylum_genome_count_df \
-        .copy() \
-        .sort_values(by='Phylum')
+# def make_ribogrove_primer_coverage_df(input_dirpath,
+#                                       gene_stats_df):
+#     path_to_raw_tables = _get_path_to_raw_tables(input_dirpath)
+#     per_phylum_genome_count_df = _count_genomes_per_phylum(
+#         gene_stats_df
+#     )
+#     primers_coverage_df = _count_coverage_per_phylum(
+#         path_to_raw_tables,
+#         per_phylum_genome_count_df,
+#         gene_stats_df
+#     )
 
-    for primer_key, raw_table_fpath in path_to_raw_tables.items():
+#     print(primers_coverage_df)
+#     return primers_coverage_df
+# # end def
 
-        print(primer_key)
 
-        tmp_df = pd.read_csv(raw_table_fpath, sep='\t')
+# def _get_path_to_raw_tables(input_dirpath):
+#     primer_keys_to_final_names = {
+#         '1115F-1492R': '1115F-1492R.tsv',
+#         '27F-1492R'  : '27F-1492R.tsv',
+#         '27F-338R'   : '27F-338R.tsv',
+#         '27F-534R'   : '27F-534R.tsv',
+#         '341F-785R'  : '341F-785R.tsv',
+#         '341F-944R'  : '341F-944R.tsv',
+#         '515F-806R'  : '515F-806R.tsv',
+#         '515F-1100R' : '515F-1100R.tsv',
+#         '515F-944R'  : '515F-944R.tsv',
+#         '784F-1100R' : '784F-1100R.tsv',
+#         '784F-1193R' : '784F-1193R.tsv',
+#         '939F-1193R' : '939F-1193R.tsv',
+#         '939F-1378R' : '939F-1378R.tsv',
+#     }
 
-        tmp_df = tmp_df.merge(
-            gene_stats_df[['asm_acc', 'Phylum']],
-            on='asm_acc',
-            how='outer'
-        ) \
-        .drop_duplicates() \
-        .dropna(subset=['seqID'])
+#     primer_keys_to_fpaths = {
+#         k : os.path.join(input_dirpath, v) for k, v in primer_keys_to_final_names.items()
+#     }
 
-        primers_coverage_df['num_revealed_genomes'] = tmp_df \
-            .groupby(['Phylum'], as_index=False) \
-            .agg({'asm_acc': lambda x: x.nunique()}) \
-            .rename(columns={'asm_acc': 'num_revealed_genomes'}) \
-            .merge(
-                per_phylum_genome_count_df,
-                on='Phylum',
-                how='right'
-            ).sort_values(by='Phylum') \
-            .fillna(0) \
-            .reset_index() \
-            ['num_revealed_genomes']
+#     for f in primer_keys_to_fpaths.values():
+#         if not os.path.exists(f):
+#             err_msg = 'Error: file `{}` does not exist'.format(f)
+#             raise OSError(err_msg)
+#         # end def
+#     # end for
 
-        primers_coverage_df[primer_key] = primers_coverage_df['num_revealed_genomes'] \
-                                          / primers_coverage_df['num_genomes'] \
-                                          * 100
-        primers_coverage_df = primers_coverage_df.drop(
-            ['num_revealed_genomes'],
-            axis=1
-        )
-    # end for
+#     return primer_keys_to_fpaths
+# # end def
 
-    return primers_coverage_df
-# end def
+
+# def _count_genomes_per_phylum(gene_stats_df):
+
+#     bacterial_seqIDs = set(
+#         gene_stats_df[
+#             gene_stats_df['Domain'] == 'Bacteria'
+#         ]['seqID']
+#     )
+
+#     seqID_df = pd.DataFrame({'seqID': tuple(bacterial_seqIDs)})
+#     del bacterial_seqIDs
+
+#     per_phylum_genome_count_df = seqID_df \
+#         .merge(
+#             gene_stats_df[['seqID', 'asm_acc', 'Phylum']],
+#             on='seqID',
+#             how='left'
+#         ) \
+#         .groupby('Phylum', as_index=False) \
+#         .agg({'asm_acc': lambda x: x.nunique()}) \
+#         .rename(columns={'asm_acc': 'num_genomes'}) \
+#         .sort_values(by='num_genomes', ascending=False)
+
+
+#     return per_phylum_genome_count_df
+# # end def
+
+
+# def _count_coverage_per_phylum(path_to_raw_tables,
+#                                per_phylum_genome_count_df,
+#                                gene_stats_df):
+#     primers_coverage_df = per_phylum_genome_count_df \
+#         .copy() \
+#         .sort_values(by='Phylum')
+
+#     for primer_key, raw_table_fpath in path_to_raw_tables.items():
+
+#         print(primer_key)
+
+#         tmp_df = pd.read_csv(raw_table_fpath, sep='\t')
+
+#         tmp_df = tmp_df.merge(
+#             gene_stats_df[['asm_acc', 'Phylum']],
+#             on='asm_acc',
+#             how='outer'
+#         ) \
+#         .drop_duplicates() \
+#         .dropna(subset=['seqID'])
+
+#         primers_coverage_df['num_revealed_genomes'] = tmp_df \
+#             .groupby(['Phylum'], as_index=False) \
+#             .agg({'asm_acc': lambda x: x.nunique()}) \
+#             .rename(columns={'asm_acc': 'num_revealed_genomes'}) \
+#             .merge(
+#                 per_phylum_genome_count_df,
+#                 on='Phylum',
+#                 how='right'
+#             ).sort_values(by='Phylum') \
+#             .fillna(0) \
+#             .reset_index() \
+#             ['num_revealed_genomes']
+
+#         primers_coverage_df[primer_key] = primers_coverage_df['num_revealed_genomes'] \
+#                                           / primers_coverage_df['num_genomes'] \
+#                                           * 100
+#         primers_coverage_df = primers_coverage_df.drop(
+#             ['num_revealed_genomes'],
+#             axis=1
+#         )
+#     # end for
+
+#     return primers_coverage_df
+# # end def
 
 
 def format_primer_coverage_df(primer_coverage_df,

@@ -136,7 +136,7 @@
       </li>
       <li>
         <span class="samp-highl">primer_pair_genomic_coverage.tsv</span><br>
-        This is a TSV file which contains genomic coverage of primer pairs targeting different V-regions of 16S rRNA genes. For example, for <i>Enterobacteriaceae</i>, genomic coverage of a primer pair is the per cent of <i>Enterobacteriaceae</i> genomes which contain at least one 16S rRNA gene that can (theoretically) produce a PCR product using the primer pair.
+        This is a TSV file which contains genomic coverage of primer pairs targeting different V-regions of 16S rRNA genes. For example, for <i>Enterobacteriaceae</i>, genomic coverage of a primer pair is the percent of <i>Enterobacteriaceae</i> genomes which contain at least one 16S rRNA gene that can (theoretically) produce a PCR product using the primer pair.
       </li>
     </ol></small>
   </details>
@@ -255,7 +255,7 @@
 <caption>16S rRNA gene copy number</caption>
 <tbody>
 <tr><th class="numcol">Copy number <sup>*</sup></th><th class="alncenter" colspan="2">Bacteria</th><th class="alncenter" colspan="2">Archaea</th></tr>
-<tr><td></td><td>Number of species</td><td>Per cent of species (%)</td><td>Number of species</td><td>Per cent of species (%)</td></tr>
+<tr><td></td><td>Number of species</td><td>Percent of species (%)</td><td>Number of species</td><td>Percent of species (%)</td></tr>
 
 {% for _, row in ribogrove_copy_number_df.iterrows() %}
 <tr class="sumtab-row">
@@ -395,7 +395,7 @@
 </table>
 
 <p><sup>*</sup> Entropy is <a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)">Shannon entropy</a> calculated for each column of the multiple sequence alignment (MSA) of all full-length 16S rRNA genes of a genome. Entropy is then summed up (column “Sum of entropy”) and averaged (column “Mean entropy”).</p>
-<p><sup>**</sup> <i>Halomicrobium</i> sp. ZPS1 is a quite remarkable case. This genome harbours two 16S rRNA genes, therefore entropy is equal to the number of mismatching nucleotides between sequences of the genes. Respectively, per cent of identity between these two gene sequences is 90.70%! This is remarkable because the usual (however arbitrary) <em>genus</em> demarcation threshold of per cent of identity is 95%.</p>
+<p><sup>**</sup> <i>Halomicrobium</i> sp. ZPS1 is a quite remarkable case. This genome harbours two 16S rRNA genes, therefore entropy is equal to the number of mismatching nucleotides between sequences of the genes. Respectively, percent of identity between these two gene sequences is 90.70%! This is remarkable because the usual (however arbitrary) <em>genus</em> demarcation threshold of percent of identity is 95%.</p>
 
 <div id="primers-coverages" class="pad-anchor"></div>
 <table class="sum-table"><caption>Coverage<sup>*</sup> of primer pairs for different V-regions of bacterial 16S rRNA genes</caption>
@@ -451,7 +451,7 @@
 </tbody>
 </table>
 
-<p><sup>*</sup> Coverage of a primer pair is the per cent of genomes having at least one 16S rRNA gene which can be amplified by PCR using this primer pair. For details, see our <a href="https://doi.org/10.1016/j.resmic.2022.103936">paper about RiboGrove</a>.</p>
+<p><sup>*</sup> Coverage of a primer pair is the percent of genomes having at least one 16S rRNA gene which can be amplified by PCR using this primer pair. For details, see our <a href="https://doi.org/10.1016/j.resmic.2022.103936">paper about RiboGrove</a>.</p>
 <p>You can find a more detailed table in the file <span class="samp">primer_pair_genomic_coverage.tsv</span> in the <a href="#downloads">metadata</a>. That table contains coverage not just for phyla, but also for each bacterial class, order, family, genus, and species. Moreover, that table contains coverage values for primer pair 1115F–1492R (V7–V9 region). In this table, it is omitted for brevity.</p>
 
 <table class="sum-table"><caption>Primers used for coverage estimation</caption>
@@ -555,7 +555,7 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
 <hr>
 <div id="contacts" class="pad-anchor"></div>
 <h2>Contacts</h2>
-<p>For any questions concerning RiboGrove, please contact Maksim Sikolenko at sikolenko<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by or maximdeynonih<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">gmail.com.</p>
+<p>For any questions concerning RiboGrove, please contact Maksim Sikolenko at sikolenko<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">mbio.bas-net.by or maximdeynonih<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">gmail.com.</p>
 <hr>
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <h2>Citing RiboGrove</h2>

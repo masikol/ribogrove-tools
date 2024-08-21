@@ -155,6 +155,7 @@ if [[ ! -z "${PREV_WORKDIR}" ]]; then
   CACHE_MODE=true
   prev_aberr_dir="${PREV_WORKDIR}/aberrations_and_heterogeneity"
   PREV_ASM_SUM_FINAL="${PREV_WORKDIR}/genomes_data/assembly_summary_final.txt.gz"
+  PREV_REPLICON_MAP="${PREV_WORKDIR}/genomes_data/replicon_map.tsv.gz"
   PREV_ASM_ACCS_NNN="${PREV_WORKDIR}/genomes_data/asm_accs_NNN.txt.gz"
   PREV_RIBOTYPER_SHORT_OUT_TSV="${prev_aberr_dir}/ribotyper_out/ribotyper_out.ribotyper.short.out.tsv"
   PREV_RIBOTYPER_LONG_OUT_TSV="${prev_aberr_dir}/ribotyper_out/ribotyper_out.ribotyper.long.out.tsv"
@@ -209,10 +210,18 @@ python3 "${SCRIPTS_DIR}/download_genomes.py" \
 
 # == Make replicon map ==
 
-python3 "${SCRIPTS_DIR}/make_replicon_map.py" \
-  --asm-sum "${ASS_SUM_FILT_1}" \
-  --genomes-dir "${GENOMES_GBK_DIR}" \
-  --out "${REPLICON_MAP}"
+if [[ "${CACHE_MODE}" == true ]]; then
+  python3 "${SCRIPTS_DIR}/make_replicon_map.py" \
+    --asm-sum "${ASS_SUM_FILT_1}" \
+    --genomes-dir "${GENOMES_GBK_DIR}" \
+    --prev-replicon-map "${PREV_REPLICON_MAP}" \
+    --out "${REPLICON_MAP}"
+else
+  python3 "${SCRIPTS_DIR}/make_replicon_map.py" \
+    --asm-sum "${ASS_SUM_FILT_1}" \
+    --genomes-dir "${GENOMES_GBK_DIR}" \
+    --out "${REPLICON_MAP}"
+fi
 
 
 # == Make final Assembly summary file ==
@@ -459,13 +468,15 @@ if [[ "${CALC_PRIMERS_COVERAGE}" == true ]]; then
       --fasta-seqs-file "${ALL_GENES_FASTA}" \
       --outdir "${PRIMERS_DIRPATH}" \
       --mfeprimer "${MFEPRIMER}" \
+      --mfe-tmp-dir "${MFEPRIMER_TMP_DIR}" \
       --prev-final-fasta "${PREV_FINAL_GENES_FASTA}" \
       --prev-primers-outdir "${PREV_PRIMERS_DIR}"
   else
     python3 "${SCRIPTS_DIR}/check_primers_mfeprimer.py" \
       --fasta-seqs-file "${ALL_GENES_FASTA}" \
       --outdir "${PRIMERS_DIRPATH}" \
-      --mfeprimer "${MFEPRIMER}"
+      --mfeprimer "${MFEPRIMER}" \
+      --mfe-tmp-dir "${MFEPRIMER_TMP_DIR}"
   fi
 fi
 

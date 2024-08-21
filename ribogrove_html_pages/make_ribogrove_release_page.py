@@ -78,8 +78,8 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '--primers-dir',
-    help='a directory with results of the script check_primers_mfeprimer.py',
+    '--primers-cov',
+    help='the file of primer coverage summary, `primer_pair_genomic_coverage.tsv`',
     required=True
 )
 
@@ -116,7 +116,7 @@ metadata_fpath = os.path.abspath(args.metadata)
 gene_stats_fpath = os.path.abspath(args.gene_stats_table)
 entropy_summary_fpath = os.path.abspath(args.entropy_summary)
 source_genomes_fpath = os.path.abspath(args.source_genomes)
-primers_dirpath = os.path.abspath(args.primers_dir)
+primers_fpath = os.path.abspath(args.primers_cov)
 archive = args.archive
 outdpath = os.path.abspath(args.outdir)
 seqkit_fpath = os.path.abspath(args.seqkit)
@@ -143,6 +143,7 @@ input_fpaths = (
     gene_stats_fpath,
     entropy_summary_fpath,
     source_genomes_fpath,
+    primers_fpath
 )
 
 for fpath in input_fpaths:
@@ -160,11 +161,6 @@ if not os.path.isdir(outdpath):
         print(str(err))
         sys.exit(1)
     # end try
-# end if
-
-if not os.path.isdir(primers_dirpath):
-    print(f'Error: directory `{primers_dirpath}` does not exist')
-    sys.exit(1)
 # end if
 
 del input_fpaths, fpath
@@ -298,8 +294,7 @@ print('done\n')
 # PCR primer coverage per phylum
 print('Calculating PCR primer coverage per phylum')
 ribogrove_primer_coverage_df = make_ribogrove_primer_coverage_df(
-    primers_dirpath,
-    gene_stats_df
+    primers_fpath
 )
 print('done\n')
 

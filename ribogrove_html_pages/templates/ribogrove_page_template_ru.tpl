@@ -550,7 +550,7 @@
 <hr>
 <div id="contacts" class="pad-anchor"></div>
 <h2>Контакты</h2>
-<p>Если у вас есть вопрос про RiboGrove, пожалуйста, обращайтесь к Максиму Сиколенко на эл. адрес sikolenko<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">bio.bsu.by.</p>
+<p>Если у вас есть вопрос про RiboGrove, пожалуйста, обращайтесь к Максиму Сиколенко на эл. адрес sikolenko<img class="sabaka" src="/wp-content/uploads/cager/pes2.gif" alt="[ at ]" align="bottom">mbio.bas-net.by или maximdeynonih<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">gmail.com.</p>
 <hr>
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <h2>Цитирование RiboGrove</h2>

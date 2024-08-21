@@ -231,3 +231,28 @@ python3 make_ribogrove_release_page.py \
   --seqkit /usr/bin/seqkit
 
 
+python3 make_ribogrove_release_page.py \
+  --release-num 18.224 \
+  --release-date 2024-08-20 \
+  --final-fasta /mnt/data/Max/RiboGrove/RiboGrove_releases/18.224/ribogrove_18.224_sequences.fasta.gz \
+  --metadata /mnt/data/Max/RiboGrove/RiboGrove_releases/18.224/metadata_ribogrove_18.224.zip \
+  --gene-stats-table /mnt/data/Max/RiboGrove/RiboGrove_releases/18.224/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/data/Max/RiboGrove/RiboGrove_releases/18.224/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/data/Max/RiboGrove/RiboGrove_releases/18.224/metadata/source_RefSeq_genomes.tsv \
+  --primers-cov /mnt/data/Max/RiboGrove/RiboGrove_releases/18.224/metadata/primer_pair_genomic_coverage.tsv \
+  --outdir /mnt/data/Max/RiboGrove/RiboGrove_pages/18.224/ \
+  --seqkit /usr/bin/seqkit
+
+
+python3 make_ribogrove_release_page.py \
+  --release-num 19.225 \
+  --release-date 2024-08-21 \
+  --final-fasta /mnt/data/Max/RiboGrove/RiboGrove_releases/19.225/ribogrove_19.225_sequences.fasta.gz \
+  --metadata /mnt/data/Max/RiboGrove/RiboGrove_releases/19.225/metadata_ribogrove_19.225.zip \
+  --gene-stats-table /mnt/data/Max/RiboGrove/RiboGrove_releases/19.225/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/data/Max/RiboGrove/RiboGrove_releases/19.225/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/data/Max/RiboGrove/RiboGrove_releases/19.225/metadata/source_RefSeq_genomes.tsv \
+  --primers-cov /mnt/data/Max/RiboGrove/RiboGrove_releases/19.225/metadata/primer_pair_genomic_coverage.tsv \
+  --outdir /mnt/data/Max/RiboGrove/RiboGrove_pages/19.225/ \
+  --seqkit /usr/bin/seqkit
+  
