@@ -128,7 +128,7 @@
       </li>
       <li>
         <span class="samp-highl">entropy_summary.tsv</span><br>
-        This is a TSV file, which contains summary of instragenomic variability of the 16S rRNA genes. Intragenomic variability are calculated only for the category&nbsp;1 genomes having more than one 16S rRNA gene. Intragenomic variability is evaluated using Shannon entropy. We align gene sequences from each genome using <a href="https://drive5.com/muscle5/">MUSCLE</a>, and then we calculate Shannon entropy for each multiple alignment column (i.e. base).
+        This is a TSV file, which contains summary of instragenomic variability of the 16S rRNA genes. Intragenomic variability are calculated only for the category&nbsp;1 genomes having more than one 16S rRNA gene. Intragenomic variability is evaluated using Shannon entropy. We align gene sequences from each genome using <a href="https://mafft.cbrc.jp/alignment/software/">MAFFT</a>, and then we calculate Shannon entropy for each multiple alignment column (i.e. base).
       </li>
       <li>
         <span class="samp-highl">16S_GCNs.tsv</span><br>
@@ -281,7 +281,7 @@
 </tr>
 {% for _, row in ribogrove_top_longest_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
-<td>{{ retrieve_strain_name(row['strain_name']) }}</td>
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
@@ -292,7 +292,7 @@
 </tr>
 {% for _, row in ribogrove_top_longest_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
-<td>{{ retrieve_strain_name(row['strain_name']) }}</td>
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
@@ -311,7 +311,7 @@
 </tr>
 {% for _, row in ribogrove_top_shortest_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
-<td>{{ retrieve_strain_name(row['strain_name']) }}</td>
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
@@ -322,7 +322,7 @@
 </tr>
 {% for _, row in ribogrove_top_shortest_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
-<td>{{ retrieve_strain_name(row['strain_name']) }}</td>
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
 <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
@@ -341,7 +341,7 @@
 </tr>
 {% for _, row in ribogrove_top_copy_numbers_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
-<td>{{ retrieve_strain_name(row['strain_name']) }}</td>
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
@@ -351,7 +351,7 @@
 </tr>
 {% for _, row in ribogrove_top_copy_numbers_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
-<td>{{ retrieve_strain_name(row['strain_name']) }}</td>
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
@@ -370,7 +370,7 @@
 </tr>
 {% for _, row in ribogrove_top_intragenomic_var_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
-<td>{{ retrieve_strain_name(row['strain_name']) }}</td>
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['sum_entropy'] }}</td>
 <td class="numcol">{{ row['mean_entropy'] }}</td>
 <td class="numcol">{{ row['num_var_cols'] }}</td>
@@ -383,7 +383,7 @@
 </tr>
 {% for _, row in ribogrove_top_intragenomic_var_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
-<td>{{ retrieve_strain_name(row['strain_name']) }}</td>
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['sum_entropy'] }}</td>
 <td class="numcol">{{ row['mean_entropy'] }}</td>
 <td class="numcol">{{ row['num_var_cols'] }}</td>
@@ -432,7 +432,7 @@
 </tr>
 {% for _, row in ribogrove_primers_cov_df.iterrows() %}
 <tr class="sumtab-row">
-  <td><i>{{ row['Phylum'] }}</i></td>
+  <td>{{ italicize_candidatus(row['Phylum']) }}</td>
   <td class="numcol">{{ row['num_genomes'] }}</td>
   <td class="numcol">{{ row['27F-1492R'] }}</td>
   <td class="numcol">{{ row['27F-338R'] }}</td>

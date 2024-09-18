@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # The script calculates per-base intragenomic entropy from non-aberrant genes.
-# The script aligns gene sequences with MAFFT, and then caculates per-base entropy basing
+# The script aligns gene sequences with MUSCLE, and then caculates per-base entropy basing
 #   on this multiple sequence alignment. The script calculates variability of the
 #   target genes from the genomes of category 1 harbouring more than 1 target gene.
 
@@ -20,7 +20,7 @@
 #   of the previous RiboGrove release (per_base_*_entropy.tsv.gz).
 
 ### Dependencies:
-# 1. `--mafft` -- a MAFFT (https://mafft.cbrc.jp/alignment/software/) aligner executable.
+# 1. `--muscle` -- a MUSCLE (https://www.drive5.com/muscle/) aligner executable.
 
 
 import os
@@ -72,8 +72,8 @@ parser.add_argument(
 
 # Dependencies
 parser.add_argument(
-    '--mafft',
-    help='mafft executable',
+    '--muscle',
+    help='muscle executable',
     required=True
 )
 
@@ -102,7 +102,7 @@ from src.ribogrove_seqID import parse_asm_acc
 # For convenience
 fasta_seqs_fpath = os.path.abspath(args.fasta_seqs_file)
 categories_fpath = os.path.abspath(args.categories_file)
-mafft_fpath = os.path.abspath(args.mafft)
+muscle_fpath = os.path.abspath(args.muscle)
 outfpath = os.path.abspath(args.outfile)
 
 cache_mode = not args.prev_per_base_entropy_file is None
@@ -114,7 +114,7 @@ else:
 
 
 # Check existance of all input files and dependencies
-for fpath in (fasta_seqs_fpath, mafft_fpath, categories_fpath):
+for fpath in (fasta_seqs_fpath, muscle_fpath, categories_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist')
         sys.exit(1)
@@ -122,8 +122,8 @@ for fpath in (fasta_seqs_fpath, mafft_fpath, categories_fpath):
 # enb for
 
 # Check if executables are actually executable
-if not os.access(mafft_fpath, os.X_OK):
-    print(f'Error: file `{mafft_fpath}` is not executable')
+if not os.access(muscle_fpath, os.X_OK):
+    print(f'Error: file `{muscle_fpath}` is not executable')
     sys.exit(1)
 # end if
 
@@ -148,7 +148,7 @@ if cache_mode:
 
 print(fasta_seqs_fpath)
 print(categories_fpath)
-print(mafft_fpath)
+print(muscle_fpath)
 print(prev_perbase_entropy_fpath)
 print()
 
@@ -170,30 +170,21 @@ def get_asm_acc_from_seq_record(seq_record):
 
 
 
-def do_msa(seq_records: Sequence[SeqRecord], mafft_fpath: str) -> List[SeqRecord]:
+def do_msa(seq_records: Sequence[SeqRecord], muscle_fpath: str) -> List[SeqRecord]:
     # Function does Multiple Sequence Alignment
 
-    # TODO: remove hardcoded paths and threads
-    tmp_fpath = '/tmp/tmp.fasta'
-
     # Configure command
-    cmd = ' '.join(
-        [
-            mafft_fpath,
-            '--auto',
-            '--thread 2',
-            tmp_fpath
-        ]
-    )
+    cmd = f'{muscle_fpath} -quiet -diags'
 
     # Configure input fasta string for MSA
-    with open(tmp_fpath, 'wt') as outfile:
-        for seq_record in seq_records:
-            outfile.write('>{}\n{}\n'.format(seq_record.id, seq_record.seq))
-    # end with
+    fasta_str = '\n'.join(
+        (f'>{r.id}\n{str(r.seq)}' for r in seq_records)
+    ) + '\n'
 
     # Create pipe
-    pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
+    pipe = sp.Popen(cmd, shell=True, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
+    # Write inpit fasta record to stdin
+    pipe.stdin.write(fasta_str.encode('ascii'))
 
     # Run command
     stdout_stderr = pipe.communicate()
@@ -211,8 +202,6 @@ def do_msa(seq_records: Sequence[SeqRecord], mafft_fpath: str) -> List[SeqRecord
     # Parse alignment
     msa_records = list(SeqIO.parse(msa_io, 'fasta'))
     msa_io.close()
-
-    os.unlink(tmp_fpath)
 
     return msa_records
 # end def
@@ -348,7 +337,7 @@ with gzip.open(per_base_entropy_fpath, 'wt') as per_base_entropy_outfile:
         # Perform MSA only if there are at least 2 sequences
         if len(selected_seq_records) > 1:
             # Perform MSA
-            msa_records = do_msa(selected_seq_records, mafft_fpath)
+            msa_records = do_msa(selected_seq_records, muscle_fpath)
 
             # Calculate entropy
             entropy_arr = calc_entropy(msa_records)

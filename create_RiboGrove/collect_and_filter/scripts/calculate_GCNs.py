@@ -124,6 +124,10 @@ print()
 
 def make_basic_gcn_df(final_stats_fpath):
     stats_df = pd.read_csv(final_stats_fpath, sep='\t')
+    # Consictency with RiboGrove releases before 11.217
+    if 'ass_id' in stats_df.columns:
+        stats_df = stats_df.rename(columns={'ass_id': 'asm_acc'})
+    # end if
     basic_gcn_df = stats_df.groupby('asm_acc', as_index=False) \
         .agg({'seqID': lambda x: x.nunique()}) \
         .rename(columns={'seqID': '16S_rRNA_gcn'})

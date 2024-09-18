@@ -30,7 +30,7 @@
 #   Mandatory.
 
 ### Dependencies:
-# 1. `--muscle` -- [MUSCLE](https://www.drive5.com/muscle/) aligner executable
+# 1. `--mafft` -- [mafft](https://mafft.cbrc.jp/alignment/software/) aligner executable
 #   for multiple sequence alignment. Mandatory.
 
 ### Parameters:
@@ -123,8 +123,8 @@ parser.add_argument(
 # Dependencies
 
 parser.add_argument(
-    '--muscle',
-    help='MUSCLE aligner executable',
+    '--mafft',
+    help='MAFFT aligner executable',
     required=True
 )
 
@@ -166,7 +166,7 @@ fasta_seqs_fpath = os.path.abspath(args.fasta_seqs_file)
 ribotyper_fail_fpath = os.path.abspath(args.ribotyper_fail_seqIDs)
 asm_sum_fpath = os.path.abspath(args.in_asm_sum)
 ribotyper_long_fpath = os.path.abspath(args.ribotyper_long_out_tsv)
-muscle_fpath = os.path.abspath(args.muscle)
+mafft_fpath = os.path.abspath(args.mafft)
 if not args.prev_final_fasta is None \
    and not args.prev_aberrant_seqIDs is None:
     prev_final_fasta_fpath = os.path.abspath(args.prev_final_fasta)
@@ -193,7 +193,7 @@ except ValueError:
 
 
 # Check existance of all input files and dependencies
-for fpath in (fasta_seqs_fpath, asm_sum_fpath, ribotyper_long_fpath, muscle_fpath):
+for fpath in (fasta_seqs_fpath, asm_sum_fpath, ribotyper_long_fpath, mafft_fpath):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
@@ -201,8 +201,8 @@ for fpath in (fasta_seqs_fpath, asm_sum_fpath, ribotyper_long_fpath, muscle_fpat
 # enb for
 
 # Check if executables are actually executable
-if not os.access(muscle_fpath, os.X_OK):
-    print(f'Error: file `{muscle_fpath}` is not executable!')
+if not os.access(mafft_fpath, os.X_OK):
+    print(f'Error: file `{mafft_fpath}` is not executable!')
     sys.exit(1)
 # end if
 
@@ -235,7 +235,7 @@ print(fasta_seqs_fpath)
 print(ribotyper_fail_fpath)
 print(asm_sum_fpath)
 print(ribotyper_long_fpath)
-print(muscle_fpath)
+print(mafft_fpath)
 print('deletion_len_threshold = {}'.format(deletion_len_threshold))
 if cache_mode:
     print(prev_final_fasta_fpath)
@@ -295,21 +295,31 @@ def get_asm_acc_from_seq_record(seq_record):
 
 def pairwise_align(pivotal_seq_record: SeqRecord,
                    seq_record: SeqRecord,
-                   muscle_fpath: str) -> Tuple[SeqRecord, SeqRecord]:
+                   mafft_fpath: str) -> Tuple[SeqRecord, SeqRecord]:
     # Function performs pairwise global alignment of a pivotal gene (pivotal_seq_record)
     #    and some another gene (seq_record).
-    # It does pairwise with MUSCLE. It's quite weird, but we'll do it
+    # It does pairwise with MAFFT. It's quite weird, but we'll do it
     #    for the sake of uniformity.
 
+    # TODO: remove hardcoded paths and threads
+    tmp_fpath = '/tmp/tmp.fasta'
+
     # Configure command
-    cmd = f'{muscle_fpath} -diags -quiet'
-    pipe = sp.Popen(cmd, shell=True, stdin=sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
+    cmd = ' '.join(
+        [
+            mafft_fpath,
+            '--auto',
+            '--thread 2',
+            tmp_fpath
+        ]
+    )
+    pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
 
     # Configure input fasta string
-    fasta_str = f'>{pivotal_seq_record.id}\n{str(pivotal_seq_record.seq)}\n>{seq_record.id}\n{str(seq_record.seq)}\n'
-
-    # Write fasta string to stdin
-    pipe.stdin.write(fasta_str.encode('ascii'))
+    with open(tmp_fpath, 'wt') as outfile:
+        fasta_str = f'>{pivotal_seq_record.id}\n{str(pivotal_seq_record.seq)}\n>{seq_record.id}\n{str(seq_record.seq)}\n'
+        outfile.write(fasta_str)
+    # end with
 
     # Run command
     stdout_stderr = pipe.communicate()
@@ -334,6 +344,8 @@ def pairwise_align(pivotal_seq_record: SeqRecord,
     # Extract aligned strings of pivotal gene and another gene alone
     pivotal_aln_record = next(filter(lambda r: r.id == pivotal_seq_record.id, aln_records))
     aln_record = next(filter(lambda r: r.id != pivotal_seq_record.id, aln_records))
+
+    os.unlink(tmp_fpath)
 
     return pivotal_aln_record, aln_record
 # end def
@@ -581,7 +593,7 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
                 seq_record = selected_seq_records[seqID]
 
                 # Perform pairwise alignment of current gene and current pivotal gene
-                pivotal_aln_record, aln_record = pairwise_align(pivotal_seq_record, seq_record, muscle_fpath)
+                pivotal_aln_record, aln_record = pairwise_align(pivotal_seq_record, seq_record, mafft_fpath)
 
                 # Save some statistics of performaed alignment
                 pident = pairwise_percent_identity(pivotal_aln_record, aln_record)

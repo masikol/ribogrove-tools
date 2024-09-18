@@ -402,6 +402,7 @@ def run_cmsearch(fasta_fpath: str):
     #   stored in file `fasta_fpath`
     # Returns path to result .tblout file
 
+    # TODO: remove hardcoded paths and threads
     tblout_fpath = '/tmp/tmpXXX_tblout.tsv'
     out_fpath = '/tmp/tmpXXX_cmsearch_out.txt'
     cmd = f'{cmsearch_fpath} --noali -o {out_fpath} --tblout {tblout_fpath} --cpu 6 {rfam_family_fpath} {fasta_fpath}'

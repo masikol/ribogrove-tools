@@ -25,7 +25,8 @@ from src.formatting import format_float_number
 from src.strains_names import retrieve_strain_name_en, \
                               retrieve_strain_name_ru, \
                               retrieve_strain_name_ua, \
-                              retrieve_strain_name_be
+                              retrieve_strain_name_be, \
+                              italicize_candidatus
 
 # == Parse arguments ==
 
@@ -437,7 +438,8 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
                 ribogrove_top_copy_numbers_df=fmt_ribogrove_top_copy_numbers_df,
                 ribogrove_top_intragenomic_var_df=fmt_ribogrove_top_intragenomic_var_df,
                 retrieve_strain_name=retrieve_strain_name,
-                ribogrove_primers_cov_df=fmt_ribogrove_primers_cov_df
+                ribogrove_primers_cov_df=fmt_ribogrove_primers_cov_df,
+                italicize_candidatus=italicize_candidatus
         )
     # end with
 

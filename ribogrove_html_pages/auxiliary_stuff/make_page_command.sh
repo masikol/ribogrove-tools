@@ -255,4 +255,16 @@ python3 make_ribogrove_release_page.py \
   --primers-cov /mnt/data/Max/RiboGrove/RiboGrove_releases/19.225/metadata/primer_pair_genomic_coverage.tsv \
   --outdir /mnt/data/Max/RiboGrove/RiboGrove_pages/19.225/ \
   --seqkit /usr/bin/seqkit
-  
+
+
+python3 make_ribogrove_release_page.py \
+  --release-num 20.226 \
+  --release-date 2024-09-18 \
+  --final-fasta /mnt/data/Max/RiboGrove/RiboGrove_releases/20.226/ribogrove_20.226_sequences.fasta.gz \
+  --metadata /mnt/data/Max/RiboGrove/RiboGrove_releases/20.226/metadata_ribogrove_20.226.zip \
+  --gene-stats-table /mnt/data/Max/RiboGrove/RiboGrove_releases/20.226/metadata/gene_seqs_statistics.tsv \
+  --entropy-summary /mnt/data/Max/RiboGrove/RiboGrove_releases/20.226/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/data/Max/RiboGrove/RiboGrove_releases/20.226/metadata/source_RefSeq_genomes.tsv \
+  --primers-cov /mnt/data/Max/RiboGrove/RiboGrove_releases/20.226/metadata/primer_pair_genomic_coverage.tsv \
+  --outdir /mnt/data/Max/RiboGrove/RiboGrove_pages/20.226/ \
+  --seqkit /usr/bin/seqkit

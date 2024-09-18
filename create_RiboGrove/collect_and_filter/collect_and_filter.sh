@@ -137,12 +137,6 @@ FINAL_SEQIDS="${GENES_DIR}/final_seqIDs.txt"
 DISCARDED_FASTA="${GENES_DIR}/discarded_gene_seqs.fasta"
 ANNOTATED_DISCARDED_FASTA="${GENES_DIR}/discarded_gene_seqs_annotated.fasta"
 
-rfam_dir_for_extract_16s=`dirname "${RFAM_FOR_EXTRACT_16S}"`
-RFAM_FAMILY_FOR_EXTRACT_16S="${rfam_dir_for_extract_16s}/${RFAM_FAMILY_ID}_for_extract_16S.cm"
-
-rfam_dir_for_filtering=`dirname "${RFAM_FOR_EXTRACT_16S}"`
-RFAM_FAMILY_FOR_FILTERING="${rfam_dir_for_filtering}/${RFAM_FAMILY_ID}_for_filtering.cm"
-
 COUNT_BASES_TABLE="${GENES_STATS_DIR}/bases_count.tsv"
 DISCARDED_COUNT_BASES_TABLE="${GENES_STATS_DIR}/discarded_bases_count.tsv"
 
@@ -252,16 +246,6 @@ python3 "${SCRIPTS_DIR}/make_taxonomy.py" \
     --out "${TAXONOMY_FILE}"
 
 
-# == Extract Rfam covariance model for 16S rRNA genes extraction ==
-
-"${CMFETCH}" "${RFAM_FOR_EXTRACT_16S}" "${RFAM_FAMILY_ID}" > "${RFAM_FAMILY_FOR_EXTRACT_16S}"
-if [[ $? != 0 ]]; then
-  echo 'Error!' >&2
-  echo "Cannot extract model for family ${RFAM_FAMILY_ID} from file ${RFAM_FOR_EXTRACT_16S}" >&2
-  exit 1
-fi
-
-
 # == Extract 16S genes from downloaded genomes ==
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/extract_16S.py" \
@@ -332,7 +316,7 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --prev-final-fasta "${PREV_FINAL_GENES_FASTA}" \
     --prev-aberrant-seqIDs "${PREV_ABERRANT_SEQIDS}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
-    --muscle "${MUSCLE}" \
+    --mafft "${MAFFT}" \
     --deletion-len-threshold "${DELETION_LEN_THRESHOLD}"
 else
   python3 "${SCRIPTS_DIR}/find_aberrant_genes.py" \
@@ -341,7 +325,7 @@ else
     --in-asm-sum "${ASS_SUM_FINAL}" \
     --ribotyper-long-out-tsv "${RIBOTYPER_LONG_OUT_TSV}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
-    --muscle "${MUSCLE}" \
+    --mafft "${MAFFT}" \
     --deletion-len-threshold "${DELETION_LEN_THRESHOLD}"
 fi
 
@@ -450,13 +434,13 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --categories-file "${CATEGORIES_FILE}" \
     --outfile "${ENTROPY_FILE}" \
     --prev-per-base-entropy-file "${PREV_PERBASE_ENTROPY_FILE}" \
-    --muscle "${MUSCLE}"
+    --mafft "${MAFFT}"
 else
   python3 "${SCRIPTS_DIR}/calculate_entropy.py" \
     --fasta-seqs-file "${ANNOTATED_RESULT_FASTA}" \
     --categories-file "${CATEGORIES_FILE}" \
     --outfile "${ENTROPY_FILE}" \
-    --muscle "${MUSCLE}"
+    --mafft "${MAFFT}"
 fi
 
 
