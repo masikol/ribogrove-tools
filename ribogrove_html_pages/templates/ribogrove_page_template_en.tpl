@@ -111,8 +111,8 @@
         This is a TSV files, which contains information about what genomes were used for the RiboGrove construction.
       </li>
       <li>
-        <span class="samp-highl">gene_seqs_statistics.tsv</span>, <span class="samp-highl">discarded_gene_seqs_statistics.tsv</span><br>
-        These are TSV files, which contain nucleotide conposition, size, genomic and taxonomic affiliation of the gene sequences. The first file describes final RiboGrove gene sequences, the second file describes discarded sequences.
+        <span class="samp-highl">gene_seqs_base_counts.tsv</span>, <span class="samp-highl">discarded_gene_seqs_base_counts.tsv</span><br>
+        These are TSV files, which contain nucleotide composition and size of the gene sequences. The first file describes final RiboGrove gene sequences, the second file describes discarded sequences.
       </li>
       <li>
         <span class="samp-highl">categories.tsv</span><br>
@@ -398,62 +398,128 @@
 <p><sup>**</sup> <i>Halomicrobium</i> sp. ZPS1 is a quite remarkable case. This genome harbours two 16S rRNA genes, therefore entropy is equal to the number of mismatching nucleotides between sequences of the genes. Respectively, percent of identity between these two gene sequences is 90.70%! This is remarkable because the usual (however arbitrary) <em>genus</em> demarcation threshold of percent of identity is 95%.</p>
 
 <div id="primers-coverages" class="pad-anchor"></div>
-<table class="sum-table"><caption>Coverage<sup>*</sup> of primer pairs for different V-regions of bacterial 16S rRNA genes</caption>
+<h3>Coverage<sup>*</sup> of primer pairs for different V-regions of 16S rRNA genes</h3>
+
+<p><sup>*</sup> Coverage of a primer pair is the percent of genomes having at least one 16S rRNA gene which can be amplified by PCR using this primer pair. For details, see our <a href="https://doi.org/10.1016/j.resmic.2022.103936">paper about RiboGrove</a>.</p>
+<p>In the tables below, you can find coverage of primer pairs that are being commonly used to amplify bacterial and archaeal genes (“bacterial” and “archaeal” primers).</p>
+<p>You can find a more detailed table in the file <span class="samp">primer_pair_genomic_coverage.tsv</span> in the <a href="#downloads">metadata</a>. That table contains coverage not just for phyla, but also for each class, order, family, genus, and species. Moreover, that table contains coverage values for primer pair 1115F–1492R (V7–V9 region). In the tables below, it is omitted for brevity.</p>
+
+<table class="sum-table"><caption>Bacterial genes, “bacterial” primers</caption>
 <tbody class="primer-cov-tbody">
 <tr>
   <th class="alnleft" rowspan="2">Phylum</th>
   <th class="numcol" rowspan="2">Number<br />of genomes</th>
-  <th class="numcol">Full gene</th>
-  <th class="numcol">V1–V2</th>
-  <th class="numcol">V1–V3</th>
-  <th class="numcol">V3–V4</th>
-  <th class="numcol">V3–V5</th>
-  <th class="numcol">V4</th>
-  <th class="numcol">V4–V5</th>
-  <th class="numcol">V4–V6</th>
-  <th class="numcol">V5–V6</th>
-  <th class="numcol">V5–V7</th>
-  <th class="numcol">V6–V7</th>
-  <th class="numcol">V6–V8</th>
+  {% for v_region_name in bacterial_primer_pairs.values() %}
+  <th class="numcol">{{ v_region_name.replace('-', '–') }}</th>
+  {% endfor %}
 </tr>
 <tr>
-  <th class="numcol">27F–1492R<br />(%)</th>
-  <th class="numcol">27F–338R<br />(%)</th>
-  <th class="numcol">27F–534R<br />(%)</th>
-  <th class="numcol">341F–785R<br />(%)</th>
-  <th class="numcol">341F–944R<br />(%)</th>
-  <th class="numcol">515F–806R<br />(%)</th>
-  <th class="numcol">515F–944R<br />(%)</th>
-  <th class="numcol">515F–1100R<br />(%)</th>
-  <th class="numcol">784F–1100R<br />(%)</th>
-  <th class="numcol">784F–1193R<br />(%)</th>
-  <th class="numcol">939F–1193R<br />(%)</th>
-  <th class="numcol">939F–1378R<br />(%)</th>
+  {% for primer_pair_name in bacterial_primer_pairs.keys() %}
+  <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+  {% endfor %}
 </tr>
-{% for _, row in ribogrove_primers_cov_df.iterrows() %}
+{% for _, row in ribogrove_primers_cov_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
   <td>{{ italicize_candidatus(row['Phylum']) }}</td>
   <td class="numcol">{{ row['num_genomes'] }}</td>
-  <td class="numcol">{{ row['27F-1492R'] }}</td>
-  <td class="numcol">{{ row['27F-338R'] }}</td>
-  <td class="numcol">{{ row['27F-534R'] }}</td>
-  <td class="numcol">{{ row['341F-785R'] }}</td>
-  <td class="numcol">{{ row['341F-944R'] }}</td>
-  <td class="numcol">{{ row['515F-806R'] }}</td>
-  <td class="numcol">{{ row['515F-944R'] }}</td>
-  <td class="numcol">{{ row['515F-1100R'] }}</td>
-  <td class="numcol">{{ row['784F-1100R'] }}</td>
-  <td class="numcol">{{ row['784F-1193R'] }}</td>
-  <td class="numcol">{{ row['939F-1193R'] }}</td>
-  <td class="numcol">{{ row['939F-1378R'] }}</td>
+  {% for primer_pair_name in bacterial_primer_pairs.keys() %}
+  <td class="numcol">{{ row[primer_pair_name] }}</td>
+  {% endfor %}
 </tr>
 {% endfor %}
 </tbody>
 </table>
 
-<p><sup>*</sup> Coverage of a primer pair is the percent of genomes having at least one 16S rRNA gene which can be amplified by PCR using this primer pair. For details, see our <a href="https://doi.org/10.1016/j.resmic.2022.103936">paper about RiboGrove</a>.</p>
-<p>You can find a more detailed table in the file <span class="samp">primer_pair_genomic_coverage.tsv</span> in the <a href="#downloads">metadata</a>. That table contains coverage not just for phyla, but also for each bacterial class, order, family, genus, and species. Moreover, that table contains coverage values for primer pair 1115F–1492R (V7–V9 region). In this table, it is omitted for brevity.</p>
+<table class="sum-table"><caption>Archaeal genes, “archaeal” primers</caption>
+<tbody class="primer-cov-tbody">
+<tr>
+  <th class="alnleft" rowspan="2">Phylum</th>
+  <th class="numcol" rowspan="2">Number<br />of genomes</th>
+  {% for v_region_name in archaeal_primer_pairs.values() %}
+  <th class="numcol">{{ v_region_name.replace('-', '–') }}</th>
+  {% endfor %}
+</tr>
+<tr>
+  {% for primer_pair_name in archaeal_primer_pairs.keys() %}
+  <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+  {% endfor %}
+</tr>
+{% for _, row in ribogrove_primers_cov_df.query('Domain == "Archaea"').iterrows() %}
+<tr class="sumtab-row">
+  <td>{{ italicize_candidatus(row['Phylum']) }}</td>
+  <td class="numcol">{{ row['num_genomes'] }}</td>
+  {% for primer_pair_name in archaeal_primer_pairs.keys() %}
+  <td class="numcol">{{ row[primer_pair_name] }}</td>
+  {% endfor %}
+</tr>
+{% endfor %}
+</tbody>
+</table>
+<br />
 
+<details>
+<summary><b>Bacterial genes, “archaeal” primers</b></summary>
+<div id="primers-coverages" class="pad-anchor"></div>
+<table class="sum-table"><caption>Bacterial genes, “archaeal” primers</caption>
+<tbody class="primer-cov-tbody">
+<tr>
+  <th class="alnleft" rowspan="2">Phylum</th>
+  <th class="numcol" rowspan="2">Number<br />of genomes</th>
+  {% for v_region_name in archaeal_primer_pairs.values() %}
+  <th class="numcol">{{ v_region_name.replace('-', '–') }}</th>
+  {% endfor %}
+</tr>
+<tr>
+  {% for primer_pair_name in archaeal_primer_pairs.keys() %}
+  <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+  {% endfor %}
+</tr>
+{% for _, row in ribogrove_primers_cov_df.query('Domain == "Bacteria"').iterrows() %}
+<tr class="sumtab-row">
+  <td>{{ italicize_candidatus(row['Phylum']) }}</td>
+  <td class="numcol">{{ row['num_genomes'] }}</td>
+  {% for primer_pair_name in archaeal_primer_pairs.keys() %}
+  <td class="numcol">{{ row[primer_pair_name] }}</td>
+  {% endfor %}
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</details>
+<br />
+
+<details>
+<summary><b>Archaeal genes, “bacterial” primers</b></summary>
+<table class="sum-table"><caption>Archaeal genes, “bacterial” primers</caption>
+  <tbody class="primer-cov-tbody">
+  <tr>
+    <th class="alnleft" rowspan="2">Phylum</th>
+    <th class="numcol" rowspan="2">Number<br />of genomes</th>
+    {% for v_region_name in bacterial_primer_pairs.values() %}
+    <th class="numcol">{{ v_region_name.replace('-', '–') }}</th>
+    {% endfor %}
+  </tr>
+  <tr>
+    {% for primer_pair_name in bacterial_primer_pairs.keys() %}
+    <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+    {% endfor %}
+  </tr>
+  {% for _, row in ribogrove_primers_cov_df.query('Domain == "Archaea"').iterrows() %}
+  <tr class="sumtab-row">
+    <td>{{ italicize_candidatus(row['Phylum']) }}</td>
+    <td class="numcol">{{ row['num_genomes'] }}</td>
+    {% for primer_pair_name in bacterial_primer_pairs.keys() %}
+    <td class="numcol">{{ row[primer_pair_name] }}</td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</details>
+<br />
+
+<details>
+<summary><b>Primers used for coverage estimation</b></summary>
 <table class="sum-table"><caption>Primers used for coverage estimation</caption>
 <tbody>
   <tr><th>Primer name</th><th>Sequence</th><th>Reference</th></tr>
@@ -471,10 +537,23 @@
   <tr class="sumtab-row"><td>1193R</td><td>ACGTCATCCCCACCTTCC</td><td><a href="https://doi.org/10.1371/journal.pone.0056329">Bodenhausen et al, 2013</a></td></tr>
   <tr class="sumtab-row"><td>1378R</td><td>CGGTGTGTACAAGGCCCGGGAACG</td><td><a href="https://doi.org/10.1016/j.anaerobe.2014.04.006">Lebuhn et al., 2014</a></td></tr>
   <tr class="sumtab-row"><td>1492R</td><td>TACCTTGTTACGACTT</td><td><a href="https://doi.org/10.1128/AEM.02272-07">Frank et al., 2008</a></td></tr>
+  <tr class="sumtab-row"><td>SSU1ArF</td><td>TCCGGTTGATCCYGCBRG</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>SSU520R</td><td>GCTACGRRYGYTTTARRC</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>340f</td><td>CCCTAYGGGGYGCASCAG</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>806rB</td><td>GGACTACNVGGGTWTCTAAT</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>349f</td><td>GYGCASCAGKCGMGAAW</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>519r</td><td>TTACCGCGGCKGCTG</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>515fB</td><td>GTGYCAGCMGCCGCGGTAA</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>Parch519f</td><td>CAGCCGCCGCGGTAA</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>Arch915r</td><td>GTGCTCCCCCGCCAATTCCT</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>1106F</td><td>TTWAGTCAGGCAACGAGC</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>Ar1378R<sup> **</sup></td><td>TGTGCAAGGAGCAGGGAC</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
 </tbody>
 </table>
-
 <p><sup>*</sup> Primers 341F and 785R are used in the <a href="https://support.illumina.com/downloads/16s_metagenomic_sequencing_library_preparation.html">protocol</a> for library preparation for sequencing of V3–V4 region of 16S rRNA genes on Illumina MiSeq.</p>
+<p><sup>**</sup> Ar1378R is originally named 1378R. We use amended name to avoid confusion.</p>
+</details>
+
 
 <hr>
 <div id="searching-data" class="pad-anchor"></div>

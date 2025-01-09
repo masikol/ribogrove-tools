@@ -3,8 +3,8 @@ In this archive, the metadata for RiboGrove RELEASE_NUMBER_REPLACE are stored.
 The metadata consists of the following files:
 1. discarded_RELEASE_NUMBER_REPLACE_sequences.fasta.gz
 2. source_RefSeq_genomes.tsv
-3. gene_seqs_statistics.tsv
-4. discarded_gene_seqs_statistics.tsv
+3. gene_seqs_base_counts.tsv
+4. discarded_gene_seqs_base_counts.tsv
 5. categories.tsv
 6. taxonomy.tsv
 7. intragenic_repeats.tsv
@@ -99,27 +99,22 @@ Column descriptions:
 
 
 
-==      gene_seqs_statistics.tsv      ==
-== discarded_gene_seqs_statistics.tsv ==
+==      gene_seqs_base_counts.tsv      ==
+== discarded_gene_seqs_base_counts.tsv ==
 
-This is a TSV file which contains nucleotide conposition, size, genomic and taxonomic affiliation of the gene sequences.
-`discarded_gene_seqs_statistics.tsv` is the same but for discarded gene sequences.
+This is a TSV file which contains nucleotide composition and size of the gene sequences.
+`discarded_gene_seqs_base_counts.tsv` is the same but for discarded gene sequences.
 
 Column descriptions:
 
 - Column `seqID`: RiboGrove sequence ID of a gene.
-- Column `asm_acc`: the Assembly ID of a genome (https://www.ncbi.nlm.nih.gov/datasets/genome).
-- Column `taxID`: the Taxonomy ID from the NCBI Taxonomy database (https://www.ncbi.nlm.nih.gov/taxonomy).
-- Column `organism_name`: the taxonomy name from the NCBI Taxonomy database (https://www.ncbi.nlm.nih.gov/taxonomy).
-- Column `category`: the category of the genome, from which the gene originates.
-- 7 columns `Species`, `Genus`, `Family`, `Order`, `Class`, `Phylum`, `Domain`. Each of them contains the name of the taxon at the corresponding taxonomical level.
 - Column `len`: length of the gene sequence (bp).
-- 15 columns `a`,`t`,`g`,`c`,`r`,`y`,`w`,`s`,`k`,`m`,`h`,`v`,`b`,`d`,`n`. Each of them corresponds to the nucleotide base, according to IUPAC (https://www.bioinformatics.org/sms/iupac.html). For each row, a column from this list contains number of corresponding base in the gene sequence (e.g. number 395 in column `a` insicates that the gene contains 395 adenine bases).
+- 15 columns `a`,`t`,`g`,`c`,`r`,`y`,`w`,`s`,`k`,`m`,`h`,`v`,`b`,`d`,`n`. Each of them corresponds to the nucleotide base, according to IUPAC (https://www.bioinformatics.org/sms/iupac.html). For each row, a column from this list contains number of corresponding base in the gene sequence (e.g. number 395 in column `a` indicates that the gene contains 395 adenine bases).
 
 
 == categories.tsv ==
 
-This is a TSV file which contains information about what genome cetagories were assigned to each genome and why. Moreover, it contains information about what sequencing technology was used to sequence each genome.
+This is a TSV file which contains information about what genome categories were assigned to each genome and why. Moreover, it contains information about what sequencing technology was used to sequence each genome.
 
 Column descriptions:
 
@@ -160,7 +155,7 @@ Column descriptions:
 
 == entropy_summary.tsv ==
 
-This is a TSV file which contains summary of instragenomic variability of the target genes. Intragenomic variability are calculated only for the caetgory 1 genomes having more than one target gene. Intragenomic variability is evaluated using Shannon entropy. We align target genes from each genome using MUSCLE, and then we calculate Shannon entropy for each multiple alignment column (i.e. base).
+This is a TSV file which contains summary of instragenomic variability of the target genes. Intragenomic variability are calculated only for the category 1 genomes having more than one target gene. Intragenomic variability is evaluated using Shannon entropy. We align target genes from each genome using MAFFT, and then we calculate Shannon entropy for each multiple alignment column (i.e. base).
 
 Column descriptions:
 

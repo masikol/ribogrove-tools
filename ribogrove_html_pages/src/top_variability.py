@@ -65,10 +65,15 @@ def make_ribogrove_top_intragenomic_var_df(entropy_summary_df, gene_stats_df, to
         #   and if the next (`top_num`+1)th one has the same sum of entropy as `top_num`th one
         #   we wil add (`top_num`+1)th genome too
         top_genome_counter = 0
-        next_sum_entropy_the_same = abs(
-            domain_entropy_df.loc[top_genome_counter, 'sum_entropy'] \
-            - domain_entropy_df.loc[top_genome_counter+1, 'sum_entropy']
-        ) < 1e-9
+        try:
+            next_sum_entropy_the_same = abs(
+                domain_entropy_df.loc[top_genome_counter, 'sum_entropy'] \
+                - domain_entropy_df.loc[top_genome_counter+1, 'sum_entropy']
+            ) < 1e-9
+        except KeyError:
+            # Catch case if number of rows is 1
+            next_sum_entropy_the_same = False
+        # end try
 
         while top_genome_counter < top_num or next_sum_entropy_the_same:
 

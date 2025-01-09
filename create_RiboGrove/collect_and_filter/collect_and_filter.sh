@@ -137,11 +137,8 @@ FINAL_SEQIDS="${GENES_DIR}/final_seqIDs.txt"
 DISCARDED_FASTA="${GENES_DIR}/discarded_gene_seqs.fasta"
 ANNOTATED_DISCARDED_FASTA="${GENES_DIR}/discarded_gene_seqs_annotated.fasta"
 
-COUNT_BASES_TABLE="${GENES_STATS_DIR}/bases_count.tsv"
-DISCARDED_COUNT_BASES_TABLE="${GENES_STATS_DIR}/discarded_bases_count.tsv"
-
-PER_GENE_STATS="${GENES_STATS_DIR}/per_gene_stats.tsv"
-DISCARDED_PER_GENE_STATS="${GENES_STATS_DIR}/discarded_per_gene_stats.tsv"
+COUNT_BASES_TABLE="${GENES_STATS_DIR}/base_counts.tsv"
+DISCARDED_COUNT_BASES_TABLE="${GENES_STATS_DIR}/discarded_base_counts.tsv"
 
 ENTROPY_FILE="${ABERRATIONS_AND_HETEROGENEITY_DIR}/entropy.tsv"
 
@@ -400,30 +397,17 @@ cat "${tmp_fasta}" > "${ANNOTATED_DISCARDED_FASTA}"
 rm -v "${tmp_fasta}"
 
 
-# == Make per-gene statistics file (final) ==
+# == Count bases (final) ==
 
 python3 "${SCRIPTS_DIR}/count_bases.py" \
   --input-fasta "${ANNOTATED_RESULT_FASTA}" \
   --outfile "${COUNT_BASES_TABLE}"
 
-python3 "${SCRIPTS_DIR}/merge_bases_categories_taxonomy.py" \
-  --bases-file "${COUNT_BASES_TABLE}" \
-  --categories-file "${CATEGORIES_FILE}" \
-  --taxonomy-file "${TAXONOMY_FILE}" \
-  --outfile "${PER_GENE_STATS}"
-
-
-# == Make per-gene statistics file for discarded sequences ==
+# == Count bases for discarded sequences ==
 
 python3 "${SCRIPTS_DIR}/count_bases.py" \
   --input-fasta "${ANNOTATED_DISCARDED_FASTA}" \
   --outfile "${DISCARDED_COUNT_BASES_TABLE}"
-
-python3 "${SCRIPTS_DIR}/merge_bases_categories_taxonomy.py" \
-  --bases-file "${DISCARDED_COUNT_BASES_TABLE}" \
-  --categories-file "${CATEGORIES_FILE}" \
-  --taxonomy-file "${TAXONOMY_FILE}" \
-  --outfile "${DISCARDED_PER_GENE_STATS}"
 
 
 # == Calculate entropy -- intragenomic variability ==
@@ -469,11 +453,11 @@ fi
 
 if [[ "${CALC_PRIMERS_COVERAGE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/calculate_GCNs.py" \
-    --final-gene-stats "${PER_GENE_STATS}" \
+    --final-base-counts "${COUNT_BASES_TABLE}" \
     --primers-dir "${PRIMERS_DIRPATH}" \
     --outdir "${GCNS_DIR}"
 else
   python3 "${SCRIPTS_DIR}/calculate_GCNs.py" \
-    --final-gene-stats "${PER_GENE_STATS}" \
+    --final-base-counts "${DISCARDED_COUNT_BASES_TABLE}" \
     --outdir "${GCNS_DIR}"
 fi

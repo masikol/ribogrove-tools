@@ -6,7 +6,10 @@ print(f'\n|=== STARTING SCRIPT `{os.path.basename(__file__)}` ===|\n')
 
 import re
 import sys
+import json
 import argparse
+from functools import reduce
+from collections import OrderedDict
 
 import flask
 import numpy as np
@@ -61,8 +64,20 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '--gene-stats-table',
-    help='per-gene statistivs for RiboGrove seuences (Archaea + Bacteria)`',
+    '--base-counts',
+    help='per-gene base counts table for RiboGrove seuences (Archaea + Bacteria)`',
+    required=True
+)
+
+parser.add_argument(
+    '--taxonomy',
+    help='taxonomy table for RiboGrove seuences (Archaea + Bacteria)`',
+    required=True
+)
+
+parser.add_argument(
+    '--categories',
+    help='categories table for RiboGrove seuences (Archaea + Bacteria)`',
     required=True
 )
 
@@ -114,7 +129,9 @@ ribogrove_release_number = args.release_num
 ribogrove_release_date = args.release_date
 final_fasta_fpath = os.path.abspath(args.final_fasta)
 metadata_fpath = os.path.abspath(args.metadata)
-gene_stats_fpath = os.path.abspath(args.gene_stats_table)
+base_counts_fpath = os.path.abspath(args.base_counts)
+taxonomy_fpath = os.path.abspath(args.taxonomy)
+categories_fpath = os.path.abspath(args.categories)
 entropy_summary_fpath = os.path.abspath(args.entropy_summary)
 source_genomes_fpath = os.path.abspath(args.source_genomes)
 primers_fpath = os.path.abspath(args.primers_cov)
@@ -141,7 +158,9 @@ if re.match(r'^[\-0-9]+$', ribogrove_release_date) is None:
 input_fpaths = (
     final_fasta_fpath,
     metadata_fpath,
-    gene_stats_fpath,
+    base_counts_fpath,
+    taxonomy_fpath,
+    categories_fpath,
     entropy_summary_fpath,
     source_genomes_fpath,
     primers_fpath
@@ -174,6 +193,34 @@ STRAIN_DESIGNATION_PATTERN = re.compile(
 
 # == Some functions ==
 
+def make_gene_stats_df(base_counts_fpath,
+                       taxonomy_fpath,
+                       categories_fpath):
+    base_counts_df = pd.read_csv(base_counts_fpath, sep='\t')
+    taxonomy_df = pd.read_csv(taxonomy_fpath, sep='\t')
+    categories_df = pd.read_csv(categories_fpath, sep='\t')
+
+    base_counts_df['asm_acc'] = np.repeat('', base_counts_df.shape[0])
+    base_counts_df = base_counts_df.apply(set_asm_acc, axis=1)
+
+    gene_stats_df = base_counts_df[['asm_acc', 'seqID', 'len']].merge(
+        taxonomy_df,
+        on='asm_acc',
+        how='left'
+    ).merge(
+        categories_df[['asm_acc', 'category']],
+        on='asm_acc',
+        how='left'
+    )
+    return gene_stats_df
+# end def
+
+def set_asm_acc(row):
+    # TODO: parse asm_acc using the function in src...
+    row['asm_acc'] = row['seqID'].partition(':')[0]
+    return row
+# end def
+
 def get_file_size_MB(fpath):
 
     size_in_bytes = os.path.getsize(fpath)
@@ -205,6 +252,30 @@ def set_strain_name(row):
     return row
 # end def
 
+def parse_primer_pairs():
+    # TODO: deduplicate code
+    primers_pairs_fpath = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+        'create_RiboGrove', 'collect_and_filter', 'scripts', 'data', 'primers', 'primer_pairs.json'
+    )
+    with open(primers_pairs_fpath, 'rt') as infile:
+        primer_pairs = json.load(infile)
+    # end with
+
+    bacterial_primer_pairs = transform_primer_pair_dict(primer_pairs['Bacteria'])
+    archaeal_primer_pairs  = transform_primer_pair_dict(primer_pairs['Archaea'])
+
+    return bacterial_primer_pairs, archaeal_primer_pairs
+# end def
+
+def transform_primer_pair_dict(primer_pairs):
+    all_primer_pair_dict = OrderedDict()
+    for nameF, nameR, v_region_name in primer_pairs:
+        all_primer_pair_dict['{}-{}'.format(nameF, nameR)] = v_region_name
+    # end for
+    return all_primer_pair_dict
+# end def
+
 
 # == Proceed ==
 
@@ -221,7 +292,11 @@ metadata_fsize = get_file_size_MB(metadata_fpath)
 
 
 # Read per-gene statistics file
-gene_stats_df = pd.read_csv(gene_stats_fpath, sep='\t')
+gene_stats_df = make_gene_stats_df(
+    base_counts_fpath,
+    taxonomy_fpath,
+    categories_fpath
+)
 # Read info about source genomes
 source_genomes_df = pd.read_csv(source_genomes_fpath, sep='\t')
 source_genomes_df['strain_name'] = np.repeat('', source_genomes_df.shape[0])
@@ -235,6 +310,10 @@ gene_stats_df = gene_stats_df.merge(
     how='left'
 ).drop_duplicates(subset=init_columns)
 del init_columns
+
+# Parse primer pair data
+bacterial_primer_pairs, archaeal_primer_pairs = parse_primer_pairs()
+del bacterial_primer_pairs['1115F-1492R']
 
 
 # Read entropy summary file
@@ -439,7 +518,9 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
                 ribogrove_top_intragenomic_var_df=fmt_ribogrove_top_intragenomic_var_df,
                 retrieve_strain_name=retrieve_strain_name,
                 ribogrove_primers_cov_df=fmt_ribogrove_primers_cov_df,
-                italicize_candidatus=italicize_candidatus
+                italicize_candidatus=italicize_candidatus,
+                bacterial_primer_pairs=bacterial_primer_pairs,
+                archaeal_primer_pairs=archaeal_primer_pairs
         )
     # end with
 

@@ -110,8 +110,8 @@
       Это TSV-файл, который содержит информацию про то, какие геномы использовались для создания RiboGrove.
     </li>
     <li>
-      <span class="samp-highl">gene_seqs_statistics.tsv</span>, <span class="samp-highl">discarded_gene_seqs_statistics.tsv</span><br>
-      Это TSV-файлы, которые содержат информацию про нуклеотидный состав, размер, геномную и таксономическую принадлежность последовательностей генов. Первый файл их этих двух описывает финальные последовательности, включенные в RiboGrove, а второй — „забракованые“ последовательности.
+      <span class="samp-highl">gene_seqs_base_counts.tsv</span>, <span class="samp-highl">discarded_gene_seqs_base_counts.tsv</span><br>
+      Это TSV-файлы, которые содержат информацию про нуклеотидный состав и размер последовательностей генов. Первый файл их этих двух описывает финальные последовательности, включенные в RiboGrove, а второй — „забракованые“ последовательности.
     </li>
     <li>
       <span class="samp-highl">categories.tsv</span><br>
@@ -394,62 +394,130 @@
 <hr>
 
 <div id="primers-coverages" class="pad-anchor"></div>
-<table class="sum-table"><caption>Спектр действия<sup>*</sup> пар праймеров к разным V-участкам бактериальных генов 16S рРНК</caption>
+<h3>Спектр действия<sup>*</sup> пар праймеров к разным V-участкам бактериальных генов 16S рРНК</h3>
+
+<p><sup>*</sup> Спектр действия пары праймеров — это процент геномов, которые содержат как минимум один ген 16S рРНК, который возможно амплифицировать с помощью ПЦР используя эту пару праймеров. Подробности описаны в нашей <a href="https://doi.org/10.1016/j.resmic.2022.103936">статье про RiboGrove</a>.</p>
+<p>В таблицах ниже можно найти спектры действия пар праймеров, которые обычно используются для амплификации бактериальных и архейных генов 16S рРНК („бактериальные“ и „архейные“ праймеры).</p>
+<p>Есть более подробная таблица — в файле <span class="samp">primer_pair_genomic_coverage.tsv</span> в метаданных <a href="#downloads">metadata</a>. Та таблица содержит спектры действия не только для отделов (phyla), но и для каждого класса, порядка, семейства, рода и вида. Кроме того, та таблица содержит спектры действия для пары праймеров 1115F–1492R (участок V7–V9). В таблицах ниже нет этой пары, чтобы они не были слишком громоздкими.</p>
+
+<table class="sum-table"><caption>Бактерияльные гены, „бактерияльные“ праймеры</caption>
 <tbody class="primer-cov-tbody">
 <tr>
-  <th class="alnleft" rowspan="2">Отдел<br />бактерий</th>
+  <th class="alnleft" rowspan="2">Отдел</th>
   <th class="numcol" rowspan="2">Количество<br />геномов</th>
-  <th class="numcol">Полный<br />ген</th>
-  <th class="numcol">V1–V2</th>
-  <th class="numcol">V1–V3</th>
-  <th class="numcol">V3–V4</th>
-  <th class="numcol">V3–V5</th>
-  <th class="numcol">V4</th>
-  <th class="numcol">V4–V5</th>
-  <th class="numcol">V4–V6</th>
-  <th class="numcol">V5–V6</th>
-  <th class="numcol">V5–V7</th>
-  <th class="numcol">V6–V7</th>
-  <th class="numcol">V6–V8</th>
+  {% for v_region_name in bacterial_primer_pairs.values() %}
+  <th class="numcol">{{ v_region_name.replace('-', '–') }}</th>
+  {% endfor %}
 </tr>
 <tr>
-  <th class="numcol">27F–1492R<br />(%)</th>
-  <th class="numcol">27F–338R<br />(%)</th>
-  <th class="numcol">27F–534R<br />(%)</th>
-  <th class="numcol">341F–785R<br />(%)</th>
-  <th class="numcol">341F–944R<br />(%)</th>
-  <th class="numcol">515F–806R<br />(%)</th>
-  <th class="numcol">515F–944R<br />(%)</th>
-  <th class="numcol">515F–1100R<br />(%)</th>
-  <th class="numcol">784F–1100R<br />(%)</th>
-  <th class="numcol">784F–1193R<br />(%)</th>
-  <th class="numcol">939F–1193R<br />(%)</th>
-  <th class="numcol">939F–1378R<br />(%)</th>
+  {% for primer_pair_name in bacterial_primer_pairs.keys() %}
+  <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+  {% endfor %}
 </tr>
-{% for _, row in ribogrove_primers_cov_df.iterrows() %}
+{% for _, row in ribogrove_primers_cov_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
   <td>{{ italicize_candidatus(row['Phylum']) }}</td>
   <td class="numcol">{{ row['num_genomes'] }}</td>
-  <td class="numcol">{{ row['27F-1492R'] }}</td>
-  <td class="numcol">{{ row['27F-338R'] }}</td>
-  <td class="numcol">{{ row['27F-534R'] }}</td>
-  <td class="numcol">{{ row['341F-785R'] }}</td>
-  <td class="numcol">{{ row['341F-944R'] }}</td>
-  <td class="numcol">{{ row['515F-806R'] }}</td>
-  <td class="numcol">{{ row['515F-944R'] }}</td>
-  <td class="numcol">{{ row['515F-1100R'] }}</td>
-  <td class="numcol">{{ row['784F-1100R'] }}</td>
-  <td class="numcol">{{ row['784F-1193R'] }}</td>
-  <td class="numcol">{{ row['939F-1193R'] }}</td>
-  <td class="numcol">{{ row['939F-1378R'] }}</td>
+  {% for primer_pair_name in bacterial_primer_pairs.keys() %}
+  <td class="numcol">{{ row[primer_pair_name] }}</td>
+  {% endfor %}
 </tr>
 {% endfor %}
 </tbody>
 </table>
+<br />
 
-<p><sup>*</sup> Спектр действия пары праймеров — это процент геномов, которые содержат как минимум один ген 16S рРНК, который возможно амплифицировать с помощью ПЦР используя эту пару праймеров. Подробности описаны в нашей <a href="https://doi.org/10.1016/j.resmic.2022.103936">статье про RiboGrove</a>.</p>
-<p>Есть более подробная таблица — в файле <span class="samp">primer_pair_genomic_coverage.tsv</span> в метаданных <a href="#downloads">metadata</a>. Та таблица содержит покрытие не только для отделов бактерий, но и для каждого класса, порядка, семейства, рода и вида. Кроме того, та таблица содержит покрытие для пары праймеров 1115F–1492R (участок V7–V9). В этой таблице нет этой пары, чтобы таблица не была слишком большой.</p>
+<table class="sum-table"><caption>Архейные гены, „архейные“ праймеры</caption>
+<tbody class="primer-cov-tbody">
+<tr>
+  <th class="alnleft" rowspan="2">Отдел</th>
+  <th class="numcol" rowspan="2">Количество<br />геномов</th>
+  {% for v_region_name in archaeal_primer_pairs.values() %}
+  <th class="numcol">{{ v_region_name.replace('-', '–') }}</th>
+  {% endfor %}
+</tr>
+<tr>
+  {% for primer_pair_name in archaeal_primer_pairs.keys() %}
+  <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+  {% endfor %}
+</tr>
+{% for _, row in ribogrove_primers_cov_df.query('Domain == "Archaea"').iterrows() %}
+<tr class="sumtab-row">
+  <td>{{ italicize_candidatus(row['Phylum']) }}</td>
+  <td class="numcol">{{ row['num_genomes'] }}</td>
+  {% for primer_pair_name in archaeal_primer_pairs.keys() %}
+  <td class="numcol">{{ row[primer_pair_name] }}</td>
+  {% endfor %}
+</tr>
+{% endfor %}
+</tbody>
+</table>
+<br />
 
+<details>
+<summary><b>Бактериальные гены, „архейные“ праймеры</b></summary>
+<div id="primers-coverages" class="pad-anchor"></div>
+<table class="sum-table"><caption>Бактериальные гены, „архейные“ праймеры</caption>
+<tbody class="primer-cov-tbody">
+<tr>
+  <th class="alnleft" rowspan="2">Отдел</th>
+  <th class="numcol" rowspan="2">Количество<br />геномов</th>
+  {% for v_region_name in archaeal_primer_pairs.values() %}
+  <th class="numcol">{{ v_region_name.replace('-', '–') }}</th>
+  {% endfor %}
+</tr>
+<tr>
+  {% for primer_pair_name in archaeal_primer_pairs.keys() %}
+  <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+  {% endfor %}
+</tr>
+{% for _, row in ribogrove_primers_cov_df.query('Domain == "Bacteria"').iterrows() %}
+<tr class="sumtab-row">
+  <td>{{ italicize_candidatus(row['Phylum']) }}</td>
+  <td class="numcol">{{ row['num_genomes'] }}</td>
+  {% for primer_pair_name in archaeal_primer_pairs.keys() %}
+  <td class="numcol">{{ row[primer_pair_name] }}</td>
+  {% endfor %}
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</details>
+<br />
+
+<details>
+<summary><b>Архейные гены, „бактериальные“ праймеры</b></summary>
+<table class="sum-table"><caption>Архейные гены, „бактериальные“ праймеры</caption>
+  <tbody class="primer-cov-tbody">
+  <tr>
+    <th class="alnleft" rowspan="2">Отдел</th>
+    <th class="numcol" rowspan="2">Количество<br />геномов</th>
+    {% for v_region_name in bacterial_primer_pairs.values() %}
+    <th class="numcol">{{ v_region_name.replace('-', '–') }}</th>
+    {% endfor %}
+  </tr>
+  <tr>
+    {% for primer_pair_name in bacterial_primer_pairs.keys() %}
+    <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+    {% endfor %}
+  </tr>
+  {% for _, row in ribogrove_primers_cov_df.query('Domain == "Archaea"').iterrows() %}
+  <tr class="sumtab-row">
+    <td>{{ italicize_candidatus(row['Phylum']) }}</td>
+    <td class="numcol">{{ row['num_genomes'] }}</td>
+    {% for primer_pair_name in bacterial_primer_pairs.keys() %}
+    <td class="numcol">{{ row[primer_pair_name] }}</td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</details>
+<br />
+
+
+<details>
+<summary><b>Праймеры, спектр действия которых оценивался</b></summary>
 <table class="sum-table"><caption>Праймеры, спектр действия которых оценивался</caption>
 <tbody>
   <tr><th>Название праймера</th><th>Последовательность</th><th>Ссылка</th></tr>
@@ -467,10 +535,23 @@
   <tr class="sumtab-row"><td>1193R</td><td>ACGTCATCCCCACCTTCC</td><td><a href="https://doi.org/10.1371/journal.pone.0056329">Bodenhausen et al, 2013</a></td></tr>
   <tr class="sumtab-row"><td>1378R</td><td>CGGTGTGTACAAGGCCCGGGAACG</td><td><a href="https://doi.org/10.1016/j.anaerobe.2014.04.006">Lebuhn et al., 2014</a></td></tr>
   <tr class="sumtab-row"><td>1492R</td><td>TACCTTGTTACGACTT</td><td><a href="https://doi.org/10.1128/AEM.02272-07">Frank et al., 2008</a></td></tr>
+  <tr class="sumtab-row"><td>SSU1ArF</td><td>TCCGGTTGATCCYGCBRG</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>SSU520R</td><td>GCTACGRRYGYTTTARRC</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>340f</td><td>CCCTAYGGGGYGCASCAG</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>806rB</td><td>GGACTACNVGGGTWTCTAAT</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>349f</td><td>GYGCASCAGKCGMGAAW</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>519r</td><td>TTACCGCGGCKGCTG</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>515fB</td><td>GTGYCAGCMGCCGCGGTAA</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>Parch519f</td><td>CAGCCGCCGCGGTAA</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>Arch915r</td><td>GTGCTCCCCCGCCAATTCCT</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>1106F</td><td>TTWAGTCAGGCAACGAGC</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>Ar1378R<sup> **</sup></td><td>TGTGCAAGGAGCAGGGAC</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
 </tbody>
 </table>
-
 <p><sup>*</sup> Праймеры 341F и 785R используются в <a href="https://support.illumina.com/downloads/16s_metagenomic_sequencing_library_preparation.html">протоколе</a> подготовки библиотеки для секвенирования ампликонов участков V3–V4 генов 16S рРНК на приборе Illumina MiSeq.</p>
+<p><sup>**</sup> Исходное название праймера Ar1378R — 1378R. Мы изменили название, чтобы избежать путаницы.</p>
+</details>
+
 
 <div id="searching-data" class="pad-anchor"></div>
 <h2>Поиск данных в базе данных RiboGrove</h2>

@@ -1,6 +1,6 @@
 # Prepare RiboGrove release
 
-The script `prepare_release.sh` (found this directory) combines bacterial and archaeal data into a RiboGrove release, namely into files `ribogrove_XX.XXX_sequences.fasta.gz` and `metadata.zip` (`XX.XXX` is RiboGrove release number, e.g. 10.216).
+The script `combine_release.sh` (found this directory) combines bacterial and archaeal data into a RiboGrove release, namely into files `ribogrove_XX.XXX_sequences.fasta.gz` and `metadata.zip` (`XX.XXX` is RiboGrove release number, e.g. 10.216).
 
 ## Input
 
@@ -9,7 +9,7 @@ Output working directories `bacteria/` and `archaea/` made by the pipeline `coll
 ## Usage
 
 ```
-bash prepare_release.sh \
+bash combine_release.sh \
     <WORKDIR_ROOT> \
     <OUTDIR> \
     <RELEASE_NUMBER>
@@ -18,7 +18,7 @@ bash prepare_release.sh \
 ### Example
 
 ```
-bash prepare_release.sh \
+bash combine_release.sh \
     /mnt/my_drive/RiboGrove_workdirs/9.215 \
     /mnt/my_drive/RiboGrove_releases/9.215 \
     9.215

@@ -41,9 +41,9 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument(
     '-f',
-    '--final-gene-stats',
-    help="""A TSV file of final per-gene statistics.
-    This is the output of the script `merge_bases_categories_taxonomy.py`""",
+    '--final-base-counts',
+    help="""A TSV file of final base counts.
+    This is the output of the script `count_bases.py`""",
     required=True
 )
 
@@ -70,17 +70,19 @@ args = parser.parse_args()
 # == Import them now ==
 import sys
 import json
+from functools import reduce
 
 import numpy as np
 import pandas as pd
 
 from src.rg_tools_time import get_time
+from src.ribogrove_seqID import parse_asm_acc
 from src.primers import make_primer_pair_key
 from src.file_navigation import primer_pair_key_2_outfpath
 
 
 # For convenience
-final_stats_fpath = os.path.abspath(args.final_gene_stats)
+base_counts_fpath = os.path.abspath(args.final_base_counts)
 outdir_path = os.path.abspath(args.outdir)
 if not args.primers_dir is None:
     print('INFO: the script will calculate primer-wise GCNs as well')
@@ -93,8 +95,8 @@ else:
 
 
 # Check existance of all input files and dependencies
-if not os.path.exists(final_stats_fpath):
-    print(f'Error: file `{final_stats_fpath}` does not exist!')
+if not os.path.exists(base_counts_fpath):
+    print(f'Error: file `{base_counts_fpath}` does not exist!')
     sys.exit(1)
 # end if
 
@@ -115,23 +117,32 @@ if not os.path.isdir(outdir_path):
 # end if
 
 
-print(final_stats_fpath)
+print(base_counts_fpath)
 if primers_mode:
     print(primers_dirpath)
 # end if
 print()
 
 
-def make_basic_gcn_df(final_stats_fpath):
-    stats_df = pd.read_csv(final_stats_fpath, sep='\t')
-    # Consictency with RiboGrove releases before 11.217
-    if 'ass_id' in stats_df.columns:
-        stats_df = stats_df.rename(columns={'ass_id': 'asm_acc'})
+def make_basic_gcn_df(base_counts_fpath):
+    base_count_df = pd.read_csv(base_counts_fpath, sep='\t')
+    if 'ass_id' in base_count_df.columns:
+        # Consistency with RiboGrove releases before 11.217
+        base_count_df = base_count_df.rename(columns={'ass_id': 'asm_acc'})
+    elif not 'asm_acc' in base_count_df.columns:
+        # Consistency with RiboGrove releases after 21.227
+        base_count_df['asm_acc'] = np.repeat('', base_count_df.shape[0])
+        base_count_df = base_count_df.apply(set_asm_acc, axis=1)
     # end if
-    basic_gcn_df = stats_df.groupby('asm_acc', as_index=False) \
+    basic_gcn_df = base_count_df.groupby('asm_acc', as_index=False) \
         .agg({'seqID': lambda x: x.nunique()}) \
         .rename(columns={'seqID': '16S_rRNA_gcn'})
     return basic_gcn_df
+# end def
+
+def set_asm_acc(row):
+    row['asm_acc'] = parse_asm_acc(row['seqID'])
+    return row
 # end def
 
 def output_gcn_df(df, outfpath):
@@ -157,16 +168,19 @@ def make_primers_gcn_dfs(primer_pairs,
         }
     )
     
-    for nameF, nameR in primer_pairs:
+    for nameF, nameR, _ in primer_pairs:
         primer_pair_key = make_primer_pair_key(nameF, nameR)
         primers_anneal_df_fpath = primer_pair_key_2_outfpath(primers_dirpath, primer_pair_key)
         primers_anneal_df = pd.read_csv(primers_anneal_df_fpath, sep='\t')
+        primers_anneal_df['asm_acc'] = np.repeat('', primers_anneal_df.shape[0])
+        primers_anneal_df = primers_anneal_df.apply(set_asm_acc, axis=1)
 
         primers_gcn_df = primers_anneal_df.groupby('asm_acc', as_index=False) \
             .agg({'seqID': lambda x: x.nunique()}) \
             .rename(columns={'seqID': '16S_rRNA_gcn'}) \
             .merge(fake_total_df, on='asm_acc', how='right')
-        primers_gcn_df['16S_rRNA_gcn'] = primers_gcn_df['16S_rRNA_gcn'].fillna(0).map(int)
+        primers_gcn_df['16S_rRNA_gcn'] = primers_gcn_df['16S_rRNA_gcn'] \
+            .infer_objects(copy=False).fillna(0).map(np.uint8) # we use uint8, for 16S GCN is by no means likely to be >255
         primers_gcn_df = primers_gcn_df[
             ['asm_acc', '16S_rRNA_gcn',]
         ]
@@ -195,12 +209,16 @@ primer_pairs_fpath = os.path.join(
 with open(primer_pairs_fpath, 'rt') as infile:
     primer_pairs = json.load(infile)
 # end with
+primer_pairs = reduce(
+    lambda list_a, list_b: list_a + list_b,
+    primer_pairs.values()
+)
 
 
 # == Proceed ==
 
 # Basic GCN df
-basic_gcn_df = make_basic_gcn_df(final_stats_fpath)
+basic_gcn_df = make_basic_gcn_df(base_counts_fpath)
 basic_gcn_outfpath = os.path.join(outdir_path, '16S_GCNs.tsv')
 output_gcn_df(basic_gcn_df, basic_gcn_outfpath)
 print('Basic GCNs: `{}`'.format(basic_gcn_outfpath))

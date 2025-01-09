@@ -1,4 +1,6 @@
-set -e
+#!/usr/bin/env bash
+
+set -eu
 
 
 function print_help {
@@ -123,20 +125,20 @@ done
 RIBOGROVE_SOURCE_GENOMES="${METADATA_DIR}/source_RefSeq_genomes.tsv"
 
 # Gene sequences statistics (final)
-BACTERIA_PER_GENE_STATS="${BACTERIA_DIR}/gene_stats/per_gene_stats.tsv"
-ARCHAEA_PER_GENE_STATS="${ARCHAEA_DIR}/gene_stats/per_gene_stats.tsv"
-for f in "${BACTERIA_PER_GENE_STATS}" "${ARCHAEA_PER_GENE_STATS}"; do
+BACTERIA_BASE_COUNTS="${BACTERIA_DIR}/gene_stats/base_counts.tsv"
+ARCHAEA_BASE_COUNTS="${ARCHAEA_DIR}/gene_stats/base_counts.tsv"
+for f in "${BACTERIA_BASE_COUNTS}" "${ARCHAEA_BASE_COUNTS}"; do
     check_file "${f}"
 done
-RIBOGROVE_PER_GENE_STATS="${METADATA_DIR}/gene_seqs_statistics.tsv"
+RIBOGROVE_BASE_COUNTS="${METADATA_DIR}/gene_seqs_base_counts.tsv"
 
 # Gene sequences statistics (raw)
-BACTERIA_DISCARDED_PER_GENE_STATS="${BACTERIA_DIR}/gene_stats/discarded_per_gene_stats.tsv"
-ARCHAEA_DISCARDED_PER_GENE_STATS="${ARCHAEA_DIR}/gene_stats/discarded_per_gene_stats.tsv"
-for f in "${BACTERIA_DISCARDED_PER_GENE_STATS}" "${ARCHAEA_DISCARDED_PER_GENE_STATS}"; do
+BACTERIA_DISCARDED_BASE_COUNTS="${BACTERIA_DIR}/gene_stats/discarded_base_counts.tsv"
+ARCHAEA_DISCARDED_BASE_COUNTS="${ARCHAEA_DIR}/gene_stats/discarded_base_counts.tsv"
+for f in "${BACTERIA_DISCARDED_BASE_COUNTS}" "${ARCHAEA_DISCARDED_BASE_COUNTS}"; do
     check_file "${f}"
 done
-RIBOGROVE_DISCARDED_PER_GENE_STATS="${METADATA_DIR}/discarded_gene_seqs_statistics.tsv"
+RIBOGROVE_DISCARDED_BASE_COUNTS="${METADATA_DIR}/discarded_gene_seqs_base_counts.tsv"
 
 # Categories
 BACTERIA_CATEGORIES="${BACTERIA_DIR}/categories/categories.tsv"
@@ -181,6 +183,7 @@ RIBOGROVE_16S_GCN="${METADATA_DIR}/16S_GCNs.tsv"
 
 # Total primer coverage
 BACTERIA_PRIMER_COV_DIR="${BACTERIA_DIR}/primers_coverage"
+ARCHAEA_PRIMER_COV_DIR="${ARCHAEA_DIR}/primers_coverage"
 this_file_relative_dirpath=`dirname "$0"`
 this_file_abs_dirpath=`realpath "${this_file_relative_dirpath}"`
 MAKE_COV_TABLE_SCRIPT="${this_file_abs_dirpath}/make_total_primer_cov_table.py"
@@ -245,29 +248,29 @@ cat "${ARCHAEA_ASM_SUM}" \
   >> "${RIBOGROVE_SOURCE_GENOMES}"
 echo "${RIBOGROVE_SOURCE_GENOMES}"
 
-# Gene sequences statistics (final)
-echo -n 'Gene sequences statistics (final)...  '
-if [[ -f "${RIBOGROVE_PER_GENE_STATS}" ]]; then
+# Gene sequences base counts (final)
+echo -n 'Gene sequences base counts (final)...  '
+if [[ -f "${RIBOGROVE_BASE_COUNTS}" ]]; then
     # Empty the merged file
-    echo -n '' > "${RIBOGROVE_PER_GENE_STATS}"
+    echo -n '' > "${RIBOGROVE_BASE_COUNTS}"
 fi
-cat "${BACTERIA_PER_GENE_STATS}" > "${RIBOGROVE_PER_GENE_STATS}"
-cat "${ARCHAEA_PER_GENE_STATS}" \
+cat "${BACTERIA_BASE_COUNTS}" > "${RIBOGROVE_BASE_COUNTS}"
+cat "${ARCHAEA_BASE_COUNTS}" \
   | csvtk del-header -tT \
-  >> "${RIBOGROVE_PER_GENE_STATS}"
-echo "${RIBOGROVE_PER_GENE_STATS}"
+  >> "${RIBOGROVE_BASE_COUNTS}"
+echo "${RIBOGROVE_BASE_COUNTS}"
 
-# Gene sequences statistics (discarded)
-echo -n 'Gene sequences statistics (discarded)...  '
-if [[ -f "${RIBOGROVE_DISCARDED_PER_GENE_STATS}" ]]; then
+# Gene sequences base counts (discarded)
+echo -n 'Gene sequences base counts (discarded)...  '
+if [[ -f "${RIBOGROVE_DISCARDED_BASE_COUNTS}" ]]; then
   # Empty the merged file
-  echo -n '' > "${RIBOGROVE_DISCARDED_PER_GENE_STATS}"
+  echo -n '' > "${RIBOGROVE_DISCARDED_BASE_COUNTS}"
 fi
-cat "${BACTERIA_DISCARDED_PER_GENE_STATS}" > "${RIBOGROVE_DISCARDED_PER_GENE_STATS}"
-cat "${ARCHAEA_DISCARDED_PER_GENE_STATS}" \
+cat "${BACTERIA_DISCARDED_BASE_COUNTS}" > "${RIBOGROVE_DISCARDED_BASE_COUNTS}"
+cat "${ARCHAEA_DISCARDED_BASE_COUNTS}" \
   | csvtk del-header -tT \
-  >> "${RIBOGROVE_DISCARDED_PER_GENE_STATS}"
-echo "${RIBOGROVE_DISCARDED_PER_GENE_STATS}"
+  >> "${RIBOGROVE_DISCARDED_BASE_COUNTS}"
+echo "${RIBOGROVE_DISCARDED_BASE_COUNTS}"
 
 # Categories
 echo -n 'Categories...  '
@@ -334,11 +337,23 @@ cat "${ARCHAEA_16S_GCN}" \
 echo "${RIBOGROVE_16S_GCN}"
 
 # Total primer coverage
+tmp_file="${METADATA_DIR}/tmp.tsv"
 echo 'Primer coverage...  '
+echo '  Bacteria...'
 python3 "${MAKE_COV_TABLE_SCRIPT}" \
   --primers-dir "${BACTERIA_PRIMER_COV_DIR}" \
-  --gene-stats "${RIBOGROVE_PER_GENE_STATS}" \
-  --outfile "${RIBOGROVE_PRIMER_COVERAGE_TABLE}"
+  --taxonomy "${RIBOGROVE_TAXONOMY}" \
+  --target-domain 'bacteria' \
+  --outfile "${tmp_file}"
+cat "${tmp_file}" > "${RIBOGROVE_PRIMER_COVERAGE_TABLE}"
+echo '  Archaea...'
+python3 "${MAKE_COV_TABLE_SCRIPT}" \
+  --primers-dir "${ARCHAEA_PRIMER_COV_DIR}" \
+  --taxonomy "${RIBOGROVE_TAXONOMY}" \
+  --target-domain 'archaea' \
+  --outfile "${tmp_file}"
+cat "${tmp_file}" \
+  | csvtk del-header -tT >> "${RIBOGROVE_PRIMER_COVERAGE_TABLE}"
 echo "${RIBOGROVE_PRIMER_COVERAGE_TABLE}"
 
 # Zip the metadata

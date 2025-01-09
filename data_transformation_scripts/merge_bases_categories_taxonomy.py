@@ -18,7 +18,11 @@
 
 
 import os
-from src.rg_tools_time import get_time
+import time
+
+def get_time():
+    return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+# end def
 
 print(
     '\n|=== {} STARTING SCRIPT `{}` ===|\n' \

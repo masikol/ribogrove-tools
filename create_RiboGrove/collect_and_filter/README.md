@@ -90,16 +90,16 @@ bash collect_and_filter.sh config/bacteria_config.conf -t
 
 ### Standalone programs:
 
-1. Seqkit: [https://github.com/shenwei356/seqkit](https://github.com/shenwei356/seqkit). Tested on version 2.2.0.
+1. Seqkit: [https://github.com/shenwei356/seqkit](https://github.com/shenwei356/seqkit). Tested on version 2.9.0.
 
-2. `ribotyper` program from [Ribovore](https://github.com/ncbi/ribovore) suite. Tested on Ribovore version 1.0.2.
+2. `ribotyper` program from [Ribovore](https://github.com/ncbi/ribovore) suite. Tested on Ribovore version 1.0.5.
 
-2. MUSCLE: [https://www.drive5.com/muscle/](https://www.drive5.com/muscle/). Tested on version 3.8.31.
+2. MAFFT: [https://mafft.cbrc.jp/alignment/software](https://mafft.cbrc.jp/alignment/software). Tested on version v7.526.
 
-3. Infernal [http://eddylab.org/infernal/](http://eddylab.org/infernal/). Infernal 1.1.1 is used for re-annotation of genomic sequences (for compatibility with [PGAP](https://www.ncbi.nlm.nih.gov/genome/annotation_prok/)).
+3. Infernal [http://eddylab.org/infernal/](http://eddylab.org/infernal/). Infernal 1.1.5 is used for re-annotation of genomic sequences (for compatibility with [PGAP](https://www.ncbi.nlm.nih.gov/genome/annotation_prok/)).
 
-3. MFEprimer [https://www.mfeprimer.com/](https://www.mfeprimer.com/). Tested on version 3.2.2.
+3. MFEprimer [https://www.mfeprimer.com/](https://www.mfeprimer.com/). Tested on version 3.3.1.
 
 ### Data:
 
-1. Rfam database version 12.0 (ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz) for re-annotation of genomic sequences.
+1. Rfam database version 14.4 (ftp://ftp.ebi.ac.uk/pub/databases/Rfam/14.4/Rfam.cm.gz) for re-annotation of genomic sequences for compatibility with [PGAP](https://www.ncbi.nlm.nih.gov/genome/annotation_prok/).

@@ -1,3 +1,0 @@
-1. adopt rrnDB rejected list
-2. create_RiboGrove/collect_and_filter/scripts/check_seqs_with_ribotyper.py:403: DtypeWarning: Columns (8,9,10,11,12,13,14,15,16,17,18,19,20,22) have mixed types. Specify dtype option on import or set low_memory=False.
-3. rename prepare_release.sh to combine_release.sh

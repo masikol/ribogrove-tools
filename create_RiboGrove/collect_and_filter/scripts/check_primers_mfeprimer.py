@@ -102,6 +102,7 @@ import glob
 import json
 import shutil
 import subprocess as sp
+from functools import reduce
 
 from Bio import SeqIO
 import pandas as pd
@@ -188,6 +189,18 @@ print()
 K_MER_SIZE = 8
 
 
+def parse_all_primer_pairs(primer_pairs_fpath):
+    with open(primer_pairs_fpath, 'rt') as infile:
+        primer_pairs_raw_data = json.load(infile)
+    # end with
+    all_primer_pairs = reduce(
+        lambda list_a, list_b: list_a + list_b,
+        primer_pairs_raw_data.values()
+    )
+    return all_primer_pairs
+# end def
+
+
 def prepare_pcr_template(seq_str):
     tmp_fasta = os.path.join(tmp_dirpath, 'tmpQ.fasta')
 
@@ -221,9 +234,6 @@ def simulate_pcr_for_single_template(template_fpath, primers_fpath):
             '-c 2',
             f'-i {primers_fpath}',
             f'-d {template_fpath}',
-            # JSON mode remnant
-            # '-j',
-            # f'-o {tmp_out_base}'
         ]
     )
     pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE, encoding='utf-8')
@@ -233,68 +243,8 @@ def simulate_pcr_for_single_template(template_fpath, primers_fpath):
         print(stderr)
         sys.exit(1)
     # end if
-
-    # JSON mode remnant
-    # Clean
-    # os.unlink(tmp_out_base)
-
-    # JSON mode remnant
-    # out_json_fpath = f'{tmp_out_base}.json'
     return stdout
 # end def
-
-# JSON mode remnant
-# def parse_pcr_json_result(json_fpath):
-#     # Read mfeprimer's output
-#     mfe_json = json.loads(open(json_fpath, 'rt').read())
-
-#     # Get list of possible amplicons (products)
-#     amp_list = mfe_json['AmpList']
-
-#     if not amp_list is None:
-#         for amp in amp_list:
-#             # Collect all appropriate data about primer annealing
-#             product_size = amp['P']['Size']
-#             ppc = amp['PPC'] # what's this?
-
-#             f_size = amp['F']['Size'] # size of forw primer
-#             f_start = amp['F']['Start'] # start pos of forw primer annealing
-#             f_end = amp['F']['End'] # start pos of forw primer annealing
-#             f_tm = amp['F']['Tm'] # melting temperature for forw primer
-#             f_dg = amp['F']['Dg'] # free energy for forw primer
-#             f_bind_len = len(amp['F']['Sseq']) # product sequence
-#             f_pident = amp['F']['Aseq'].count(':') / len(amp['F']['Aseq']) # pident for forw primer
-#             f_cover = f_bind_len / f_size # coverage for forw primer
-
-#             r_size = amp['R']['Size'] # size of rev primer
-#             r_start = amp['R']['Start'] # start pos of rev primer annealing
-#             r_end = amp['R']['End'] # start pos of rev primer annealing
-#             r_tm = amp['R']['Tm'] # melting temperature for rev primer
-#             r_dg = amp['R']['Dg'] # free energy for rev primer
-#             r_bind_len = len(amp['R']['Sseq']) # product sequence
-#             r_pident = amp['R']['Aseq'].count(':') / len(amp['R']['Aseq']) # pident for rev primer
-#             r_cover = r_bind_len / r_size # coverage for rev primer
-
-#             output_values = list(
-#                 map(
-#                     str,
-#                     [
-#                         product_size, ppc,
-#                         f_size, f_start, f_end, f_tm, f_dg, f_bind_len, f_pident, f_cover,
-#                         r_size, r_start, r_end, r_tm, r_dg, r_bind_len, r_pident, r_cover,
-#                     ]
-#                 )
-#             )
-
-#             yield output_values
-#         # end for
-#     # end if
-
-#     # Clean
-#     os.unlink(json_fpath)
-
-#     return
-# # end def
 
 
 def parse_pcr_plain_result(plain_text_str):
@@ -325,18 +275,15 @@ def parse_pcr_plain_result(plain_text_str):
         # end if
 
         output_values = [
-            # TODO: remove
-            # re_obj.group(1),  # t_start
-            # re_obj.group(2),  # t_end
-            re_obj.group(1),  # product_size
-            re_obj.group(2),  # f_tm
-            re_obj.group(3),  # f_dg
-            re_obj.group(4),  # f_start
-            re_obj.group(5),  # f_end
-            re_obj.group(6),  # r_tm
-            re_obj.group(7),  # r_dg
-            re_obj.group(8), # r_start
-            re_obj.group(9), # r_end
+            '{:.0f}'.format(float(re_obj.group(1))), # product_size
+            '{:.2f}'.format(float(re_obj.group(2))), # f_tm
+            '{:.2f}'.format(float(re_obj.group(3))), # f_dg
+            '{:.0f}'.format(float(re_obj.group(4))), # f_start
+            '{:.0f}'.format(float(re_obj.group(5))), # f_end
+            '{:.2f}'.format(float(re_obj.group(6))), # r_tm
+            '{:.2f}'.format(float(re_obj.group(7))), # r_dg
+            '{:.0f}'.format(float(re_obj.group(8))), # r_start
+            '{:.0f}'.format(float(re_obj.group(9))), # r_end
         ]
 
         yield output_values
@@ -348,10 +295,13 @@ def parse_pcr_plain_result(plain_text_str):
 def write_output_for_dedup_seq(output_row, seq_id_list, outfile):
     for seq_id in seq_id_list:
         # Get assembly ID of current seq_id
-        asm_acc = parse_asm_acc(seq_id)
+        # TODO: remove
+        # asm_acc = parse_asm_acc(seq_id)
         # Add Assembly ID and SeqID to output_row
         output_row = list(map(str, output_row))
-        complete_output_row = [asm_acc, seq_id] + output_row
+        # TODO: remove
+        # complete_output_row = [asm_acc, seq_id] + output_row
+        complete_output_row = [seq_id] + output_row
         # Write output line
         outfile.write('{}\n'.format('\t'.join(complete_output_row)))
     # end for
@@ -398,7 +348,7 @@ def read_cached_data(prev_fasta_fpath, prev_primers_outdpath):
 
     print('Collecting cached data for primer pairs:')
 
-    for i, (nameF, nameR) in enumerate(primer_pairs):
+    for i, (nameF, nameR, _) in enumerate(primer_pairs):
         primer_pair_key = make_primer_pair_key(nameF, nameR)
 
         print(
@@ -432,6 +382,28 @@ def read_cached_data(prev_fasta_fpath, prev_primers_outdpath):
     return cache_dict, uniq_cached_seqs
 # end def
 
+
+def deduplicate_output(outfpath):
+    out_df = pd.read_csv(outfpath, sep='\t')
+    out_df.drop_duplicates(
+        subset=[
+            'seqID',
+            'product_size',
+            'f_start', 'f_end',
+            'r_start', 'r_end',
+        ],
+        inplace=True
+    )
+    out_df.to_csv(
+        outfpath,
+        sep='\t',
+        index=False,
+        header=True,
+        na_rep='NA'
+    )
+# end def
+
+
 # == Get primer data ==
 
 primers_data_dir = os.path.join(
@@ -450,9 +422,11 @@ primer_pairs_fpath = os.path.join(
     primers_data_dir,
     'primer_pairs.json'
 )
-with open(primer_pairs_fpath, 'rt') as infile:
-    primer_pairs = json.load(infile)
-# end with
+# TODO: remove
+# with open(primer_pairs_fpath, 'rt') as infile:
+#     primer_pairs = json.load(infile)
+# # end with
+primer_pairs = parse_all_primer_pairs(primer_pairs_fpath)
 
 
 # Configure paths to temporary files
@@ -472,19 +446,13 @@ for some_dir in (tmp_dirpath, tmp_primers_dpath):
 # end for
 
 # Columns for output files
-# JSON mode remnant
-# OUT_COLNAMES = [
-#     'asm_acc', 'seqID', 'product_size', 'ppc',
-#     'f_size', 'f_start', 'f_end', 'f_tm', 'f_dg', 'f_bind_len', 'f_pident', 'f_cover',
-#     'r_size', 'r_start', 'r_end', 'r_tm', 'r_dg', 'r_bind_len', 'r_pident', 'r_cover',
-# ]
 OUT_COLNAMES = [
-    'asm_acc', 'seqID',
     # TODO: remove
-    # 't_start', 't_end',
+    # 'asm_acc', 'seqID',
+    'seqID',
     'product_size', 
-    'f_tm', 'f_dg', 'f_start', 'f_end', 
-    'r_tm', 'r_dg', 'r_start', 'r_end', 
+    'f_tm', 'f_dg', 'f_start', 'f_end',
+    'r_tm', 'r_dg', 'r_start', 'r_end',
 ]
 
 PARTIAL_OUT_COLNAMES = OUT_COLNAMES[2:]
@@ -600,6 +568,8 @@ for i, (seq, curr_seq_id_list) in enumerate(uniq_seq_records.items()):
                 write_output_for_dedup_seq(output_row, curr_seq_id_list, outfile)
             # end def
         # end with
+
+        deduplicate_output(outfpath)
     # end for
 # end for
 

@@ -400,7 +400,36 @@ def get_cached_out_long_df(prev_long_out_fpath, cached_short_out_df):
     cached_seqIDs = set(
         cached_short_out_df['target']
     )
-    prev_long_df = pd.read_csv(prev_long_out_fpath, sep='\t')
+    prev_long_df = pd.read_csv(
+        prev_long_out_fpath,
+        sep='\t',
+        dtypes={
+            'target': str,
+            'pass_fail': str,
+            'length': np.uint16,
+            'fm': np.uint16,
+            'fam': str,
+            'domain': str,
+            'model': str,
+            'strnd': str,
+            'ht': np.uint16,
+            'tscore': np.float32,
+            'bscore': np.float32,
+            's_per_nt': np.float32,
+            'bevalue': float,
+            'tcov': np.float32,
+            'bcov': np.float32,
+            'bfrom': np.uint16,
+            'bto': np.uint16,
+            'mfrom': np.uint16,
+            'mto': np.uint16,
+            'scdiff': np.float32,
+            'scd_per_nt': np.float32,
+            'model': str,
+            'tscore': np.float32,
+            'unexpected_features': str,
+        }
+    )
     cached_long_df = prev_long_df.query('target in @cached_seqIDs').copy()
     return cached_long_df
 # end def

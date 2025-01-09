@@ -54,4 +54,4 @@ python3 make_ribogrove_release_page.py \
 
 ### Standalone programs
 
-1. [seqkit](https://github.com/shenwei356/seqkit). Tested on version 2.2.0.
+1. [seqkit](https://github.com/shenwei356/seqkit). Tested on version 2.9.0.
