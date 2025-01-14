@@ -37,8 +37,8 @@ bash combine_release.sh \
 
 This script depends on two programs:
 
-1. [csvtk](https://github.com/shenwei356/csvtk). Tested on version 0.24.0.
+1. [csvtk](https://github.com/shenwei356/csvtk). Tested on version 0.31.2.
 
-2. [seqkit](https://github.com/shenwei356/seqkit). Tested on version 2.2.0.
+2. [seqkit](https://github.com/shenwei356/seqkit). Tested on version 2.9.0.
 
 The programs should be in PATH environment variable.

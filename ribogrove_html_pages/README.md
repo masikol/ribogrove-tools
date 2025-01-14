@@ -17,7 +17,9 @@ python3 make_ribogrove_release_page.py \
   --release-date     <RELEASE_DATE>        \
   --final-fasta      <FULL_LENGTH_FASTA>   \
   --metadata         <METADATA_ZIP>        \
-  --gene-stats-table <GENE_STATS_TSV>      \
+  --base-counts      <BASE_COUNTS_TSV> \
+  --taxonomy         <TAXONOMY_TSV> \
+  --categories       <CATEGORIES_TSV> \
   --entropy-summary  <ENTROPY_SUMMARY_TSV> \
   --source-genomes   <SOURCE_GENOMES_TSV>  \
   --primers-dir      <PRIMER_COVERAGE_DIR> \
@@ -29,16 +31,18 @@ python3 make_ribogrove_release_page.py \
 
 ```
 python3 make_ribogrove_release_page.py \
-  --release-num      9.215 \
-  --release-date     2022-07-20 \
-  --final-fasta      /mnt/my_drive/RiboGrove_releases/9.215/ribogrove_9.215_sequences.fasta.gz \
-  --metadata         /mnt/my_drive/RiboGrove_releases/9.215/metadata_ribogrove_9.215.zip \
-  --gene-stats-table /mnt/my_drive/RiboGrove_releases/9.215/metadata/gene_seqs_statistics.tsv \
-  --entropy-summary  /mnt/my_drive/RiboGrove_releases/9.215/metadata/entropy_summary.tsv \
-  --source-genomes   /mnt/my_drive/RiboGrove_releases/9.215/metadata/source_RefSeq_genomes.tsv \
-  --primers-dir      /mnt/my_drive/RiboGrove/RiboGrove_workdirs/9.215/bacteria/primers_coverage \
-  --outdir           /mnt/my_drive/RiboGrove_pages/9.215/ \
-  --seqkit           /usr/bin/seqkit
+  --release-num 22.228 \
+  --release-date 2025-01-14 \
+  --final-fasta /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/ribogrove_22.228_sequences.fasta.gz \
+  --metadata /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata_ribogrove_22.228.zip \
+  --base-counts /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata/gene_seqs_base_counts.tsv \
+  --taxonomy /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata/taxonomy.tsv \
+  --categories /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata/categories.tsv \
+  --entropy-summary /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata/source_RefSeq_genomes.tsv \
+  --primers-cov /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata/primer_pair_genomic_coverage.tsv \
+  --outdir /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_pages/22.228 \
+  --seqkit /usr/bin/seqkit
 ```
 
 
@@ -46,11 +50,11 @@ python3 make_ribogrove_release_page.py \
 
 ### Python packages
 
-1. numpy. Installation: `pip3 install numpy`. Tested on version 1.19.2.
+1. numpy. Installation: `pip3 install numpy`. Tested on version 2.2.1.
 
-2. pandas. Installation: `pip3 install pandas`. Tested on version 1.1.3.
+2. pandas. Installation: `pip3 install pandas`. Tested on version 2.2.3.
 
-3. flask. Installation: `pip3 install Flask`. Tested on version 2.0.2.
+3. flask. Installation: `pip3 install Flask`. Tested on version 3.1.0.
 
 ### Standalone programs
 

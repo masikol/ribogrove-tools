@@ -80,13 +80,13 @@ bash collect_and_filter.sh config/bacteria_config.conf -t
 
 ### Python packages:
 
-1. numpy. Installation: `pip3 install numpy`. Tested on version 1.19.2.
+1. numpy. Installation: `pip3 install numpy`. Tested on version 2.2.1.
 
-2. pandas. Installation: `pip3 install pandas`. Tested on version 1.1.3.
+2. pandas. Installation: `pip3 install pandas`. Tested on version 2.2.3.
 
-3. Biopython. Installation: `pip3 install biopython`. Tested on version 1.81.
+3. Biopython. Installation: `pip3 install biopython`. Tested on version 1.84.
 
-4. [repeatfinder](https://github.com/deprekate/RepeatFinder). Installation: `pip3 install repeatfinder`. Tested on version 1.5.
+4. [repeatfinder](https://github.com/deprekate/RepeatFinder). Installation: `pip3 install repeatfinder`. Tested on version 1.10.
 
 ### Standalone programs:
 
