@@ -18,10 +18,10 @@ class GenomeDownloader:
     FAIL_SLEEP_TIME = 3
 
     def __init__(self, asm_sum_row: Series, outdir):
-        self.assembly_accession = asm_sum_row['asm_acc']
-        self.asm_basedir_url    = asm_sum_row['ftp_path']
+        self.assembly_accession = str(asm_sum_row['asm_acc'])
+        self.asm_basedir_url    = str(asm_sum_row['ftp_path'])
         self.asm_name           = self._parse_asm_name(
-            asm_sum_row['ftp_path'], asm_sum_row['asm_acc']
+            self.asm_basedir_url, self.assembly_accession
         )
         self.genome_dirpath = os.path.join(outdir, self.assembly_accession)
         self.asm_report_fpath = get_asm_report_fpath(

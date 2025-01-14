@@ -430,23 +430,13 @@ fi
 
 # == Calculate PCR primer coverage ==
 
-if [[ "${CALC_PRIMERS_COVERAGE}" == true ]]; then
-  if [[ "${CACHE_MODE}" == true ]]; then
-    python3 "${SCRIPTS_DIR}/check_primers_mfeprimer.py" \
-      --fasta-seqs-file "${ALL_GENES_FASTA}" \
-      --outdir "${PRIMERS_DIRPATH}" \
-      --mfeprimer "${MFEPRIMER}" \
-      --mfe-tmp-dir "${MFEPRIMER_TMP_DIR}" \
-      --prev-final-fasta "${PREV_FINAL_GENES_FASTA}" \
-      --prev-primers-outdir "${PREV_PRIMERS_DIR}"
-  else
-    python3 "${SCRIPTS_DIR}/check_primers_mfeprimer.py" \
-      --fasta-seqs-file "${ALL_GENES_FASTA}" \
-      --outdir "${PRIMERS_DIRPATH}" \
-      --mfeprimer "${MFEPRIMER}" \
-      --mfe-tmp-dir "${MFEPRIMER_TMP_DIR}"
-  fi
-fi
+python3 "${SCRIPTS_DIR}/check_primers_mfeprimer.py" \
+  --fasta-seqs-file "${ALL_GENES_FASTA}" \
+  --outdir "${PRIMERS_DIRPATH}" \
+  --mfeprimer "${MFEPRIMER}" \
+  --mfe-tmp-dir "${MFEPRIMER_TMP_DIR}" \
+  --threads "${MFEPRIMER_THREADS}"
+
 
 
 # == Calculate Gene Copy Numbers ==

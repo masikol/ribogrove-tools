@@ -111,6 +111,7 @@ import sys
 import subprocess as sp
 from typing import List
 
+import numpy as np
 import pandas as pd
 from Bio import SeqIO
 
@@ -403,7 +404,7 @@ def get_cached_out_long_df(prev_long_out_fpath, cached_short_out_df):
     prev_long_df = pd.read_csv(
         prev_long_out_fpath,
         sep='\t',
-        dtypes={
+        dtype={
             'target': str,
             'pass_fail': str,
             'length': np.uint16,
@@ -412,23 +413,24 @@ def get_cached_out_long_df(prev_long_out_fpath, cached_short_out_df):
             'domain': str,
             'model': str,
             'strnd': str,
-            'ht': np.uint16,
+            'ht': str,
             'tscore': np.float32,
             'bscore': np.float32,
             's_per_nt': np.float32,
             'bevalue': float,
-            'tcov': np.float32,
-            'bcov': np.float32,
-            'bfrom': np.uint16,
-            'bto': np.uint16,
-            'mfrom': np.uint16,
-            'mto': np.uint16,
+            'tcov': str,
+            'bcov': str,
+            'bfrom': str,
+            'bto': str,
+            'mfrom': np.float32,
+            'mto': np.float32,
             'scdiff': np.float32,
             'scd_per_nt': np.float32,
             'model': str,
             'tscore': np.float32,
             'unexpected_features': str,
-        }
+        },
+        na_values=['-']
     )
     cached_long_df = prev_long_df.query('target in @cached_seqIDs').copy()
     return cached_long_df

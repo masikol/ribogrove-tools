@@ -273,15 +273,15 @@ python3 make_ribogrove_release_page.py \
 # Remove gene-stats
 
 python3 make_ribogrove_release_page.py \
-  --release-num 0.000 \
-  --release-date 2222-22-22 \
-  --final-fasta /mnt/data/Max/tmp/TEST_RiboGrove/release/ribogrove_0.000_sequences.fasta.gz \
-  --metadata /mnt/data/Max/tmp/TEST_RiboGrove/release/metadata_ribogrove_0.000.zip \
-  --base-counts /mnt/data/Max/tmp/TEST_RiboGrove/release/metadata/gene_seqs_base_counts.tsv \
-  --taxonomy /mnt/data/Max/tmp/TEST_RiboGrove/release/metadata/taxonomy.tsv \
-  --categories /mnt/data/Max/tmp/TEST_RiboGrove/release/metadata/categories.tsv \
-  --entropy-summary /mnt/data/Max/tmp/TEST_RiboGrove/release/metadata/entropy_summary.tsv \
-  --source-genomes /mnt/data/Max/tmp/TEST_RiboGrove/release/metadata/source_RefSeq_genomes.tsv \
-  --primers-cov /mnt/data/Max/tmp/TEST_RiboGrove/release/metadata/primer_pair_genomic_coverage.tsv \
-  --outdir /mnt/data/Max/tmp/TEST_RiboGrove/pages \
+  --release-num 22.228 \
+  --release-date 2025-01-14 \
+  --final-fasta /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/ribogrove_22.228_sequences.fasta.gz \
+  --metadata /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata_ribogrove_22.228.zip \
+  --base-counts /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata/gene_seqs_base_counts.tsv \
+  --taxonomy /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata/taxonomy.tsv \
+  --categories /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata/categories.tsv \
+  --entropy-summary /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata/source_RefSeq_genomes.tsv \
+  --primers-cov /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/22.228/metadata/primer_pair_genomic_coverage.tsv \
+  --outdir /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_pages/22.228 \
   --seqkit /usr/bin/seqkit

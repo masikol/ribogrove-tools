@@ -14,12 +14,17 @@
 # 1. `-o / --outdir` -- an output directory, where output TSV files
 #   for each primer pair will be located. Mandatory.
 
+### Parameters:
+# 1. `-t / --threads` -- number of threads for mfeprimer to use.
+#   Optional. Default: 1.
+
 ### Dependencies:
 # 1. --mfeprimer -- an [MFEprimer](https://www.mfeprimer.com/) executable.
 #   Mandatory.
 # 2. --mfe-tmp-dir -- a directory for MFEPrimer temporary files.
 #   Default value: --outdir/tmp
 
+# Disabled:
 ### "Cached" files:
 # 1. `--prev-final-fasta` -- a fasta file of final RiboGrove sequences
 #    of the previous RiboGrove release. Optional.
@@ -52,21 +57,23 @@ parser.add_argument(
     required=True
 )
 
-# "Cached" files
 
-parser.add_argument(
-    '--prev-final-fasta',
-    help="""a fasta file of final RiboGrove sequences
-  of the previous RiboGrove release. Optional.""",
-    required=False
-)
+# TODO: add cache?
+# # "Cached" files
 
-parser.add_argument(
-    '--prev-primers-outdir',
-    help="""a directory where results of this script
-  are stored, but for the previous RiboGrove release. Optional.""",
-    required=False
-)
+# parser.add_argument(
+#     '--prev-final-fasta',
+#     help="""a fasta file of final RiboGrove sequences
+#   of the previous RiboGrove release. Optional.""",
+#     required=False
+# )
+
+# parser.add_argument(
+#     '--prev-primers-outdir',
+#     help="""a directory where results of this script
+#   are stored, but for the previous RiboGrove release. Optional.""",
+#     required=False
+# )
 
 
 # Output files
@@ -92,6 +99,16 @@ parser.add_argument(
     required=False
 )
 
+# Parameters
+
+parser.add_argument(
+    '-t',
+    '--threads',
+    help='number of threads for mfeprimer to use',
+    required=False,
+    default=1
+)
+
 args = parser.parse_args()
 
 
@@ -101,11 +118,13 @@ import sys
 import glob
 import json
 import shutil
+import hashlib
 import subprocess as sp
 from functools import reduce
 
-from Bio import SeqIO
+import numpy as np
 import pandas as pd
+from Bio import SeqIO
 
 from src.rg_tools_time import get_time
 from src.primers import make_primer_pair_key
@@ -117,16 +136,29 @@ from src.file_navigation import primer_pair_key_2_outfpath
 fasta_fpath = os.path.abspath(args.fasta_seqs_file)
 mfeprimer_fpath = os.path.abspath(args.mfeprimer)
 outdir_path = os.path.abspath(args.outdir)
+num_threads = args.threads
 
-cache_mode = not args.prev_final_fasta        is None \
-             and not args.prev_primers_outdir is None
-if cache_mode:
-    prev_fasta_fpath = os.path.abspath(args.prev_final_fasta)
-    prev_primers_outdpath = os.path.abspath(args.prev_primers_outdir)
-else:
-    prev_fasta_fpath = None
-    prev_primers_outdpath = None
-# end if
+# TODO: add cache?
+# cache_mode = not args.prev_final_fasta        is None \
+#              and not args.prev_primers_outdir is None
+# if cache_mode:
+#     prev_fasta_fpath = os.path.abspath(args.prev_final_fasta)
+#     prev_primers_outdpath = os.path.abspath(args.prev_primers_outdir)
+# else:
+#     prev_fasta_fpath = None
+#     prev_primers_outdpath = None
+# # end if
+
+try:
+    num_threads = int(num_threads)
+    if num_threads < 1:
+        raise ValueError
+    # end if
+except ValueError as err:
+    print('Error: threads must be an integer > 0. You has provided `{}`'.format(num_threads))
+    print(err)
+    sys.exit(1)
+# end try
 
 
 # Check existance of all input files and dependencies
@@ -163,25 +195,28 @@ if not os.access(mfeprimer_fpath, os.X_OK):
     sys.exit(1)
 # end if
 
+# TODO: add cache?
 # Primary check of "cached" data
-if cache_mode:
-    if not os.path.exists(prev_fasta_fpath):
-        print('Error: file `{}` does not exist'.format(prev_fasta_fpath))
-        sys.exit(1)
-    # end def
-    if not os.path.isdir(prev_primers_outdpath):
-        print('Error: directory `{}` does not exist'.format(prev_primers_outdpath))
-        sys.exit(1)
-    # end def
-# end def
+# if cache_mode:
+#     if not os.path.exists(prev_fasta_fpath):
+#         print('Error: file `{}` does not exist'.format(prev_fasta_fpath))
+#         sys.exit(1)
+#     # end def
+#     if not os.path.isdir(prev_primers_outdpath):
+#         print('Error: directory `{}` does not exist'.format(prev_primers_outdpath))
+#         sys.exit(1)
+#     # end def
+# # end def
 
 
 print(fasta_fpath)
 print(mfeprimer_fpath)
-if cache_mode:
-    print(prev_fasta_fpath)
-    print(prev_primers_outdpath)
-# end def
+print(num_threads)
+# TODO: add cache?
+# if cache_mode:
+#     print(prev_fasta_fpath)
+#     print(prev_primers_outdpath)
+# # end def
 print()
 
 # Configure k-mer for mfeprimer.
@@ -201,109 +236,136 @@ def parse_all_primer_pairs(primer_pairs_fpath):
 # end def
 
 
-def prepare_pcr_template(seq_str):
-    tmp_fasta = os.path.join(tmp_dirpath, 'tmpQ.fasta')
-
-    # Write current sequence to fasta file. This will be input for mfeprimer.
-    with open(tmp_fasta, 'wt') as tmp_fasta_file:
-        tmp_fasta_file.write(f'>query_sequence\n{seq_str}\n')
-    # end with
-
-    # Index input sequence for mfeprimer
-    index_fasta_for_mfeprimer(tmp_fasta)
-
-    return tmp_fasta
+def index_fasta_for_mfeprimer(fasta_fpath, num_threads=1):
+    global K_MER_SIZE
+    cmd = ' '.join(
+        [
+            mfeprimer_fpath, 'index',
+            f'-i {fasta_fpath}',
+            f'-k {K_MER_SIZE}',
+            f'-c {num_threads}',
+        ]
+    )
+    pipe = sp.Popen(cmd, shell=True, stderr=sp.PIPE, encoding='utf-8')
+    _, stderr = pipe.communicate()
+    if pipe.returncode != 0:
+        print(f'MFEprimer index exited with an error (exit code {pipe.returncode}):')
+        print(stderr)
+        sys.exit(1)
+    # end if
 # end def
 
-
-def index_fasta_for_mfeprimer(fasta_fpath):
-    index_cmd = f'{mfeprimer_fpath} index -i {fasta_fpath} -k {K_MER_SIZE} -c 2'
-    os.system(index_cmd)
-# end def
-
-
-def simulate_pcr_for_single_template(template_fpath, primers_fpath):
-
-    tmp_out_base = os.path.join(tmp_dirpath, 'tmpOUT')
-
+def simulate_pcr(template_fpath, primers_fpath, outfpath, num_threads=1):
     cmd = ' '.join(
         [
             mfeprimer_fpath, 'spec',
             f'--misEnd {K_MER_SIZE}',
             f'-k {K_MER_SIZE}',
-            '-c 2',
+            f'-c {num_threads}',
             f'-i {primers_fpath}',
             f'-d {template_fpath}',
+            '> {}'.format(outfpath),
         ]
     )
-    pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE, encoding='utf-8')
-    stdout, stderr = pipe.communicate()
+    pipe = sp.Popen(cmd, shell=True, stderr=sp.PIPE, encoding='utf-8')
+    _, stderr = pipe.communicate()
     if pipe.returncode != 0:
         print(f'MFEprimer exited with an error (exit code {pipe.returncode}):')
         print(stderr)
         sys.exit(1)
     # end if
-    return stdout
+
+    with open(outfpath, 'rt') as infile:
+        out_text = infile.read()
+    # end with
+    return out_text
 # end def
 
 
-def parse_pcr_plain_result(plain_text_str):
-    num_ampl_reobj = re.search(
-        r'Descriptions of \[ ([0-9]+) \] potential amplicons',
-        plain_text_str
+def parse_pcr_plain_result(mfeprimer_result_text):
+    global OUT_COLNAMES
+    output_rows = tuple(
+        parse_pcr_plain_rows(mfeprimer_result_text)
     )
-    if num_ampl_reobj is None:
-        print('ERROR')
-        print('Cannot parse MFEPrimer stdout: cannot find number of found amplicons')
-        sys.exit(1)
-    else:
-        num_amplicons = int(num_ampl_reobj.group(1))
-    # end if
+    output_df = pd.DataFrame(
+        data=output_rows,
+        columns=OUT_COLNAMES
+    )
 
-    if num_amplicons == 0:
-        return
-    # end if
+    output_df.drop_duplicates(
+        subset=[
+            'seqID',
+            'product_size',
+            'f_start', 'f_end',
+            'r_start', 'r_end',
+        ],
+        inplace=True
+    )
+    return output_df
+# end def
 
-    for i_ampl in range(1, num_amplicons+1):
-        pattern = PATTERN_DRAFT.format(i_ampl)
-        re_obj = re.search(pattern, plain_text_str)
-
-        if re_obj is None:
+def parse_pcr_plain_rows(mfeprimer_result_text):
+        num_ampl_reobj = re.search(
+            r'Descriptions of \[ ([0-9]+) \] potential amplicons',
+            mfeprimer_result_text
+        )
+        if num_ampl_reobj is None:
             print('ERROR')
-            print('Cannot parse MFEPrimer stdout: cannot find PCR results')
+            print('Cannot parse MFEPrimer stdout: cannot find number of found amplicons')
             sys.exit(1)
+        else:
+            num_amplicons = int(num_ampl_reobj.group(1))
         # end if
 
-        output_values = [
-            '{:.0f}'.format(float(re_obj.group(1))), # product_size
-            '{:.2f}'.format(float(re_obj.group(2))), # f_tm
-            '{:.2f}'.format(float(re_obj.group(3))), # f_dg
-            '{:.0f}'.format(float(re_obj.group(4))), # f_start
-            '{:.0f}'.format(float(re_obj.group(5))), # f_end
-            '{:.2f}'.format(float(re_obj.group(6))), # r_tm
-            '{:.2f}'.format(float(re_obj.group(7))), # r_dg
-            '{:.0f}'.format(float(re_obj.group(8))), # r_start
-            '{:.0f}'.format(float(re_obj.group(9))), # r_end
-        ]
+        if num_amplicons == 0:
+            return
+        # end if
 
-        yield output_values
-    # end for
-    return
+        # A regex pattern for searching PCR results parameters
+        amplicon_pattern = r'''Amp [0-9]+: .+ \+ .+ ==> ([0-9a-z]+):[0-9]+-[0-9]+[ ]*
+[ ]*
+[ ]*Size = ([0-9]+) bp, GC content = [0-9\.]+%, Tm = [0-9\.-]+ .C, Ta = [0-9\.-]+ .C[ ]*
+[ ]*F: Tm = ([0-9\.-]+) .C, Delta G = ([0-9\.-]+) kcal/mol, Start = ([0-9]+), End = ([0-9]+)[ ]*
+[ ]*R: Tm = ([0-9\.-]+) .C, Delta G = ([0-9\.-]+) kcal/mol, Start = ([0-9]+), End = ([0-9]+)'''
+
+        matches = re.finditer(amplicon_pattern, mfeprimer_result_text)
+
+        for match_obj in matches:
+            output_values = [
+                match_obj.group(1),                          # sequence hash
+                '{:.0f}'.format(float(match_obj.group(2))),  # product_size
+                '{:.2f}'.format(float(match_obj.group(3))),  # f_tm
+                '{:.2f}'.format(float(match_obj.group(4))),  # f_dg
+                '{:.0f}'.format(float(match_obj.group(5))),  # f_start
+                '{:.0f}'.format(float(match_obj.group(6))),  # f_end
+                '{:.2f}'.format(float(match_obj.group(7))),  # r_tm
+                '{:.2f}'.format(float(match_obj.group(8))),  # r_dg
+                '{:.0f}'.format(float(match_obj.group(9))),  # r_start
+                '{:.0f}'.format(float(match_obj.group(10))), # r_end
+            ]
+            yield output_values
+        # end for
+        return
 # end def
 
 
-def write_output_for_dedup_seq(output_row, seq_id_list, outfile):
-    for seq_id in seq_id_list:
-        # Get assembly ID of current seq_id
-        # TODO: remove
-        # asm_acc = parse_asm_acc(seq_id)
-        # Add Assembly ID and SeqID to output_row
-        output_row = list(map(str, output_row))
-        # TODO: remove
-        # complete_output_row = [asm_acc, seq_id] + output_row
-        complete_output_row = [seq_id] + output_row
-        # Write output line
-        outfile.write('{}\n'.format('\t'.join(complete_output_row)))
+def write_deduplicated_output(output_df, uniq_seq_records, outfile):
+
+    for seq, seqID_list in uniq_seq_records.items():
+        seq_hash = md5_hash(seq)
+        curr_seq_df = output_df[output_df['seqID'] == seq_hash].copy()
+
+        for seqID in seqID_list:
+            curr_seq_df['seqID'] = np.repeat(seqID, curr_seq_df.shape[0])
+            curr_seq_df.to_csv(
+                outfile,
+                sep='\t',
+                index=False,
+                header=False,
+                na_rep='NA'
+            )
+            # end for
+        # end with
     # end for
 # end def
 
@@ -318,89 +380,90 @@ def clean_tmp_dir():
 # end def
 
 
-def read_cached_data(prev_fasta_fpath, prev_primers_outdpath):
-    global PARTIAL_OUT_COLNAMES
-    cached_seq_records = tuple(SeqIO.parse(prev_fasta_fpath, 'fasta'))
-    uniq_cached_seqs = set(
-        map(
-            lambda r: str(r.seq),
-            cached_seq_records
-        )
-    )
-    print('Found {:,} unique cached sequences'.format(len(uniq_cached_seqs)))
+# TODO: add cache?
+# def read_cached_data(prev_fasta_fpath, prev_primers_outdpath):
+#     global OUT_COLNAMES, PARTIAL_OUT_COLNAMES
 
-    cache_dict = {
-        seq: dict() for seq in uniq_cached_seqs
-    }
+#     cached_seq_records = tuple(SeqIO.parse(prev_fasta_fpath, 'fasta'))
+#     uniq_cached_seqs = frozenset(
+#         map(
+#             lambda r: str(r.seq),
+#             cached_seq_records
+#         )
+#     )
+#     print('Found {:,} unique cached sequences'.format(len(uniq_cached_seqs)))
 
-    seq_2_cached_seqID = {
-        seq: None for seq in uniq_cached_seqs
-    }
-    for r in cached_seq_records:
-        seq = str(r.seq)
-        if seq_2_cached_seqID[seq] is None:
-            seq_2_cached_seqID[seq] = r.id
-        # end if
-    # end for
-    seqIDs_for_cache_finding = set(seq_2_cached_seqID.values())
+#     cache_dict = {
+#         seq: dict() for seq in uniq_cached_seqs
+#     }
 
-    del cached_seq_records
+#     seq_2_cached_seqID = {
+#         seq: None for seq in uniq_cached_seqs
+#     }
+#     # Store only first seqID for each unique sequence
+#     for r in cached_seq_records:
+#         seq = str(r.seq)
+#         if seq_2_cached_seqID[seq] is None:
+#             seq_2_cached_seqID[seq] = r.id
+#         # end if
+#     # end for
+#     seqIDs_for_cache_finding = set(seq_2_cached_seqID.values())
 
-    print('Collecting cached data for primer pairs:')
+#     del cached_seq_records
 
-    for i, (nameF, nameR, _) in enumerate(primer_pairs):
-        primer_pair_key = make_primer_pair_key(nameF, nameR)
+#     print('Collecting cached data for primer pairs:')
 
-        print(
-            '{} -- Start collecting for pair {}/{}: {}' \
-                .format(get_time(), i+1, len(primer_pairs), primer_pair_key)
-        )
+#     for i, (nameF, nameR, _) in enumerate(primer_pairs):
+#         primer_pair_key = make_primer_pair_key(nameF, nameR)
 
-        cached_fpath = os.path.join(
-            prev_primers_outdpath,
-            '{}.tsv'.format(primer_pair_key)
-        )
-        if not os.path.exists(cached_fpath):
-            print('Error cached file does not exist: `{}`'.format(cached_fpath))
-            sys.exit(1)
-        # end if
-        cached_df = pd.read_csv(cached_fpath, sep='\t')
-        reduced_cached_df = cached_df.query('seqID in @seqIDs_for_cache_finding')
-        del cached_df
+#         print(
+#             '{} -- Start collecting for pair {}/{}: {}' \
+#                 .format(get_time(), i+1, len(primer_pairs), primer_pair_key)
+#         )
 
-        for cached_seq, cached_seqID in seq_2_cached_seqID.items():
-            df_for_curr_seq = reduced_cached_df[
-                reduced_cached_df['seqID'] == cached_seqID
-            ][PARTIAL_OUT_COLNAMES]
+#         cached_fpath = os.path.join(
+#             prev_primers_outdpath,
+#             '{}.tsv'.format(primer_pair_key)
+#         )
+#         if not os.path.exists(cached_fpath):
+#             print('Warning: cached file does not exist: `{}`'.format(cached_fpath))
+#             print('The script will calculate coverage for this pair de novo')
+#             continue
+#         # end if
+#         cached_df = pd.read_csv(
+#             cached_fpath,
+#             sep='\t',
+#             usecols=OUT_COLNAMES,
+#             dtype={
+#                 'seqID': str,
+#                 'f_tm': np.float32,
+#                 'f_dg': np.float32,
+#                 'f_start': int,
+#                 'f_end': int,
+#                 'r_tm': np.float32,
+#                 'r_dg': np.float32,
+#                 'r_start': int,
+#                 'r_end': int,
+#             }
+#         ).query('seqID in @seqIDs_for_cache_finding')
 
-            cache_dict[cached_seq][primer_pair_key] = [
-                list(row) for _, row in df_for_curr_seq.iterrows()
-            ]
-        # end for
-    # end for
+#         for cached_seq, cached_seqID in seq_2_cached_seqID.items():
+#             df_for_curr_seq = cached_df[
+#                 cached_df['seqID'] == cached_seqID
+#             ][PARTIAL_OUT_COLNAMES]
 
-    return cache_dict, uniq_cached_seqs
-# end def
+#             cache_dict[cached_seq][primer_pair_key] = [
+#                 tuple(row) for _, row in df_for_curr_seq.iterrows()
+#             ]
+#         # end for
+#     # end for
+
+#     return cache_dict, uniq_cached_seqs
+# # end def
 
 
-def deduplicate_output(outfpath):
-    out_df = pd.read_csv(outfpath, sep='\t')
-    out_df.drop_duplicates(
-        subset=[
-            'seqID',
-            'product_size',
-            'f_start', 'f_end',
-            'r_start', 'r_end',
-        ],
-        inplace=True
-    )
-    out_df.to_csv(
-        outfpath,
-        sep='\t',
-        index=False,
-        header=True,
-        na_rep='NA'
-    )
+def md5_hash(string):
+    return hashlib.md5(string.encode('utf-8')).hexdigest()
 # end def
 
 
@@ -422,16 +485,11 @@ primer_pairs_fpath = os.path.join(
     primers_data_dir,
     'primer_pairs.json'
 )
-# TODO: remove
-# with open(primer_pairs_fpath, 'rt') as infile:
-#     primer_pairs = json.load(infile)
-# # end with
 primer_pairs = parse_all_primer_pairs(primer_pairs_fpath)
 
 
 # Configure paths to temporary files
 tmp_primers_dpath = os.path.join(tmp_dirpath, 'tmp_primers')
-
 
 for some_dir in (tmp_dirpath, tmp_primers_dpath):
     if not os.path.isdir(some_dir):
@@ -445,24 +503,25 @@ for some_dir in (tmp_dirpath, tmp_primers_dpath):
     # end if
 # end for
 
+tmp_outfpath = os.path.join(
+    tmp_dirpath,
+    'tmp_mfeprimer_out.txt'
+)
+unique_templates_fpath = os.path.join(
+    tmp_dirpath,
+    'tmp_pcr_templates.fasta'
+)
+
+
 # Columns for output files
 OUT_COLNAMES = [
-    # TODO: remove
-    # 'asm_acc', 'seqID',
     'seqID',
-    'product_size', 
+    'product_size',
     'f_tm', 'f_dg', 'f_start', 'f_end',
     'r_tm', 'r_dg', 'r_start', 'r_end',
 ]
 
-PARTIAL_OUT_COLNAMES = OUT_COLNAMES[2:]
-
-# A regex pattern for searching PCR results parameters
-PATTERN_DRAFT = r'''Amp {}: .+ \+ .+ ==> .+:[0-9]+-[0-9]+[ ]*
-[ ]*
-[ ]*Size = ([0-9]+) bp, GC content = [0-9\.]+%, Tm = [0-9\.-]+ .C, Ta = [0-9\.-]+ .C[ ]*
-[ ]*F: Tm = ([0-9\.-]+) .C, Delta G = ([0-9\.-]+) kcal/mol, Start = ([0-9]+), End = ([0-9]+)[ ]*
-[ ]*R: Tm = ([0-9\.-]+) .C, Delta G = ([0-9\.-]+) kcal/mol, Start = ([0-9]+), End = ([0-9]+)'''
+PARTIAL_OUT_COLNAMES = OUT_COLNAMES[1:]
 
 
 print('{} -- Creating auxiliary data structures...'.format(get_time()))
@@ -474,32 +533,23 @@ print('{} -- 1/4'.format(get_time()))
 # Create output files for all primer pairs.
 # And create temporary fasta files of primer pairs for mfeprimer.
 primer_pair_fasta_dict = dict()
-
-for nameF, nameR in primer_pairs:
-
+for nameF, nameR, _ in primer_pairs:
     primer_pair_key = make_primer_pair_key(nameF, nameR)
-
-    # Write header for output TSV files
-    outfpath = primer_pair_key_2_outfpath(outdir_path, primer_pair_key)
-    with open(outfpath, 'w') as outfile:
-        outfile.write('{}\n'.format('\t'.join(OUT_COLNAMES)))
-    # end with
-
     curr_primer_fpath = os.path.join(tmp_primers_dpath, f'{primer_pair_key}.fasta')
     # Write fasta data of current primer pair
     with open(curr_primer_fpath, 'w') as tmp_primers_file:
         tmp_primers_file.write(f'>{nameF}\n{primers[nameF]}\n>{nameR}\n{primers[nameR]}\n')
     # end with
-
     primer_pair_fasta_dict[primer_pair_key] = curr_primer_fpath
 # end for
 print('{} -- 2/4'.format(get_time()))
 
 
 # De-replicate input sequences
-uniq_seqs = set(
+uniq_seqs = frozenset(
     map(lambda r: str(r.seq), seq_records)
 )
+
 uniq_seq_records = {
     seq: list() for seq in uniq_seqs
 }
@@ -507,71 +557,71 @@ del uniq_seqs
 for r in seq_records:
     uniq_seq_records[str(r.seq)].append(r.id)
 # end for
-print('{} -- 3/4'.format(get_time()))
 del seq_records
 
-if cache_mode:
-    print('Reading cached data...')
-    cache_dict, cached_seqs = read_cached_data(prev_fasta_fpath, prev_primers_outdpath)
-else:
-    cache_dict, cached_seqs = None, set()
-# end if
-print('{} -- 4/4'.format(get_time()))
+# Save unique sequences with md5 hashes as fasta headers
+with open(unique_templates_fpath, 'wt') as outfile:
+    for seq in uniq_seq_records.keys():
+        outfile.write('>{}\n{}\n'.format(md5_hash(seq), seq))
+    # end for
+# wnd with
+
+print('{} -- 3/4'.format(get_time()))
 
 
-# Count sequences for status bar
-num_seqs = len(uniq_seq_records)
+# TODO: add cache?
+# if cache_mode:
+#     print('Reading cached data...')
+#     cache_dict, cached_seqs = read_cached_data(prev_fasta_fpath, prev_primers_outdpath)
+# else:
+#     cache_dict, cached_seqs = None, set()
+# # end if
+# print('{} -- 4/4'.format(get_time()))
+
 print('done\n')
 
 
 # == Proceed ==
-for i, (seq, curr_seq_id_list) in enumerate(uniq_seq_records.items()):
+
+
+# TODO: add cache?
+print('Indexing input template sequences...')
+index_fasta_for_mfeprimer(unique_templates_fpath, num_threads)
+print('done')
+
+# For each primer pair, check if they can anneal
+for i, (nameF, nameR, _) in enumerate(primer_pairs):
     print(
-        '\r{} -- Doing deduplicated sequence {}/{}' \
-            .format(get_time(), i+1, num_seqs),
-        end=' '
+        '{} -- starting pair {}/{}: {}' \
+            .format(get_time(), i+1, len(primer_pairs), primer_pair_key)
     )
 
-    clean_tmp_dir()
+    # Get path to fasta file of current primer pair
+    primer_pair_key = make_primer_pair_key(nameF, nameR)
+    tmp_primers_fpath = primer_pair_fasta_dict[primer_pair_key]
 
-    if not seq in cached_seqs:
-        template_fpath = prepare_pcr_template(seq)
-    # end if
+    # Run mfeprimer
+    mfeprimer_result_text = simulate_pcr(
+        unique_templates_fpath,
+        tmp_primers_fpath,
+        tmp_outfpath,
+        num_threads
+    )
 
-    # For each primer pair, check if they can anneal
-    for nameF, nameR in primer_pairs:
+    output_df = parse_pcr_plain_result(mfeprimer_result_text)
+    del mfeprimer_result_text
 
-        primer_pair_key = make_primer_pair_key(nameF, nameR)
-
-        if cache_mode and seq in cached_seqs:
-            output_rows_list = cache_dict[seq][primer_pair_key]
-        else:
-            # Get path to fasta file of current primer pair
-            tmp_primers_fpath = primer_pair_fasta_dict[primer_pair_key]
-
-            # Run mfeprimer
-            tmp_out = simulate_pcr_for_single_template(
-                template_fpath,
-                tmp_primers_fpath
-            )
-
-            # JSON mode remnant
-            # output_rows_list = parse_pcr_json_result(tmp_out)
-            output_rows_list = parse_pcr_plain_result(tmp_out)
-        # end if
-
-        # Form path to current output file (corresponding to current primer pair)
-        outfpath = primer_pair_key_2_outfpath(outdir_path, primer_pair_key)
-        with open(outfpath, 'at') as outfile:
-            for output_row in output_rows_list:
-                # Write the result for every sequence identical to `seq`
-                write_output_for_dedup_seq(output_row, curr_seq_id_list, outfile)
-            # end def
-        # end with
-
-        deduplicate_output(outfpath)
-    # end for
+    # Make path to current output file (corresponding to current primer pair)
+    outfpath = primer_pair_key_2_outfpath(outdir_path, primer_pair_key)
+    with open(outfpath, 'wt') as outfile:
+        # Write header for output TSV files
+        outfile.write('{}\n'.format('\t'.join(OUT_COLNAMES)))
+        # Write the result
+        write_deduplicated_output(output_df, uniq_seq_records, outfile)
+        del output_df
+    # end with
 # end for
+
 
 
 # Remove temporary directory

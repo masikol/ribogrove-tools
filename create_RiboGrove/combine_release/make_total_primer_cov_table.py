@@ -285,7 +285,7 @@ def _sort_rows_and_columns_per_rank(per_rank_cov_df,
     ).drop_duplicates()
     out_df = out_df.rename(columns={rank: 'taxon'}) # "Phylum" -> "taxon"
     output_col_names = ['Domain', 'rank', 'taxon', 'num_genomes'] \
-                       + all_primer_pair_dict.values()
+                       + list(all_primer_pair_dict.keys())
     return out_df[output_col_names] \
         .sort_values(by=['Domain', 'num_genomes'], ascending=False)
 # end def
