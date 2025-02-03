@@ -12,12 +12,16 @@
 # 2. `-c / --categories-file` -- a TSV file of categories info.
 #   This is the file, which is the output of th script `assign_genome_categories.py`. Mandatory.
 
+### Parameters:
+# 1. `-t / --threads` -- Number of CPU threads to use for MSA. Default: 1.
+# 2. `--tmp-dir` -- A temporary directory for MAFFT-aligned sequences. Default: directory of the `--outfile`.
+
 ### Output files:
 # 1. `-o / --outfile` -- a TSV file containing per-position intragenomic entropy. Mandatory.
 
 ### "Cached" files:
 # 1. `--prev-per-base-entropy-file` -- a file of per-base entropy from the workdir
-#   of the previous RiboGrove release (per_base_*_entropy.tsv.gz).
+#   of the previous RiboGrove release (per_base_*_entropy.json.gz).
 
 ### Dependencies:
 # 1. `--mafft` -- a MAFFT (https://mafft.cbrc.jp/alignment/software/) aligner executable.
@@ -54,10 +58,29 @@ parser.add_argument(
     required=True
 )
 
+# Parameters
+
+parser.add_argument(
+    '--tmp-dir',
+    help="""A temporary directory for MAFFT-aligned sequences.
+Default: directory of the `--outfile`.""",
+    required=False
+)
+
+parser.add_argument(
+    '-t',
+    '--threads',
+    help='Number of CPU threads to use for MSA. Default: 1.',
+    required=False,
+    default=1
+)
+
+# "Cache"
+
 parser.add_argument(
     '--prev-per-base-entropy-file',
-    help="""TSV file (with header: asm_acc,pos,entropy)
-    containing per-base intragenomic entropy. For example, file `per_base_demo_bacteria_entropy.tsv.gz`.
+    help="""a JSON file
+    containing per-base intragenomic entropy. For example, file `per_base_demo_bacteria_entropy.json.gz`.
     The file may be gzipped.""",
     required=False
 )
@@ -84,6 +107,7 @@ args = parser.parse_args()
 import sys
 import gzip
 import math
+import json
 import operator
 from array import array
 import subprocess as sp
@@ -104,6 +128,20 @@ fasta_seqs_fpath = os.path.abspath(args.fasta_seqs_file)
 categories_fpath = os.path.abspath(args.categories_file)
 mafft_fpath = os.path.abspath(args.mafft)
 outfpath = os.path.abspath(args.outfile)
+if args.tmp_dir is None:
+    tmp_dirpath = os.path.dirname(outfpath)
+else:
+    tmp_dirpath = os.path.abspath(args.tmp_dir)
+# end if
+
+try:
+    threads = int(args.threads)
+    if threads < 1:
+        raise ValueError
+    # end if
+except ValueError:
+    print('Error: threads must be an integer > 0. Your value: `{}`'.format(threads))
+# end try
 
 cache_mode = not args.prev_per_base_entropy_file is None
 if cache_mode:
@@ -127,15 +165,17 @@ if not os.access(mafft_fpath, os.X_OK):
     sys.exit(1)
 # end if
 
-# Create output directory if needed
-if not os.path.isdir(os.path.dirname(outfpath)):
-    try:
-        os.makedirs(os.path.dirname(outfpath))
-    except OSError as err:
-        print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
-        sys.exit(1)
-    # end try
-# end if
+# Create output and tmp directories if needed
+for d in (tmp_dirpath, os.path.dirname(outfpath)):
+    if not os.path.isdir(d):
+        try:
+            os.makedirs(d)
+        except OSError as err:
+            print(f'Error: cannot create directory `{d}`')
+            sys.exit(1)
+        # end try
+    # end if
+# enf for
 
 # Check if previous ("cached") files is specified
 if cache_mode:
@@ -149,9 +189,10 @@ if cache_mode:
 print(fasta_seqs_fpath)
 print(categories_fpath)
 print(mafft_fpath)
+print(threads)
+print(tmp_dirpath)
 print(prev_perbase_entropy_fpath)
 print()
-
 
 def select_gene_seqs(asm_acc: str,
                      seq_records: Sequence[SeqRecord]) -> Sequence[SeqRecord]:
@@ -170,11 +211,14 @@ def get_asm_acc_from_seq_record(seq_record):
 
 
 
-def do_msa(seq_records: Sequence[SeqRecord], mafft_fpath: str) -> List[SeqRecord]:
+def do_msa(seq_records: Sequence[SeqRecord],
+           mafft_fpath: str,
+           threads : int,
+           tmp_dirpath : str) -> List[SeqRecord]:
     # Function does Multiple Sequence Alignment
 
-    # TODO: remove hardcoded paths and threads
-    tmp_fpath = '/tmp/tmp.fasta'
+    # TODO: remove hardcoded threads
+    tmp_fpath = os.path.join(tmp_dirpath, 'tmp.fasta')
 
     # Configure command
     cmd = ' '.join(
@@ -262,7 +306,7 @@ def calc_entropy(msa_records: Sequence[SeqRecord]) -> Sequence[float]:
         aln_pos += 1
     # end for
 
-    return entropy_arr
+    return tuple(entropy_arr)
 # end def
 
 
@@ -271,20 +315,26 @@ def encode_accs(acc_list):
 # end def
 
 
-def read_maybegzipped_df_tsv(fpath):
-    if fpath.endswith('.gz'):
-        open_func = gzip.open
-    else:
-        open_func = open
-    # end if
-
-    with open_func(fpath, 'rt') as file:
-        df = pd.read_csv(file, sep='\t')
-    # end with
-
-    return df
+def set_sum_mean_num_var_cols(row):
+    global perbase_entropy_dict
+    asm_acc = row['asm_acc']
+    entropy_arr = perbase_entropy_dict[asm_acc]
+    row['sum_entropy'] = np.sum(entropy_arr)
+    row['mean_entropy'] = np.mean(entropy_arr)
+    row['num_var_cols'] = count_var_positions(entropy_arr)
+    return row
 # end def
 
+def count_var_positions(entropy_arr):
+    return len(
+        tuple(
+            filter(
+                lambda entropy: entropy > 1e-6,
+                entropy_arr
+            )
+        )
+    )
+# end def
 
 
 # == Proceed ==
@@ -293,7 +343,9 @@ def read_maybegzipped_df_tsv(fpath):
 categories_df = pd.read_csv(categories_fpath, sep='\t')
 
 # Get Assembly IDs of 1 category
-asm_accs = set(categories_df[categories_df['category'] == 1]['asm_acc'])
+asm_accs = frozenset(
+    categories_df[categories_df['category'] == 1]['asm_acc']
+)
 
 # Read genes sequnces
 seq_records = tuple(SeqIO.parse(fasta_seqs_fpath, 'fasta'))
@@ -301,13 +353,17 @@ seq_records = tuple(SeqIO.parse(fasta_seqs_fpath, 'fasta'))
 
 per_base_entropy_fpath = os.path.join(
     os.path.dirname(outfpath),
-    'per_base_' + os.path.basename(outfpath) + '.gz'
+    'per_base_entropy.json.gz'
 )
 
 if cache_mode:
     print('Creating auxiliary data structures...')
-    prev_perbase_entropy_df = read_maybegzipped_df_tsv(prev_perbase_entropy_fpath)
-    prev_asm_accs = set(prev_perbase_entropy_df['asm_acc'])
+
+    with gzip.open(prev_perbase_entropy_fpath, 'rt') as input_handle:
+        prev_perbase_entropy_dict = json.load(input_handle)
+    # end with
+    prev_asm_accs = frozenset(prev_perbase_entropy_dict.keys())
+
     cached_asm_accs = asm_accs & prev_asm_accs
     del prev_asm_accs
     print('done')
@@ -316,49 +372,44 @@ if cache_mode:
             .format(len(cached_asm_accs), len(asm_accs))
     )
 else:
-    prev_perbase_entropy_df = None
+    prev_perbase_entropy_dict = dict()
     cached_asm_accs = set()
 # end if
 
-with gzip.open(per_base_entropy_fpath, 'wt') as per_base_entropy_outfile:
 
-    per_base_entropy_outfile.write('asm_acc\tpos\tentropy\n')
 
-    # Iterate over assemblies
-    for i, asm_acc in enumerate(asm_accs):
-        print(f'\rDoing {i+1}/{len(asm_accs)}: {asm_acc}', end=' '*10)
-        if asm_acc in cached_asm_accs:
-            cached_perbase_ass_df = prev_perbase_entropy_df[
-                prev_perbase_entropy_df['asm_acc'] == asm_acc
-            ]
-            cached_perbase_ass_df.to_csv(
-                per_base_entropy_outfile,
-                sep='\t',
-                header=False,
-                index=False,
-                na_rep='NA',
-                encoding='utf-8'
-            )
-            continue # cache hit
-        # end if
+perbase_entropy_dict = {asm_acc: None for asm_acc in asm_accs}
 
-        # Select genes sequnences for currnet genome
-        selected_seq_records = select_gene_seqs(asm_acc, seq_records)
+# Iterate over assemblies
+for i, asm_acc in enumerate(asm_accs):
+    print(f'\rDoing {i+1}/{len(asm_accs)}: {asm_acc}', end=' '*10)
+    if asm_acc in cached_asm_accs:
+        perbase_entropy_dict[asm_acc] = prev_perbase_entropy_dict[asm_acc]
+        continue # cache hit
+    # end if
 
-        # Perform MSA only if there are at least 2 sequences
-        if len(selected_seq_records) > 1:
-            # Perform MSA
-            msa_records = do_msa(selected_seq_records, mafft_fpath)
+    # Select genes sequnences for currnet genome
+    selected_seq_records = select_gene_seqs(asm_acc, seq_records)
 
-            # Calculate entropy
-            entropy_arr = calc_entropy(msa_records)
+    # Perform MSA only if there are at least 2 sequences
+    if len(selected_seq_records) > 1:
+        # Perform MSA
+        msa_records = do_msa(
+            selected_seq_records,
+            mafft_fpath,
+            threads,
+            tmp_dirpath
+        )
+        # Calculate entropy
+        perbase_entropy_dict[asm_acc] = calc_entropy(msa_records)
+    else:
+        del perbase_entropy_dict[asm_acc]
+    # end if
+# end for
 
-            # Write per-base entropy
-            for i, entropy in enumerate(entropy_arr):
-                per_base_entropy_outfile.write(f'{asm_acc}\t{i}\t{entropy}\n')
-            # end for
-        # end if
-    # end for
+# Save per-base entropy
+with gzip.open(per_base_entropy_fpath, 'wt') as output_handle:
+    json.dump(perbase_entropy_dict, output_handle)
 # end with
 
 print()
@@ -368,30 +419,20 @@ print('Summarizing the calculated entropy...')
 
 # Summarize entropy: calculate sum and mean for each genome
 
-# Read per-base entropy file
-with gzip.open(per_base_entropy_fpath, 'rt') as per_base_entropy_outfile:
-    per_base_entropy_df = pd.read_csv(per_base_entropy_outfile, sep='\t')
-# end with
-
 # Calculate sum and mean entropy for each genome
 # Calculate number of variable positions for each genome
 
-count_var_positions = lambda entropy_arr: len(
-    tuple(
-        filter(
-            lambda entropy: entropy > 1e-6,
-            entropy_arr
-        )
+
+if len(perbase_entropy_dict) != 0:
+    summary_entropy_df = pd.DataFrame(
+        {
+            'asm_acc': list(perbase_entropy_dict.keys()),
+            'sum_entropy': np.repeat(None, len(perbase_entropy_dict)),
+            'mean_entropy': np.repeat(None, len(perbase_entropy_dict)),
+            'num_var_cols': np.repeat(None, len(perbase_entropy_dict)),
+        }
     )
-)
-
-
-if per_base_entropy_df.shape[0] != 0:
-    summary_entropy_df = per_base_entropy_df.groupby('asm_acc', as_index=False) \
-        .agg({'entropy': ('sum', 'mean', count_var_positions)})
-    summary_entropy_df.columns = ['asm_acc', 'sum_entropy', 'mean_entropy', 'num_var_cols']
-    del per_base_entropy_df
-    summary_entropy_df['num_var_cols'] = summary_entropy_df['num_var_cols'].map(int)
+    summary_entropy_df = summary_entropy_df.apply(set_sum_mean_num_var_cols, axis=1)
 else:
     summary_entropy_df = pd.DataFrame(
         {
