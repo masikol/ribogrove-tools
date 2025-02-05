@@ -92,6 +92,21 @@ def make_dada2_header_with_species(record):
     genus_name   = re.search(GENUS_PATTERN,   descr).group(1)
     species_name = re.search(SPECIES_PATTERN, descr).group(1)
 
+
+    species_name = species_name.replace('Candidatus ', '') \
+                               .replace('[',           '') \
+                               .replace(']',           '')
+    species_name = re.sub(r'^[A-Z][a-z]+ ', '', species_name)
+
+    if species_name.startswith('sp.') \
+       or species_name.startswith('uncultured') \
+       or species_name.startswith('endosymbiont') \
+       or species_name.startswith('cloacae complex') \
+       or species_name.startswith('genomosp') \
+       or species_name.startswith('unidentified'):
+        species_name = 'NA'
+    # end if
+
     return make_out_header_with_species(
         domain_name,
         phylum_name,
