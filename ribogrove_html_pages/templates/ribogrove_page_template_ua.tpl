@@ -548,17 +548,26 @@
   <tr class="sumtab-row"><td>1193R</td><td>ACGTCATCCCCACCTTCC</td><td><a href="https://doi.org/10.1371/journal.pone.0056329">Bodenhausen et al, 2013</a></td></tr>
   <tr class="sumtab-row"><td>1378R</td><td>CGGTGTGTACAAGGCCCGGGAACG</td><td><a href="https://doi.org/10.1016/j.anaerobe.2014.04.006">Lebuhn et al., 2014</a></td></tr>
   <tr class="sumtab-row"><td>1492R</td><td>TACCTTGTTACGACTT</td><td><a href="https://doi.org/10.1128/AEM.02272-07">Frank et al., 2008</a></td></tr>
-  <tr class="sumtab-row"><td>SSU1ArF</td><td>TCCGGTTGATCCYGCBRG</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
-  <tr class="sumtab-row"><td>SSU520R</td><td>GCTACGRRYGYTTTARRC</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
-  <tr class="sumtab-row"><td>340f</td><td>CCCTAYGGGGYGCASCAG</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
-  <tr class="sumtab-row"><td>806rB</td><td>GGACTACNVGGGTWTCTAAT</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
-  <tr class="sumtab-row"><td>349f</td><td>GYGCASCAGKCGMGAAW</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
-  <tr class="sumtab-row"><td>519r</td><td>TTACCGCGGCKGCTG</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
-  <tr class="sumtab-row"><td>515fB</td><td>GTGYCAGCMGCCGCGGTAA</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
-  <tr class="sumtab-row"><td>Parch519f</td><td>CAGCCGCCGCGGTAA</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
-  <tr class="sumtab-row"><td>Arch915r</td><td>GTGCTCCCCCGCCAATTCCT</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
-  <tr class="sumtab-row"><td>1106F</td><td>TTWAGTCAGGCAACGAGC</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
-  <tr class="sumtab-row"><td>Ar1378R<sup> **</sup></td><td>TGTGCAAGGAGCAGGGAC</td><td><a href="https://doi.org/10.3390/microorganisms9020361">Francioli et al., 2021</a></td></tr>
+  <tr class="sumtab-row"><td>SSU1ArF</td><td>TCCGGTTGATCCYGCBRG</td><td><a href="https://doi.org/10.1111/1758-2229.12684">Bahram et al., 2018</a></td></tr>
+  <tr class="sumtab-row"><td>SSU520R</td><td>GCTACGRRYGYTTTARRC</td><td><a href="https://doi.org/10.1111/1758-2229.12684">Bahram et al., 2018</a></td></tr>
+  <tr class="sumtab-row"><td>340f</td><td>CCCTAYGGGGYGCASCAG</td><td><a href="https://doi.org/10.1016/j.mimet.2010.10.001">Gantner et al., 2011</a></td></tr>
+  <tr class="sumtab-row"><td>806rB</td><td>GGACTACNVGGGTWTCTAAT</td><td><a href="https://doi.org/10.3354/ame01753 ">Appril et al., 2015</a></td></tr>
+  <tr class="sumtab-row"><td>349f</td><td>GYGCASCAGKCGMGAAW</td><td><a href="https://doi.org/10.1128/AEM.66.11.5066-5072.2000">Takai and Horikoshi, 2000</a></td></tr>
+  <tr class="sumtab-row"><td>519r</td><td>TTACCGCGGCKGCTG</td><td><a href="https://doi.org/10.1093/nar/gks808">Klindworth et al., 2013</a></td></tr>
+  <tr class="sumtab-row"><td>515fB</td><td>GTGYCAGCMGCCGCGGTAA</td><td><a href="https://doi.org/10.1111/1462-2920.13023">Parada et al., 2015</a></td></tr>
+  <tr class="sumtab-row"><td>Parch519f</td><td>CAGCCGCCGCGGTAA</td><td><a href="https://doi.org/10.1128/aem.63.9.3367-3373.1997">Ovreås et al., 1997</a></td></tr>
+  <tr class="sumtab-row"><td>Arch915r</td><td>GTGCTCCCCCGCCAATTCCT</td><td><a href="https://doi.org/10.1128/aem.60.4.1232-1240.1994">Raskin et al., 1994</a></td></tr>
+  <tr class="sumtab-row"><td>1106F</td><td>TTWAGTCAGGCAACGAGC</td><td><a href="https://doi.org/10.1016/j.soilbio.2007.05.030">Watanabe et al., 2007</a></td></tr>
+  <tr class="sumtab-row"><td>Ar1378R<sup> **</sup></td><td>TGTGCAAGGAGCAGGGAC</td><td><a href="https://doi.org/10.1016/j.soilbio.2007.05.030">Watanabe et al., 2007</a></td></tr>
+  <tr class="sumtab-row"><td>A751F</td><td>CCGACGGTGAGRGRYGAA</td><td><a href="https://doi.org/10.1016/j.mimet.2003.08.009">Baker et al., 2003</a></td></tr>
+  <tr class="sumtab-row"><td>SSU1492Rngs</td><td>CGGNTACCTTGTKACGAC</td><td><a href="https://doi.org/10.1111/1758-2229.12684">Bahram et al., 2018</a></td></tr>
+  <tr class="sumtab-row"><td>SSU280ArR</td><td>TCAGWNYCCNWCTCSRGG</td><td><a href="https://doi.org/10.1111/1758-2229.12684">Bahram et al., 2018</a></td></tr>
+  <tr class="sumtab-row"><td>SSU470R</td><td>DCNGCNGGTDTTACCGCG</td><td><a href="https://doi.org/10.1111/1758-2229.12684">Bahram et al., 2018</a></td></tr>
+  <tr class="sumtab-row"><td>SSU468R</td><td>GNDCNGCNGGTDTTACCG</td><td><a href="https://doi.org/10.1111/1758-2229.12684">Bahram et al., 2018</a></td></tr>
+  <tr class="sumtab-row"><td>A519R</td><td>GGTDTTACCGCGGCKGCTG</td><td><a href="https://doi.org/10.1371/journal.pone.0007401">Wang and Qian, 2009</a></td></tr>
+  <tr class="sumtab-row"><td>SSU666ArR</td><td>HGCYTTCGCCACHGGTRG</td><td><a href="https://doi.org/10.1111/1758-2229.12684">Bahram et al., 2018</a></td></tr>
+  <tr class="sumtab-row"><td>SSU1000ArR</td><td>GGCCATGCAMYWCCTCTC</td><td><a href="https://doi.org/10.1111/1758-2229.12684">Bahram et al., 2018</a></td></tr>
+  <tr class="sumtab-row"><td>UA1204R</td><td>TTMGGGGCATRCIKACCT</td><td><a href="https://doi.org/10.1016/j.mimet.2003.08.009">Baker et al., 2003</a></td></tr>
 </tbody>
 </table>
 <p><sup>*</sup> Праймери 341F та 785R застосовуються у <a href="https://support.illumina.com/downloads/16s_metagenomic_sequencing_library_preparation.html">протоколі</a> підготовки бібліотеки для секвенування ампліконів регіонів V3–V4 генів 16S рРНК на апараті Illumina MiSeq.</p>
