@@ -49,6 +49,13 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '-d',
+    '--domain',
+    help='domain name, for example, "bacteria"',
+    required=True
+)
+
 # Output file
 
 parser.add_argument(
@@ -73,6 +80,7 @@ import src.rg_tools_IO as rgIO
 # For convenience
 asm_sum_fpath = os.path.abspath(args.asm_sum)
 rankedlineage_path = os.path.abspath(args.ranked_lineage)
+domain = args.domain.capitalize()
 outfpath = os.path.abspath(args.out)
 
 
@@ -360,6 +368,16 @@ def fill_missing_taxonomy(row):
     return row
 # end def
 
+def set_domain(taxonomy_df, domain_name):
+    def set_domain_to_row(row):
+        row['Domain'] = domain_name
+        return row
+    # end def
+
+    taxonomy_df = taxonomy_df.apply(set_domain_to_row, axis=1)
+    return taxonomy_df
+# end def
+
 
 
 # == Proceed ==
@@ -449,6 +467,8 @@ taxonomy_df = taxonomy_df[
         'Domain',
     ]
 ]
+
+taxonomy_df = set_domain(taxonomy_df, domain)
 
 # Write output per-genome file
 taxonomy_df.to_csv(

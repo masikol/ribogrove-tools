@@ -275,6 +275,7 @@ fi
 python3 "${SCRIPTS_DIR}/make_taxonomy.py" \
     --asm-sum "${ASS_SUM_FINAL}" \
     --ranked-lineage "${RANKEDLINEAGE_FPATH}" \
+    --domain "${DOMAIN}" \
     --out "${TAXONOMY_FILE}"
 
 
