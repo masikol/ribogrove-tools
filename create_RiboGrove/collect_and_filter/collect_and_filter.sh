@@ -2,15 +2,18 @@ set -e
 
 function print_help {
   echo 'Usage:' >&2
-  echo "  bash ${0} <CONFIG_FILE> [-ta]" >&2
+  echo "  bash ${0} <CONFIG_FILE> [-tax]" >&2
   echo '-t: Test mode. The script will not use entire RefSeq' >&2
   echo '  but just some genomes from the file' >&2
   echo '  scripts/data/test/test_bacteria_assembly_summary.txt.gz or' >&2
   echo '  scripts/data/test/test_archaea_assembly_summary.txt.gz' >&2
   echo '-a: RefSeq catalog file is already filtered.' >&2
-  echo '  If you already have file RefSeq-release216_filtered.catalog.gz' >&2
+  echo '  If you already have the file RefSeq-release216_filtered.catalog.gz' >&2
   echo '  created from file RefSeq-release216.catalog.gz,' >&2
-  echo '  the script will not filter it again and thus save some time.' >&2
+  echo '  then the script will not filter it again and thus save some time.' >&2
+  echo '-x: NCBI taxonomy (new_taxdump.tar.gz) is already downloaded and extracted.' >&2
+  echo '  If you already have the file new_taxdump/rankedlineage.dmp extracted from new_taxdump.tar.gz,' >&2
+  echo '  then the script will not downlaod and extract it again and thus save some time.' >&2
   echo 'Example:' >&2
   echo "  bash ${0} config/archaea_example.conf -a" >&2
 }
@@ -34,9 +37,10 @@ fi
 # Parse options
 TEST_MODE=false
 REFSEQ_CATALOG_ALREADY_FILTERED=false
+RANKEDLINEAGE_ALREADY_EXTRACTED=false
 
 shift
-while getopts ":ta" opt; do
+while getopts ":tax" opt; do
   case "${opt}" in
   t)
       TEST_MODE=true
@@ -45,6 +49,10 @@ while getopts ":ta" opt; do
   a)
       REFSEQ_CATALOG_ALREADY_FILTERED=true
       echo 'INFO: Assuming that RefSeq catalog is already filtered.' >&2
+      ;;
+  x)
+      RANKEDLINEAGE_ALREADY_EXTRACTED=true
+      echo 'INFO: Assuming that thr file new_taxdump/rankedlineage.dmp already exists.' >&2
       ;;
   esac
 done
@@ -113,6 +121,12 @@ WHITELIST_SEQIDS_FILE="${SCRIPTS_DATA_DIR}/ad_hoc/whitelist_seqIDs.tsv"
 ALL_GENES_FASTA="${GENES_DIR}/all_collected.fasta"
 ALL_GENES_STATS="${GENES_STATS_DIR}/all_collected_stats.tsv"
 
+NEW_TAXDUM_DIR="$(dirname ${REFSEQ_CATALOG_FILE})/new_taxdump"
+NEW_TAXDUMP_URL='https://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz'
+NEW_TAXDUMP_MD5_URL='https://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz.md5'
+NEW_TAXDUMP_ARCHIVE="${NEW_TAXDUM_DIR}/new_taxdump.tar.gz"
+NEW_TAXDUMP_ARCHIVE_MD5="${NEW_TAXDUMP_ARCHIVE}.md5"
+RANKEDLINEAGE_FPATH="${NEW_TAXDUM_DIR}/rankedlineage.dmp"
 TAXONOMY_FILE="${TAXONOMY_DIR}/taxonomy.tsv"
 
 CATEGORIES_FILE="${CATEGORIES_DIR}/categories.tsv"
@@ -154,13 +168,17 @@ if [[ ! -z "${PREV_WORKDIR}" ]]; then
   PREV_ALL_GENES_FASTA="${PREV_WORKDIR}/gene_seqs/all_collected.fasta"
   PREV_ALL_GENES_STATS="${PREV_WORKDIR}/gene_stats/all_collected_stats.tsv"
   PREV_FINAL_GENES_FASTA="${PREV_WORKDIR}/gene_seqs/final_gene_seqs_annotated.fasta"
-  PREV_PERBASE_ENTROPY_FILE="${prev_aberr_dir}/per_base_entropy.tsv.gz"
+  PREV_PERBASE_ENTROPY_FILE="${prev_aberr_dir}/per_base_entropy.json.gz"
   PREV_PRIMERS_DIR="${PREV_WORKDIR}/primers_coverage"
   PREV_ABERRANT_SEQIDS="${prev_aberr_dir}/aberrant_seqIDs.txt"
 else
   CACHE_MODE=false
 fi
 
+if [[ "${RANKEDLINEAGE_ALREADY_EXTRACTED}" == true && ! -f "${RANKEDLINEAGE_FPATH}" ]]; then
+  echo "Error: -x option is provided but the file '${RANKEDLINEAGE_FPATH}' does not actually exist." >&2
+  exit 1
+fi
 
 # |=== Proceed ===|
 
@@ -235,6 +253,23 @@ else
 fi
 
 
+# == Download taxonomy (new_taxdump.tar.gz) and extract rankedlineage.dmp ==
+
+if [[ "${RANKEDLINEAGE_ALREADY_EXTRACTED}" != true ]]; then
+  save_dir=$(pwd)
+  if [[ ! -d "${NEW_TAXDUM_DIR}" ]]; then
+    mkdir -v "${NEW_TAXDUM_DIR}"
+  fi
+  cd "${NEW_TAXDUM_DIR}"
+  curl "${NEW_TAXDUMP_URL}" -o "${NEW_TAXDUMP_ARCHIVE}"
+  curl "${NEW_TAXDUMP_MD5_URL}" -o "${NEW_TAXDUMP_ARCHIVE_MD5}"
+  md5sum -c "${NEW_TAXDUMP_ARCHIVE_MD5}"
+  tar xvf "${NEW_TAXDUMP_ARCHIVE}" rankedlineage.dmp
+  ls "${RANKEDLINEAGE_FPATH}" # ensure its existance
+  cd "${save_dir}"
+fi
+
+
 # == Make taxonomy ==
 
 python3 "${SCRIPTS_DIR}/make_taxonomy.py" \
@@ -244,6 +279,7 @@ python3 "${SCRIPTS_DIR}/make_taxonomy.py" \
 
 
 # == Extract 16S genes from downloaded genomes ==
+
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/extract_16S.py" \
     --asm-sum "${ASS_SUM_FINAL}" \

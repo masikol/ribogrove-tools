@@ -40,11 +40,9 @@ Also, the configuration file specifies some pipeline parameters, such as Rfam RN
 
 ## NCBI files to download before run
 
-The pipeline requires the following files downloaded:
+The pipeline requires the following files downloaded before run:
 
 1. A RefSeq `.catalog.gz` file from [https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/](https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/). E.g. for RiboGrove 7.213 you should use file `RefSeq-release213.catalog.gz`.
-
-2. A `rankedlineage.dmp` file from NCBI [Taxonomy](https://www.ncbi.nlm.nih.gov/taxonomy) database. This file can be downloaded within `new_taxdump` archive from [NCBI Taxonomy FTP site](https://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/). It is better to download this archive before construction of each RiboGrove release to use up-to-date taxonomic data.
 
 ## Usage
 
@@ -68,6 +66,10 @@ bash collect_and_filter.sh <CONFIG_FILE> [-at]
     created from file RefSeq-release216.catalog.gz,
     the script will not run the script filter_refseq_catalog.py again
     and thus save some time.
+
+-x: NCBI taxonomy (new_taxdump.tar.gz) is already downloaded and extracted.
+    If you already have the file new_taxdump/rankedlineage.dmp extracted from new_taxdump.tar.gz,
+    then the script will not downlaod and extract it again and thus save some time.
 ```
 
 ### Example:
