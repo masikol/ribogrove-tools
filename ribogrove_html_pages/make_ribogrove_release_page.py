@@ -265,6 +265,17 @@ def parse_primer_pairs():
     bacterial_primer_pairs = transform_primer_pair_dict(primer_pairs['Bacteria'])
     archaeal_primer_pairs  = transform_primer_pair_dict(primer_pairs['Archaea'])
 
+    unwanted_primer_pairs = parse_unwanted_primer_pairs()
+
+    for pair_name in unwanted_primer_pairs:
+        if pair_name in bacterial_primer_pairs:
+            del bacterial_primer_pairs[pair_name]
+        # end if
+        if pair_name in archaeal_primer_pairs:
+            del archaeal_primer_pairs[pair_name]
+        # end if
+    # end for
+
     return bacterial_primer_pairs, archaeal_primer_pairs
 # end def
 
@@ -274,6 +285,22 @@ def transform_primer_pair_dict(primer_pairs):
         all_primer_pair_dict['{}-{}'.format(nameF, nameR)] = v_region_name
     # end for
     return all_primer_pair_dict
+# end def
+
+def parse_unwanted_primer_pairs():
+    unwanted_primer_pairs_fpath = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        'unwanted_primer_pairs.txt'
+    )
+    with open(unwanted_primer_pairs_fpath, 'rt') as input_handle:
+        primer_pairs = tuple(
+            map(
+                str.strip,
+                input_handle.readlines()
+            )
+        )
+    # end with
+    return primer_pairs
 # end def
 
 
@@ -313,8 +340,6 @@ del init_columns
 
 # Parse primer pair data
 bacterial_primer_pairs, archaeal_primer_pairs = parse_primer_pairs()
-del bacterial_primer_pairs['1115F-1492R']
-
 
 # Read entropy summary file
 entropy_summary_df = pd.read_csv(entropy_summary_fpath, sep='\t')

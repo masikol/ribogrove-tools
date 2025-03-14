@@ -29,32 +29,6 @@ def make_ribogrove_primer_coverage_df(input_fpath):
         renamed_columns.update(d_rename_columns)
     # end for
 
-    # TODO: remove
-    # df = df.rename(
-    #     columns={
-    #         'Taxon'                        : 'Phylum',
-    #         'Number of genomes'            : 'num_genomes',
-    #         '27F-1492R; Full gene (%)'     : '27F-1492R',
-    #         '27F-338R; V1-V2 (%)'          : '27F-338R',
-    #         '27F-534R; V1-V3 (%)'          : '27F-534R',
-    #         '341F-785R; V3-V4 (%)'         : '341F-785R',
-    #         '341F-944R; V3-V5 (%)'         : '341F-944R',
-    #         '515F-806R; V4 (%)'            : '515F-806R',
-    #         '515F-944R; V4-V5 (%)'         : '515F-944R',
-    #         '515F-1100R; V4-V6 (%)'        : '515F-1100R',
-    #         '784F-1100R; V5-V6 (%)'        : '784F-1100R',
-    #         '784F-1193R; V5-V7 (%)'        : '784F-1193R',
-    #         '939F-1193R; V6-V7 (%)'        : '939F-1193R',
-    #         '939F-1378R; V6-V8 (%)'        : '939F-1378R',
-    #         '1115F-1492R; V7-V9 (%)'       : '1115F-1492R',
-    #         'SSU1ArF-SSU520R; V1-V4 (%)'   : 'SSU1ArF-SSU520R',
-    #         '340f-806rB; V3-V4 (%)'        : '340f-806rB',
-    #         '349f-519r; V3-V4 (%)'         : '349f-519r',
-    #         '515fB-806rB; V4 (%)'          : '515fB-806rB',
-    #         'Parch519f-Arch915r; V4-V5 (%)': 'Parch519f-Arch915r',
-    #         '1106F-Ar1378R; V7-V8 (%)'     : '1106F-Ar1378R',
-    #     }
-    # )
     df = df.rename(
         columns=renamed_columns
     )
@@ -140,50 +114,6 @@ def _sort_rows_and_columns(primer_df):
     bacterial_primer_pairs, archaeal_primer_pairs = parse_primer_pairs()
     ordered_primer_names = list(bacterial_primer_pairs.keys()) \
                          + list(archaeal_primer_pairs.keys())
-    # TODO: remove
-    # ordered_primer_names = [
-    #     # Bacteria
-    #     # Full
-    #     '27F-1492R',
-    #     # V1-V2
-    #     '27F-338R',
-    #     # V1-V3
-    #     '27F-534R',
-    #     # V3-V4
-    #     '341F-785R',
-    #     # V3-V5
-    #     '341F-944R',
-    #     # V4
-    #     '515F-806R',
-    #     # V4-V5
-    #     '515F-944R',
-    #     # V4-V6
-    #     '515F-1100R',
-    #     # V5-V6
-    #     '784F-1100R',
-    #     # V5-V7
-    #     '784F-1193R',
-    #     # V6-V7
-    #     '939F-1193R',
-    #     # V6-V8
-    #     '939F-1378R',
-    #     # V7-V9
-    #     '1115F-1492R',
-    #     # Archaea
-    #     # V1-V4
-    #     'SSU1ArF-SSU520R',
-    #     # V3-V4
-    #     '340f-806rB',
-    #     # V3-V4
-    #     '349f-519r',
-    #     # V4
-    #     '515fB-806rB',
-    #     # V4-V5
-    #     'Parch519f-Arch915r',
-    #     # V7-V8
-    #     '1106F-Ar1378R',
-    # ]
-
     fmt_primer_df = primer_df[
         ['Domain', 'Phylum', 'num_genomes'] + ordered_primer_names
     ].sort_values(by='num_genomes', ascending=False)
