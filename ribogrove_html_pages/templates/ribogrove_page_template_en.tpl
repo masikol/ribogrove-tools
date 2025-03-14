@@ -402,7 +402,7 @@
 
 <p><sup>*</sup> Coverage of a primer pair is the percent of genomes having at least one 16S rRNA gene which can be amplified by PCR using this primer pair. For details, see our <a href="https://doi.org/10.1016/j.resmic.2022.103936">paper about RiboGrove</a>.</p>
 <p>In the tables below, you can find coverage of primer pairs that are being commonly used to amplify bacterial and archaeal genes (“bacterial” and “archaeal” primers).</p>
-<p>You can find a more detailed table in the file <span class="samp">primer_pair_genomic_coverage.tsv</span> in the <a href="#downloads">metadata</a>. That table contains coverage not just for phyla, but also for each class, order, family, genus, and species. Moreover, that table contains coverage values for primer pair 1115F–1492R (V7–V9 region). In the tables below, it is omitted for brevity.</p>
+<p>You can find a more detailed table in the file <span class="samp">primer_pair_genomic_coverage.tsv</span> in the <a href="#downloads">metadata</a>. That table contains coverage not just for phyla, but also for each class, order, family, genus, and species. Moreover, that table contains coverage values for additional primer pairs, namely {{ unwanted_primer_pairs }}. In the tables below, they are omitted for brevity.</p>
 
 <table class="sum-table"><caption>Bacterial genes, “bacterial” primers</caption>
 <tbody class="primer-cov-tbody">
@@ -415,7 +415,7 @@
 </tr>
 <tr>
   {% for primer_pair_name in bacterial_primer_pairs.keys() %}
-  <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+  <th class="numcol">{{ primer_pair_name.replace('-', '–<br />') }}<br />(%)</th>
   {% endfor %}
 </tr>
 {% for _, row in ribogrove_primers_cov_df.query('Domain == "Bacteria"').iterrows() %}
@@ -441,7 +441,7 @@
 </tr>
 <tr>
   {% for primer_pair_name in archaeal_primer_pairs.keys() %}
-  <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+  <th class="numcol">{{ primer_pair_name.replace('-', '–<br />') }}<br />(%)</th>
   {% endfor %}
 </tr>
 {% for _, row in ribogrove_primers_cov_df.query('Domain == "Archaea"').iterrows() %}
@@ -471,7 +471,7 @@
 </tr>
 <tr>
   {% for primer_pair_name in archaeal_primer_pairs.keys() %}
-  <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+  <th class="numcol">{{ primer_pair_name.replace('-', '–<br />') }}<br />(%)</th>
   {% endfor %}
 </tr>
 {% for _, row in ribogrove_primers_cov_df.query('Domain == "Bacteria"').iterrows() %}
@@ -501,7 +501,7 @@
   </tr>
   <tr>
     {% for primer_pair_name in bacterial_primer_pairs.keys() %}
-    <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+    <th class="numcol">{{ primer_pair_name.replace('-', '–<br />') }}<br />(%)</th>
     {% endfor %}
   </tr>
   {% for _, row in ribogrove_primers_cov_df.query('Domain == "Archaea"').iterrows() %}

@@ -411,7 +411,7 @@
 
 <p><sup>*</sup> Спектр дії пары праймерів — це видсоток геномів, які мають принаймні один ген 16S рРНК, який можливо заампліфікувати за допомогою ПЛР з застосуванням цієї пари праймерів. Деталі описані у нашому <a href="https://masikol.github.io/latest_ribogrove_release_ua.html#citing-ribogrove">артикулі про RiboGrove</a>.</p>
 <p>У таблицях нижче можна знайти спектри дії пар праймерів, які звичайно застосовуються для ампліфікації бактеріальних та архейних генів 16S рРНК („бактеріальні“ і „архейні“ праймери).</p>
-<p>Є більш детальна таблиця — у файлі <span class="samp">primer_pair_genomic_coverage.tsv</span> у метаданих <a href="#downloads">metadata</a>. Та таблиця утримує спектри дії не тільки для типів (phyla), але і для кожного класу, ряду, родини, роду та виду. Крім того, та таблиця утримує спектри дії для пари праймерів 1115F–1492R (регіон V7–V9). У таблицях нижче нема цієї пари, щоб вони не були занадто великою.</p>
+<p>Є більш детальна таблиця — у файлі <span class="samp">primer_pair_genomic_coverage.tsv</span> у метаданих <a href="#downloads">metadata</a>. Та таблиця утримує спектри дії не тільки для типів (phyla), але і для кожного класу, ряду, родини, роду та виду. Крім того, та таблиця утримує спектри дії для додаткових пар праймерів, а саме: {{ unwanted_primer_pairs }}. У таблицях нижче нема цих пар, щоб таблиці не були занадто великими.</p>
 
 <table class="sum-table"><caption>Бактеріальні гени, „бактеріальні“ праймери</caption>
 <tbody class="primer-cov-tbody">
@@ -424,7 +424,7 @@
 </tr>
 <tr>
   {% for primer_pair_name in bacterial_primer_pairs.keys() %}
-  <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+  <th class="numcol">{{ primer_pair_name.replace('-', '–<br />') }}<br />(%)</th>
   {% endfor %}
 </tr>
 {% for _, row in ribogrove_primers_cov_df.query('Domain == "Bacteria"').iterrows() %}
@@ -451,7 +451,7 @@
 </tr>
 <tr>
   {% for primer_pair_name in archaeal_primer_pairs.keys() %}
-  <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+  <th class="numcol">{{ primer_pair_name.replace('-', '–<br />') }}<br />(%)</th>
   {% endfor %}
 </tr>
 {% for _, row in ribogrove_primers_cov_df.query('Domain == "Archaea"').iterrows() %}
@@ -481,7 +481,7 @@
 </tr>
 <tr>
   {% for primer_pair_name in archaeal_primer_pairs.keys() %}
-  <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+  <th class="numcol">{{ primer_pair_name.replace('-', '–<br />') }}<br />(%)</th>
   {% endfor %}
 </tr>
 {% for _, row in ribogrove_primers_cov_df.query('Domain == "Bacteria"').iterrows() %}
@@ -511,7 +511,7 @@
   </tr>
   <tr>
     {% for primer_pair_name in bacterial_primer_pairs.keys() %}
-    <th class="numcol">{{ primer_pair_name.replace('-', '–') }}<br />(%)</th>
+    <th class="numcol">{{ primer_pair_name.replace('-', '–<br />') }}<br />(%)</th>
     {% endfor %}
   </tr>
   {% for _, row in ribogrove_primers_cov_df.query('Domain == "Archaea"').iterrows() %}

@@ -43,3 +43,19 @@ python3 make_ribogrove_release_page.py \
   --primers-cov /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/23.229/metadata/primer_pair_genomic_coverage.tsv \
   --outdir /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_pages/23.229 \
   --seqkit /usr/bin/seqkit
+
+
+# On Tower:
+python3 make_ribogrove_release_page.py \
+  --release-num 23.229 \
+  --release-date 2025-03-13 \
+  --final-fasta /mnt/data/Max/RiboGrove/RiboGrove_releases/23.229/ribogrove_23.229_sequences.fasta.gz \
+  --metadata /mnt/data/Max/RiboGrove/RiboGrove_releases/23.229/metadata_ribogrove_23.229.zip \
+  --base-counts /mnt/data/Max/RiboGrove/RiboGrove_releases/23.229/metadata/gene_seqs_base_counts.tsv \
+  --taxonomy /mnt/data/Max/RiboGrove/RiboGrove_releases/23.229/metadata/taxonomy.tsv \
+  --categories /mnt/data/Max/RiboGrove/RiboGrove_releases/23.229/metadata/categories.tsv \
+  --entropy-summary /mnt/data/Max/RiboGrove/RiboGrove_releases/23.229/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/data/Max/RiboGrove/RiboGrove_releases/23.229/metadata/source_RefSeq_genomes.tsv \
+  --primers-cov /mnt/data/Max/RiboGrove/RiboGrove_releases/23.229/metadata/primer_pair_genomic_coverage.tsv \
+  --outdir /mnt/data/Max/RiboGrove/RiboGrove_pages/23.229 \
+  --seqkit /usr/bin/seqkit

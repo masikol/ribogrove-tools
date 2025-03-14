@@ -545,7 +545,8 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
                 ribogrove_primers_cov_df=fmt_ribogrove_primers_cov_df,
                 italicize_candidatus=italicize_candidatus,
                 bacterial_primer_pairs=bacterial_primer_pairs,
-                archaeal_primer_pairs=archaeal_primer_pairs
+                archaeal_primer_pairs=archaeal_primer_pairs,
+                unwanted_primer_pairs=', '.join(parse_unwanted_primer_pairs())
         )
     # end with
 
