@@ -368,16 +368,6 @@ def fill_missing_taxonomy(row):
     return row
 # end def
 
-def set_domain(taxonomy_df, domain_name):
-    def set_domain_to_row(row):
-        row['Domain'] = domain_name
-        return row
-    # end def
-
-    taxonomy_df = taxonomy_df.apply(set_domain_to_row, axis=1)
-    return taxonomy_df
-# end def
-
 
 
 # == Proceed ==
@@ -395,8 +385,13 @@ print('Reading reformatted rankedlineage file...')
 rankedlineage_df = pd.read_csv(
     reformatted_rankedlineade_fpath,
     sep='\t',
-    names=['taxid', 'organism_name', 'Species', 'Genus', 'Family', 'Order', 'Class', 'Phylum', 'Kingdom', 'Superkingdom'],
+    names=[
+        'taxid', 'organism_name',
+        'Species', 'Genus', 'Family', 'Order', 'Class', 'Phylum',
+        'Unknown_1', 'Unknown_2', 'Domain'
+    ],
     header=None,
+    index_col=False,
     dtype={
         'taxid': pd.Int32Dtype(),
         'organism_name': str,
@@ -406,19 +401,17 @@ rankedlineage_df = pd.read_csv(
         'Order': str,
         'Class': str,
         'Phylum': str,
-        'Kingdom': str,
-        'Superkingdom': str
+        'Unknown_1': str,
+        'Unknown_2': str,
+        'Domain': str
     }
 )
 
 # Remove columns of no interest
 rankedlineage_df = rankedlineage_df.drop(
-    columns=['organism_name', 'Kingdom'],
+    columns=['organism_name', 'Unknown_1', 'Unknown_2'],
     axis=1
 )
-
-# Rename the 'Superkingdom' column
-rankedlineage_df = rankedlineage_df.rename(columns={'Superkingdom': 'Domain'})
 
 
 # Make per-genome taxonomy file
@@ -468,7 +461,6 @@ taxonomy_df = taxonomy_df[
     ]
 ]
 
-taxonomy_df = set_domain(taxonomy_df, domain)
 
 # Write output per-genome file
 taxonomy_df.to_csv(

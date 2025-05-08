@@ -59,3 +59,18 @@ python3 make_ribogrove_release_page.py \
   --primers-cov /mnt/data/Max/RiboGrove/RiboGrove_releases/23.229/metadata/primer_pair_genomic_coverage.tsv \
   --outdir /mnt/data/Max/RiboGrove/RiboGrove_pages/23.229 \
   --seqkit /usr/bin/seqkit
+
+
+python3 make_ribogrove_release_page.py \
+  --release-num 24.230 \
+  --release-date 2025-05-08 \
+  --final-fasta /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/24.230/ribogrove_24.230_sequences.fasta.gz \
+  --metadata /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/24.230/metadata_ribogrove_24.230.zip \
+  --base-counts /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/24.230/metadata/gene_seqs_base_counts.tsv \
+  --taxonomy /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/24.230/metadata/taxonomy.tsv \
+  --categories /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/24.230/metadata/categories.tsv \
+  --entropy-summary /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/24.230/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/24.230/metadata/source_RefSeq_genomes.tsv \
+  --primers-cov /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/24.230/metadata/primer_pair_genomic_coverage.tsv \
+  --outdir /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_pages/24.230 \
+  --seqkit /usr/bin/seqkit

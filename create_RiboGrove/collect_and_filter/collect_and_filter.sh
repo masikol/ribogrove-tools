@@ -52,7 +52,7 @@ while getopts ":tax" opt; do
       ;;
   x)
       RANKEDLINEAGE_ALREADY_EXTRACTED=true
-      echo 'INFO: Assuming that thr file new_taxdump/rankedlineage.dmp already exists.' >&2
+      echo 'INFO: Assuming that the file new_taxdump/rankedlineage.dmp already exists.' >&2
       ;;
   esac
 done
