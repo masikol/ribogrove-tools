@@ -265,14 +265,13 @@
 <p><sup>*</sup> Медианное число копий в пределах вида.</p>
 
 <div id="top-longest" class="pad-anchor"></div>
-<table class="sum-table">
-<caption>Топ-10 самых длинных генов 16S рРНК</caption>
+<table class="sum-table"><caption>Топ-10 самых длинных генов 16S рРНК</caption>
 <tbody>
 <tr><th class="alnleft">Организм</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
 <tr>
 <td colspan="4" class="subhead">Бактерии</td>
 </tr>
-{% for _, row in ribogrove_top_longest_df.query('Domain == "Bacteria"').iterrows() %}
+{% for _, row in really_top_longest_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -280,10 +279,29 @@
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
+</tbody></table>
+{% if rest_top_longest_df.query('Domain == "Bacteria"').shape[0] > 0 %}
+  <details>
+  <summary><i>Остальные гены такой же длины (в десятку не вошли случайно)</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Организм</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
+  <tr>
+  </tr>
+  {% for _, row in rest_top_longest_df.query('Domain == "Bacteria"').iterrows() %}
+  <tr class="sumtab-row">
+  <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+  <td class="numcol">{{ row['len'] }}</td>
+  <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
+  <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+  </tr>
+  {% endfor %}
+{% endif %}
+<table class="sum-table"><tbody>
 <tr>
 <td colspan="4" class="subhead">Археи</td>
 </tr>
-{% for _, row in ribogrove_top_longest_df.query('Domain == "Archaea"').iterrows() %}
+<tr><th class="alnleft">Организм</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
+{% for _, row in really_top_longest_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -291,19 +309,34 @@
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
-</tbody>
-</table>
+</tbody></table>
+{% if rest_top_longest_df.query('Domain == "Archaea"').shape[0] > 0 %}
+  <details>
+  <summary><i>Остальные гены такой же длины (в десятку не вошли случайно)</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Организм</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
+  <tr>
+  </tr>
+  {% for _, row in rest_top_longest_df.query('Domain == "Archaea"').iterrows() %}
+  <tr class="sumtab-row">
+  <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+  <td class="numcol">{{ row['len'] }}</td>
+  <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
+  <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+  </tr>
+  {% endfor %}
+  </tbody></table>
+{% endif %}
 <p><sup>*</sup> SeqID — это идентификатор последовательности RiboGrove.</p>
 
 <div id="top-shortest" class="pad-anchor"></div>
-<table class="sum-table">
-<caption>Топ-10 самых коротких генов 16S рРНК</caption>
+<table class="sum-table"><caption>Топ-10 самых коротких генов 16S рРНК</caption>
 <tbody>
 <tr><th class="alnleft">Организм</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
 <tr>
 <td colspan="4" class="subhead">Бактерии</td>
 </tr>
-{% for _, row in ribogrove_top_shortest_df.query('Domain == "Bacteria"').iterrows() %}
+{% for _, row in really_top_shortest_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -311,10 +344,29 @@
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
+</tbody></table>
+{% if rest_top_shortest_df.query('Domain == "Bacteria"').shape[0] > 0 %}
+  <details>
+    <summary><i>Остальные гены такой же длины (в десятку не вошли случайно)</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Организм</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
+  {% for _, row in rest_top_shortest_df.query('Domain == "Bacteria"').iterrows() %}
+  <tr class="sumtab-row">
+  <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+  <td class="numcol">{{ row['len'] }}</td>
+  <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
+  <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+  </tr>
+  {% endfor %}
+  </tbody></table>
+  </details>
+{% endif %}
+<table class="sum-table"><tbody>
 <tr>
 <td colspan="4" class="subhead">Археи</td>
 </tr>
-{% for _, row in ribogrove_top_shortest_df.query('Domain == "Archaea"').iterrows() %}
+<tr><th class="alnleft">Организм</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
+{% for _, row in really_top_shortest_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -322,29 +374,62 @@
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
-</tbody>
-</table>
+</tbody></table>
+{% if rest_top_shortest_df.query('Domain == "Archaea"').shape[0] > 0 %}
+  <details>
+    <summary><i>Остальные гены такой же длины (в десятку не вошли случайно)</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Организм</th><th class="numcol">Длина гена, п.н.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
+  {% for _, row in rest_top_shortest_df.query('Domain == "Archaea"').iterrows() %}
+  <tr class="sumtab-row">
+  <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+  <td class="numcol">{{ row['len'] }}</td>
+  <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
+  <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+  </tr>
+  {% endfor %}
+  </tbody></table>
+  </details>
+{% endif %}
+
 <p><sup>*</sup> SeqID — это идентификатор последовательности RiboGrove.</p>
 
 <div id="top-copy-num" class="pad-anchor"></div>
-<table class="sum-table">
-<caption>Tоп-10 геномов с наибольшим числом копий генов 16S рРНК</caption>
+<table class="sum-table"><caption>Tоп-10 геномов с наибольшим числом копий генов 16S рРНК</caption>
 <tbody>
 <tr><th class="alnleft">Организм</th><th class="numcol">Число копий</th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
 <tr>
 <td colspan="4" class="subhead">Бактерии</td>
 </tr>
-{% for _, row in ribogrove_top_copy_numbers_df.query('Domain == "Bacteria"').iterrows() %}
+{% for _, row in really_top_gcn_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
+</tbody></table>
+{% if rest_top_gcn_df.query('Domain == "Bacteria"').shape[0] > 0 %}
+  <details>
+    <summary><i>Остальные геномы с таким же числом копий (в десятку не вошли случайно)</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Организм</th><th class="numcol">Число копий</th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
+    {% for _, row in rest_top_gcn_df.query('Domain == "Bacteria"').iterrows() %}
+    <tr class="sumtab-row">
+    <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+    <td class="numcol">{{ row['copy_number'] }}</td>
+    <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody></table>
+  </details>
+{% endif %}
+<table class="sum-table"><tbody>
+<tr><th class="alnleft">Организм</th><th class="numcol">Число копий</th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
 <tr>
 <td colspan="4" class="subhead">Археи</td>
 </tr>
-{% for _, row in ribogrove_top_copy_numbers_df.query('Domain == "Archaea"').iterrows() %}
+{% for _, row in really_top_gcn_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
@@ -353,6 +438,21 @@
 {% endfor %}
 </tbody>
 </table>
+{% if rest_top_gcn_df.query('Domain == "Archaea"').shape[0] > 0 %}
+  <details>
+    <summary><i>Остальные геномы с таким же числом копий (в десятку не вошли случайно)</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Организм</th><th class="numcol">Число копий</th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
+    {% for _, row in rest_top_gcn_df.query('Domain == "Archaea"').iterrows() %}
+    <tr class="sumtab-row">
+    <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+    <td class="numcol">{{ row['copy_number'] }}</td>
+    <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody></table>
+  </details>
+{% endif %}
 
 <div id="top-var" class="pad-anchor"></div>
 <table class="sum-table">

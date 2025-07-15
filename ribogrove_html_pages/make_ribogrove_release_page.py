@@ -304,6 +304,27 @@ def parse_unwanted_primer_pairs():
 # end def
 
 
+def split_top_df(df, top_n=10):
+    bacteria_df = df.query('Domain == "Bacteria"')
+    archaea_df = df.query('Domain == "Archaea"')
+
+    really_top_df = pd.concat(
+        [
+            bacteria_df.iloc[:top_n,],
+            archaea_df.iloc[:top_n,],
+        ]
+    )
+    rest_df = pd.concat(
+        [
+            bacteria_df.iloc[top_n:,],
+            archaea_df.iloc[top_n:,],
+        ]
+    )
+
+    return really_top_df, rest_df
+# end def
+
+
 # == Proceed ==
 
 # Some Flask stuff
@@ -345,7 +366,7 @@ bacterial_primer_pairs, archaeal_primer_pairs = parse_primer_pairs()
 entropy_summary_df = pd.read_csv(entropy_summary_fpath, sep='\t')
 
 # RiboGrove size
-print('Counting RiboGrove size')
+print('Counting RiboGrove sequences')
 ribogrove_size_dict = make_ribogrove_size_dict(
     final_fasta_fpath,
     gene_stats_df,
@@ -372,6 +393,7 @@ print('Finding top longest RiboGrove genes')
 ribogrove_top_longest_df = make_ribogrove_top_longest_df(
     gene_stats_df
 )
+really_top_longest_df, rest_top_longest_df = split_top_df(ribogrove_top_longest_df)
 print('done\n')
 
 # RiboGrove top shortest genes
@@ -379,6 +401,7 @@ print('Finding top shortest RiboGrove genes')
 ribogrove_top_shortest_df = make_ribogrove_top_shortest_df(
     gene_stats_df
 )
+really_top_shortest_df, rest_top_shortest_df = split_top_df(ribogrove_top_shortest_df)
 print('done\n')
 
 # RiboGrove top shortest genes
@@ -386,6 +409,7 @@ print('Finding top genomes with largest copy numbers RiboGrove genes')
 ribogrove_top_copy_numbers_df = make_ribogrove_top_copy_numbers_df(
     gene_stats_df
 )
+really_top_gcn_df, rest_top_gcn_df = split_top_df(ribogrove_top_copy_numbers_df)
 print('done\n')
 
 # RiboGrove top genomes with highest intragenomic variability of target genes
@@ -494,20 +518,35 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
         decimal_separator
     )
 
-    fmt_ribogrove_top_longest_df = format_longest_genes_df(
-        ribogrove_top_longest_df,
+    fmt_really_top_longest_df = format_longest_genes_df(
+        really_top_longest_df,
+        thousand_separator,
+        decimal_separator
+    )
+    fmt_rest_top_longest_df = format_longest_genes_df(
+        rest_top_longest_df,
         thousand_separator,
         decimal_separator
     )
 
-    fmt_ribogrove_top_shortest_df = format_shortest_genes_df(
-        ribogrove_top_shortest_df,
+    fmt_really_top_shortest_df = format_shortest_genes_df(
+        really_top_shortest_df,
+        thousand_separator,
+        decimal_separator
+    )
+    fmt_rest_top_shortest_df = format_shortest_genes_df(
+        rest_top_shortest_df,
         thousand_separator,
         decimal_separator
     )
 
-    fmt_ribogrove_top_copy_numbers_df = format_top_copy_numbers_df(
-        ribogrove_top_copy_numbers_df,
+    fmt_really_top_gcn_df = format_top_copy_numbers_df(
+        really_top_gcn_df,
+        thousand_separator,
+        decimal_separator
+    )
+    fmt_rest_top_gcn_df = format_top_copy_numbers_df(
+        rest_top_gcn_df,
         thousand_separator,
         decimal_separator
     )
@@ -537,9 +576,12 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
                 ribogrove_size_dict=fmt_ribogrove_size_dict,
                 ribogrove_len_dict=fmt_ribogrove_len_dict,
                 ribogrove_copy_number_df=fmt_ribogrove_copy_number_df,
-                ribogrove_top_longest_df=fmt_ribogrove_top_longest_df,
-                ribogrove_top_shortest_df=fmt_ribogrove_top_shortest_df,
-                ribogrove_top_copy_numbers_df=fmt_ribogrove_top_copy_numbers_df,
+                really_top_longest_df=fmt_really_top_longest_df,
+                rest_top_longest_df=fmt_rest_top_longest_df,
+                really_top_shortest_df=fmt_really_top_shortest_df,
+                rest_top_shortest_df=fmt_rest_top_shortest_df,
+                really_top_gcn_df=fmt_really_top_gcn_df,
+                rest_top_gcn_df=fmt_rest_top_gcn_df,
                 ribogrove_top_intragenomic_var_df=fmt_ribogrove_top_intragenomic_var_df,
                 retrieve_strain_name=retrieve_strain_name,
                 ribogrove_primers_cov_df=fmt_ribogrove_primers_cov_df,

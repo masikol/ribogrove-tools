@@ -272,14 +272,13 @@
 <p><sup>*</sup> These are median within-species copy numbers.</p>
 
 <div id="top-longest" class="pad-anchor"></div>
-<table class="sum-table"><caption>Top-10 longest 16S rRNA genes
-</caption>
+<table class="sum-table"><caption>Top-10 longest 16S rRNA genes</caption>
 <tbody>
 <tr><th class="alnleft">Organism</th><th class="numcol">Gene length (bp)</th><th class="alnleft">RiboGrove Sequence ID(s)</th><th class="alnleft">Assembly<br>accession</th></tr>
 <tr>
 <td colspan="4" class="subhead">Bacteria</td>
 </tr>
-{% for _, row in ribogrove_top_longest_df.query('Domain == "Bacteria"').iterrows() %}
+{% for _, row in really_top_longest_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -287,10 +286,29 @@
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
+</tbody></table>
+{% if rest_top_longest_df.query('Domain == "Bacteria"').shape[0] > 0 %}
+  <details>
+  <summary><i>Other genes of the same size left out of the top by sheer chance</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Organism</th><th class="numcol">Gene length (bp)</th><th class="alnleft">RiboGrove Sequence ID(s)</th><th class="alnleft">Assembly<br>accession</th></tr>
+  <tr>
+  </tr>
+  {% for _, row in rest_top_longest_df.query('Domain == "Bacteria"').iterrows() %}
+  <tr class="sumtab-row">
+  <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+  <td class="numcol">{{ row['len'] }}</td>
+  <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
+  <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+  </tr>
+  {% endfor %}
+{% endif %}
+<table class="sum-table"><tbody>
 <tr>
 <td colspan="4" class="subhead">Archaea</td>
 </tr>
-{% for _, row in ribogrove_top_longest_df.query('Domain == "Archaea"').iterrows() %}
+<tr><th class="alnleft">Organism</th><th class="numcol">Gene length (bp)</th><th class="alnleft">RiboGrove Sequence ID(s)</th><th class="alnleft">Assembly<br>accession</th></tr>
+{% for _, row in really_top_longest_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -298,18 +316,33 @@
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
-</tbody>
-</table>
+</tbody></table>
+{% if rest_top_longest_df.query('Domain == "Archaea"').shape[0] > 0 %}
+  <details>
+  <summary><i>Other genes of the same size left out of the top by sheer chance</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Organism</th><th class="numcol">Gene length (bp)</th><th class="alnleft">RiboGrove Sequence ID(s)</th><th class="alnleft">Assembly<br>accession</th></tr>
+  <tr>
+  </tr>
+  {% for _, row in rest_top_longest_df.query('Domain == "Archaea"').iterrows() %}
+  <tr class="sumtab-row">
+  <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+  <td class="numcol">{{ row['len'] }}</td>
+  <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
+  <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+  </tr>
+  {% endfor %}
+  </tbody></table>
+{% endif %}
 
 <div id="top-shortest" class="pad-anchor"></div>
-<table class="sum-table"><caption>Top-10 shortest 16S rRNA genes
-</caption>
+<table class="sum-table"><caption>Top-10 shortest 16S rRNA genes</caption>
 <tbody>
 <tr><th class="alnleft">Organism</th><th class="numcol">Gene length (bp)</th><th class="alnleft">RiboGrove Sequence ID(s)</th><th class="alnleft">Assembly<br>accession</th></tr>
 <tr>
 <td colspan="4" class="subhead">Bacteria</td>
 </tr>
-{% for _, row in ribogrove_top_shortest_df.query('Domain == "Bacteria"').iterrows() %}
+{% for _, row in really_top_shortest_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -317,10 +350,29 @@
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
+</tbody></table>
+{% if rest_top_shortest_df.query('Domain == "Bacteria"').shape[0] > 0 %}
+  <details>
+    <summary><i>Other genes of the same size left out of the top by sheer chance</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Organism</th><th class="numcol">Gene length (bp)</th><th class="alnleft">RiboGrove Sequence ID(s)</th><th class="alnleft">Assembly<br>accession</th></tr>
+  {% for _, row in rest_top_shortest_df.query('Domain == "Bacteria"').iterrows() %}
+  <tr class="sumtab-row">
+  <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+  <td class="numcol">{{ row['len'] }}</td>
+  <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
+  <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+  </tr>
+  {% endfor %}
+  </tbody></table>
+  </details>
+{% endif %}
+<table class="sum-table"><tbody>
 <tr>
 <td colspan="4" class="subhead">Archaea</td>
 </tr>
-{% for _, row in ribogrove_top_shortest_df.query('Domain == "Archaea"').iterrows() %}
+<tr><th class="alnleft">Organism</th><th class="numcol">Gene length (bp)</th><th class="alnleft">RiboGrove Sequence ID(s)</th><th class="alnleft">Assembly<br>accession</th></tr>
+{% for _, row in really_top_shortest_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -328,28 +380,60 @@
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
-</tbody>
-</table>
+</tbody></table>
+{% if rest_top_shortest_df.query('Domain == "Archaea"').shape[0] > 0 %}
+  <details>
+    <summary><i>Other genes of the same size left out of the top by sheer chance</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Organism</th><th class="numcol">Gene length (bp)</th><th class="alnleft">RiboGrove Sequence ID(s)</th><th class="alnleft">Assembly<br>accession</th></tr>
+  {% for _, row in rest_top_shortest_df.query('Domain == "Archaea"').iterrows() %}
+  <tr class="sumtab-row">
+  <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+  <td class="numcol">{{ row['len'] }}</td>
+  <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
+  <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+  </tr>
+  {% endfor %}
+  </tbody></table>
+  </details>
+{% endif %}
 
 <div id="top-copy-num" class="pad-anchor"></div>
-<table class="sum-table"><caption>Top-10 genomes with the largest 16S rRNA copy numbers
-</caption>
+<table class="sum-table"><caption>Top-10 genomes with the largest 16S rRNA copy numbers</caption>
 <tbody>
 <tr><th class="alnleft">Organism</th><th class="numcol">Copy number</th><th class="alnleft">Assembly<br>accession</th></tr>
 <tr>
 <td colspan="4" class="subhead">Bacteria</td>
 </tr>
-{% for _, row in ribogrove_top_copy_numbers_df.query('Domain == "Bacteria"').iterrows() %}
+{% for _, row in really_top_gcn_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
+</tbody></table>
+{% if rest_top_gcn_df.query('Domain == "Bacteria"').shape[0] > 0 %}
+  <details>
+    <summary><i>Other genomes of the same copy number left out of the top by sheer chance</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Organism</th><th class="numcol">Copy number</th><th class="alnleft">Assembly<br>accession</th></tr>
+    {% for _, row in rest_top_gcn_df.query('Domain == "Bacteria"').iterrows() %}
+    <tr class="sumtab-row">
+    <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+    <td class="numcol">{{ row['copy_number'] }}</td>
+    <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody></table>
+  </details>
+{% endif %}
+<table class="sum-table"><tbody>
+<tr><th class="alnleft">Organism</th><th class="numcol">Copy number</th><th class="alnleft">Assembly<br>accession</th></tr>
 <tr>
 <td colspan="4" class="subhead">Archaea</td>
 </tr>
-{% for _, row in ribogrove_top_copy_numbers_df.query('Domain == "Archaea"').iterrows() %}
+{% for _, row in really_top_gcn_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
@@ -358,13 +442,27 @@
 {% endfor %}
 </tbody>
 </table>
+{% if rest_top_gcn_df.query('Domain == "Archaea"').shape[0] > 0 %}
+  <details>
+    <summary><i>Other genomes of the same copy number left out of the top by sheer chance</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Organism</th><th class="numcol">Copy number</th><th class="alnleft">Assembly<br>accession</th></tr>
+    {% for _, row in rest_top_gcn_df.query('Domain == "Archaea"').iterrows() %}
+    <tr class="sumtab-row">
+    <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+    <td class="numcol">{{ row['copy_number'] }}</td>
+    <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody></table>
+  </details>
+{% endif %}
 
 <div id="top-var" class="pad-anchor"></div>
 <table class="sum-table"><caption>Top-10 genomes with the highest intragenomic variability of 16S rRNA genes
 </caption>
 <tbody>
 <tr><th class="alnleft">Organism</th><th class="numcol">Sum of entropy<sup> *</sup> (bits)</th><th class="numcol">Mean entropy<sup> *</sup> (bits)</th><th class="numcol">Number of variable positions</th><th class="numcol">Gene copy number</th><th class="alnleft">Assembly<br>accession</th></tr>
-
 <tr>
 <td colspan="6" class="subhead">Bacteria</td>
 </tr>

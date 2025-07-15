@@ -280,14 +280,13 @@
 <p><sup>*</sup> Медіанна кількість копій у межах виду.</p>
 
 <div id="top-longest" class="pad-anchor"></div>
-<table class="sum-table">
-<caption>Топ-10 найдовших генів 16S рРНК</caption>
+<table class="sum-table"><caption>Топ-10 найдовших генів 16S рРНК</caption>
 <tbody>
-<tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
+<tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.<</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
 <tr>
 <td colspan="4" class="subhead">Бактерії</td>
 </tr>
-{% for _, row in ribogrove_top_longest_df.query('Domain == "Bacteria"').iterrows() %}
+{% for _, row in really_top_longest_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -295,10 +294,29 @@
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
+</tbody></table>
+{% if rest_top_longest_df.query('Domain == "Bacteria"').shape[0] > 0 %}
+  <details>
+  <summary><i>Позосталі гени такої ж довжижи (у десятку не увійшли випадково)</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.<</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
+  <tr>
+  </tr>
+  {% for _, row in rest_top_longest_df.query('Domain == "Bacteria"').iterrows() %}
+  <tr class="sumtab-row">
+  <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+  <td class="numcol">{{ row['len'] }}</td>
+  <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
+  <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+  </tr>
+  {% endfor %}
+{% endif %}
+<table class="sum-table"><tbody>
 <tr>
 <td colspan="4" class="subhead">Археї</td>
 </tr>
-{% for _, row in ribogrove_top_longest_df.query('Domain == "Archaea"').iterrows() %}
+<tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.<</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
+{% for _, row in really_top_longest_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -306,19 +324,34 @@
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
-</tbody>
-</table>
+</tbody></table>
+{% if rest_top_longest_df.query('Domain == "Archaea"').shape[0] > 0 %}
+  <details>
+  <summary><i>Позосталі гени такої ж довжижи (у десятку не увійшли випадково)</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.<</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
+  <tr>
+  </tr>
+  {% for _, row in rest_top_longest_df.query('Domain == "Archaea"').iterrows() %}
+  <tr class="sumtab-row">
+  <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+  <td class="numcol">{{ row['len'] }}</td>
+  <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
+  <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+  </tr>
+  {% endfor %}
+  </tbody></table>
+{% endif %}
 <p><sup>*</sup> SeqID — це ідентифікатор послідовності RiboGrove.</p>
 
 <div id="top-shortest" class="pad-anchor"></div>
-<table class="sum-table">
-<caption>Топ-10 найкоротших генів 16S рРНК</caption>
+<table class="sum-table"><caption>Топ-10 найкоротших генів 16S рРНК</caption>
 <tbody>
 <tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
 <tr>
 <td colspan="4" class="subhead">Бактерії</td>
 </tr>
-{% for _, row in ribogrove_top_shortest_df.query('Domain == "Bacteria"').iterrows() %}
+{% for _, row in really_top_shortest_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -326,10 +359,29 @@
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
+</tbody></table>
+{% if rest_top_shortest_df.query('Domain == "Bacteria"').shape[0] > 0 %}
+  <details>
+    <summary><i>Позосталі гени такої ж довжижи (у десятку не увійшли випадково)</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
+  {% for _, row in rest_top_shortest_df.query('Domain == "Bacteria"').iterrows() %}
+  <tr class="sumtab-row">
+  <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+  <td class="numcol">{{ row['len'] }}</td>
+  <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
+  <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+  </tr>
+  {% endfor %}
+  </tbody></table>
+  </details>
+{% endif %}
+<table class="sum-table"><tbody>
 <tr>
 <td colspan="4" class="subhead">Археї</td>
 </tr>
-{% for _, row in ribogrove_top_shortest_df.query('Domain == "Archaea"').iterrows() %}
+<tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
+{% for _, row in really_top_shortest_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -337,29 +389,60 @@
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
-</tbody>
-</table>
-<p><sup>*</sup> SeqID — це ідентифікатор послідовності RiboGrove.</p>
+</tbody></table>
+{% if rest_top_shortest_df.query('Domain == "Archaea"').shape[0] > 0 %}
+  <details>
+    <summary><i>Позосталі гени такої ж довжижи (у десятку не увійшли випадково)</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
+  {% for _, row in rest_top_shortest_df.query('Domain == "Archaea"').iterrows() %}
+  <tr class="sumtab-row">
+  <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+  <td class="numcol">{{ row['len'] }}</td>
+  <td class="seqid-td">{{ '<br>'.join(row['seqID']) }}</td>
+  <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+  </tr>
+  {% endfor %}
+  </tbody></table>
+  </details>
+{% endif %}
 
 <div id="top-copy-num" class="pad-anchor"></div>
-<table class="sum-table">
-<caption>Топ-10 геномів за найбільшею кілкістю копій генів 16S рРНК</caption>
+<table class="sum-table"><caption>Топ-10 геномів за найбільшею кількістю копій генів 16S рРНК</caption>
 <tbody>
 <tr><th class="alnleft">Організм</th><th class="numcol">Кількість копій</th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
 <tr>
 <td colspan="4" class="subhead">Бактерії</td>
 </tr>
-{% for _, row in ribogrove_top_copy_numbers_df.query('Domain == "Bacteria"').iterrows() %}
+{% for _, row in really_top_gcn_df.query('Domain == "Bacteria"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
 <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
 </tr>
 {% endfor %}
+</tbody></table>
+{% if rest_top_gcn_df.query('Domain == "Bacteria"').shape[0] > 0 %}
+  <details>
+    <summary><i>Позосталі геноми з такою ж кількістю копій (у десятку не увійшли випадково)</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Організм</th><th class="numcol">Кількість копій</th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
+    {% for _, row in rest_top_gcn_df.query('Domain == "Bacteria"').iterrows() %}
+    <tr class="sumtab-row">
+    <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+    <td class="numcol">{{ row['copy_number'] }}</td>
+    <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody></table>
+  </details>
+{% endif %}
+<table class="sum-table"><tbody>
+<tr><th class="alnleft">Організм</th><th class="numcol">Кількість копій</th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
 <tr>
 <td colspan="4" class="subhead">Археї</td>
 </tr>
-{% for _, row in ribogrove_top_copy_numbers_df.query('Domain == "Archaea"').iterrows() %}
+{% for _, row in really_top_gcn_df.query('Domain == "Archaea"').iterrows() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
@@ -368,6 +451,21 @@
 {% endfor %}
 </tbody>
 </table>
+{% if rest_top_gcn_df.query('Domain == "Archaea"').shape[0] > 0 %}
+  <details>
+    <summary><i>Позосталі геноми з такою ж кількістю копій (у десятку не увійшли випадково)</i></summary>
+  <table class="sum-table"><tbody>
+  <tr><th class="alnleft">Організм</th><th class="numcol">Кількість копій</th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
+    {% for _, row in rest_top_gcn_df.query('Domain == "Archaea"').iterrows() %}
+    <tr class="sumtab-row">
+    <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+    <td class="numcol">{{ row['copy_number'] }}</td>
+    <td><a href="https://ncbi.nlm.nih.gov/datasets/genome/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody></table>
+  </details>
+{% endif %}
 
 <div id="top-var" class="pad-anchor"></div>
 <table class="sum-table">
