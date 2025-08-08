@@ -9,7 +9,9 @@ import subprocess as sp
 from Bio import SeqIO
 from pandas import Series
 
-from src.file_navigation import get_asm_report_fpath, get_genome_seqannot_fpath
+from src.file_navigation import get_asm_data_dir_path, \
+                                get_asm_report_fpath, \
+                                get_genome_seqannot_fpath
 
 
 class GenomeDownloader:
@@ -23,7 +25,7 @@ class GenomeDownloader:
         self.asm_name           = self._parse_asm_name(
             self.asm_basedir_url, self.assembly_accession
         )
-        self.genome_dirpath = os.path.join(outdir, self.assembly_accession)
+        self.genome_dirpath = get_asm_data_dir_path(self.assembly_accession, outdir)
         self.asm_report_fpath = get_asm_report_fpath(
             self.assembly_accession,
             outdir
