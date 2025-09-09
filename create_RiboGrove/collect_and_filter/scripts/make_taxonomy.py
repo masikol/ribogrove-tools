@@ -126,21 +126,6 @@ def reformat_rankedlineaage_file(rankedlineage_path: str) -> str:
 # end def
 
 
-
-def amend_Cyanophyceae(row: pd.Series) -> pd.Series:
-    # NCBI taxonomy violently omits 'class' taxon for Cyanobacteria.
-    # But they have class: all the same -- Cyanophyceae (see https://lpsn.dsmz.de/class/cyanophyceae).
-    # This function restores justice. Long live Cyanobacteria!
-    # The function is meant to be used with `pd.DataFrame.apply` function
-
-    if row['Phylum'] == 'Cyanobacteria':
-        row['Class'] = 'Cyanophyceae'
-    # end if
-
-    return row
-# end def
-
-
 def fill_empty_species_name(row: pd.Series) -> pd.Series:
     # If taxid points to a species, (like 1642), it's taxonomy contains no 'species' fiels.
     # Well, then we will copy it from 'organism_name' field.
@@ -232,7 +217,7 @@ def request_missing_taxonomy(taxid):
     # :param taxid: target Taxonomy ID;
     # :type taxid: int;
 
-    ranks = ('Superkingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species')
+    ranks = ('Domain', 'Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species')
 
     # These words at second (with index 1) position of title indicate that
     #   actual species name are specified after it.
@@ -255,6 +240,7 @@ def request_missing_taxonomy(taxid):
         return {
             'organism_name': 'NA',
             'Domain': 'NA',
+            'Kingdom': 'NA',
             'Phylum': 'NA',
             'Class': 'NA',
             'Order': 'NA',
@@ -269,7 +255,7 @@ def request_missing_taxonomy(taxid):
         tax_tuple[0].lower(): tax_tuple[1] for tax_tuple in taxonomy
     }
 
-    # We will leave only following taxonomic ranks: domain, phylum, class, order, family, genus.
+    # We will leave only following taxonomic ranks: domain, kingdom, phylum, class, order, family, genus.
     # Species name requires special handling, it will be added later.
     ranks_to_select = ranks[:-1]
 
@@ -320,10 +306,6 @@ def request_missing_taxonomy(taxid):
             taxonomy_dict[rank_name] = 'NA'
         # end if
     # end for
-
-    # Rename 'Superkingdom' -> 'Domain'
-    taxonomy_dict['Domain'] = taxonomy_dict['Superkingdom']
-    del taxonomy_dict['Superkingdom']
 
     return taxonomy_dict
 # end def
@@ -388,7 +370,7 @@ rankedlineage_df = pd.read_csv(
     names=[
         'taxid', 'organism_name',
         'Species', 'Genus', 'Family', 'Order', 'Class', 'Phylum',
-        'Unknown_1', 'Unknown_2', 'Domain'
+        'Kingdom', 'Domain'
     ],
     header=None,
     index_col=False,
@@ -401,15 +383,14 @@ rankedlineage_df = pd.read_csv(
         'Order': str,
         'Class': str,
         'Phylum': str,
-        'Unknown_1': str,
-        'Unknown_2': str,
+        'Kingdom': str,
         'Domain': str
     }
 )
 
 # Remove columns of no interest
 rankedlineage_df = rankedlineage_df.drop(
-    columns=['organism_name', 'Unknown_1', 'Unknown_2'],
+    columns=['organism_name',],
     axis=1
 )
 
@@ -440,8 +421,6 @@ if len(missing_taxids) != 0:
 del missing_taxids
 
 
-# Amend class for Cyanobacteria
-taxonomy_df = taxonomy_df.apply(amend_Cyanophyceae, axis=1)
 # Amend species names
 taxonomy_df = taxonomy_df.apply(fill_empty_species_name, axis=1)
 
@@ -457,6 +436,7 @@ taxonomy_df = taxonomy_df[
         'Order',
         'Class',
         'Phylum',
+        'Kingdom',
         'Domain',
     ]
 ]

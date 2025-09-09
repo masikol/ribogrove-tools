@@ -498,7 +498,7 @@
 
 <p><sup>*</sup> Спектр действия пары праймеров — это процент геномов, которые содержат как минимум один ген 16S рРНК, который возможно амплифицировать с помощью ПЦР используя эту пару праймеров. Подробности описаны в нашей <a href="https://doi.org/10.1016/j.resmic.2022.103936">статье про RiboGrove</a>.</p>
 <p>В таблицах ниже можно найти спектры действия пар праймеров, которые обычно используются для амплификации бактериальных и архейных генов 16S рРНК („бактериальные“ и „архейные“ праймеры).</p>
-<p>Есть более подробная таблица — в файле <span class="samp">primer_pair_genomic_coverage.tsv</span> в метаданных <a href="#downloads">metadata</a>. Та таблица содержит спектры действия не только для отделов (phyla), но и для каждого класса, порядка, семейства, рода и вида. Кроме того, та таблица содержит спектры действия для дополнительных пар праймеров, а именно: {{ unwanted_primer_pairs }}. В таблицах ниже нет этих пар, чтобы таблицы не были слишком громоздкими.</p>
+<p>Есть более подробная таблица — в файле <span class="samp">primer_pair_genomic_coverage.tsv</span> в метаданных <a href="#downloads">metadata</a>. Та таблица содержит спектры действия не только для отделов (phyla), но и для каждого царства (kingdom), класса, порядка, семейства, рода и вида. Кроме того, та таблица содержит спектры действия для дополнительных пар праймеров, а именно: {{ unwanted_primer_pairs }}. В таблицах ниже нет этих пар, чтобы таблицы не были слишком громоздкими.</p>
 
 <table class="sum-table"><caption>Бактерияльные гены, „бактерияльные“ праймеры</caption>
 <tbody class="primer-cov-tbody">
@@ -668,7 +668,7 @@
 <div id="header-format" class="pad-anchor"></div>
 <h3>Формат fasta-заголовка</h3>
 <p>Fasta-файлы, составляющие базу данных RiboGrove имеют следующий формат заголовка:</p>
-<p class="samp-highl samp-vwide" style="font-size:14px">&gt;GCF_000978375.1:NZ_CP009686.1:8908-10459:plus ;d__Bacteria;p__Firmicutes;c__Bacilli;o__Bacillales;f__Bacillaceae;g__Bacillus;s__cereus; category:1</p>
+<p class="samp-highl samp-vwide" style="font-size:14px">&gt;GCF_000978375.1:NZ_CP009686.1:8908-10459:plus ;d__Bacteria;k__Bacillati;p__Bacillota;c__Bacilli;o__Bacillales;f__Bacillaceae;g__Bacillus;s__cereus; category:1</p>
 <p>Основные части заголовка отделены друг от друга пробелами. Заголовок состоит из трёх таких частей:</p>
 <ol>
 <li>Идентификатор последовательности (seqID): <span class="samp-highl">GCF_000978375.1:NZ_CP009686.1:8908-10459:plus</span>. SeqID, в свою очередь, состоит из четырёх частей, отделённых друг от друга двоеточиями (<span class="samp-highl">:</span>):
@@ -679,8 +679,8 @@
 <li>Знак цепи геномной последовательности из RefSeq, на которой расположен ген: <span class="samp-highl">plus</span> (либо <span class="samp-highl">minus</span>).</li>
 </ol>
 </li>
-<li>Строка таксономии, а именно названия домена (<span class="samp-highl">Bacteria</span>), отдела (<span class="samp-highl">Firmicutes</span>), класса (<span class="samp-highl">Bacilli</span>), порядка (<span class="samp-highl">Bacillales</span>), семейства (<span class="samp-highl">Bacillaceae</span>) и рода (<span class="samp-highl">Bacillus</span>), а также видовой эпитет (<span class="samp-highl">cereus</span>).<br>
-Перед каждым названием пишется префикс, который обозначает ранг: <span class="samp-highl">d__</span> для домена, <span class="samp-highl">p__</span> для отдела, <span class="samp-highl">c__</span> для класса, <span class="samp-highl">o__</span> для порядка, <span class="samp-highl">f__</span> для семейства, <span class="samp-highl">g__</span> для рода и <span class="samp-highl">s__</span> для видового эпитета. В префиксах после буквы пишутся <strong>два</strong> знака нижнего подчёркивания.<br>
+<li>Строка таксономии, а именно названия домена (<span class="samp-highl">Bacteria</span>), царства (<span class="samp-highl">Bacillati</span>), отдела (<span class="samp-highl">Bacillota</span>), класса (<span class="samp-highl">Bacilli</span>), порядка (<span class="samp-highl">Bacillales</span>), семейства (<span class="samp-highl">Bacillaceae</span>) и рода (<span class="samp-highl">Bacillus</span>), а также видовой эпитет (<span class="samp-highl">cereus</span>).<br>
+Перед каждым названием пишется префикс, который обозначает ранг: <span class="samp-highl">d__</span> для домена, <span class="samp-highl">k__</span> для царства, <span class="samp-highl">p__</span> для отдела, <span class="samp-highl">c__</span> для класса, <span class="samp-highl">o__</span> для порядка, <span class="samp-highl">f__</span> для семейства, <span class="samp-highl">g__</span> для рода и <span class="samp-highl">s__</span> для видового эпитета. В префиксах после буквы пишутся <strong>два</strong> знака нижнего подчёркивания.<br>
 Названия разделены и окружены точками с запятой (<span class="samp-highl">;</span>).</li>
 <li>Категория генома, и которого происходит ген: (<span class="samp-highl">category:1</span>).</li>
 </ol>
@@ -705,8 +705,8 @@
 <p><strong>Пример 5</strong>. Выбрать все последовательности генов, которые происходят из геномов 1-й категории.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp "category:1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
 <p><strong>Пример 6</strong>. Выбрать все последовательности генов, кроме тех, которые принадлежат фирмикутам.</p>
-<p class="samp-highl samp-vwide">seqkit grep -nvrp ";p__Firmicutes;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p class="samp-comment">Обратите внимание на опцию <span class="samp">-v</span> внутри строки с опциями (<span class="samp">-nvrp</span>). Эта опция инвертирует поведение программы, и теперь она находит только те последовательности, в заголовках которых нет подстроки «<span class="samp">;p__Firmicutes;</span>».</p>
+<p class="samp-highl samp-vwide">seqkit grep -nvrp ";p__Bacillota;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p class="samp-comment">Обратите внимание на опцию <span class="samp">-v</span> внутри строки с опциями (<span class="samp">-nvrp</span>). Эта опция инвертирует поведение программы, и теперь она находит только те последовательности, в заголовках которых нет подстроки «<span class="samp">;p__Bacillota;</span>».</p>
 <div id="subset-by-len" class="pad-anchor"></div>
 <h4>Выборка последовательностей по длине</h4>
 <p>Отбирать последовательности по длине можно с помощью программы <span class="samp">seqkit seq</span>.</p>

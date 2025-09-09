@@ -87,6 +87,7 @@ print('outfpath: `{}`'.format(outfpath))
 # == Constants ==
 
 RANKS = (
+    'Kingdom',
     'Phylum',
     'Class',
     'Order',

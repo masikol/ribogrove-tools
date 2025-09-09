@@ -500,7 +500,7 @@
 
 <p><sup>*</sup> Coverage of a primer pair is the percent of genomes having at least one 16S rRNA gene which can be amplified by PCR using this primer pair. For details, see our <a href="https://doi.org/10.1016/j.resmic.2022.103936">paper about RiboGrove</a>.</p>
 <p>In the tables below, you can find coverage of primer pairs that are being commonly used to amplify bacterial and archaeal genes (“bacterial” and “archaeal” primers).</p>
-<p>You can find a more detailed table in the file <span class="samp">primer_pair_genomic_coverage.tsv</span> in the <a href="#downloads">metadata</a>. That table contains coverage not just for phyla, but also for each class, order, family, genus, and species. Moreover, that table contains coverage values for additional primer pairs, namely {{ unwanted_primer_pairs }}. In the tables below, they are omitted for brevity.</p>
+<p>You can find a more detailed table in the file <span class="samp">primer_pair_genomic_coverage.tsv</span> in the <a href="#downloads">metadata</a>. That table contains coverage not just for phyla, but also for each kingdom, class, order, family, genus, and species. Moreover, that table contains coverage values for additional primer pairs, namely {{ unwanted_primer_pairs }}. In the tables below, they are omitted for brevity.</p>
 
 <table class="sum-table"><caption>Bacterial genes, “bacterial” primers</caption>
 <tbody class="primer-cov-tbody">
@@ -669,7 +669,7 @@
 <div id="header-format" class="pad-anchor"></div>
 <h3>Header format</h3>
 <p>RiboGrove fasta data has the following format of header:</p>
-<p class="samp-highl samp-vwide" style="font-size:14px">&gt;GCF_000978375.1:NZ_CP009686.1:8908-10459:plus ;d__Bacteria;p__Firmicutes;c__Bacilli;o__Bacillales;f__Bacillaceae;g__Bacillus;s__cereus; category:1</p>
+<p class="samp-highl samp-vwide" style="font-size:14px">&gt;GCF_000978375.1:NZ_CP009686.1:8908-10459:plus ;d__Bacteria;k__Bacillati;p__Bacillota;c__Bacilli;o__Bacillales;f__Bacillaceae;g__Bacillus;s__cereus; category:1</p>
 <p>Major blocks of a header are separated by spaces. A header consists of three such blocks:</p>
 <ol>
 <li>Sequence ID (seqID): <span class="samp-highl">GCF_000978375.1:NZ_CP009686.1:8908-10459:plus</span>. SeqID, in turn, consists of four parts separated by semicolons (<span class="samp-highl">:</span>):
@@ -680,8 +680,8 @@
 <li>Strand of the RefSeq genomic sequence, where the gene is located: <span class="samp-highl">plus</span> (or <span class="samp-highl">minus</span>).</li>
 </ol>
 </li>
-<li>A taxonomy string, comprising domain (<span class="samp-highl">Bacteria</span>), phylum (<span class="samp-highl">Firmicutes</span>), class (<span class="samp-highl">Bacilli</span>), order (<span class="samp-highl">Bacillales</span>), family (<span class="samp-highl">Bacillaceae</span>), genus (<span class="samp-highl">Bacillus</span>) names, and the specific epithet (<span class="samp-highl">cereus</span>).<br>
-Each name is preceded by a prefix, which denotes rank: <span class="samp-highl">d__</span> for domain, <span class="samp-highl">p__</span> for phylum, <span class="samp-highl">c__</span> for class, <span class="samp-highl">o__</span> for order, <span class="samp-highl">f__</span> for family, <span class="samp-highl">g__</span> for genus, and <span class="samp-highl">s__</span> for specific epithet. Prefixes contain <strong>double</strong> underscores.<br>
+<li>A taxonomy string, comprising domain (<span class="samp-highl">Bacteria</span>), kingdom (<span class="samp-highl">Bacillati</span>), phylum (<span class="samp-highl">Bacillota</span>), class (<span class="samp-highl">Bacilli</span>), order (<span class="samp-highl">Bacillales</span>), family (<span class="samp-highl">Bacillaceae</span>), genus (<span class="samp-highl">Bacillus</span>) names, and the specific epithet (<span class="samp-highl">cereus</span>).<br>
+Each name is preceded by a prefix, which denotes rank: <span class="samp-highl">d__</span> for domain, <span class="samp-highl">k__</span> for kingdom, <span class="samp-highl">p__</span> for phylum, <span class="samp-highl">c__</span> for class, <span class="samp-highl">o__</span> for order, <span class="samp-highl">f__</span> for family, <span class="samp-highl">g__</span> for genus, and <span class="samp-highl">s__</span> for specific epithet. Prefixes contain <strong>double</strong> underscores.<br>
 The taxonomic names are separated and flanked by semicolons (<span class="samp-highl">;</span>).</li>
 <li>The category of the genome, from which the gene sequence originates: (<span class="samp-highl">category:1</span>).</li>
 </ol>
@@ -705,9 +705,9 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
 <p class="samp-comment">To ensure search specificity, surround the taxonomy name with semicolons (<span class="samp-highl">;</span>).</p>
 <p><strong>Example 5</strong>. Select all sequences originating from category 1 genomes.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp "category:1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p><strong>Example 6</strong>. Select all sequences except for those belonging to <i>Firmicutes</i>.</p>
-<p class="samp-highl samp-vwide">seqkit grep -nvrp ";p__Firmicutes;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p class="samp-comment">Recognize the <span class="samp">-v</span> option within the option sequence <span class="samp">-nvrp</span>. This option inverts match, i.e. output will comprise sequences, headers of which do <strong>not</strong> contain the substring “<span class="samp">;p__Firmicutes;</span>”.</p>
+<p><strong>Example 6</strong>. Select all sequences except for those belonging to <i>Bacillota</i>.</p>
+<p class="samp-highl samp-vwide">seqkit grep -nvrp ";p__Bacillota;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p class="samp-comment">Recognize the <span class="samp">-v</span> option within the option sequence <span class="samp">-nvrp</span>. This option inverts match, i.e. output will comprise sequences, headers of which do <strong>not</strong> contain the substring “<span class="samp">;p__Bacillota;</span>”.</p>
 <div id="select-by-len" class="pad-anchor"></div>
 <h4>Search sequences by length</h4>
 <p>You can use the <span class="samp">seqkit seq</span> program to select sequences by length.</p>

@@ -136,6 +136,7 @@ def get_taxonomy(asm_acc, tax_df):
 
     tax_names = [
         'NA' if pd.isnull(curr_tax_record[ 'Domain']) else curr_tax_record[ 'Domain'],
+        'NA' if pd.isnull(curr_tax_record['Kingdom']) else curr_tax_record['Kingdom'],
         'NA' if pd.isnull(curr_tax_record[ 'Phylum']) else curr_tax_record[ 'Phylum'],
         'NA' if pd.isnull(curr_tax_record[  'Class']) else curr_tax_record[  'Class'],
         'NA' if pd.isnull(curr_tax_record[  'Order']) else curr_tax_record[  'Order'],
@@ -144,7 +145,7 @@ def get_taxonomy(asm_acc, tax_df):
         species_name,
     ]
 
-    prefixes = ['d__', 'p__', 'c__', 'o__', 'f__', 'g__', 's__',]
+    prefixes = ['d__', 'k__', 'p__', 'c__', 'o__', 'f__', 'g__', 's__',]
 
     tax_names_with_prefixes = [
         '{}{}'.format(prefix, name) for prefix, name in zip(prefixes, tax_names)
@@ -183,6 +184,7 @@ tax_df = pd.read_csv(
         'Order': str,
         'Class': str,
         'Phylum': str,
+        'Kingdom': str,
         'Domain': str,
     }
 )

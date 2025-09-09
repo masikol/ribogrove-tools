@@ -508,7 +508,7 @@
 
 <p><sup>*</sup> Спектр дзеяння пары праймераў — гэта адсотак геномаў, якія маюць прынамсі адзін ген 16S рРНК, які магчыма ампліфікаваць з дапамогай ПЛР і з выкарыстаннем гэтай пары праймераў. Падрабязнасці апісаныя ў нашым <a href="https://masikol.github.io/latest_ribogrove_release_be.html#citing-ribogrove">артыкуле пра RiboGrove</a>.</p>
 <p>У табліцах нижэй можна знайсці спектры дзеяння пар праймераў, якія звычайна выкарыстозваюцца для ампліфікацыі бактэрыяльных і архейных генаў 16S рРНК (т.б.м., „бактэрыяльныя“ і „архейныя“ праймеры).</p>
-<p>Ёсць больш падрабязная табліца — у файле <span class="samp">primer_pair_genomic_coverage.tsv</span> у метададзеных <a href="#downloads">metadata</a>. Тая табліца змяшчае спектр дзеяння не толькі для тыпаў (phyla), але і для кожнага класу, парадку, сямейства, роду ды віду. Апроч таго, тая табліца змяшчае спектр дзеяння для дадатковых пар праймераў, а менавіта {{ unwanted_primer_pairs }}. У табліцах ніжэй няма гэтых пар, каб табліцы не былі занадта вялікімі.</p>
+<p>Ёсць больш падрабязная табліца — у файле <span class="samp">primer_pair_genomic_coverage.tsv</span> у метададзеных <a href="#downloads">metadata</a>. Тая табліца змяшчае спектр дзеяння не толькі для тыпаў (phyla), але і для кожнага царства (kingdom), класу, парадку, сямейства, роду ды віду. Апроч таго, тая табліца змяшчае спектр дзеяння для дадатковых пар праймераў, а менавіта {{ unwanted_primer_pairs }}. У табліцах ніжэй няма гэтых пар, каб табліцы не былі занадта вялікімі.</p>
 
 <table class="sum-table"><caption>Бактэрыяльныя гены, „бактэрыяльныя“ праймеры</caption>
 <tbody class="primer-cov-tbody">
@@ -628,7 +628,7 @@
 
 
 <details>
-<summary><b>Праймеры, спектр дзеяння якіх ацэньваўся<b></summary>
+<summary><b>Праймеры, спектр дзеяння якіх ацэньваўся</b></summary>
 <table class="sum-table"><caption>Праймеры, спектр дзеяння якіх ацэньваўся</caption>
 <tbody>
   <tr><th>Назва праймера</th><th>Паслядоўнасць</th><th>Спасылка</th></tr>
@@ -680,7 +680,7 @@
 <div id="header-format" class="pad-anchor"></div>
 <h3>Фармат загалоўка</h3>
 <p>Запісы паслядоўнасцяў RiboGrove у фармаце fasta маюць наступны фармат загалоўка:</p>
-<p class="samp-highl samp-vwide" style="font-size:14px">&gt;GCF_000978375.1:NZ_CP009686.1:8908-10459:plus ;d__Bacteria;p__Firmicutes;c__Bacilli;o__Bacillales;f__Bacillaceae;g__Bacillus;s__cereus; category:1</p>
+<p class="samp-highl samp-vwide" style="font-size:14px">&gt;GCF_000978375.1:NZ_CP009686.1:8908-10459:plus ;d__Bacteria;k__Bacillati;p__Bacillota;c__Bacilli;o__Bacillales;f__Bacillaceae;g__Bacillus;s__cereus; category:1</p>
 <p>Асноўныя часткі загалоўка адасобленыя адна ад адной прабеламі. У загалоўку павінна быць тры такія часткі:</p>
 <ol>
 <li>Ідэнтыфікатар паслядоўнасці (SeqID): <span class="samp-highl">GCF_000978375.1:NZ_CP009686.1:8908-10459:plus</span>. SeqID, у сваю чаргу, складаецца з чатырох частак, адасобленых двукропʼямі (<span class="samp-highl">:</span>):
@@ -691,8 +691,8 @@
 <li>Ланцуг геномнай паслядоўнасці, на якой ген знаходзіцца: <span class="samp-highl">plus</span> (альбо <span class="samp-highl">minus</span>).</li>
 </ol>
 </li>
-<li>Радок таксаноміі, а менавіта назвы дамену (<span class="samp-highl">Bacteria</span>), тыпу (<span class="samp-highl">Firmicutes</span>), класу (<span class="samp-highl">Bacilli</span>), парадку (<span class="samp-highl">Bacillales</span>), сямейства (<span class="samp-highl">Bacillaceae</span>), роду (<span class="samp-highl">Bacillus</span>), а таксама відавы эпітэт (<span class="samp-highl">cereus</span>).<br>
-Перад кожнай назвай пішацца прэфікс, які пазначае ранг: <span class="samp-highl">d__</span> для дамену, <span class="samp-highl">p__</span> для тыпу, <span class="samp-highl">c__</span> для класу, <span class="samp-highl">o__</span> для парадку, <span class="samp-highl">f__</span> для сямейства, <span class="samp-highl">g__</span> для роду і <span class="samp-highl">s__</span> для відавага эпітэту. У прэфіксах пасля літары пішуцца <strong>два</strong> знакі ніжняга падкрэслівання.<br>
+<li>Радок таксаноміі, а менавіта назвы дамену (<span class="samp-highl">Bacteria</span>), царства (<span class="samp-highl">Bacillati</span>), тыпу (<span class="samp-highl">Bacillota</span>), класу (<span class="samp-highl">Bacilli</span>), парадку (<span class="samp-highl">Bacillales</span>), сямейства (<span class="samp-highl">Bacillaceae</span>), роду (<span class="samp-highl">Bacillus</span>), а таксама відавы эпітэт (<span class="samp-highl">cereus</span>).<br>
+Перад кожнай назвай пішацца прэфікс, які пазначае ранг: <span class="samp-highl">d__</span> для дамену, <span class="samp-highl">k__</span> для царства, <span class="samp-highl">p__</span> для тыпу, <span class="samp-highl">c__</span> для класу, <span class="samp-highl">o__</span> для парадку, <span class="samp-highl">f__</span> для сямейства, <span class="samp-highl">g__</span> для роду і <span class="samp-highl">s__</span> для відавага эпітэту. У прэфіксах пасля літары пішуцца <strong>два</strong> знакі ніжняга падкрэслівання.<br>
 Таксанамічныя назвы адасобленыя і аточаныя кропкамі з коскай (<span class="samp-highl">;</span>).</li>
 <li>Катэгорыя геному, з якога паслядоўнасць гена паходзіць: (<span class="samp-highl">category:1</span>).</li>
 </ol>
@@ -716,9 +716,9 @@
 <p class="samp-comment">Каб забяспечыць спецыфічнасць пошуку, атачайце таксаномію кропкамі з коскай (<span class="samp-highl">;</span>).</p>
 <p><strong>Прыклад 5</strong>. Выбраць усе паслядоўнасці з геномаў катэгорыі 1.</p>
 <p class="samp-highl samp-vwide">seqkit grep -nrp "category:1" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p><strong>Прыклад 6</strong>. Выбраць усе паслядоўнасці апроч тых, якія належаць да тыпу <i>Firmicutes</i>.</p>
-<p class="samp-highl samp-vwide">seqkit grep -nvrp ";p__Firmicutes;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
-<p class="samp-comment">Звярніце ўвагу на опцыю <span class="samp">-v</span> у шэгару опцый <span class="samp">-nvrp</span>. Гэтая опцыя інвертуе паводзіны праграмы, і цяпер яна знойдзе ўсе паслядоўнасці, у загалоўках якіх <em>няма</em> радку «<span class="samp">;p__Firmicutes;</span>».</p>
+<p><strong>Прыклад 6</strong>. Выбраць усе паслядоўнасці апроч тых, якія належаць да тыпу <i>Bacillota</i>.</p>
+<p class="samp-highl samp-vwide">seqkit grep -nvrp ";p__Bacillota;" ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz</p>
+<p class="samp-comment">Звярніце ўвагу на опцыю <span class="samp">-v</span> у шэгару опцый <span class="samp">-nvrp</span>. Гэтая опцыя інвертуе паводзіны праграмы, і цяпер яна знойдзе ўсе паслядоўнасці, у загалоўках якіх <em>няма</em> радку «<span class="samp">;p__Bacillota;</span>».</p>
 <div id="subset-by-len" class="pad-anchor"></div>
 <h4>Адбор паслядоўнасцяў паводле даўжыні</h4>
 <p>Адбіраць паслядоўнасці паводле даўжыні можна з дапамогай праграмы <span class="samp">seqkit seq</span>.</p>
