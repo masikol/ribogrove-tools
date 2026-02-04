@@ -4,6 +4,9 @@
   <title>Дзеркало RiboGrove</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/release-page.css">
+  <meta name="google-site-verification" content="V7soLZAQ2olS4LhqXl5Xp7gVUDYzwOc3zwymWgks5ik" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body>
@@ -11,7 +14,7 @@
 <div class="lang-section">
 <p>&#127760;&nbsp;<a href="index.html">English</a> / <a href="latest_ribogrove_release_be.html">Беларуская</a> / <span class="active-lang">Українська</span> / <a href="latest_ribogrove_release_ru.html">Русский</a></p>
 </div>
-<p><div class="warn-section"><a href="https://mbio.bas-net.by/cager/en/ribogrove">Головний сайт</a>, де ми розміщуємо базу даних RiboGrove, може бути недосяжним поза межами Білорусі через технічні проблеми та біду взагалі. Актуальний реліз RiboGrove можна знайти тут — нехай база даних буде досяжна принаймни такою мірою.</div></p><br>
+<p><div class="warn-section"><a href="https://mbio.bas-net.by/cager/en/ribogrove.html">Головний сайт</a>, де ми розміщуємо базу даних RiboGrove, може бути недосяжним поза межами Білорусі через технічні проблеми та біду взагалі. Актуальний реліз RiboGrove можна знайти тут — нехай база даних буде досяжна принаймни такою мірою.</div></p><br>
 <h1 style="display:none">RiboGrove</h1>
 <img src="img/RiboGrove_logo.png"><br><br>
 <h2>Зміст</h2>
@@ -107,10 +110,11 @@
 <h3>Реліз RiboGrove {{ ribogrove_release_number }} ({{ ribogrove_release_date }})</h3>
 {% endif %}
 <p>Реліз заснований на базі даних RefSeq {{ refseq_release }}.</p>
+<p>DOI реліза RiboGrove {{ ribogrove_release_number }}: <a href="https://doi.org/{{ zenodo_doi }}">{{ zenodo_doi }}</a>.</p>
 <ul>
-<li>Fasta-файл повнорозмірних послідовностей генів 16S рРНК. <a href="ribogrove_releases/{{ ribogrove_release_number }}/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz">Завантажити („ґзіпʼнутий“ fasta-файл, {{ final_fasta_fsize_fmt }} Мб)</a></li>
+<li>Fasta-файл повнорозмірних послідовностей генів 16S рРНК. <a href="https://zenodo.org/records/{{ zenodo_record_id }}/files/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz?download=1">Завантажити („ґзіпʼнутий“ fasta-файл, {{ final_fasta_fsize_fmt }} Мб)</a></li>
 
-<li>Метадані. <a href="ribogrove_releases/{{ ribogrove_release_number }}/metadata_ribogrove_{{ ribogrove_release_number }}.zip">Завантажити (zip-архів {{ metadata_fsize_fmt }} Мб)</a><br>
+<li>Метадані. <a href="https://zenodo.org/records/{{ zenodo_record_id }}/files/metadata_ribogrove_{{ ribogrove_release_number }}.zip?download=1">Завантажити (zip-архів {{ metadata_fsize_fmt }} Мб)</a><br>
 <details>
   <summary><small>Яка саме інформація утримується у метаданих?</small></summary>
   <small>
@@ -507,7 +511,7 @@
 <div id="primers-coverages" class="pad-anchor"></div>
 <h3>Спектр дії<sup>*</sup> пар праймерів до різних V-регіонів бактеріальних генів 16S рРНК</h3>
 
-<p><sup>*</sup> Спектр дії пары праймерів — це видсоток геномів, які мають принаймні один ген 16S рРНК, який можливо заампліфікувати за допомогою ПЛР з застосуванням цієї пари праймерів. Деталі описані у нашому <a href="https://masikol.github.io/latest_ribogrove_release_ua.html#citing-ribogrove">артикулі про RiboGrove</a>.</p>
+<p><sup>*</sup> Спектр дії пары праймерів — це видсоток геномів, які мають принаймні один ген 16S рРНК, який можливо заампліфікувати за допомогою ПЛР з застосуванням цієї пари праймерів. Деталі описані у нашому <a href="https://doi.org/10.1016/j.resmic.2022.103936">артикулі про RiboGrove</a>.</p>
 <p>У таблицях нижче можна знайти спектри дії пар праймерів, які звичайно застосовуються для ампліфікації бактеріальних та архейних генів 16S рРНК („бактеріальні“ і „архейні“ праймери).</p>
 <p>Є більш детальна таблиця — у файлі <span class="samp">primer_pair_genomic_coverage.tsv</span> у метаданих <a href="#downloads">metadata</a>. Та таблиця утримує спектри дії не тільки для типів (phyla), але і для кожного царства (kingdom), класу, ряду, родини, роду та виду. Крім того, та таблиця утримує спектри дії для додаткових пар праймерів, а саме: {{ unwanted_primer_pairs }}. У таблицях нижче нема цих пар, щоб таблиці не були занадто великими.</p>
 
@@ -751,13 +755,18 @@
 <hr>
 <div id="contacts" class="pad-anchor"></div>
 <h2>Контакти</h2>
-<p>Якщо ви маєте питання щодо RiboGrove, будь ласка, звертайтеся до Максима Сиколенка на ел. адресу sikolenko<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">mbio.bas-net.by або maximdeynonih<img class="sabaka" src="img/pes2.gif" alt="[ at ]" align="bottom">gmail.com.</p>
+<p>Якщо ви маєте питання щодо RiboGrove, будь ласка, звертайтеся до Максима Сиколенка на ел. адресу &#115;&#105;&#107;&#111;&#108;&#101;&#110;&#107;&#111;&#64;&#109;&#98;&#105;&#111;&#46;&#98;&#97;&#115;&#45;&#110;&#101;&#116;&#46;&#98;&#121; або &#109;&#97;&#120;&#105;&#109;&#100;&#101;&#121;&#110;&#111;&#110;&#105;&#104;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;.</p>
 {% if not archive %}
 <hr>
 <div id="citing-ribogrove" class="pad-anchor"></div>
 <h2>Цитування RiboGrove</h2>
 <p>Якщо база даних RiboGrove сталася корисною для ваших досліджень, посилайтеся, будь ласка, на наступну публікацію:</p>
 <p>Maxim A. Sikolenko, Leonid N. Valentovich. “RiboGrove: a database of full-length prokaryotic 16S rRNA genes derived from completely assembled genomes” // Research in Microbiology, Volume 173, Issue 4, May 2022, 103936.<br> (ЦІО: <a href="https://doi.org/10.1016/j.resmic.2022.103936">10.1016/j.resmic.2022.103936</a>).</p>
+<p>Крім того, можна цитувати базу даних RiboGrove саму по собі на Zenodo:</p>
+<ul>
+  <li>RiboGrove безвідносно конкретного релізу: <a href="https://doi.org/{{ zenodo_ribogrove_doi }}">DOI: {{ zenodo_ribogrove_doi }}</a>;</li>
+  <li>Конкретно реліз {{ zenodo_record_id }}: <a href="https://doi.org/{{ zenodo_doi }}">DOI: {{ zenodo_doi }}</a>.</li>
+</ul>
 <hr>
 <div id="faq" class="pad-anchor"></div>
 <h2>Питання, які люди задають про RiboGrove</h2>

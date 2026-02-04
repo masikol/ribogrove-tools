@@ -1,5 +1,22 @@
+<!DOCTYPE html>
+<html lang="be">
+<head>
+  <title>RiboGrove mirror</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/release-page.css">
+  <meta name="google-site-verification" content="V7soLZAQ2olS4LhqXl5Xp7gVUDYzwOc3zwymWgks5ik" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+</head>
+
+<body>
+<div class="container">
+<div class="lang-section">
+<p>&#127760;&nbsp;<span class="active-lang">English</span> / <a href="latest_ribogrove_release_be.html">Беларуская</a> / <a href="latest_ribogrove_release_ua.html">Українська</a> / <a href="latest_ribogrove_release_ru.html">Русский</a></p>
+</div>
+<p><div class="warn-section">The <a href="https://mbio.bas-net.by/cager/en/ribogrove.html">main website</a> where RiboGrove is hosted may be unavailable outside Belarus due to technical troubles and the overall disaster.<br>Hence this mirror has been created, and RiboGrove files are available through Zenodo (links are <a href="#downloads">below</a>).</div></p><br>
 <h1 style="display:none">RiboGrove</h1>
-<img src="/cager/Documents/uploads/RiboGrove_logo.png"><br><br>
+<img src="img/RiboGrove_logo.png"><br><br>
 <h2>Contents</h2>
 <ul>
 {% if not archive %}
@@ -146,11 +163,11 @@
 <p>The fasta file is compressed with gzip, and the metadata file is a zip archive. To uncompress them, Linux and Mac OS users may use gzip and zip programs, they should be built-in. For Windows users, the free and open-source (de)compression program <a href="https://www.7-zip.org/">7-Zip</a> is available.</p>
 <div id="release-archive" class="pad-anchor"></div>
 <h3>RiboGrove release archive</h3>
-<p>You can find all releases in the <a href="https://mbio.bas-net.by/cager/en/ribogrove-archive.html">RiboGrove release archive</a>.</p>
+<p>You can find all releases in the <a href="archive/ribogrove_archive_en.html">RiboGrove release archive</a>.</p>
 <div id="release-notes" class="pad-anchor"></div>
 <h3>Release notes</h3>
 <p><i>No important differences from the previous release.</i></p>
-<p>You can find notes to all RiboGrove releases on the <a href="https://mbio.bas-net.by/cager/en/ribogrove-notes.html">release notes page</a>.</p>
+<p>You can find notes to all RiboGrove releases on the <a href="ribogrove_release_notes_en.html">release notes page</a>.</p>
 <hr>
 <div id="summary" class="pad-anchor"></div>
 <h2>Statistical summary</h2>
@@ -769,3 +786,9 @@ The taxonomic names are separated and flanked by semicolons (<span class="samp-h
   <p>People have already provided several useful answers in the corresponding discussion: <a href="https://www.biostars.org/p/9561418">https://www.biostars.org/p/9561418</a>.</p>
 </details></div>
 {% endif %}
+<br>
+<hr>
+<p>RiboGrove, {{ ribogrove_release_date }}</p>
+</div>
+</body>
+</html>

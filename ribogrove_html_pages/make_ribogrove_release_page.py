@@ -100,6 +100,18 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    '--zenodo-doi',
+    help='Zenodo DOI of this particular RiboGrove release',
+    required=True
+)
+
+parser.add_argument(
+    '--zenodo-record-id',
+    help='Zenodo record ID (e.g. 17201587 for https://zenodo.org/records/17201587) of this particular RiboGrove release',
+    required=True
+)
+
+parser.add_argument(
     '--archive',
     help='make pages for an archive realease, i.e. they shall be reduced',
     action='store_true'
@@ -137,6 +149,8 @@ source_genomes_fpath = os.path.abspath(args.source_genomes)
 primers_fpath = os.path.abspath(args.primers_cov)
 archive = args.archive
 outdpath = os.path.abspath(args.outdir)
+zenodo_doi = args.zenodo_doi
+zenodo_record_id = args.zenodo_record_id
 seqkit_fpath = os.path.abspath(args.seqkit)
 
 
@@ -189,6 +203,8 @@ del input_fpaths, fpath
 STRAIN_DESIGNATION_PATTERN = re.compile(
     r'strain=(.+)'
 )
+
+RIBOGROVE_ZENODO_DOI = '10.5281/zenodo.17190266'
 
 
 # == Some functions ==
@@ -433,13 +449,19 @@ print('done\n')
 
 template_fpaths = (
     'ribogrove_page_template_en.tpl',
-    'ribogrove_page_template_ru.tpl',
-    'ribogrove_page_template_ua.tpl',
+    'ribogrove_page_template_en.mirror.tpl',
     'ribogrove_page_template_be.tpl',
+    'ribogrove_page_template_be.mirror.tpl',
+    'ribogrove_page_template_ua.mirror.tpl',
+    'ribogrove_page_template_ru.tpl',
+    'ribogrove_page_template_ru.mirror.tpl',
 )
 
 thousand_separators = (
     ',',
+    ',',
+    '&nbsp;',
+    '&nbsp;',
     '&nbsp;',
     '&nbsp;',
     '&nbsp;',
@@ -447,6 +469,9 @@ thousand_separators = (
 
 decimal_separators = (
     '.',
+    '.',
+    ',',
+    ',',
     ',',
     ',',
     ',',
@@ -454,9 +479,12 @@ decimal_separators = (
 
 strains_names_functions = (
     retrieve_strain_name_en,
-    retrieve_strain_name_ru,
-    retrieve_strain_name_ua,
+    retrieve_strain_name_en,
     retrieve_strain_name_be,
+    retrieve_strain_name_be,
+    retrieve_strain_name_ua,
+    retrieve_strain_name_ru,
+    retrieve_strain_name_ru,
 )
 
 # Paths to output files
@@ -588,7 +616,10 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
                 italicize_candidatus=italicize_candidatus,
                 bacterial_primer_pairs=bacterial_primer_pairs,
                 archaeal_primer_pairs=archaeal_primer_pairs,
-                unwanted_primer_pairs=', '.join(parse_unwanted_primer_pairs())
+                unwanted_primer_pairs=', '.join(parse_unwanted_primer_pairs()),
+                zenodo_ribogrove_doi=RIBOGROVE_ZENODO_DOI,
+                zenodo_doi=zenodo_doi,
+                zenodo_record_id=zenodo_record_id
         )
     # end with
 

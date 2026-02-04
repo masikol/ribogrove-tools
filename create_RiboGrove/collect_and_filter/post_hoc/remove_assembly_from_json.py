@@ -26,7 +26,7 @@ with gzip.open(json_fpath, 'rt') as input_handle:
 
 if not asm_acc_to_rm in dictionary.keys():
     print('Error!')
-    print('Cannot file assembly acession `{}` in the json file'.format(asm_acc_to_rm))
+    print('Cannot find assembly acession `{}` in the json file'.format(asm_acc_to_rm))
     print('Refusing to rewrite')
     sys.exit(0)
 # end if

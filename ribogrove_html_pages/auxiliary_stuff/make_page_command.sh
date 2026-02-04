@@ -88,3 +88,22 @@ python3 make_ribogrove_release_page.py \
   --primers-cov /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/26.232/metadata/primer_pair_genomic_coverage.tsv \
   --outdir /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_pages/26.232 \
   --seqkit /usr/bin/seqkit
+
+
+# Add Zenodo
+
+python3 make_ribogrove_release_page.py \
+  --release-num 27.233 \
+  --release-date 2026-02-03 \
+  --final-fasta /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/27.233/ribogrove_27.233_sequences.fasta.gz \
+  --metadata /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/27.233/metadata_ribogrove_27.233.zip \
+  --base-counts /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/27.233/metadata/gene_seqs_base_counts.tsv \
+  --taxonomy /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/27.233/metadata/taxonomy.tsv \
+  --categories /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/27.233/metadata/categories.tsv \
+  --entropy-summary /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/27.233/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/27.233/metadata/source_RefSeq_genomes.tsv \
+  --primers-cov /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/27.233/metadata/primer_pair_genomic_coverage.tsv \
+  --outdir /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_pages/27.233 \
+  --seqkit /usr/bin/seqkit \
+  --zenodo-doi '10.5281/zenodo.17273649' \
+  --zenodo-record-id '17273649'

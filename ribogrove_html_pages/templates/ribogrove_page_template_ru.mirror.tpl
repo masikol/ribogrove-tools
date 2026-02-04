@@ -1,5 +1,22 @@
+<!DOCTYPE html>
+<html lang="be">
+<head>
+  <title>RiboGrove mirror</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/release-page.css">
+  <meta name="google-site-verification" content="V7soLZAQ2olS4LhqXl5Xp7gVUDYzwOc3zwymWgks5ik" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+</head>
+
+<body>
+<div class="container">
+<div class="lang-section">
+<p>&#127760;&nbsp;<a href="index.html">English</a> / <a href="latest_ribogrove_release_ru.html">Беларуская</a> / <a href="latest_ribogrove_release_ua.html">Українська</a> / <span class="active-lang">Русский</span></p>
+</div>
+<p><div class="warn-section"><a href="https://mbio.bas-net.by/cager/ru/ribogrove.html">Основной сайт</a>, где мы размещаем базу данных RiboGrove, может быть недоступен за пределами Беларуси из-за технических бед и беды вообще.<br>Поэтому мы создали это зеркало, а файлы RiboGrove доступны через Дропбокс (ссылки <a href="#downloads">ниже</a>).</div></p><br>
 <h1 style="display:none">RiboGrove</h1>
-<img src="/cager/Documents/uploads/RiboGrove_logo.png"><br><br>
+<img src="img/RiboGrove_logo.png"><br><br>
 <h2>Содержание</h2>
 <ul>
 {% if not archive %}
@@ -141,11 +158,11 @@
 <p>Fasta-файл сжат с помощью программы gzip, а метаданные — с помощью программы zip. Чтобы разархивировать их, пользователи Linux и Mac OS могут воспользоваться программами gzip и zip, соответственно; эти программы должны быть предустановлены. Пользователи же Windows могут воспользоваться бесплатной программой <a href="https://www.7-zip.org/">7-Zip</a>.</p>
 <div id="release-archive" class="pad-anchor"></div>
 <h3>Архив выпусков RiboGrove</h3>
-<p>Вы можете найти все выпуски RiboGrove в <a href="https://mbio.bas-net.by/cager/ru/ribogrove-archive.html">архиве выпусков RiboGrove</a>.</p>
+<p>Вы можете найти все выпуски RiboGrove в <a href="archive/ribogrove_archive_en.html">архиве выпусков RiboGrove</a>.</p>
 <div id="release-notes" class="pad-anchor"></div>
 <h3>Комментарии к выпуску</h3>
 <p><i>Нет принципиальных отличий от предыдущего выпуска.</i></p>
-<p>Комментарии ко всем выпускам RiboGrove можно найти на <a href="https://mbio.bas-net.by/cager/ru/ribogrove-notes.html">странице комментариев к выпускам</a>.</p>
+<p>Комментарии ко всем выпускам RiboGrove можно найти на <a href="ribogrove_release_notes_en.html">странице комментариев к выпускам</a>.</p>
 <hr>
 <div id="summary" class="pad-anchor"></div>
 <h2>Статистическое описание</h2>
@@ -768,3 +785,9 @@
   <p>В соответствующей дискуссии на форуме уже дали несколько полезных ответов и рекомендаций: <a href="https://www.biostars.org/p/9561418">https://www.biostars.org/p/9561418</a>.</p>
 </details></div>
 {% endif %}
+<br>
+<hr>
+<p>RiboGrove, {{ ribogrove_release_date }}</p>
+</div>
+</body>
+</html>

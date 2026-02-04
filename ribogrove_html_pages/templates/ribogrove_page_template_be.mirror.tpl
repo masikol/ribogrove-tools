@@ -1,5 +1,22 @@
+<!DOCTYPE html>
+<html lang="be">
+<head>
+  <title>Люстэрка RiboGrove</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/release-page.css">
+  <meta name="google-site-verification" content="V7soLZAQ2olS4LhqXl5Xp7gVUDYzwOc3zwymWgks5ik" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+</head>
+
+<body>
+<div class="container">
+<div class="lang-section">
+<p>&#127760;&nbsp;<a href="index.html">English</a> / <span class="active-lang">Беларуская</span> / <a href="latest_ribogrove_release_ua.html">Українська</a> / <a href="latest_ribogrove_release_ru.html">Русский</a></p>
+</div>
+<p><div class="warn-section"><a href="https://mbio.bas-net.by/cager/en/ribogrove.html">Асноўны сайт</a>, дзе размяшчаецца база дадзеных RiboGrove, можа быць недасяжным па-за межамі Беларусі праз тэхнічныя прычыны ды бяду даогул. Таму існуе гэтае люстэрка, а файлы RiboGrove дасяжныя праз Дропбокс (спасылкі <a href="#downloads">ніжэй</a>).</div></p><br>
 <h1 style="display:none">RiboGrove</h1>
-<img src="/cager/Documents/uploads/RiboGrove_logo.png"><br><br>
+<img src="img/RiboGrove_logo.png"><br><br>
 <h2>Змест</h2>
 <ul>
 {% if not archive %}
@@ -93,7 +110,6 @@
 {% endif %}
 <p>Выпуск заснованы на базе дадзеных RefSeq {{ refseq_release }}.</p>
 <p>DOI выпуска RiboGrove {{ ribogrove_release_number }}: <a href="https://doi.org/{{ zenodo_doi }}">{{ zenodo_doi }}</a>.</p>
-
 <ul>
 <li>Fasta-файл з поўнапамернымі паслядоўнасцямі генаў 16S рРНК. <a href="https://zenodo.org/records/{{ zenodo_record_id }}/files/ribogrove_{{ ribogrove_release_number }}_sequences.fasta.gz?download=1">Спампаваць („гзіпʼнуты“ fasta-файл, {{ final_fasta_fsize_fmt }} Мб)</a></li>
 <li>Метададзеныя. <a href="https://zenodo.org/records/{{ zenodo_record_id }}/files/metadata_ribogrove_{{ ribogrove_release_number }}.zip?download=1">Спампаваць (zip-архіў {{ metadata_fsize_fmt }} Мб)</a><br>
@@ -141,11 +157,11 @@
 <p>Файл fasta сціснуты з дапамогаю праграмы gzip, а файлы з метададзенымі сціснутыя ў zip-архіў. Каб распакаваць іх, карыстальнікі Linux і Mac OS могуць скарастыцца якраз праграмамі gzip і zip; гэтыя праграмы звычайна ўсталяваныя разам з аперыцыйнай сістэмай. Карыстальнікам Windows можа прыдацца бясплатная праграма-архіватар <a href="https://www.7-zip.org/">7-Zip</a>.</p>
 <div id="release-archive" class="pad-anchor"></div>
 <h3>Архіў выпускаў RiboGrove</h3>
-<p>Усе папярэднія выпускі можна знайсці ў <a href="https://mbio.bas-net.by/cager/be/ribogrove-archive.html"> архіве выпускаў RiboGrove</a>. На жаль, ён вядзецца толькі па-англійску.</p>
+<p>Усе папярэднія выпускі можна знайсці ў <a href="archive/ribogrove_archive_en.html"> архіве выпускаў RiboGrove</a>. На жаль, ён вядзецца толькі па-англійску.</p>
 <div id="release-notes" class="pad-anchor"></div>
 <h3>Каментары да выпуску</h3>
 <p><i>Няма прынцыповых адрозненняў ад папярэдняга выпуску.</i></p>
-<p>Каментары да ўсіх выпускаў RiboGrove можна знайсці на <a href="https://mbio.bas-net.by/cager/be/ribogrove-notes.html">старонцы каментароў да выпускаў</a>.</p>
+<p>Каментары да ўсіх выпускаў RiboGrove можна знайсці на <a href="ribogrove_release_notes_en.html">старонцы каментароў да выпускаў</a>.</p>
 <hr>
 <div id="summary" class="pad-anchor"></div>
 <h2>Статыстычнае апісанне</h2>
@@ -767,3 +783,9 @@
   <p>У адпаведнай дыскусіі на форуме ўжо далі некалькі карысных адказаў і парад: <a href="https://www.biostars.org/p/9561418">https://www.biostars.org/p/9561418</a>.</p>
 </details></div>
 {% endif %}
+<br>
+<hr>
+<p>RiboGrove, {{ ribogrove_release_date }}</p>
+</div>
+</body>
+</html>
