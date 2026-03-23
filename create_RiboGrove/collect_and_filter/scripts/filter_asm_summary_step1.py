@@ -30,6 +30,8 @@
 
 
 import os
+import sys
+
 from src.rg_tools_time import get_time
 
 print(
@@ -166,21 +168,14 @@ def set_up_ass_level(row):
 
 
 def remove_blacklist(ass_sum_df, blacklist_fpath):
-    blacklist_accs = read_blacklist(blacklist_fpath)
-    ass_sum_df['acc_no_version'] = np.repeat('', ass_sum_df.shape[0])
-    ass_sum_df = ass_sum_df.apply(set_acc_no_version, axis=1)
+    blacklist_asm_accs = read_blacklist(blacklist_fpath)
 
     filt_ass_sum_df = ass_sum_df.query(
-        'not acc_no_version in @blacklist_accs'
+        'not asm_acc in @blacklist_asm_accs'
     )
 
     filt_ass_sum_df = filt_ass_sum_df.drop(columns=['acc_no_version'])
     return filt_ass_sum_df
-# end def
-
-def set_acc_no_version(row):
-    row['acc_no_version'] = row['asm_acc'].partition('.')[0]
-    return row
 # end def
 
 def read_blacklist(blacklist_fpath):
@@ -196,6 +191,20 @@ def read_blacklist(blacklist_fpath):
         # end while
     # end with
     return accessions
+# end def
+
+
+def find_updated_blacklist_asm_accs(ass_sum_df, blacklist_fpath):
+    blacklist_asm_accs = read_blacklist(blacklist_fpath)
+    blacklist_asm_accs_no_version = frozenset([
+        asm_acc.partition('.')[2] for asm_acc in blacklist_asm_accs
+    ])
+
+    actual_asm_accs_no_version = frozenset(
+        asm_acc.partition('.')[2] for asm_acc in ass_sum_df['asm_acc']
+    )
+
+    return actual_asm_accs_no_version & blacklist_asm_accs_no_version
 # end def
 
 
@@ -237,6 +246,22 @@ ass_sum_df = remove_blacklist(ass_sum_df, blacklist_fpath)
 step3_rownum = ass_sum_df.shape[0]
 print('3. Blacklist genomes are removed.')
 print('   {:,} genomes are retained.'.format(step3_rownum))
+
+# Check if there are any updated blacklisted genomes
+updated_blacklist_asm_accs = find_updated_blacklist_asm_accs(
+    ass_sum_df,
+    blacklist_fpath
+)
+if len(updated_blacklist_asm_accs) > 0:
+    print('WARNING!')
+    print('Some blacklisted asm_accs has been updated, they have newer versions:')
+    print(
+        '\n'.join(
+            ['  {}'.format(asm_acc) for asm_acc in updated_blacklist_asm_accs]
+        )
+    )
+    sys.exit(1)
+# end if
 
 # Output
 write_output(ass_sum_df, outfpath)
