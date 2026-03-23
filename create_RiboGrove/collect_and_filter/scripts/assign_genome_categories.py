@@ -3,8 +3,8 @@
 # The script assigns categories to downloaded genomes. Categories are assigned according
 #   to the reliability of a genome assembly.
 # The categories are the following:
-# Category 1. A genome is not of category 3, and it was sequenced using PacBio or ONT+Illumina.
-# Category 2. A genome is not of category 3, and it was sequenced neither using PacBio nor ONT+Illumina.
+# Category 1. A genome is not of category 3, and it was sequenced using PacBio or ONT+Illumina or ONT+MGI.
+# Category 2. A genome is not of category 3, and it was sequenced neither using PacBio nor ONT+Illumina nor ONT+MGI.
 # Category 3. At least one of the following is true:
 #   - A genome has at least one degenerate base in its SSU gene sequences.
 #   - At least one of the genomic sequences contains phrase "map unlocalized" in it title,
@@ -163,6 +163,9 @@ pacbio_vocab_fpath = os.path.realpath(
 illumina_vocab_fpath = os.path.realpath(
     os.path.join(data_dirpath, 'seqtech_dicts', 'illumina')
 )
+illumina_vocab_fpath = os.path.realpath(
+    os.path.join(data_dirpath, 'seqtech_dicts', 'mgi')
+)
 nanopore_vocab_fpath = os.path.realpath(
     os.path.join(data_dirpath, 'seqtech_dicts', 'ont')
 )
@@ -263,6 +266,21 @@ def is_illumina(seqtech_str: str) -> bool:
     )
 # end def
 
+def is_mgi(seqtech_str: str) -> bool:
+    # Function decides if genome was sequenced with MGI
+
+    global mgi_vocab
+
+    return any(
+        tuple(
+            map(
+                lambda x: x in seqtech_str,
+                mgi_vocab
+            )
+        )
+    )
+# end def
+
 def is_nanopore(seqtech_str: str) -> bool:
     # Function decides if genome was sequenced with Oxford Nanopore
 
@@ -317,6 +335,7 @@ stats_df = pd.read_csv(
 # Make vocabularies of seqtech keywords
 pacbio_vocab   = read_seqtech_vocab(pacbio_vocab_fpath)
 illumina_vocab = read_seqtech_vocab(illumina_vocab_fpath)
+mgi_vocab = read_seqtech_vocab(mgi_vocab_fpath)
 nanopore_vocab = read_seqtech_vocab(nanopore_vocab_fpath)
 
 
@@ -375,8 +394,10 @@ with open(outfpath, 'wt') as outfile:
         if degenerate_in_16S or unlocalized_16S:
             category = CATEGORY_3
         elif not seqtech is None:
+            is_nanopore = is_nanopore(seqtech)
             seqtech_is_cat1 = is_pacbio(seqtech) \
-                              or (is_illumina(seqtech) and is_nanopore(seqtech))
+                              or (is_illumina(seqtech) and is_nanopore) \
+                              or (is_mgi(seqtech) and is_nanopore)
             if seqtech_is_cat1:
                 category = CATEGORY_1
             else:
