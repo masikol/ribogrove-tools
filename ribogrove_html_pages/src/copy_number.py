@@ -1,12 +1,15 @@
 
 from functools import partial
 
+import numpy as np
 import pandas as pd
 
+from src.util import is_validlike_species_name
 from src.formatting import format_int_number, format_float_number
 
 
 def make_ribogrove_copy_number_df(gene_stats_df):
+
     bacteria_gcn_df = _make_per_species_median_gcn_df(gene_stats_df, 'Bacteria')
     archaea_gcn_df  = _make_per_species_median_gcn_df(gene_stats_df,  'Archaea')
 
@@ -41,15 +44,20 @@ def make_ribogrove_copy_number_df(gene_stats_df):
 
 
 def _make_per_species_median_gcn_df(gene_stats_df, domain_name):
+
     series_nunique = lambda x: x.nunique()
 
-    domain_gene_stats_df = gene_stats_df[gene_stats_df['Domain'] == domain_name]
+    domain_gene_stats_df = gene_stats_df[gene_stats_df['Domain'] == domain_name] \
+        .reset_index()
+    tmp_subset_df = domain_gene_stats_df[
+        is_validlike_species_name(domain_gene_stats_df['Species'])
+    ]
 
-    by_genome_copy_number_df = domain_gene_stats_df.groupby('asm_acc', as_index=False) \
+    by_genome_copy_number_df = tmp_subset_df.groupby('asm_acc', as_index=False) \
         .agg({'seqID': series_nunique}) \
         .rename(columns={'seqID': 'copy_number'}) \
         .merge(
-            domain_gene_stats_df[['asm_acc', 'Species']].drop_duplicates(),
+            tmp_subset_df[['asm_acc', 'Species']].drop_duplicates(),
             on='asm_acc',
             how='left'
         )
@@ -63,7 +71,7 @@ def _make_per_species_median_gcn_df(gene_stats_df, domain_name):
         .agg({'Species': series_nunique}) \
         .rename(columns={'Species': 'number_of_species'})
 
-    total_species_count = domain_gene_stats_df['Species'].nunique()
+    total_species_count = tmp_subset_df['Species'].nunique()
 
     ribogrove_copy_number_df['percent_of_species'] = ribogrove_copy_number_df['number_of_species'] \
                                                      / total_species_count \

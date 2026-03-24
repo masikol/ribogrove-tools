@@ -355,6 +355,9 @@ python3 "${MAKE_COV_TABLE_SCRIPT}" \
 cat "${tmp_file}" \
   | csvtk del-header -tT >> "${RIBOGROVE_PRIMER_COVERAGE_TABLE}"
 echo "${RIBOGROVE_PRIMER_COVERAGE_TABLE}"
+if [[ -f "${tmp_file}" ]]; then
+  rm "${tmp_file}"
+fi
 
 # Zip the metadata
 echo "Zipping the metadata directory: '${METADATA_DIR}/'"

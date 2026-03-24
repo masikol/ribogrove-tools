@@ -6,6 +6,7 @@ import subprocess as sp
 import pandas as pd
 
 from src.formatting import format_int_number
+from src.util import is_validlike_species_name
 
 
 def _init_size_dict():
@@ -122,13 +123,18 @@ def make_ribogrove_size_dict(final_fasta_fpath, gene_stats_df, seqkit_fpath):
     )
 
     # Count Number of species
-    ribogrove_size_dict['species_num']['Bacteria'] = gene_stats_df[
-        gene_stats_df['Domain'] == 'Bacteria'
-    ]['Species'].nunique()
-    ribogrove_size_dict['species_num']['Archaea'] = gene_stats_df[
-        gene_stats_df['Domain'] == 'Archaea'
-    ]['Species'].nunique()
-    ribogrove_size_dict['species_num']['Total'] = gene_stats_df['Species'].nunique()
+    total_species_count = 0
+    for domain in ('Bacteria', 'Archaea',):
+        species_set = frozenset(
+            gene_stats_df[gene_stats_df['Domain'] == domain]['Species']
+        )
+        ribogrove_size_dict['species_num'][domain] = len(tuple(filter(
+            is_validlike_species_name,
+            species_set
+        )))
+        total_species_count += ribogrove_size_dict['species_num'][domain]
+    # end for
+    ribogrove_size_dict['species_num']['Total'] = total_species_count
 
     # Count Number of genomes
     ribogrove_size_dict['genome_num']['Bacteria'] = gene_stats_df[

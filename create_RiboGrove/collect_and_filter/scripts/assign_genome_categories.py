@@ -163,7 +163,7 @@ pacbio_vocab_fpath = os.path.realpath(
 illumina_vocab_fpath = os.path.realpath(
     os.path.join(data_dirpath, 'seqtech_dicts', 'illumina')
 )
-illumina_vocab_fpath = os.path.realpath(
+mgi_vocab_fpath = os.path.realpath(
     os.path.join(data_dirpath, 'seqtech_dicts', 'mgi')
 )
 nanopore_vocab_fpath = os.path.realpath(
@@ -394,10 +394,10 @@ with open(outfpath, 'wt') as outfile:
         if degenerate_in_16S or unlocalized_16S:
             category = CATEGORY_3
         elif not seqtech is None:
-            is_nanopore = is_nanopore(seqtech)
+            is_nanopore_var = is_nanopore(seqtech)
             seqtech_is_cat1 = is_pacbio(seqtech) \
-                              or (is_illumina(seqtech) and is_nanopore) \
-                              or (is_mgi(seqtech) and is_nanopore)
+                              or (is_illumina(seqtech) and is_nanopore_var) \
+                              or (is_mgi(seqtech) and is_nanopore_var)
             if seqtech_is_cat1:
                 category = CATEGORY_1
             else:

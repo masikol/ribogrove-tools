@@ -45,7 +45,7 @@ class GenomeDownloader:
         # We get asm_name from ftp_path because asm_sum_row['asm_name'] is sometimes inconsistent with actual URLs.
         #  Some examples of inconsistency:
         #    GCF_902166805.1, GCF_000577895.1, GCF_900095285.1, GCF_905187425.1
-        return ftp_path \
+        return ftp_path.rstrip('/') \
             .split('/')[-1] \
             .replace('{}_'.format(asm_acc), '')
     # end def
@@ -269,7 +269,7 @@ class GenomeDownloader:
         # Dir url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/900/012/635/GCF_900012635.1_Pyrococcus_chitonophagus_genome_sequence
         # File name: GCF_900012635.1_Pyrococcus_chitonophagus_genome_sequence_assembly_report.txt
         return '{}/{}_{}_assembly_report.txt'.format(
-            self.asm_basedir_url,
+            self.asm_basedir_url.rstrip('/'),
             self.assembly_accession,
             self.asm_name
         )

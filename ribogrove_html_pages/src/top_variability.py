@@ -4,7 +4,15 @@ import pandas as pd
 
 from src.formatting import format_int_number, format_float_number
 
+
+_IGNORE_ASM_ACCS = {
+    'GCF_019974355.1', # just a large insertion in GCF_019974355.1:NZ_AP024929.1:249100-251537:minus. other positions are identical
+}
+
+
 def make_ribogrove_top_intragenomic_var_df(entropy_summary_df, gene_stats_df, top_num=10):
+
+    entropy_tmp_df = entropy_summary_df.query('not asm_acc in @_IGNORE_ASM_ACCS')
 
     # Columns for the output dataframe
     out_columns = [
@@ -29,7 +37,7 @@ def make_ribogrove_top_intragenomic_var_df(entropy_summary_df, gene_stats_df, to
         )
 
     # Map Assembly IDs to domain names
-    entropy_summary_df = entropy_summary_df.merge(
+    entropy_tmp_df = entropy_tmp_df.merge(
         by_genome_copy_number_df,
         on='asm_acc',
         how='left'
@@ -42,8 +50,8 @@ def make_ribogrove_top_intragenomic_var_df(entropy_summary_df, gene_stats_df, to
     for domain in ('Bacteria', 'Archaea'):
 
         # Create a dataframe of maximum sum of entropy for each genome
-        domain_entropy_df = entropy_summary_df[
-            entropy_summary_df['Domain'] == domain
+        domain_entropy_df = entropy_tmp_df[
+            entropy_tmp_df['Domain'] == domain
         ].sort_values(by='sum_entropy', ascending=False) \
             .reset_index()
 

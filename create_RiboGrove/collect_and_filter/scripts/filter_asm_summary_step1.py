@@ -174,7 +174,6 @@ def remove_blacklist(ass_sum_df, blacklist_fpath):
         'not asm_acc in @blacklist_asm_accs'
     )
 
-    filt_ass_sum_df = filt_ass_sum_df.drop(columns=['acc_no_version'])
     return filt_ass_sum_df
 # end def
 
@@ -197,11 +196,11 @@ def read_blacklist(blacklist_fpath):
 def find_updated_blacklist_asm_accs(ass_sum_df, blacklist_fpath):
     blacklist_asm_accs = read_blacklist(blacklist_fpath)
     blacklist_asm_accs_no_version = frozenset([
-        asm_acc.partition('.')[2] for asm_acc in blacklist_asm_accs
+        asm_acc.partition('.')[0] for asm_acc in blacklist_asm_accs
     ])
 
     actual_asm_accs_no_version = frozenset(
-        asm_acc.partition('.')[2] for asm_acc in ass_sum_df['asm_acc']
+        asm_acc.partition('.')[0] for asm_acc in ass_sum_df['asm_acc']
     )
 
     return actual_asm_accs_no_version & blacklist_asm_accs_no_version

@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 from src.formatting import format_float_number
+from src.util import is_validlike_species_name
 
 
 def _init_len_dict():
@@ -53,10 +54,10 @@ def make_ribogrove_len_dict(gene_stats_df):
 
     bacteria_df = gene_stats_df[
         gene_stats_df['Domain'] == 'Bacteria'
-    ]
+    ].reset_index()
     archaea_df = gene_stats_df[
         gene_stats_df['Domain'] == 'Archaea'
-    ]
+    ].reset_index()
 
     # Calculate minimum lengths
     ribogrove_len_dict['min']['Bacteria'] = bacteria_df['len'].min()
@@ -67,9 +68,15 @@ def make_ribogrove_len_dict(gene_stats_df):
     ribogrove_len_dict['max']['Archaea'] = archaea_df['len'].max()
 
     # Make normalized (by species) dataframe
-    bacteria_normalized_df = bacteria_df.groupby('Species', as_index=False) \
+    bacteria_normalized_df = bacteria_df[
+        is_validlike_species_name(bacteria_df['Species'])
+    ]
+    bacteria_normalized_df = bacteria_normalized_df.groupby('Species', as_index=False) \
         .agg({'len': 'median'})
-    archaea_normalized_df = archaea_df.groupby('Species', as_index=False) \
+    archaea_normalized_df = archaea_df[
+        is_validlike_species_name(archaea_df['Species'])
+    ]
+    archaea_normalized_df = archaea_normalized_df.groupby('Species', as_index=False) \
         .agg({'len': 'median'})
 
     # 25-th percentile

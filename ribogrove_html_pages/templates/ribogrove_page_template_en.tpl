@@ -71,7 +71,7 @@
 <h3>Genome categories</h3>
 <p>All genomes used for RiboGrove construction were divided into three categories according to their expected reliability:</p>
 <ol style="list-style:none;">
-  <li><strong>Category 1</strong> (the highest reliability). Genomes showing no signs of a low-quality assembly and sequenced either with PacBio technology or with a combination “Oxford&nbsp;Nanopore&nbsp;+&nbsp;Illumina”.</li>
+  <li><strong>Category 1</strong> (the highest reliability). Genomes showing no signs of a low-quality assembly and sequenced either with PacBio technology or with a combination “Oxford&nbsp;Nanopore&nbsp;+&nbsp;Illumina” or “Oxford&nbsp;Nanopore&nbsp;+&nbsp;Illumina”.</li>
   <li><strong>Category 2.</strong> Genomes showing no signs of a low-quality assembly and sequenced with any other technology (or the technology is not specified).</li>
   <li><strong>Category 3</strong> (the lowest reliability). Genomes showing at least one sign of a low-quality assembly.</li>
 </ol>
