@@ -37,8 +37,6 @@
 #   Please, use Infernal 1.1.1 with this script, to be fully consistent with the PGAP. Mandatory.
 # 2. `-r / --rfam-family-cm` -- an (uncompressed) `.cm` file containing a Rfam's (version 12.0)
 #    covariance models: ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz. Mandatory.
-# 3. `--seqkit` -- a `seqkit` executable: github.com/shenwei356/seqkit.
-#   Mandatory.
 
 
 import os
@@ -102,12 +100,6 @@ parser.add_argument(
     required=True
 )
 
-parser.add_argument(
-    '--seqkit',
-    help='seqkit executable',
-    required=True
-)
-
 # Prev "cached" data
 
 parser.add_argument(
@@ -151,7 +143,6 @@ outstats_fpath = os.path.realpath(args.out_stats)
 
 cmsearch_fpath = os.path.realpath(args.cmsearch)
 rfam_family_fpath = os.path.realpath(args.rfam_family_cm)
-seqkit_fpath = os.path.realpath(args.seqkit)
 
 if not args.prev_all_genes_fasta is None and not args.prev_all_genes_stats is None:
     cache_mode = True
@@ -188,9 +179,9 @@ for some_dir in map(os.path.dirname, [fasta_outfpath, outstats_fpath]):
     # end if
 # end if
 
-# Check existance of cmsearch executables --cmsearch and --seqkit
+# Check existance of cmsearch executables --cmsearch
 # And check if they are executable
-for fpath in (cmsearch_fpath, seqkit_fpath):
+for fpath in (cmsearch_fpath,):
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
         sys.exit(1)
@@ -227,7 +218,6 @@ if cache_mode:
     print(prev_all_fasta_fpath)
     print(prev_all_stats_fpath)
 # end if
-print(seqkit_fpath)
 print()
 
 
@@ -485,14 +475,20 @@ def remove_sestart_truncated_gene(tblout_df: pd.DataFrame) -> pd.DataFrame:
     def set_remove_flag(row):
         if row['strand'] == '+':
             if row['seq_from'] == 1: # if gene may be truncated by sequence start
-                fixed_copy_exists = tblout_df[tblout_df['seq_to'] == row['seq_to']].shape[0] > 1
+                fixed_copy_exists = tblout_df[
+                    (tblout_df['seq_to'] == row['seq_to']) \
+                  & (tblout_df['score'] > row['score'])
+                ].shape[0] > 0
                 if fixed_copy_exists: # if fixed copy of this gene exists in `tblout_df`
                     row['remove'] = 1
                 # end if
             # end if
         else:
             if row['seq_to'] == 1: # if gene may be truncated by sequence start
-                fixed_copy_exists = tblout_df[tblout_df['seq_from'] == row['seq_from']].shape[0] > 1
+                fixed_copy_exists = tblout_df[
+                    (tblout_df['seq_from'] == row['seq_from']) \
+                  & (tblout_df['score'] > row['score'])
+                ].shape[0] > 0
                 if fixed_copy_exists: # if fixed copy of this gene exists in `tblout_df`
                     row['remove'] = 1
                 # end if
@@ -500,6 +496,8 @@ def remove_sestart_truncated_gene(tblout_df: pd.DataFrame) -> pd.DataFrame:
         # end if
         return row
     # end def
+
+    tblout_df['score'] = tblout_df['score'].map(float)
 
     # Set flag `remove` to 1 on those genes, which should be removed
     tblout_df['remove'] = np.repeat(0, tblout_df.shape[0])
@@ -575,6 +573,8 @@ def extract_reannotated_genes(seq_record: SeqRecord, topology: str, asm_acc: int
             tblout_df,
             original_len
         )
+        # Deduplicate
+        tblout_df = tblout_df.drop_duplicates(subset=['seq_from', 'seq_to'])
         tblout_df = remove_sestart_truncated_gene(tblout_df)
         seq_record.seq = seq_record.seq[: -len_circ_tail]
     # end if
@@ -746,19 +746,6 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, \
         # end for
     # end for
 # end with
-
-
-# Some genes may be duplicated because of appending sequence's start to it's end
-# Therefore, we need to dereplicate sequences by name (seqkit rmdup -n)
-print('\n{} -- Running seqkit rmdup...'.format(get_time()))
-tmpfasta = os.path.join(
-    os.path.dirname(fasta_outfpath),
-    'tmp_ALL_GENES.fasta'
-)
-os.system(f'cat {fasta_outfpath} | {seqkit_fpath} rmdup -n > {tmpfasta}')
-os.system(f'cat {tmpfasta} | {seqkit_fpath} seq -u > {fasta_outfpath}')
-os.unlink(tmpfasta)
-print('{} -- Done'.format(get_time()))
 
 print('\n{} -- Completed!'.format(get_time()))
 print(fasta_outfpath)

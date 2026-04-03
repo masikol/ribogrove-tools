@@ -290,8 +290,7 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
     --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
     --prev-all-genes-fasta "${PREV_ALL_GENES_FASTA}" \
-    --prev-all-genes-stats "${PREV_ALL_GENES_STATS}" \
-    --seqkit "${SEQKIT}"
+    --prev-all-genes-stats "${PREV_ALL_GENES_STATS}"
 else
   python3 "${SCRIPTS_DIR}/extract_16S.py" \
     --asm-sum "${ASS_SUM_FINAL}" \
@@ -299,8 +298,7 @@ else
     --out-fasta "${ALL_GENES_FASTA}" \
     --out-stats "${ALL_GENES_STATS}" \
     --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
-    --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
-    --seqkit "${SEQKIT}"
+    --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}"
 fi
 
 
