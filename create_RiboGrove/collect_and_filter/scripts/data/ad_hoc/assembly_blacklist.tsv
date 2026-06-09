@@ -257,42 +257,42 @@ GCF_047323925.1	Poor assembly quality. This "plasmid" is improperly assembled fo
 GCF_048320865.1	the longest 16S rRNA gene is 1192 bp long and is 5'-truncated
 GCF_048320875.1	the longest 16S rRNA gene is 1183 bp long and is 5'-truncated
 GCF_052954775.1	Poor assembly quality
-GCF_013341255.1	only rRNA and tRNA genes on a plasmid
-GCF_014048285.1	only rRNA and tRNA genes on a plasmid
-GCF_014048385.1	only rRNA and tRNA genes on a plasmid
-GCF_018741145.1	only rRNA and tRNA genes on a plasmid
-GCF_018742265.1	only rRNA and tRNA genes on a plasmid
-GCF_022370935.1	only rRNA and tRNA genes on a plasmid
-GCF_024499285.1	only rRNA and tRNA genes on a plasmid
-GCF_024610615.1	only rRNA and tRNA genes on a plasmid
-GCF_026314945.1	only rRNA and tRNA genes on a plasmid
-GCF_033449965.1	only rRNA and tRNA genes on a plasmid
-GCF_036417315.1	only rRNA and tRNA genes on a plasmid
-GCF_036418335.1	only rRNA and tRNA genes on a plasmid
-GCF_038561975.1	only rRNA and tRNA genes on a plasmid
-GCF_039556175.1	only rRNA and tRNA genes on a plasmid
-GCF_039619385.1	only rRNA and tRNA genes on a plasmid
-GCF_039619395.1	only rRNA and tRNA genes on a plasmid
-GCF_039619405.1	only rRNA and tRNA genes on a plasmid
-GCF_039619495.1	only rRNA and tRNA genes on a plasmid
-GCF_039619585.1	only rRNA and tRNA genes on a plasmid
-GCF_039619595.1	only rRNA and tRNA genes on a plasmid
-GCF_039619745.1	only rRNA and tRNA genes on a plasmid
-GCF_042019215.1	only rRNA and tRNA genes on a plasmid
-GCF_042937815.1	only rRNA and tRNA genes on a plasmid
-GCF_043950685.1	only rRNA and tRNA genes on a plasmid
-GCF_043950715.1	only rRNA and tRNA genes on a plasmid
-GCF_044054585.1	only rRNA and tRNA genes on a plasmid
-GCF_044911575.1	only rRNA and tRNA genes on a plasmid
-GCF_045924905.1	only rRNA and tRNA genes on a plasmid
-GCF_047115225.1	only rRNA and tRNA genes on a plasmid
-GCF_047302555.1	only rRNA and tRNA genes on a plasmid
-GCF_050367445.1	only rRNA and tRNA genes on a plasmid
-GCF_050881585.1	only rRNA and tRNA genes on a plasmid
-GCF_051669205.1	only rRNA and tRNA genes on a plasmid
-GCF_051861385.1	only rRNA and tRNA genes on a plasmid
-GCF_051912505.1	only rRNA and tRNA genes on a plasmid
-GCF_963360705.1	only rRNA and tRNA genes on a plasmid
+GCF_013341255.1	only rRNA and tRNA genes on a "plasmid"
+GCF_014048285.1	only rRNA and tRNA genes on a "plasmid"
+GCF_014048385.1	only rRNA and tRNA genes on a "plasmid"
+GCF_018741145.1	only rRNA and tRNA genes on a "plasmid"
+GCF_018742265.1	only rRNA and tRNA genes on a "plasmid"
+GCF_022370935.1	only rRNA and tRNA genes on a "plasmid"
+GCF_024499285.1	only rRNA and tRNA genes on a "plasmid"
+GCF_024610615.1	only rRNA and tRNA genes on a "plasmid"
+GCF_026314945.1	only rRNA and tRNA genes on a "plasmid"
+GCF_033449965.1	only rRNA and tRNA genes on a "plasmid"
+GCF_036417315.1	only rRNA and tRNA genes on a "plasmid"
+GCF_036418335.1	only rRNA and tRNA genes on a "plasmid"
+GCF_038561975.1	only rRNA and tRNA genes on a "plasmid"
+GCF_039556175.1	only rRNA and tRNA genes on a "plasmid"
+GCF_039619385.1	only rRNA and tRNA genes on a "plasmid"
+GCF_039619395.1	only rRNA and tRNA genes on a "plasmid"
+GCF_039619405.1	only rRNA and tRNA genes on a "plasmid"
+GCF_039619495.1	only rRNA and tRNA genes on a "plasmid"
+GCF_039619585.1	only rRNA and tRNA genes on a "plasmid"
+GCF_039619595.1	only rRNA and tRNA genes on a "plasmid"
+GCF_039619745.1	only rRNA and tRNA genes on a "plasmid"
+GCF_042019215.1	only rRNA and tRNA genes on a "plasmid"
+GCF_042937815.1	only rRNA and tRNA genes on a "plasmid"
+GCF_043950685.1	only rRNA and tRNA genes on a "plasmid"
+GCF_043950715.1	only rRNA and tRNA genes on a "plasmid"
+GCF_044054585.1	only rRNA and tRNA genes on a "plasmid"
+GCF_044911575.1	only rRNA and tRNA genes on a "plasmid"
+GCF_045924905.1	only rRNA and tRNA genes on a "plasmid"
+GCF_047115225.1	only rRNA and tRNA genes on a "plasmid"
+GCF_047302555.1	only rRNA and tRNA genes on a "plasmid"
+GCF_050367445.1	only rRNA and tRNA genes on a "plasmid"
+GCF_050881585.1	only rRNA and tRNA genes on a "plasmid"
+GCF_051669205.1	only rRNA and tRNA genes on a "plasmid"
+GCF_051861385.1	only rRNA and tRNA genes on a "plasmid"
+GCF_051912505.1	only rRNA and tRNA genes on a "plasmid"
+GCF_963360705.1	only rRNA and tRNA genes on a "plasmid"
 GCF_001718835.1	more than 1% of either chromosome or rrn-containing plasmid has zero read coverage
 GCF_029625475.1	more than 1% of either chromosome or rrn-containing plasmid has zero read coverage
 GCF_038693235.1	more than 1% of either chromosome or rrn-containing plasmid has zero read coverage
@@ -317,3 +317,17 @@ GCF_030389775.1	poor assembly quality: repeat misassembly
 GCF_013731155.1	poor assembly quality: repeat misassembly
 GCF_020388395.1	poor assembly quality: repeat misassembly
 GCF_001457675.1	poor assembly quality: repeat misassembly
+GCF_055721425.2	no .gbff files available yet, TODO remove this line in further releases
+GCF_055721445.2	no .gbff files available yet, TODO remove this line in further releases
+GCF_055721725.2	no .gbff files available yet, TODO remove this line in further releases
+GCF_057682525.1	no .gbff files available yet, TODO remove this line in further releases
+GCF_057682545.1	no .gbff files available yet, TODO remove this line in further releases
+GCF_057682555.1	no .gbff files available yet, TODO remove this line in further releases
+GCF_057682645.1	no .gbff files available yet, TODO remove this line in further releases
+GCF_057682655.1	no .gbff files available yet, TODO remove this line in further releases
+GCF_057682685.1	no .gbff files available yet, TODO remove this line in further releases
+GCF_057683165.1	no .gbff files available yet, TODO remove this line in further releases
+GCF_016107705.1	poor assembly quality
+GCF_056393665.1	poor assembly quality
+GCF_054187855.1	16S gene len varies from 506 to 1252
+GCF_054328655.1	16S gene len varies from 133 to 861

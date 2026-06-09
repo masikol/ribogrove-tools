@@ -117,7 +117,7 @@ args = parser.parse_args()
 import sys
 import gzip
 
-import pandas as pd
+import polars as pl
 from Bio import SeqIO
 
 import src.rg_tools_IO as rgIO
@@ -191,19 +191,28 @@ def remove_nonrelease_genomes(in_asm_sum_df,
                               replicon_map_df,
                               release_catalog_fpath,
                               nonrelease_outfpath):
-    all_seq_accs = set(replicon_map_df['seq_acc'])
+    all_seq_accs = frozenset(replicon_map_df['seq_acc'])
     print('Reading large release-catalog file silently...')
     curr_release_accs = get_curr_release_seq_accs(release_catalog_fpath)
 
     print('Filtering...')
     nonrelease_seq_accs = all_seq_accs - curr_release_accs
-    nonrelease_asm_accs = set(
-        replicon_map_df.query('seq_acc in @nonrelease_seq_accs')['asm_acc']
+    # TODO: remove
+    # nonrelease_asm_accs = frozenset(
+    #     replicon_map_df.query('seq_acc in @nonrelease_seq_accs')['asm_acc']
+    # )
+    nonrelease_asm_accs = frozenset(
+        replicon_map_df.filter(
+            pl.col('seq_acc').is_in(nonrelease_seq_accs)
+        )['asm_acc']
     )
     # Filter remaining sequences
-    filt_asm_sum_df = in_asm_sum_df.query('not asm_acc in @nonrelease_asm_accs') \
-        .reset_index(drop=True)
-
+    # TODO: removed
+    # filt_asm_sum_df = in_asm_sum_df.query('not asm_acc in @nonrelease_asm_accs') \
+    #     .reset_index(drop=True)
+    filt_asm_sum_df = in_asm_sum_df.filter(
+        ~pl.col('asm_acc').is_in(nonrelease_asm_accs)
+    )
     # Save "nonrelease" accessions
     with gzip.open(nonrelease_outfpath, 'wt') as nonrelease_file:
         for asm_acc in nonrelease_asm_accs:
@@ -220,9 +229,6 @@ def remove_nonrelease_genomes(in_asm_sum_df,
             .format(len(nonrelease_seq_accs))
     )
     print('  (their assembly accessions are written to `{}`)'.format(nonrelease_outfpath))
-    print(
-        '  {:,} genomes are retained for further work'.format(filt_asm_sum_df.shape[0])
-    )
 
     return filt_asm_sum_df
 # end def
@@ -252,6 +258,25 @@ def get_curr_release_seq_accs(release_catalog_fpath):
 # end def
 
 
+def remove_unplaced_scaffolds(filt_asm_sum_df, replicon_map_df):
+    asm_accs_to_rm = frozenset(
+        replicon_map_df.filter(pl.col('unplaced_scaffold') == 1)['asm_acc']
+    )
+
+    filt_asm_sum_df = filt_asm_sum_df.filter(
+        ~pl.col('asm_acc').is_in(asm_accs_to_rm)
+    )
+
+    print(
+        '{} -- Removed assemblies having at least one "unplaced-scaffold"' \
+            .format(get_time())
+    )
+    print('  {:,} genomes are removed'.format(len(asm_accs_to_rm)))
+
+    return filt_asm_sum_df
+# end def
+
+
 def remove_NNN_genomes(asm_sum_df,
                        genomes_dirpath,
                        cache_nonNNN_asm_accs,
@@ -262,7 +287,7 @@ def remove_NNN_genomes(asm_sum_df,
     sys.stdout.write('{} -- 0/{} genomes checked'.format(get_time(), asm_sum_df.shape[0]))
     sys.stdout.flush()
 
-    for i, row in asm_sum_df.iterrows():
+    for i, row in enumerate(asm_sum_df.to_dicts(), 1):
         asm_acc = row['asm_acc']
 
         # Try to hit cache
@@ -280,19 +305,23 @@ def remove_NNN_genomes(asm_sum_df,
         # end if
         sys.stdout.write(
             '\r{} -- {}/{} genomes checked' \
-                .format(get_time(), i+1, asm_sum_df.shape[0])
+                .format(get_time(), i, asm_sum_df.shape[0])
         )
         sys.stdout.flush()
     # end for
 
     sys.stdout.write(
         '\r{} -- {}/{} genomes checked' \
-            .format(get_time(), i+1, asm_sum_df.shape[0])
+            .format(get_time(), i, asm_sum_df.shape[0])
     )
     sys.stdout.flush()
 
-    filt_asm_sum_df = asm_sum_df.query('not asm_acc in @NNN_asm_accs') \
-        .reset_index(drop=True)
+    # TODO: remove
+    # filt_asm_sum_df = asm_sum_df.query('not asm_acc in @NNN_asm_accs') \
+    #     .reset_index(drop=True)
+    filt_asm_sum_df = asm_sum_df.filter(
+        ~pl.col('asm_acc').is_in(NNN_asm_accs)
+    )
 
     # Save "NNN" accessions
     with gzip.open(NNN_outfpath, 'wt') as NNN_file:
@@ -310,10 +339,6 @@ def remove_NNN_genomes(asm_sum_df,
             .format(len(NNN_asm_accs))
     )
     print('  (their assembly accessions are written to `{}`)'.format(NNN_outfpath))
-    print(
-        '  {:,} genomes are retained for further work' \
-            .format(filt_asm_sum_df.shape[0])
-    )
     return filt_asm_sum_df
 # end def
 
@@ -359,9 +384,9 @@ def get_cache_NNN_asm_accs(cache_NNN_asm_accs_fpath):
 # Read input
 in_asm_sum_df = rgIO.read_ass_sum_file(infpath)
 
-replicon_map_df = pd.read_csv(
+replicon_map_df = pl.read_csv(
     replicon_map_fpath,
-    sep='\t'
+    separator='\t'
 )
 
 if cache_mode:
@@ -387,11 +412,28 @@ filt_asm_sum_df = remove_nonrelease_genomes(
     release_catalog_fpath,
     nonrelease_outfpath
 )
+print(
+    '  {:,} genomes are retained'.format(filt_asm_sum_df.shape[0])
+)
 print()
 
-# == 2. Remove genomes with NNN in their sequences ==
 
-print('2. Removing genomes with sequences containing NNN')
+# == 2. Remove assemblies having "unplaced-scaffolds" ==
+
+print('2. Removing assemblies having at least one "unplaced-scaffold"')
+print('{} -- Start'.format(get_time()))
+filt_asm_sum_df = remove_unplaced_scaffolds(
+    filt_asm_sum_df,
+    replicon_map_df
+)
+print(
+    '  {:,} genomes are retained'.format(filt_asm_sum_df.shape[0])
+)
+print()
+
+# == 3. Remove genomes with NNN in their sequences ==
+
+print('3. Removing genomes with sequences containing NNN')
 print('{} -- Start'.format(get_time()))
 NNN_outfpath = os.path.join(
     os.path.dirname(outfpath),
@@ -404,20 +446,20 @@ filt_asm_sum_df = remove_NNN_genomes(
     cache_NNN_asm_accs,
     NNN_outfpath
 )
+print(
+    '  {:,} genomes are retained for further work' \
+        .format(filt_asm_sum_df.shape[0])
+)
 
 
 # == Write output ==
 
-with gzip.open(outfpath, 'wt') as outfile:
-    filt_asm_sum_df.to_csv(
-        outfile,
-        sep='\t',
-        index=False,
-        header=True,
-        na_rep='NA',
-        encoding='utf-8',
-    )
-# end with
+filt_asm_sum_df.write_csv(
+    outfpath,
+    separator='\t',
+    include_header=True,
+    null_value='NA'
+)
 
 print('\n{} -- Completed!'.format(get_time()))
 print(outfpath)

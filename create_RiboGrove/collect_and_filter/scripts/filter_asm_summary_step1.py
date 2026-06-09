@@ -95,7 +95,7 @@ import sys
 import gzip
 
 import numpy as np
-import pandas as pd
+import polars as pl
 
 import src.rg_tools_IO as rgIO
 
@@ -137,28 +137,25 @@ ALLOWED_ASM_LEVELS = (
 )
 
 
-def remove_wgs_assemblies(ass_sum_df):
-    return ass_sum_df[
-        pd.isnull(ass_sum_df['wgs_master'])
-    ].copy()
+def remove_excluded_from_refseq(asm_sum_df):
+    return asm_sum_df.filter(
+        pl.col('excluded_from_refseq').is_null()
+    )
 # end def
 
 
 
-def filter_by_ass_level(ass_sum_df):
+def filter_by_asm_level(asm_sum_df):
     global ALLOWED_ASM_LEVELS
-    allowed_ass_levels = set(
+
+    allowed_ass_levels = frozenset(
         map(lambda x: x.upper(), ALLOWED_ASM_LEVELS)
     )
-    ass_sum_df['up_assembly_level'] = np.repeat('', ass_sum_df.shape[0])
-    ass_sum_df = ass_sum_df.apply(set_up_ass_level, axis=1)
-
-    filt_ass_sum_df = ass_sum_df.query(
-        'up_assembly_level in @allowed_ass_levels'
+    filt_asm_sum_df = asm_sum_df.filter(
+        pl.col('assembly_level').str.to_uppercase().is_in(allowed_ass_levels)
     )
 
-    filt_ass_sum_df = filt_ass_sum_df.drop(columns=['up_assembly_level'])
-    return filt_ass_sum_df
+    return filt_asm_sum_df
 # end def
 
 def set_up_ass_level(row):
@@ -167,14 +164,14 @@ def set_up_ass_level(row):
 # end def
 
 
-def remove_blacklist(ass_sum_df, blacklist_fpath):
+def remove_blacklist(asm_sum_df, blacklist_fpath):
     blacklist_asm_accs = read_blacklist(blacklist_fpath)
 
-    filt_ass_sum_df = ass_sum_df.query(
-        'not asm_acc in @blacklist_asm_accs'
+    filt_asm_sum_df = asm_sum_df.filter(
+        ~pl.col('asm_acc').is_in(blacklist_asm_accs)
     )
 
-    return filt_ass_sum_df
+    return filt_asm_sum_df
 # end def
 
 def read_blacklist(blacklist_fpath):
@@ -193,62 +190,60 @@ def read_blacklist(blacklist_fpath):
 # end def
 
 
-def find_updated_blacklist_asm_accs(ass_sum_df, blacklist_fpath):
+def find_updated_blacklist_asm_accs(asm_sum_df, blacklist_fpath):
     blacklist_asm_accs = read_blacklist(blacklist_fpath)
     blacklist_asm_accs_no_version = frozenset([
         asm_acc.partition('.')[0] for asm_acc in blacklist_asm_accs
     ])
 
     actual_asm_accs_no_version = frozenset(
-        asm_acc.partition('.')[0] for asm_acc in ass_sum_df['asm_acc']
+        asm_acc.partition('.')[0] for asm_acc in asm_sum_df['asm_acc']
     )
 
     return actual_asm_accs_no_version & blacklist_asm_accs_no_version
 # end def
 
 
-def write_output(ass_sum_df, outfpath):
-    with gzip.open(outfpath, 'wt') as outfile:
-        ass_sum_df.to_csv(
-            outfile,
-            sep='\t',
-            index=False,
-            header=True,
-            encoding='utf-8',
-            na_rep='NA'
-        )
-    # end with
+def write_output(asm_sum_df, outfpath):
+    asm_sum_df.write_csv(
+        outfpath,
+        separator='\t',
+        include_header=True,
+        null_value='NA'
+    )
 # end def
 
 
 
 # == Proceed ==
 
-raw_ass_sum_df = rgIO.read_ass_sum_file(infpath, raw_summary=True)
-raw_rownum = raw_ass_sum_df.shape[0]
+raw_asm_sum_df = rgIO.read_ass_sum_file(infpath, raw_summary=True)
+raw_rownum = raw_asm_sum_df.shape[0]
 print('Found {:,} genomes at all.'.format(raw_rownum))
 
+
 # 1.
-ass_sum_df = remove_wgs_assemblies(raw_ass_sum_df)
-step1_rownum = ass_sum_df.shape[0]
-print('1. "Whole genome shotgun" sequences are removed.')
+asm_sum_df = remove_excluded_from_refseq(raw_asm_sum_df)
+step1_rownum = asm_sum_df.shape[0]
+print('1. "Excluded from RefSeq" sequences have been removed.')
 print('   {:,} genomes are retained.'.format(step1_rownum))
 
 # 2.
-ass_sum_df = filter_by_ass_level(ass_sum_df)
-step2_rownum = ass_sum_df.shape[0]
+asm_sum_df = filter_by_asm_level(asm_sum_df)
+step2_rownum = asm_sum_df.shape[0]
 print('2. Removed assemblies of level other than {}.'.format(ALLOWED_ASM_LEVELS))
 print('   {:,} genomes are retained.'.format(step2_rownum))
 
 # 3.
-ass_sum_df = remove_blacklist(ass_sum_df, blacklist_fpath)
-step3_rownum = ass_sum_df.shape[0]
+asm_sum_df = remove_blacklist(asm_sum_df, blacklist_fpath)
+step3_rownum = asm_sum_df.shape[0]
 print('3. Blacklist genomes are removed.')
 print('   {:,} genomes are retained.'.format(step3_rownum))
 
+
 # Check if there are any updated blacklisted genomes
 updated_blacklist_asm_accs = find_updated_blacklist_asm_accs(
-    ass_sum_df,
+    asm_sum_df,
     blacklist_fpath
 )
 if len(updated_blacklist_asm_accs) > 0:
@@ -263,7 +258,7 @@ if len(updated_blacklist_asm_accs) > 0:
 # end if
 
 # Output
-write_output(ass_sum_df, outfpath)
+write_output(asm_sum_df, outfpath)
 
 
 print('\nCompleted!')

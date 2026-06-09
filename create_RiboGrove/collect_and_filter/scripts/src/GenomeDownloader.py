@@ -294,7 +294,7 @@ class GenomeDownloader:
         out, err = pipe.communicate()
         if pipe.returncode != 0:
             print(err)
-            raise DownloadError(err)
+            raise DownloadError(err + ' (URL: {})'.format(download_url))
         # end if
     # end def
 

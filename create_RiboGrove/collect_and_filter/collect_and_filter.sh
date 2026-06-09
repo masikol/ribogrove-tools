@@ -191,7 +191,7 @@ if [[ "${REFSEQ_CATALOG_ALREADY_FILTERED}" == false ]]; then
 fi
 
 
-# == Download assembly_summary.txt ==
+== Download assembly_summary.txt ==
 
 if [[ "${TEST_MODE}" == false ]]; then
   curl \
@@ -217,7 +217,7 @@ python3 "${SCRIPTS_DIR}/download_genomes.py" \
   --log-file "${LOGS_DIR}/download_genomes.log"
 
 
-# == Make replicon map ==
+== Make replicon map ==
 
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/make_replicon_map.py" \
@@ -486,3 +486,5 @@ else
     --final-base-counts "${DISCARDED_COUNT_BASES_TABLE}" \
     --outdir "${GCNS_DIR}"
 fi
+
+exit 0
