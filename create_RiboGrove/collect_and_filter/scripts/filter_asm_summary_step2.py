@@ -197,19 +197,14 @@ def remove_nonrelease_genomes(in_asm_sum_df,
 
     print('Filtering...')
     nonrelease_seq_accs = all_seq_accs - curr_release_accs
-    # TODO: remove
-    # nonrelease_asm_accs = frozenset(
-    #     replicon_map_df.query('seq_acc in @nonrelease_seq_accs')['asm_acc']
-    # )
+
     nonrelease_asm_accs = frozenset(
         replicon_map_df.filter(
             pl.col('seq_acc').is_in(nonrelease_seq_accs)
         )['asm_acc']
     )
     # Filter remaining sequences
-    # TODO: removed
-    # filt_asm_sum_df = in_asm_sum_df.query('not asm_acc in @nonrelease_asm_accs') \
-    #     .reset_index(drop=True)
+
     filt_asm_sum_df = in_asm_sum_df.filter(
         ~pl.col('asm_acc').is_in(nonrelease_asm_accs)
     )
@@ -316,9 +311,6 @@ def remove_NNN_genomes(asm_sum_df,
     )
     sys.stdout.flush()
 
-    # TODO: remove
-    # filt_asm_sum_df = asm_sum_df.query('not asm_acc in @NNN_asm_accs') \
-    #     .reset_index(drop=True)
     filt_asm_sum_df = asm_sum_df.filter(
         ~pl.col('asm_acc').is_in(NNN_asm_accs)
     )

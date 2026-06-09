@@ -72,7 +72,7 @@ args = parser.parse_args()
 # == Import them now ==
 import sys
 
-import pandas as pd
+import polars as pl
 
 import src.rg_tools_IO as rgIO
 
@@ -108,12 +108,23 @@ def reformat_rankedlineaage_file(rankedlineage_path: str) -> str:
     # Original rankedlineage.dmp file has very weird separator: "\t|\t". And terminal "\t|" (OMG why???).
     # We will replace "\t|\t" with mere "\t" and remove terminal "\t|".
 
-    new_rankedlineade_fpath = os.path.join(
+    new_rankedlineage_fpath = os.path.join(
         os.path.dirname(rankedlineage_path),
         'rankedlineage_just_tabs.dmp'
     )
 
-    cmd = f'cat {rankedlineage_path} | sed "s/\\t|\\t/\\t/g" | sed "s/\\t|//g" > {new_rankedlineade_fpath}'
+    # TODO: remove
+    # cmd = f'cat {rankedlineage_path} | sed "s/\\t|\\t/\\t/g" | sed "s/\\t|//g" > {new_rankedlineage_fpath}'
+    cmd = ' '.join([
+        'cat', rankedlineage_path,
+        '|',
+        'sed "s/\\t|\\t/\\t/g"',
+        '|',
+        'sed "s/\\t|//g"',
+        '|',
+        'tr -d \'"\'',
+        '>', new_rankedlineage_fpath
+    ])
     print(cmd)
     exit_code = os.system(cmd)
 
@@ -122,19 +133,29 @@ def reformat_rankedlineaage_file(rankedlineage_path: str) -> str:
         sys.exit(1)
     # end if
 
-    return new_rankedlineade_fpath
+    return new_rankedlineage_fpath
 # end def
 
+# TODO: remove
+# def fill_empty_species_name(row: pd.Series) -> pd.Series:
+#     # If taxid points to a species, (like 1642), it's taxonomy contains no 'species' fiels.
+#     # Well, then we will copy it from 'organism_name' field.
 
-def fill_empty_species_name(row: pd.Series) -> pd.Series:
+#     if pd.isnull(row['Species']):
+#         row['Species'] = row['organism_name']
+#     # end if
+
+#     return row
+# # end def
+def fill_empty_species_name(row):
     # If taxid points to a species, (like 1642), it's taxonomy contains no 'species' fiels.
     # Well, then we will copy it from 'organism_name' field.
 
-    if pd.isnull(row['Species']):
+    if row['Species'] is None:
         row['Species'] = row['organism_name']
     # end if
 
-    return row
+    return row['Species']
 # end def
 
 
@@ -311,20 +332,53 @@ def request_missing_taxonomy(taxid):
 # end def
 
 
-def fill_missing_taxonomy(row):
+# TODO: remove
+# def fill_missing_taxonomy(row):
 
-    if pd.isnull(row['organism_name']):
+#     if pd.isnull(row['organism_name']):
 
+#         print(f'Requesting taxonomy for taxid {row["taxid"]}... ')
+
+#         taxonomy_dict = request_missing_taxonomy(row['taxid'])
+
+#         # If no taxonomy was retrieved, get it from the RefSeq title
+#         # Bad way, but no better ways are left
+#         if taxonomy_dict['organism_name'] == 'NA':
+#             global asm_sum_df
+#             seq_title = asm_sum_df[asm_sum_df['asm_acc'] == row['asm_acc']] \
+#                 .reset_index().loc[0, 'title']
+#             strings_to_rm = (
+#                 ', complete sequence',
+#                 ', complete genome',
+#                 ' map unlocalized',
+#             )
+#             for str_to_rm in strings_to_rm:
+#                 seq_title = seq_title.replace(str_to_rm, '')
+#             # end for
+#             taxonomy_dict['organism_name'] = seq_title
+
+#             print(f'Cannot find taxonomy for taxid {row["taxid"]} at the NCBI website')
+#             print(f'Using the RefSeq title as the taxonomy name: `{taxonomy_dict["organism_name"]}`')
+#         else:
+#             print(taxonomy_dict)
+#         # end if
+
+#         # Fill the taxonomy
+#         for rank_name, taxon_name in taxonomy_dict.items():
+#             row[rank_name] = taxon_name
+#         # end for
+#     # end if
+
+#     return row
+# # end def
+
+def fill_missing_taxonomy(row: dict) -> dict:
+    if row['organism_name'] is None:
         print(f'Requesting taxonomy for taxid {row["taxid"]}... ')
-
         taxonomy_dict = request_missing_taxonomy(row['taxid'])
-
-        # If no taxonomy was retrieved, get it from the RefSeq title
-        # Bad way, but no better ways are left
+        
         if taxonomy_dict['organism_name'] == 'NA':
-            global asm_sum_df
-            seq_title = asm_sum_df[asm_sum_df['asm_acc'] == row['asm_acc']] \
-                .reset_index().loc[0, 'title']
+            seq_title = asm_sum_df.filter(pl.col('asm_acc') == row['asm_acc'])['title'][0]
             strings_to_rm = (
                 ', complete sequence',
                 ', complete genome',
@@ -333,30 +387,28 @@ def fill_missing_taxonomy(row):
             for str_to_rm in strings_to_rm:
                 seq_title = seq_title.replace(str_to_rm, '')
             # end for
-            taxonomy_dict['organism_name'] = seq_title
 
+            taxonomy_dict['organism_name'] = seq_title
             print(f'Cannot find taxonomy for taxid {row["taxid"]} at the NCBI website')
             print(f'Using the RefSeq title as the taxonomy name: `{taxonomy_dict["organism_name"]}`')
         else:
             print(taxonomy_dict)
         # end if
-
-        # Fill the taxonomy
+        
+        # Update row with taxonomy values
         for rank_name, taxon_name in taxonomy_dict.items():
             row[rank_name] = taxon_name
         # end for
-    # end if
-
+    
     return row
 # end def
-
 
 
 # == Proceed ==
 
 # Reformat rankedlineage file
 print(f'Reformatting file `{rankedlineage_path}` in order to make it manageable...')
-reformatted_rankedlineade_fpath = reformat_rankedlineaage_file(rankedlineage_path)
+reformatted_rankedlineage_fpath = reformat_rankedlineaage_file(rankedlineage_path)
 print('done.\n')
 
 
@@ -364,35 +416,33 @@ print('done.\n')
 
 print('Reading reformatted rankedlineage file...')
 
-rankedlineage_df = pd.read_csv(
-    reformatted_rankedlineade_fpath,
-    sep='\t',
-    names=[
+rankedlineage_df = pl.read_csv(
+    reformatted_rankedlineage_fpath,
+    separator='\t',
+    n_threads=1,
+    new_columns=[
         'taxid', 'organism_name',
         'Species', 'Genus', 'Family', 'Order', 'Class', 'Phylum',
         'Kingdom', 'Domain'
     ],
-    header=None,
-    index_col=False,
-    dtype={
-        'taxid': pd.Int32Dtype(),
-        'organism_name': str,
-        'Species': str,
-        'Genus': str,
-        'Family': str,
-        'Order': str,
-        'Class': str,
-        'Phylum': str,
-        'Kingdom': str,
-        'Domain': str
-    }
+    has_header=False,
+    schema={
+        'taxid': pl.UInt32,
+        'organism_name': pl.String,
+        'Species': pl.String,
+        'Genus': pl.String,
+        'Family': pl.String,
+        'Order': pl.String,
+        'Class': pl.String,
+        'Phylum': pl.String,
+        'Kingdom': pl.String,
+        'Domain': pl.String,
+    },
+    null_values=['NA', 'na', '']
 )
 
 # Remove columns of no interest
-rankedlineage_df = rankedlineage_df.drop(
-    columns=['organism_name',],
-    axis=1
-)
+rankedlineage_df = rankedlineage_df.drop('organism_name')
 
 
 # Make per-genome taxonomy file
@@ -403,30 +453,64 @@ print('Creating taxonomy file')
 asm_sum_df = rgIO.read_ass_sum_file(asm_sum_fpath)
 
 # Merge per-genome taxid file to rankedlineage file
-taxonomy_df = asm_sum_df.merge(rankedlineage_df, on='taxid', how='left')
+taxonomy_df = asm_sum_df.join(rankedlineage_df, on='taxid', how='left')
 del rankedlineage_df
 
-# Sometimes information is missing for some taxids in rankedlineade.dmp
+# Sometimes information is missing for some taxids in rankedlineage.dmp
 # Request the missing taxonomy from NCBI Taxonomy
-missing_taxids = set(
-    taxonomy_df[
-        pd.isnull(taxonomy_df['organism_name'])
-    ]['taxid']
+# TODO: remove
+# missing_taxids = frozenset(
+#     taxonomy_df[
+#         pd.isnull(taxonomy_df['organism_name'])
+#     ]['taxid']
+# )
+missing_taxids = frozenset(
+    taxonomy_df.filter(
+        pl.col('organism_name').is_null()
+    )['taxid']
 )
 if len(missing_taxids) != 0:
     print(f'Taxonomy is missing for {len(missing_taxids)} Taxonomy IDs')
     print('The script will request the taxonomy for them from the NCBI website')
-    taxonomy_df = taxonomy_df.apply(fill_missing_taxonomy, axis=1)
-# end if
+    # TODO: remove
+    # taxonomy_df = taxonomy_df.apply(fill_missing_taxonomy, axis=1)
+    taxonomy_df = taxonomy_df.map_elements(
+        fill_missing_taxonomy,
+        return_dtype=df.schema
+    )
 del missing_taxids
 
 
 # Amend species names
-taxonomy_df = taxonomy_df.apply(fill_empty_species_name, axis=1)
+# TODO: remove
+# taxonomy_df = taxonomy_df.apply(fill_empty_species_name, axis=1)
+taxonomy_df = taxonomy_df.with_columns(
+    pl.struct(['Species', 'organism_name']).map_elements(
+        fill_empty_species_name,
+        return_dtype=pl.String
+    )
+)
+
 
 # Order columns
-taxonomy_df = taxonomy_df[
-    [
+# TODO: remove
+# taxonomy_df = taxonomy_df[
+#     [
+#         'asm_acc',
+#         'taxid',
+#         'organism_name',
+#         'Species',
+#         'Genus',
+#         'Family',
+#         'Order',
+#         'Class',
+#         'Phylum',
+#         'Kingdom',
+#         'Domain',
+#     ]
+# ]
+taxonomy_df = taxonomy_df.select(
+    pl.col(
         'asm_acc',
         'taxid',
         'organism_name',
@@ -438,18 +522,16 @@ taxonomy_df = taxonomy_df[
         'Phylum',
         'Kingdom',
         'Domain',
-    ]
-]
+    )
+)
 
 
 # Write output per-genome file
-taxonomy_df.to_csv(
+taxonomy_df.write_csv(
     outfpath,
-    sep='\t',
-    na_rep='NA',
-    header=True,
-    index=False,
-    encoding='utf-8'
+    separator='\t',
+    null_value='NA',
+    include_header=True
 )
 
 

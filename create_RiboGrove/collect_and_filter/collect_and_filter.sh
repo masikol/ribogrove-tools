@@ -196,6 +196,7 @@ fi
 if [[ "${TEST_MODE}" == false ]]; then
   curl \
     "${ASS_SUM_LINK}" \
+    | tr -d '"' \
     | gzip > "${ASS_SUM}"
 fi
 
