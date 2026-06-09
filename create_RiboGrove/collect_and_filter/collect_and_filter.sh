@@ -191,7 +191,7 @@ if [[ "${REFSEQ_CATALOG_ALREADY_FILTERED}" == false ]]; then
 fi
 
 
-== Download assembly_summary.txt ==
+# == Download assembly_summary.txt ==
 
 if [[ "${TEST_MODE}" == false ]]; then
   curl \
@@ -218,7 +218,7 @@ python3 "${SCRIPTS_DIR}/download_genomes.py" \
   --log-file "${LOGS_DIR}/download_genomes.log"
 
 
-== Make replicon map ==
+# == Make replicon map ==
 
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/make_replicon_map.py" \
@@ -291,7 +291,9 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
     --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
     --prev-all-genes-fasta "${PREV_ALL_GENES_FASTA}" \
-    --prev-all-genes-stats "${PREV_ALL_GENES_STATS}"
+    --prev-all-genes-stats "${PREV_ALL_GENES_STATS}" \
+    --tmp-dir "${TMP_DIR}" \
+    --threads "${CMSEARCH_THREADS}"
 else
   python3 "${SCRIPTS_DIR}/extract_16S.py" \
     --asm-sum "${ASS_SUM_FINAL}" \
@@ -299,7 +301,9 @@ else
     --out-fasta "${ALL_GENES_FASTA}" \
     --out-stats "${ALL_GENES_STATS}" \
     --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
-    --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}"
+    --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
+    --tmp-dir "${TMP_DIR}" \
+    --threads "${CMSEARCH_THREADS}"
 fi
 
 

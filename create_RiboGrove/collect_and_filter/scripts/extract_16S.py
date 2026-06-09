@@ -70,6 +70,13 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '--tmp-dir',
+    help='a directory for temp files',
+    required=False,
+    default='/tmp'
+)
+
 # Output files
 parser.add_argument(
     '-o',
@@ -114,6 +121,16 @@ parser.add_argument(
     required=False
 )
 
+# Params
+
+parser.add_argument(
+    '-t',
+    '--threads',
+    help='thread number for cmsearch',
+    required=False,
+    default=1
+)
+
 args = parser.parse_args()
 
 
@@ -124,7 +141,7 @@ import statistics as sts
 from typing import List, Tuple
 
 import numpy as np
-import pandas as pd
+import polars as pl
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqFeature import SeqFeature
@@ -143,6 +160,10 @@ outstats_fpath = os.path.realpath(args.out_stats)
 
 cmsearch_fpath = os.path.realpath(args.cmsearch)
 rfam_family_fpath = os.path.realpath(args.rfam_family_cm)
+
+tmp_dir_path = os.path.realpath(args.tmp_dir)
+cmsearch_threads = int(args.threads)
+
 
 if not args.prev_all_genes_fasta is None and not args.prev_all_genes_stats is None:
     cache_mode = True
@@ -387,16 +408,22 @@ def extract_gene_as_is(feature: SeqFeature, seq_record: SeqRecord, asm_acc: int)
 # end def
 
 
-def run_cmsearch(fasta_fpath: str):
+def run_cmsearch(fasta_fpath: str, tmp_dir_path: str, cmsearch_threads: int):
     # Function runs cmsearch searching for 16S rRNA genes in sequence
     #   stored in file `fasta_fpath`
     # Returns path to result .tblout file
 
-    # TODO: remove hardcoded paths and threads
-    tblout_fpath = '/tmp/tmpXXX_tblout.tsv'
-    out_fpath = '/tmp/tmpXXX_cmsearch_out.txt'
-    cmd = f'{cmsearch_fpath} --noali -o {out_fpath} --tblout {tblout_fpath} --cpu 6 {rfam_family_fpath} {fasta_fpath}'
-    # cmd = f'{cmsearch_fpath} -o {out_fpath} --tblout {tblout_fpath} --cpu 6 {rfam_family_fpath} {fasta_fpath}'
+    tblout_fpath = os.path.join(tmp_dir_path, 'tmpXXX_tblout.tsv')
+    out_fpath = os.path.join(tmp_dir_path, 'tmpXXX_cmsearch_out.txt')
+    cmd = ' '.join([
+        cmsearch_fpath,
+        '--noali',
+        '-o', out_fpath,
+        '--tblout', tblout_fpath,
+        '--cpu', str(cmsearch_threads),
+        rfam_family_fpath,
+        fasta_fpath,
+    ])
 
     exit_code = os.system(cmd)
     if exit_code != 0:
@@ -448,74 +475,81 @@ def reformat_tblout(tblout_fpath: str):
 # end def
 
 
-def amend_coordinates_on_extended_seq(tblout_df: pd.DataFrame, original_len: int) -> pd.DataFrame:
+def amend_coordinates_on_extended_seq(tblout_df: pl.DataFrame, original_len: int) -> pl.DataFrame:
     # Function amends coordinates of SSU genes if there are any on extended tail
 
-    def amend_length(row):
+    def amend_length(coord_value: int):
         # Amend coordinates of fixed copies of genes truncated by sequence start
         #   in order to replace coordinates greater than `original_len`
-        if row['seq_from'] > original_len:
-            row['seq_from'] -= original_len
+        if coord_value > original_len:
+            coord_value -= original_len
         # end if
-        if row['seq_to'] > original_len:
-            row['seq_to'] -= original_len
-        # end if
-        return row
+        return coord_value
     # end def
 
-    tblout_df = tblout_df.apply(amend_length, axis=1)
+    tblout_df = tblout_df.with_columns(
+        pl.col('seq_from').map_elements(amend_length, return_dtype=pl.UInt32),
+        pl.col('seq_to').map_elements(amend_length, return_dtype=pl.UInt32)
+    )
     return tblout_df
 # end def
 
 
-def remove_sestart_truncated_gene(tblout_df: pd.DataFrame) -> pd.DataFrame:
+def remove_restart_truncated_gene(tblout_df: pl.DataFrame) -> pl.DataFrame:
     # Function removes from `tblout_df` genes truncated by sequence start if fixed variant
     #   of this gene exists, thanks to extended tail.
 
-    def set_remove_flag(row):
+    def make_remove_flag(row):
+        remove = 0
         if row['strand'] == '+':
             if row['seq_from'] == 1: # if gene may be truncated by sequence start
-                fixed_copy_exists = tblout_df[
-                    (tblout_df['seq_to'] == row['seq_to']) \
-                  & (tblout_df['score'] > row['score'])
-                ].shape[0] > 0
+                fixed_copy_exists = tblout_df.filter(
+                    (pl.col('seq_to') == row['seq_to']) \
+                  & (pl.col('score') > row['score'])
+                ).shape[0] > 0
                 if fixed_copy_exists: # if fixed copy of this gene exists in `tblout_df`
-                    row['remove'] = 1
+                    remove = 1
                 # end if
             # end if
         else:
             if row['seq_to'] == 1: # if gene may be truncated by sequence start
-                fixed_copy_exists = tblout_df[
-                    (tblout_df['seq_from'] == row['seq_from']) \
-                  & (tblout_df['score'] > row['score'])
-                ].shape[0] > 0
+                fixed_copy_exists = tblout_df.filter(
+                    (pl.col('seq_from') == row['seq_from']) \
+                  & (pl.col('score') > row['score'])
+                ).shape[0] > 0
                 if fixed_copy_exists: # if fixed copy of this gene exists in `tblout_df`
-                    row['remove'] = 1
+                    remove = 1
                 # end if
             # end if
         # end if
-        return row
+        return remove
     # end def
 
-    tblout_df['score'] = tblout_df['score'].map(float)
+    tblout_df = tblout_df.with_columns(
+        pl.col('score').cast(pl.Float64)
+    )
 
-    # Set flag `remove` to 1 on those genes, which should be removed
-    tblout_df['remove'] = np.repeat(0, tblout_df.shape[0])
-    tblout_df = tblout_df.apply(set_remove_flag, axis=1)
+    tblout_df = tblout_df.with_columns(
+        pl.struct(['strand', 'seq_from', 'seq_to', 'score']).map_elements(
+            make_remove_flag,
+            return_dtype=pl.UInt32
+        ).alias('remove')
+    )
 
     # Remove truncated genes
-    tblout_df = tblout_df[tblout_df['remove'] == 0]
-    # tblout_df.drop(['remove'], axis=1, inplace=True)
+    tblout_df = tblout_df.filter(
+        pl.col('remove') == 0
+    )
+    tblout_df = tblout_df.drop('remove')
 
     return tblout_df
 # end def
 
 
-def extract_gene_seq_after_cmsearch(
-    seq_record: SeqRecord,
-    seq_start: int,
-    seq_end: int,
-    topology: str) -> Seq:
+def extract_gene_seq_after_cmsearch(seq_record: SeqRecord,
+                                    seq_start: int,
+                                    seq_end: int,
+                                    topology: str) -> Seq:
     # Function extracts gene sequence from `seq_record`.
     # `seq_start` and `seq_end` are 1-based, left-closed, right-closed.
     # Function performs well even if `seq_start` > `seq_end`: it may occur if
@@ -541,7 +575,11 @@ def extract_gene_seq_after_cmsearch(
 # end def
 
 
-def extract_reannotated_genes(seq_record: SeqRecord, topology: str, asm_acc: int):
+def extract_reannotated_genes(seq_record: SeqRecord,
+                              topology: str,
+                              asm_acc: int,
+                              tmp_dir_path: str,
+                              cmsearch_threads: int):
     # Function reannotates 16S rRNA genes in `seq_record` with cmsearch
     #   and extracts sequences of discovered genes from it.
 
@@ -560,13 +598,13 @@ def extract_reannotated_genes(seq_record: SeqRecord, topology: str, asm_acc: int
     with open(tmp_fasta, 'w') as tmpf:
         tmpf.write(f'>{seq_record.id}\n{str(seq_record.seq)}\n')
     # end with
-    tblout_fpath = run_cmsearch(tmp_fasta)
+    tblout_fpath = run_cmsearch(tmp_fasta, tmp_dir_path, cmsearch_threads)
     reformat_tblout(tblout_fpath)
     os.unlink(tmp_fasta)
 
     # Now we have `tblout_fpath` and cam extract genes sequences from `seq_record`
 
-    tblout_df = pd.read_csv(tblout_fpath, sep='\t')
+    tblout_df = pl.read_csv(tblout_fpath, separator='\t')
 
     if topology == 'circular':
         tblout_df = amend_coordinates_on_extended_seq(
@@ -574,8 +612,8 @@ def extract_reannotated_genes(seq_record: SeqRecord, topology: str, asm_acc: int
             original_len
         )
         # Deduplicate
-        tblout_df = tblout_df.drop_duplicates(subset=['seq_from', 'seq_to'])
-        tblout_df = remove_sestart_truncated_gene(tblout_df)
+        tblout_df = tblout_df.unique(subset=['seq_from', 'seq_to'])
+        tblout_df = remove_restart_truncated_gene(tblout_df)
         seq_record.seq = seq_record.seq[: -len_circ_tail]
     # end if
 
@@ -583,7 +621,7 @@ def extract_reannotated_genes(seq_record: SeqRecord, topology: str, asm_acc: int
     genes = list()
 
     # Iterate over rows of tblout_df and extract sequences of annotated genes
-    for _, row in tblout_df.iterrows():
+    for row in tblout_df.to_dicts():
         seq_start = row['seq_from']
         seq_end = row['seq_to']
         seq_strand = row['strand']
@@ -638,21 +676,17 @@ asm_sum_df = rgIO.read_ass_sum_file(asm_sum_fpath)
 if cache_mode:
     print('{} -- Reading cached data...'.format(get_time()))
 
-    cached_stats_df = pd.read_csv(
+    cached_stats_df = pl.read_csv(
         prev_all_stats_fpath,
-        sep='\t'
+        separator='\t'
     )
-    cached_stats_df = cached_stats_df.rename(
-        columns={
-            'acc': 'seq_acc'
-        }
-    )
-    cached_asm_accs = set(cached_stats_df['asm_acc'])
+    cached_stats_df = cached_stats_df.rename({'acc': 'seq_acc'})
+    cached_asm_accs = frozenset(cached_stats_df['asm_acc'])
 
     cached_dict = make_cache_dict(prev_all_fasta_fpath, cached_asm_accs)
     print('{} -- done'.format(get_time()))
 else:
-    cached_asm_accs = set()
+    cached_asm_accs = frozenset()
 # end if
 
 n_asms = asm_sum_df.shape[0] # number of Assembly ACCESSION.VESRIONs to process
@@ -668,11 +702,11 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, \
     stats_outfile.write('{}\n'.format('\t'.join(stats_header)))
 
     # For each RefSeq record: extract 16S rRNA genes from it
-    for i, row in asm_sum_df.iterrows():
+    for i, row in enumerate(asm_sum_df.to_dicts(), 1):
 
         asm_acc = row['asm_acc']
         status_str = '\r{} -- Doing {}/{}: {}'.format(
-            get_time(), i+1, n_asms, asm_acc
+            get_time(), i, n_asms, asm_acc
         )
         print(status_str, end=' '*10)
 
@@ -685,16 +719,17 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, \
                 fasta_outfile.write(f'>{sr.description}\n{sr.seq}\n')
             # end for
 
-            curr_cached_stats_df = cached_stats_df[cached_stats_df['asm_acc'] == asm_acc].copy()
-
-            curr_cached_stats_df.to_csv(
-                stats_outfile,
-                sep='\t',
-                header=False,
-                index=False,
-                na_rep='NA',
-                encoding='utf-8'
+            curr_cached_stats_df = cached_stats_df.filter(
+                pl.col('asm_acc') == 'asm_acc'
             )
+
+            curr_cached_stats_df.write_csv(
+                stats_outfile,
+                separator='\t',
+                include_header=False,
+                null_value='NA'
+            )
+            del curr_cached_stats_df
             continue # cache hit
         # end if
 
@@ -727,7 +762,13 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, \
             if improper_16S_annotation or (seq_start_truncation and topology == 'circular'):
                 # Reannotate 16S rRNA genes using cmsearch
                 # And extract reannotated genes
-                extracted_genes = extract_reannotated_genes(seq_record, topology, asm_acc)
+                extracted_genes = extract_reannotated_genes(
+                    seq_record,
+                    topology,
+                    asm_acc,
+                    tmp_dir_path,
+                    cmsearch_threads
+                )
                 for header, seq in extracted_genes:
                     fasta_outfile.write(f'>{header}\n{seq}\n')
                 # end for
