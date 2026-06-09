@@ -99,7 +99,7 @@ import gzip
 import subprocess as sp
 from typing import Dict, List, Sequence, TextIO
 
-import pandas as pd
+import polars as pl
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
@@ -324,14 +324,6 @@ def parse_seqtech(asm_acc, genomes_dirpath):
 # end def
 
 
-
-# Read per-replicon statistics
-stats_df = pd.read_csv(
-    in_stats_fpath,
-    sep='\t'
-)
-
-
 # Make vocabularies of seqtech keywords
 pacbio_vocab   = read_seqtech_vocab(pacbio_vocab_fpath)
 illumina_vocab = read_seqtech_vocab(illumina_vocab_fpath)
@@ -348,6 +340,13 @@ print(
 )
 
 
+# Read per-replicon statistics
+stats_df = pl.read_csv(
+    in_stats_fpath,
+    separator='\t'
+)
+
+
 # == Proceed ==
 
 print('Starting assigning categories for genomes')
@@ -358,7 +357,7 @@ with open(outfpath, 'wt') as outfile:
     outfile.write('asm_acc\tcategory\tseqtech\tdegenerate_in_16S\tunlocalized_16S\n')
 
     # Get all Assembly accessions
-    all_asm_accs = tuple(set(stats_df['asm_acc']))
+    all_asm_accs = tuple(frozenset(stats_df['asm_acc']))
 
     status_step = 50
     next_status = min(status_step, len(all_asm_accs))
@@ -367,7 +366,7 @@ with open(outfpath, 'wt') as outfile:
     sys.stdout.flush()
 
     # Iterate over Assembly IDs
-    for i, asm_acc in enumerate(all_asm_accs):
+    for i, asm_acc in enumerate(all_asm_accs, 1):
         # Genome has (maybe, patrial) SSU genes in "map unlocalized" sequences
         unlocalized_16S = False
         # Genome has degenerate bases in SSU genes
@@ -377,10 +376,12 @@ with open(outfpath, 'wt') as outfile:
         seqtech = parse_seqtech(asm_acc, genomes_dirpath)
 
         # Get rows corresponding to current assembly
-        curr_asm_df = stats_df[stats_df['asm_acc'] == asm_acc]
+        curr_asm_df = stats_df.filter(
+            pl.col('asm_acc') == asm_acc
+        )
 
         # Iterate over ACCESSION.VERSION's of current genome
-        for _, row in curr_asm_df.iterrows():
+        for row in curr_asm_df.to_dicts():
             asm_acc = row['asm_acc']
             title   = row['title']
 
@@ -418,9 +419,9 @@ with open(outfpath, 'wt') as outfile:
         )
         outfile.write('{}\n'.format(out_row_str))
 
-        if (i+1) == next_status:
+        if i == next_status:
             sys.stdout.write(
-                '\r{}/{} genomes are done'.format(i+1, len(all_asm_accs))
+                '\r{}/{} genomes are done'.format(i, len(all_asm_accs))
             )
             sys.stdout.flush()
             next_status = min(
