@@ -7,7 +7,6 @@
 # Category 2. A genome is not of category 3, and it was sequenced neither using PacBio nor ONT+Illumina nor ONT+MGI.
 # Category 3. At least one of the following is true:
 #   - A genome has at least one degenerate base in its SSU gene sequences.
-#   - At least one of the genomic sequences contains phrase "map unlocalized" in it title,
 #     and the sequence contains an SSU gene (or a part of it).
 
 ## Command line arguments
@@ -354,7 +353,7 @@ print('Starting assigning categories for genomes')
 with open(outfpath, 'wt') as outfile:
 
     # Write header
-    outfile.write('asm_acc\tcategory\tseqtech\tdegenerate_in_16S\tunlocalized_16S\n')
+    outfile.write('asm_acc\tcategory\tseqtech\tdegenerate_in_16S\n')
 
     # Get all Assembly accessions
     all_asm_accs = tuple(frozenset(stats_df['asm_acc']))
@@ -367,8 +366,6 @@ with open(outfpath, 'wt') as outfile:
 
     # Iterate over Assembly IDs
     for i, asm_acc in enumerate(all_asm_accs, 1):
-        # Genome has (maybe, patrial) SSU genes in "map unlocalized" sequences
-        unlocalized_16S = False
         # Genome has degenerate bases in SSU genes
         degenerate_in_16S = asm_acc in asm_accs_degen_in_16S
 
@@ -384,15 +381,11 @@ with open(outfpath, 'wt') as outfile:
         for row in curr_asm_df.to_dicts():
             asm_acc = row['asm_acc']
             title   = row['title']
-
-            # Update flag `unlocalized_16S`
-            map_unlocalized = 'MAP UNLOCALIZED' in title.upper()
-            unlocalized_16S = unlocalized_16S or (map_unlocalized and row['num_genes'] != 0)
         # end for
 
         # Assign category to the genome
         category = None
-        if degenerate_in_16S or unlocalized_16S:
+        if degenerate_in_16S:
             category = CATEGORY_3
         elif not seqtech is None:
             is_nanopore_var = is_nanopore(seqtech)
@@ -414,7 +407,6 @@ with open(outfpath, 'wt') as outfile:
                 asm_acc, category,
                 seqtech if not seqtech is None else 'NA',
                 '1' if degenerate_in_16S else '0',
-                '1' if   unlocalized_16S else '0',
             ]
         )
         outfile.write('{}\n'.format(out_row_str))

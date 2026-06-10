@@ -161,7 +161,7 @@ if [[ ! -z "${PREV_WORKDIR}" ]]; then
   prev_aberr_dir="${PREV_WORKDIR}/aberrations_and_heterogeneity"
   PREV_ASM_SUM_FINAL="${PREV_WORKDIR}/genomes_data/assembly_summary_final.txt.gz"
   PREV_REPLICON_MAP="${PREV_WORKDIR}/genomes_data/replicon_map.tsv.gz"
-  PREV_ASM_ACCS_NNN="${PREV_WORKDIR}/genomes_data/asm_accs_NNN.txt.gz"
+  PREV_ASM_ACCS_YET_UNASM="${PREV_WORKDIR}/genomes_data/asm_accs_yet_unasm.txt.gz"
   PREV_RIBOTYPER_SHORT_OUT_TSV="${prev_aberr_dir}/ribotyper_out/ribotyper_out.ribotyper.short.out.tsv"
   PREV_RIBOTYPER_LONG_OUT_TSV="${prev_aberr_dir}/ribotyper_out/ribotyper_out.ribotyper.long.out.tsv"
   PREV_TBLOUT_FILE="${prev_aberr_dir}/cmscan_output_table.tblout"
@@ -242,7 +242,7 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --refseq-catalog "${FILTERED_REFSEQ_CATALOG_FILE}" \
     --genomes-dir "${GENOMES_GBK_DIR}" \
     --prev-asm-sum-final "${PREV_ASM_SUM_FINAL}" \
-    --prev-NNN-asm-accs "${PREV_ASM_ACCS_NNN}" \
+    --prev-yet-unasm-asm-accs "${PREV_ASM_ACCS_YET_UNASM}" \
     --out-asm-sum "${ASS_SUM_FINAL}"
 else
   python3 "${SCRIPTS_DIR}/filter_asm_summary_step2.py" \
