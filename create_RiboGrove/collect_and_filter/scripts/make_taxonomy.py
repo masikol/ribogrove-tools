@@ -319,13 +319,30 @@ def request_missing_taxonomy(taxid):
 # end def
 
 
-def fill_missing_taxonomy(row: dict) -> dict:
-    if row['organism_name'] is None:
-        print(f'Requesting taxonomy for taxid {row["taxid"]}... ')
-        taxonomy_dict = request_missing_taxonomy(row['taxid'])
+def fill_missing_taxonomy(row: tuple) -> tuple:
+    # Column order:
+    # asm_acc
+    # taxid
+    # organism_name
+    # Species
+    # Genus
+    # Family
+    # Order
+    # Class
+    # Phylum
+    # Kingdom
+    # Domain
+
+    asm_acc = row[0]
+    taxid = row[1]
+    organism_name = row[2]
+
+    if organism_name is None:
+        print(f'Requesting taxonomy for taxid {taxid}... ')
+        taxonomy_dict = request_missing_taxonomy(taxid)
         
         if taxonomy_dict['organism_name'] == 'NA':
-            seq_title = asm_sum_df.filter(pl.col('asm_acc') == row['asm_acc'])['title'][0]
+            seq_title = asm_sum_df.filter(pl.col('asm_acc') == asm_acc)['title'][0]
             strings_to_rm = (
                 ', complete sequence',
                 ', complete genome',
@@ -336,7 +353,7 @@ def fill_missing_taxonomy(row: dict) -> dict:
             # end for
 
             taxonomy_dict['organism_name'] = seq_title
-            print(f'Cannot find taxonomy for taxid {row["taxid"]} at the NCBI website')
+            print(f'Cannot find taxonomy for taxid {taxid} at the NCBI website')
             print(f'Using the RefSeq title as the taxonomy name: `{taxonomy_dict["organism_name"]}`')
         else:
             print(taxonomy_dict)
@@ -344,10 +361,24 @@ def fill_missing_taxonomy(row: dict) -> dict:
 
         # Update row with taxonomy values
         for rank_name, taxon_name in taxonomy_dict.items():
-            row[rank_name] = taxon_name
+            taxonomy_row[rank_name] = taxon_name
         # end for
+
+        taxonomy_tuple = (
+            asm_acc,
+            taxid,
+            taxonomy_dict['organism_name'],
+            taxonomy_dict['Species'],
+            taxonomy_dict['Genus'],
+            taxonomy_dict['Family'],
+            taxonomy_dict['Order'],
+            taxonomy_dict['Class'],
+            taxonomy_dict['Phylum'],
+            taxonomy_dict['Kingdom'],
+            taxonomy_dict['Domain'],
+        )
     
-    return row
+    return taxonomy_tuple
 # end def
 
 
@@ -400,7 +431,23 @@ print('Creating taxonomy file')
 asm_sum_df = rgIO.read_ass_sum_file(asm_sum_fpath)
 
 # Merge per-genome taxid file to rankedlineage file
-taxonomy_df = asm_sum_df.join(rankedlineage_df, on='taxid', how='left')
+taxonomy_df = asm_sum_df \
+    .join(rankedlineage_df, on='taxid', how='left') \
+    .select(
+        pl.col(
+            'asm_acc',
+            'taxid',
+            'organism_name',
+            'Species',
+            'Genus',
+            'Family',
+            'Order',
+            'Class',
+            'Phylum',
+            'Kingdom',
+            'Domain',
+        )
+    )
 del rankedlineage_df
 
 # Sometimes information is missing for some taxids in rankedlineage.dmp
@@ -412,13 +459,10 @@ missing_taxids = frozenset(
     )['taxid']
 )
 if len(missing_taxids) != 0:
-    # TODO: this map_elements will not work: pl.DataFrame has no map_elements method
     print(f'Taxonomy is missing for {len(missing_taxids)} Taxonomy IDs')
     print('The script will request the taxonomy for them from the NCBI website')
-    taxonomy_df = taxonomy_df.map_elements(
-        fill_missing_taxonomy,
-        return_dtype=taxonomy_df.schema
-    )
+    taxonomy_df = taxonomy_df.map_rows(fill_missing_taxonomy)
+# end if
 del missing_taxids
 
 
@@ -427,25 +471,7 @@ taxonomy_df = taxonomy_df.with_columns(
     pl.struct(['Species', 'organism_name']).map_elements(
         fill_empty_species_name,
         return_dtype=pl.String
-    )
-)
-
-
-# Order columns
-taxonomy_df = taxonomy_df.select(
-    pl.col(
-        'asm_acc',
-        'taxid',
-        'organism_name',
-        'Species',
-        'Genus',
-        'Family',
-        'Order',
-        'Class',
-        'Phylum',
-        'Kingdom',
-        'Domain',
-    )
+    ).alias('Species')
 )
 
 
