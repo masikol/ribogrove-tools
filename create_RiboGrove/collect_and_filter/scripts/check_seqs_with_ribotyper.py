@@ -111,7 +111,6 @@ import sys
 import subprocess as sp
 from typing import List
 
-import numpy as np
 import polars as pl
 from Bio import SeqIO
 

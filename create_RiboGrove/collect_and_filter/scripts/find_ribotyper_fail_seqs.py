@@ -59,8 +59,7 @@ args = parser.parse_args()
 import sys
 from typing import Tuple
 
-import numpy as np
-import pandas as pd
+import polars as pl
 
 
 # For convenience
@@ -96,16 +95,31 @@ FAIL_FEATURES = (
     'UnacceptableModel',
     'MinusStrand',
     'LowScore',
+    'MultipleFamilies',
     # 'LowCoverage', # TODO: remove?
 )
 
 
 def find_failed_seqIDs(in_short_out_fpath):
-    short_out_df = pd.read_csv(in_short_out_fpath, sep='\t')
-    short_out_df['custom_fail'] = np.repeat(False, short_out_df.shape[0])
-    short_out_df = short_out_df.apply(set_custom_fail, axis=1)
+    short_out_df = pl.read_csv(in_short_out_fpath, separator='\t')
+    short_out_df = short_out_df.with_columns(
+        pl.lit(False).alias('custom_fail')
+    )
+    short_out_df = short_out_df.with_columns(
+        pl.struct(['unexpected_features', 'custom_fail']).map_elements(
+            set_custom_fail,
+            return_dtype=pl.Boolean
+        ).alias('custom_fail')
+    )
+
+    print(
+        short_out_df.filter(pl.col('custom_fail') == True)
+    )
+
     return tuple(
-        short_out_df[short_out_df['custom_fail'] == True]['target']
+        short_out_df.filter(
+            pl.col('custom_fail') == True
+        )['target']
     )
 # end def
 
@@ -114,16 +128,15 @@ def set_custom_fail(row):
 
     row_features = row['unexpected_features']
     if row_features == '-':
-        return row
+        return False
     # end if
 
     for fail_feature in FAIL_FEATURES:
         if fail_feature in row_features:
-            row['custom_fail'] = True
-            return row
+            return True
         # end if
     # end for
-    return row
+    return False
 # end def
 
 
