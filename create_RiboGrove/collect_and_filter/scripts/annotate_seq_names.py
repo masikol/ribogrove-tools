@@ -71,7 +71,7 @@ args = parser.parse_args()
 # == Import them now ==
 import sys
 
-import pandas as pd
+import polars as pl
 from Bio import SeqIO
 
 from src.ribogrove_seqID import parse_asm_acc
@@ -129,19 +129,21 @@ def get_taxonomy(asm_acc, tax_df):
     global TAX_SEP
 
     # Select line of taxonomy DF for current sequence
-    curr_tax_record = tax_df.loc[asm_acc,]
+    # TODO: remove
+    # curr_tax_record = tax_df.loc[asm_acc,]
+    curr_tax_record = tax_df.filter(pl.col('asm_acc') == asm_acc).to_dicts()[0]
 
-    raw_species_name = 'NA' if pd.isnull(curr_tax_record['Species']) else curr_tax_record['Species']
+    raw_species_name = 'NA' if curr_tax_record['Species'] is None else curr_tax_record['Species']
     species_name = make_species_name(raw_species_name)
 
     tax_names = [
-        'NA' if pd.isnull(curr_tax_record[ 'Domain']) else curr_tax_record[ 'Domain'],
-        'NA' if pd.isnull(curr_tax_record['Kingdom']) else curr_tax_record['Kingdom'],
-        'NA' if pd.isnull(curr_tax_record[ 'Phylum']) else curr_tax_record[ 'Phylum'],
-        'NA' if pd.isnull(curr_tax_record[  'Class']) else curr_tax_record[  'Class'],
-        'NA' if pd.isnull(curr_tax_record[  'Order']) else curr_tax_record[  'Order'],
-        'NA' if pd.isnull(curr_tax_record[ 'Family']) else curr_tax_record[ 'Family'],
-        'NA' if pd.isnull(curr_tax_record[  'Genus']) else curr_tax_record[  'Genus'],
+        'NA' if curr_tax_record[ 'Domain'] is None else curr_tax_record[ 'Domain'],
+        'NA' if curr_tax_record['Kingdom'] is None else curr_tax_record['Kingdom'],
+        'NA' if curr_tax_record[ 'Phylum'] is None else curr_tax_record[ 'Phylum'],
+        'NA' if curr_tax_record[  'Class'] is None else curr_tax_record[  'Class'],
+        'NA' if curr_tax_record[  'Order'] is None else curr_tax_record[  'Order'],
+        'NA' if curr_tax_record[ 'Family'] is None else curr_tax_record[ 'Family'],
+        'NA' if curr_tax_record[  'Genus'] is None else curr_tax_record[  'Genus'],
         species_name,
     ]
 
@@ -160,8 +162,12 @@ def get_taxonomy(asm_acc, tax_df):
 
 
 def get_category(cat_df, asm_acc):
-    category = cat_df[cat_df['asm_acc'] == asm_acc]['category'].values[0]
-    if pd.isnull(category):
+    # TODO: remove
+    # category = cat_df[cat_df['asm_acc'] == asm_acc]['category'].values[0]
+    category = cat_df.filter(
+        pl.col('asm_acc') == asm_acc
+    ).to_dicts()[0]['category']
+    if category is None:
         category = 'NA'
     # end if
     return category
@@ -171,39 +177,39 @@ def get_category(cat_df, asm_acc):
 # == Proceed ==
 
 # Read taxonomy file
-tax_df = pd.read_csv(
+tax_df = pl.read_csv(
     tax_fpath,
-    sep='\t',
-    dtype={
-        'asm_acc': str,
-        'taxid': pd.Int32Dtype(),
-        'organism_name': str,
-        'Species': str,
-        'Genus': str,
-        'Family': str,
-        'Order': str,
-        'Class': str,
-        'Phylum': str,
-        'Kingdom': str,
-        'Domain': str,
+    separator='\t',
+    schema={
+        'asm_acc': pl.String,
+        'taxid': pl.UInt32,
+        'organism_name': pl.String,
+        'Species': pl.String,
+        'Genus': pl.String,
+        'Family': pl.String,
+        'Order': pl.String,
+        'Class': pl.String,
+        'Phylum': pl.String,
+        'Kingdom': pl.String,
+        'Domain': pl.String,
     }
 )
+# In order to select sequences quickly
+tax_df.index = tax_df['asm_acc']
 
 # Read categories file
-cat_df = pd.read_csv(
+cat_df = pl.read_csv(
     cat_fpath,
-    sep='\t',
-    dtype={
-        'asm_acc': str,
-        'category': pd.Int8Dtype(),
+    separator='\t',
+    schema_overrides={
+        'asm_acc': pl.String,
+        'category': pl.UInt8,
     }
 )
 
 # Count sequences
 n_seqs = len(tuple(SeqIO.parse(in_fasta_fpath, 'fasta')))
 
-# In order to select sequences quickly
-tax_df.index = tax_df['asm_acc']
 
 step = 1000
 next_report_i = step
