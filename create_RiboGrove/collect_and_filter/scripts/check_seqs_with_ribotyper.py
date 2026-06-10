@@ -112,7 +112,7 @@ import subprocess as sp
 from typing import List
 
 import numpy as np
-import pandas as pd
+import polars as pl
 from Bio import SeqIO
 
 import src.rg_tools_IO as rgIO
@@ -282,11 +282,11 @@ def make_query_file(in_seqs_fpath: str,
     if cache_mode:
         print('Loading previous .short.out.tsv file')
 
-        all_curr_seqIDs = set(map(lambda r: r.id, input_seq_records))
+        all_curr_seqIDs = frozenset(map(lambda r: r.id, input_seq_records))
 
         # Read seqIDs from previous .short.out.tsv file
-        prev_short_out_df = pd.read_csv(prev_short_out_fpath, sep='\t')
-        prev_seqIDs = set(prev_short_out_df['target'])
+        prev_short_out_df = pl.read_csv(prev_short_out_fpath, separator='\t')
+        prev_seqIDs = frozenset(prev_short_out_df['target'])
 
         cached_seqIDs = all_curr_seqIDs & prev_seqIDs
 
@@ -312,7 +312,9 @@ def make_query_file(in_seqs_fpath: str,
         )
 
         query_seq_records = seq_records_for_ribotyper
-        cached_short_out_df = prev_short_out_df.query('target in @cached_seqIDs')
+        cached_short_out_df = prev_short_out_df.filter(
+            pl.col('target').is_in(cached_seqIDs)
+        )
     else:
         query_seq_records = input_seq_records
         cached_short_out_df = None
@@ -398,41 +400,41 @@ def count_seqs_fasta(fpath):
 
 
 def get_cached_out_long_df(prev_long_out_fpath, cached_short_out_df):
-    cached_seqIDs = set(
+    cached_seqIDs = frozenset(
         cached_short_out_df['target']
     )
-    prev_long_df = pd.read_csv(
+    prev_long_df = pl.read_csv(
         prev_long_out_fpath,
-        sep='\t',
-        dtype={
-            'target': str,
-            'pass_fail': str,
-            'length': np.uint16,
-            'fm': np.uint16,
-            'fam': str,
-            'domain': str,
-            'model': str,
-            'strnd': str,
-            'ht': str,
-            'tscore': np.float32,
-            'bscore': np.float32,
-            's_per_nt': np.float32,
-            'bevalue': float,
-            'tcov': str,
-            'bcov': str,
-            'bfrom': str,
-            'bto': str,
-            'mfrom': np.float32,
-            'mto': np.float32,
-            'scdiff': np.float32,
-            'scd_per_nt': np.float32,
-            'model': str,
-            'tscore': np.float32,
-            'unexpected_features': str,
+        separator='\t',
+        schema_overrides={
+            'target': pl.String,
+            'pass_fail': pl.String,
+            'length': pl.UInt32,
+            'fm': pl.UInt32,
+            'fam': pl.String,
+            'domain': pl.String,
+            'model': pl.String,
+            'strnd': pl.String,
+            'ht': pl.String,
+            'tscore': pl.Float64,
+            'bscore': pl.Float64,
+            's_per_nt': pl.Float64,
+            'bevalue': pl.Float64,
+            'tcov': pl.String,
+            'bcov': pl.String,
+            'bfrom': pl.String,
+            'bto': pl.String,
+            'mfrom': pl.Float64,
+            'mto': pl.Float64,
+            'scdiff': pl.Float64,
+            'scd_per_nt': pl.Float64,
+            'unexpected_features': pl.String,
         },
-        na_values=['-']
+        null_values=['-', 'NA']
     )
-    cached_long_df = prev_long_df.query('target in @cached_seqIDs').copy()
+    cached_long_df = prev_long_df.filter(
+        pl.col('target').is_in(cached_seqIDs)
+    ).clone()
     return cached_long_df
 # end def
 
@@ -477,28 +479,28 @@ print('Done')
 
 if cache_mode:
     # Add cached .short.out.tsv dataframe rows
-    cached_short_out_df.to_csv(
-        final_short_out_fpath,
-        sep='\t',
-        index=False,
-        header=False,
-        mode='a',
-        na_rep='NA'
-    )
+    with open(final_short_out_fpath, 'at') as out_handle:
+        cached_short_out_df.write_csv(
+            out_handle,
+            separator='\t',
+            include_header=False,
+            null_value='NA'
+        )
+    # end with
 
     # Add cached .long.out.tsv dataframe rows
     cached_long_out_df = get_cached_out_long_df(
         prev_long_out_fpath,
         cached_short_out_df
     )
-    cached_long_out_df.to_csv(
-        final_long_out_fpath,
-        sep='\t',
-        index=False,
-        header=False,
-        mode='a',
-        na_rep='NA'
-    )
+    with open(final_long_out_fpath, 'at') as out_handle:
+        cached_long_out_df.write_csv(
+            out_handle,
+            separator='\t',
+            include_header=False,
+            null_value='NA'
+        )
+    # end with
 # end if
 
 print('\nCompleted!')
