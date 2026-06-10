@@ -115,7 +115,7 @@ args = parser.parse_args()
 # == Import them now ==
 import sys
 
-import pandas as pd
+import polars as pl
 from Bio import SeqIO
 
 import src.rg_tools_IO as rgIO
@@ -173,11 +173,11 @@ print()
 print("Started")
 print('Filtering sequences...')
 
-blacklist = set(
-    pd.read_csv(blacklist_fpath, sep='\t')['seqID']
+blacklist = frozenset(
+    pl.read_csv(blacklist_fpath, separator='\t')['seqID']
 )
-whitelist = set(
-    pd.read_csv(whitelist_fpath, sep='\t')['seqID']
+whitelist = frozenset(
+    pl.read_csv(whitelist_fpath, separator='\t')['seqID']
 )
 
 # Read input sequences
