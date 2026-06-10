@@ -474,13 +474,15 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --categories-file "${CATEGORIES_FILE}" \
     --outfile "${ENTROPY_FILE}" \
     --prev-per-base-entropy-file "${PREV_PERBASE_ENTROPY_FILE}" \
-    --mafft "${MAFFT}"
+    --mafft "${MAFFT}" \
+    --threads "${MAFFT_THREADS}"
 else
   python3 "${SCRIPTS_DIR}/calculate_entropy.py" \
     --fasta-seqs-file "${ANNOTATED_RESULT_FASTA}" \
     --categories-file "${CATEGORIES_FILE}" \
     --outfile "${ENTROPY_FILE}" \
-    --mafft "${MAFFT}"
+    --mafft "${MAFFT}" \
+    --threads "${MAFFT_THREADS}"
 fi
 
 

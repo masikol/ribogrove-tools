@@ -116,7 +116,7 @@ from functools import reduce
 from typing import Sequence, Dict, List
 
 import numpy as np
-import pandas as pd
+import polars as pl
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 
@@ -217,7 +217,6 @@ def do_msa(seq_records: Sequence[SeqRecord],
            tmp_dirpath : str) -> List[SeqRecord]:
     # Function does Multiple Sequence Alignment
 
-    # TODO: remove hardcoded threads
     tmp_fpath = os.path.join(tmp_dirpath, 'tmp.fasta')
 
     # Configure command
@@ -225,7 +224,7 @@ def do_msa(seq_records: Sequence[SeqRecord],
         [
             mafft_fpath,
             '--auto',
-            '--thread 2',
+            '--thread', str(threads),
             tmp_fpath
         ]
     )
@@ -314,15 +313,22 @@ def encode_accs(acc_list):
     return ''.join(sorted(acc_list))
 # end def
 
-
-def set_sum_mean_num_var_cols(row):
+def calc_sum_entropy(asm_acc):
     global perbase_entropy_dict
-    asm_acc = row['asm_acc']
     entropy_arr = perbase_entropy_dict[asm_acc]
-    row['sum_entropy'] = np.sum(entropy_arr)
-    row['mean_entropy'] = np.mean(entropy_arr)
-    row['num_var_cols'] = count_var_positions(entropy_arr)
-    return row
+    return np.sum(entropy_arr)
+# end def
+
+def calc_mean_entropy(asm_acc):
+    global perbase_entropy_dict
+    entropy_arr = perbase_entropy_dict[asm_acc]
+    return np.mean(entropy_arr)
+# end def
+
+def calc_num_var_cols(asm_acc):
+    global perbase_entropy_dict
+    entropy_arr = perbase_entropy_dict[asm_acc]
+    return count_var_positions(entropy_arr)
 # end def
 
 def count_var_positions(entropy_arr):
@@ -340,11 +346,11 @@ def count_var_positions(entropy_arr):
 # == Proceed ==
 
 # Read categories file
-categories_df = pd.read_csv(categories_fpath, sep='\t')
+categories_df = pl.read_csv(categories_fpath, separator='\t')
 
 # Get Assembly IDs of 1 category
 asm_accs = frozenset(
-    categories_df[categories_df['category'] == 1]['asm_acc']
+    categories_df.filter(pl.col('category') == 1)['asm_acc']
 )
 
 # Read genes sequnces
@@ -424,17 +430,28 @@ print('Summarizing the calculated entropy...')
 
 
 if len(perbase_entropy_dict) != 0:
-    summary_entropy_df = pd.DataFrame(
+    summary_entropy_df = pl.DataFrame(
         {
             'asm_acc': list(perbase_entropy_dict.keys()),
-            'sum_entropy': np.repeat(None, len(perbase_entropy_dict)),
-            'mean_entropy': np.repeat(None, len(perbase_entropy_dict)),
-            'num_var_cols': np.repeat(None, len(perbase_entropy_dict)),
         }
     )
-    summary_entropy_df = summary_entropy_df.apply(set_sum_mean_num_var_cols, axis=1)
+
+    summary_entropy_df = summary_entropy_df.with_columns(
+        pl.col('asm_acc').map_elements(
+            calc_sum_entropy,
+            return_dtype=pl.Float64
+        ).alias('sum_entropy'),
+        pl.col('asm_acc').map_elements(
+            calc_mean_entropy,
+            return_dtype=pl.Float64
+        ).alias('mean_entropy'),
+        pl.col('asm_acc').map_elements(
+            calc_num_var_cols,
+            return_dtype=pl.UInt32
+        ).alias('num_var_cols')
+    )
 else:
-    summary_entropy_df = pd.DataFrame(
+    summary_entropy_df = pl.DataFrame(
         {
             'asm_acc': [],
             'sum_entropy': [],
@@ -446,12 +463,10 @@ else:
 
 
 # Overwrite the per-base file: it is barely informative
-summary_entropy_df.to_csv(
+summary_entropy_df.write_csv(
     outfpath,
-    sep='\t',
-    mode='w',
-    index=False,
-    header=True
+    separator='\t',
+    include_header=True
 )
 
 

@@ -113,8 +113,6 @@ def reformat_rankedlineaage_file(rankedlineage_path: str) -> str:
         'rankedlineage_just_tabs.dmp'
     )
 
-    # TODO: remove
-    # cmd = f'cat {rankedlineage_path} | sed "s/\\t|\\t/\\t/g" | sed "s/\\t|//g" > {new_rankedlineage_fpath}'
     cmd = ' '.join([
         'cat', rankedlineage_path,
         '|',
@@ -136,17 +134,6 @@ def reformat_rankedlineaage_file(rankedlineage_path: str) -> str:
     return new_rankedlineage_fpath
 # end def
 
-# TODO: remove
-# def fill_empty_species_name(row: pd.Series) -> pd.Series:
-#     # If taxid points to a species, (like 1642), it's taxonomy contains no 'species' fiels.
-#     # Well, then we will copy it from 'organism_name' field.
-
-#     if pd.isnull(row['Species']):
-#         row['Species'] = row['organism_name']
-#     # end if
-
-#     return row
-# # end def
 def fill_empty_species_name(row):
     # If taxid points to a species, (like 1642), it's taxonomy contains no 'species' fiels.
     # Well, then we will copy it from 'organism_name' field.
@@ -332,46 +319,6 @@ def request_missing_taxonomy(taxid):
 # end def
 
 
-# TODO: remove
-# def fill_missing_taxonomy(row):
-
-#     if pd.isnull(row['organism_name']):
-
-#         print(f'Requesting taxonomy for taxid {row["taxid"]}... ')
-
-#         taxonomy_dict = request_missing_taxonomy(row['taxid'])
-
-#         # If no taxonomy was retrieved, get it from the RefSeq title
-#         # Bad way, but no better ways are left
-#         if taxonomy_dict['organism_name'] == 'NA':
-#             global asm_sum_df
-#             seq_title = asm_sum_df[asm_sum_df['asm_acc'] == row['asm_acc']] \
-#                 .reset_index().loc[0, 'title']
-#             strings_to_rm = (
-#                 ', complete sequence',
-#                 ', complete genome',
-#                 ' map unlocalized',
-#             )
-#             for str_to_rm in strings_to_rm:
-#                 seq_title = seq_title.replace(str_to_rm, '')
-#             # end for
-#             taxonomy_dict['organism_name'] = seq_title
-
-#             print(f'Cannot find taxonomy for taxid {row["taxid"]} at the NCBI website')
-#             print(f'Using the RefSeq title as the taxonomy name: `{taxonomy_dict["organism_name"]}`')
-#         else:
-#             print(taxonomy_dict)
-#         # end if
-
-#         # Fill the taxonomy
-#         for rank_name, taxon_name in taxonomy_dict.items():
-#             row[rank_name] = taxon_name
-#         # end for
-#     # end if
-
-#     return row
-# # end def
-
 def fill_missing_taxonomy(row: dict) -> dict:
     if row['organism_name'] is None:
         print(f'Requesting taxonomy for taxid {row["taxid"]}... ')
@@ -394,7 +341,7 @@ def fill_missing_taxonomy(row: dict) -> dict:
         else:
             print(taxonomy_dict)
         # end if
-        
+
         # Update row with taxonomy values
         for rank_name, taxon_name in taxonomy_dict.items():
             row[rank_name] = taxon_name
@@ -458,32 +405,24 @@ del rankedlineage_df
 
 # Sometimes information is missing for some taxids in rankedlineage.dmp
 # Request the missing taxonomy from NCBI Taxonomy
-# TODO: remove
-# missing_taxids = frozenset(
-#     taxonomy_df[
-#         pd.isnull(taxonomy_df['organism_name'])
-#     ]['taxid']
-# )
+
 missing_taxids = frozenset(
     taxonomy_df.filter(
         pl.col('organism_name').is_null()
     )['taxid']
 )
 if len(missing_taxids) != 0:
+    # TODO: this map_elements will not work: pl.DataFrame has no map_elements method
     print(f'Taxonomy is missing for {len(missing_taxids)} Taxonomy IDs')
     print('The script will request the taxonomy for them from the NCBI website')
-    # TODO: remove
-    # taxonomy_df = taxonomy_df.apply(fill_missing_taxonomy, axis=1)
     taxonomy_df = taxonomy_df.map_elements(
         fill_missing_taxonomy,
-        return_dtype=df.schema
+        return_dtype=taxonomy_df.schema
     )
 del missing_taxids
 
 
 # Amend species names
-# TODO: remove
-# taxonomy_df = taxonomy_df.apply(fill_empty_species_name, axis=1)
 taxonomy_df = taxonomy_df.with_columns(
     pl.struct(['Species', 'organism_name']).map_elements(
         fill_empty_species_name,
@@ -493,22 +432,6 @@ taxonomy_df = taxonomy_df.with_columns(
 
 
 # Order columns
-# TODO: remove
-# taxonomy_df = taxonomy_df[
-#     [
-#         'asm_acc',
-#         'taxid',
-#         'organism_name',
-#         'Species',
-#         'Genus',
-#         'Family',
-#         'Order',
-#         'Class',
-#         'Phylum',
-#         'Kingdom',
-#         'Domain',
-#     ]
-# ]
 taxonomy_df = taxonomy_df.select(
     pl.col(
         'asm_acc',
