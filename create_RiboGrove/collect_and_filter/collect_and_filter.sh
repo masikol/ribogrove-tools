@@ -496,7 +496,6 @@ python3 "${SCRIPTS_DIR}/check_primers_mfeprimer.py" \
   --threads "${MFEPRIMER_THREADS}"
 
 
-
 # == Calculate Gene Copy Numbers ==
 
 if [[ "${CALC_PRIMERS_COVERAGE}" == true ]]; then

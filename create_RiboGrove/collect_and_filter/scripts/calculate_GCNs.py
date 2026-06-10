@@ -72,8 +72,7 @@ import sys
 import json
 from functools import reduce
 
-import numpy as np
-import pandas as pd
+import polars as pl
 
 from src.rg_tools_time import get_time
 from src.ribogrove_seqID import parse_asm_acc
@@ -125,34 +124,30 @@ print()
 
 
 def make_basic_gcn_df(base_counts_fpath):
-    base_count_df = pd.read_csv(base_counts_fpath, sep='\t')
+    base_count_df = pl.read_csv(base_counts_fpath, separator='\t')
     if 'ass_id' in base_count_df.columns:
         # Consistency with RiboGrove releases before 11.217
-        base_count_df = base_count_df.rename(columns={'ass_id': 'asm_acc'})
+        base_count_df = base_count_df.rename({'ass_id': 'asm_acc'})
     elif not 'asm_acc' in base_count_df.columns:
         # Consistency with RiboGrove releases after 21.227
-        base_count_df['asm_acc'] = np.repeat('', base_count_df.shape[0])
-        base_count_df = base_count_df.apply(set_asm_acc, axis=1)
+        base_count_df = base_count_df.with_columns(
+            pl.col('seqID').map_elements(
+                parse_asm_acc,
+                return_dtype=pl.String
+            ).alias('asm_acc')
+        )
     # end if
-    basic_gcn_df = base_count_df.groupby('asm_acc', as_index=False) \
-        .agg({'seqID': lambda x: x.nunique()}) \
-        .rename(columns={'seqID': '16S_rRNA_gcn'})
+    basic_gcn_df = base_count_df.group_by('asm_acc') \
+        .agg(pl.col('seqID').n_unique().alias('16S_rRNA_gcn'))
     return basic_gcn_df
 # end def
 
-def set_asm_acc(row):
-    row['asm_acc'] = parse_asm_acc(row['seqID'])
-    return row
-# end def
-
 def output_gcn_df(df, outfpath):
-    df.to_csv(
+    df.write_csv(
         outfpath,
-        sep='\t',
-        encoding='utf-8',
-        index=False,
-        header=True,
-        na_rep='NA'
+        separator='\t',
+        include_header=True,
+        null_value='NA'
     )
 # end def
 
@@ -162,7 +157,7 @@ def make_primers_gcn_dfs(primer_pairs,
                          basic_gcn_df,
                          outdir_path):
 
-    fake_total_df = pd.DataFrame(
+    fake_total_df = pl.DataFrame(
         {
             'asm_acc': list(basic_gcn_df['asm_acc'])
         }
@@ -171,19 +166,24 @@ def make_primers_gcn_dfs(primer_pairs,
     for nameF, nameR, _ in primer_pairs:
         primer_pair_key = make_primer_pair_key(nameF, nameR)
         primers_anneal_df_fpath = primer_pair_key_2_outfpath(primers_dirpath, primer_pair_key)
-        primers_anneal_df = pd.read_csv(primers_anneal_df_fpath, sep='\t')
-        primers_anneal_df['asm_acc'] = np.repeat('', primers_anneal_df.shape[0])
-        primers_anneal_df = primers_anneal_df.apply(set_asm_acc, axis=1)
+        primers_anneal_df = pl.read_csv(primers_anneal_df_fpath, separator='\t')
+        primers_anneal_df = primers_anneal_df.with_columns(
+            pl.col('seqID').map_elements(
+                parse_asm_acc,
+                return_dtype=pl.String
+            ).alias('asm_acc')
+        )
 
-        primers_gcn_df = primers_anneal_df.groupby('asm_acc', as_index=False) \
-            .agg({'seqID': lambda x: x.nunique()}) \
-            .rename(columns={'seqID': '16S_rRNA_gcn'}) \
-            .merge(fake_total_df, on='asm_acc', how='right')
-        primers_gcn_df['16S_rRNA_gcn'] = primers_gcn_df['16S_rRNA_gcn'] \
-            .infer_objects(copy=False).fillna(0).map(np.uint8) # we use uint8, for 16S GCN is by no means likely to be >255
-        primers_gcn_df = primers_gcn_df[
-            ['asm_acc', '16S_rRNA_gcn',]
-        ]
+        primers_gcn_df = primers_anneal_df.group_by('asm_acc') \
+            .agg(pl.col('seqID').n_unique().alias('16S_rRNA_gcn')) \
+            .join(fake_total_df, on='asm_acc', how='right')
+        primers_gcn_df = primers_gcn_df.with_columns(
+            pl.col('16S_rRNA_gcn').fill_null(0).cast(pl.UInt32)
+        )
+
+        primers_gcn_df = primers_gcn_df.select(
+            pl.col('asm_acc', '16S_rRNA_gcn')
+        )
 
         primer_gcn_outfpath = os.path.join(
             outdir_path,
