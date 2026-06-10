@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 # The script finds aberrant genes: truncated genes and genes with large deletions.
+# TODO: recheck genomes that have different seqIDs compared to prev
 
 ## Command line arguments
 
@@ -119,6 +120,13 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '--tmp-dir',
+    help='a directory for temp files',
+    required=False,
+    default='/tmp'
+)
+
 
 # Dependencies
 
@@ -128,6 +136,14 @@ parser.add_argument(
     required=True
 )
 
+# Params
+
+parser.add_argument(
+    '--threads',
+    help='number of threads for mafft',
+    required=False,
+    default=1
+)
 
 # Heuristic's params
 
@@ -151,8 +167,7 @@ import subprocess as sp
 from functools import reduce
 from typing import Sequence, Dict, Tuple
 
-import numpy as np
-import pandas as pd
+import polars as pl
 from Bio import SeqIO
 from Bio import SeqUtils
 from Bio.SeqRecord import SeqRecord
@@ -176,6 +191,8 @@ else:
     prev_aberrant_seqIDs_fpath = None
 # end if
 outdpath = os.path.abspath(args.outdir)
+tmp_dirpath = os.path.abspath(args.tmp_dir)
+n_threads = int(args.threads)
 
 
 # Check (and assign) value of `--deletion-len-threshold`
@@ -236,6 +253,8 @@ print(ribotyper_fail_fpath)
 print(asm_sum_fpath)
 print(ribotyper_long_fpath)
 print(mafft_fpath)
+print('n threads for mafft: {}'.format(n_threads))
+print(tmp_dirpath)
 print('deletion_len_threshold = {}'.format(deletion_len_threshold))
 if cache_mode:
     print(prev_final_fasta_fpath)
@@ -262,10 +281,10 @@ def get_cached_aberrant_seqIDs(seq_records, prev_aberrant_seqIDs):
 # end def
 
 def make_cached_asm_accs(cached_aberrant_seqIDs, prev_final_fasta_fpath, all_asm_accs):
-    cached_aberrant_asm_accs = set(
+    cached_aberrant_asm_accs = frozenset(
         map(parse_asm_acc, cached_aberrant_seqIDs)
     )
-    prev_final_asm_accs = set(
+    prev_final_asm_accs = frozenset(
         map(
             lambda record: parse_asm_acc(record.id),
             SeqIO.parse(prev_final_fasta_fpath, 'fasta')
@@ -295,31 +314,31 @@ def get_asm_acc_from_seq_record(seq_record):
 
 def pairwise_align(pivotal_seq_record: SeqRecord,
                    seq_record: SeqRecord,
-                   mafft_fpath: str) -> Tuple[SeqRecord, SeqRecord]:
+                   mafft_fpath: str,
+                   tmp_dirpath: str,
+                   n_threads: int) -> Tuple[SeqRecord, SeqRecord]:
     # Function performs pairwise global alignment of a pivotal gene (pivotal_seq_record)
     #    and some another gene (seq_record).
     # It does pairwise with MAFFT. It's quite weird, but we'll do it
     #    for the sake of uniformity.
 
-    # TODO: remove hardcoded paths and threads
-    tmp_fpath = '/tmp/tmp.fasta'
+    tmp_fpath = os.path.join(tmp_dirpath, 'tmp.fasta')
+    # Configure input fasta string
+    with open(tmp_fpath, 'wt') as outfile:
+        fasta_str = f'>{pivotal_seq_record.id}\n{str(pivotal_seq_record.seq)}\n>{seq_record.id}\n{str(seq_record.seq)}\n'
+        outfile.write(fasta_str)
+    # end with
 
     # Configure command
     cmd = ' '.join(
         [
             mafft_fpath,
             '--auto',
-            '--thread 2',
+            '--thread', str(n_threads),
             tmp_fpath
         ]
     )
     pipe = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
-
-    # Configure input fasta string
-    with open(tmp_fpath, 'wt') as outfile:
-        fasta_str = f'>{pivotal_seq_record.id}\n{str(pivotal_seq_record.seq)}\n>{seq_record.id}\n{str(seq_record.seq)}\n'
-        outfile.write(fasta_str)
-    # end with
 
     # Run command
     stdout_stderr = pipe.communicate()
@@ -428,47 +447,56 @@ def find_insertions_and_deletions(pivotal_aln_record: SeqRecord,
 
 
 def read_rt_long_df(ribotyper_long_fpath, ribotyper_fail_fpath):
-    rt_long_df = pd.read_csv(
+    rt_long_df = pl.read_csv(
         ribotyper_long_fpath,
-        sep='\t',
-        dtype={
-            'target': str,
-            'pass_fail': str,
-            'length': pd.Int32Dtype(),
-            'fm': str,
-            'fam': str,
-            'domain': str,
-            'model': str,
-            'strnd': str,
-            'ht': str,
-            'tscore': str,
-            'bscore': str,
-            's_per_nt': str,
-            'bevalue': str,
-            'tcov': str,
-            'bcov': str,
-            'bfrom': str,
-            'bto': str,
-            'mfrom': str,
-            'mto': str,
-            'scdiff': str,
-            'scd_per_nt': str,
-            'model': str,
-            'tscore': str,
-            'unexpected_features': str,
+        separator='\t',
+        schema_overrides={
+            'target': pl.String,
+            'pass_fail': pl.String,
+            'length': pl.UInt32,
+            'fm': pl.String,
+            'fam': pl.String,
+            'domain': pl.String,
+            'model': pl.String,
+            'strnd': pl.String,
+            'ht': pl.String,
+            'tscore': pl.String,
+            'bscore': pl.String,
+            's_per_nt': pl.String,
+            'bevalue': pl.String,
+            'tcov': pl.String,
+            'bcov': pl.String,
+            'bfrom': pl.String,
+            'bto': pl.String,
+            'mfrom': pl.String,
+            'mto': pl.String,
+            'scdiff': pl.String,
+            'scd_per_nt': pl.String,
+            'unexpected_features': pl.String,
         }
     )
 
     # Remove sequences which failed ribotyper filter
     ribotyper_fail_seqIDs = read_ribotyper_failed_seqIDs(ribotyper_fail_fpath)
-    rt_long_df = rt_long_df.query('not target in @ribotyper_fail_seqIDs').copy()
+    rt_long_df = rt_long_df.filter(
+        ~pl.col('target').is_in(ribotyper_fail_seqIDs)
+    ).clone()
 
     # for NoHist, whose `bscore` is '-'
-    rt_long_df['bscore'] = rt_long_df['bscore'].replace({'-': 0.0})
-    rt_long_df['bscore'] = rt_long_df['bscore'].map(float)
+    rt_long_df = rt_long_df.with_columns(
+        pl.col('bscore').replace('-', '0.0')
+    )
+    rt_long_df = rt_long_df.with_columns(
+        pl.col('bscore').cast(pl.Float64)
+    )
 
-    rt_long_df['asm_acc'] = np.repeat('', rt_long_df.shape[0])
-    rt_long_df = rt_long_df.apply(set_asm_acc, axis=1)
+    rt_long_df = rt_long_df.with_columns(
+        pl.col('target').map_elements(
+            parse_asm_acc,
+            return_dtype=pl.String
+        ).alias('asm_acc')
+    )
+
     return rt_long_df
 # end def
 
@@ -482,11 +510,6 @@ def read_ribotyper_failed_seqIDs(ribotyper_fail_fpath):
         )
     # end with
     return fail_seqIDs
-# end def
-
-def set_asm_acc(row):
-    row['asm_acc'] = parse_asm_acc(row['target'])
-    return row
 # end def
 
 
@@ -509,7 +532,7 @@ rt_long_df = read_rt_long_df(ribotyper_long_fpath, ribotyper_fail_fpath)
 
 
 # Get unique Assembly accessions
-asm_accs = set(asm_sum_df['asm_acc'])
+asm_accs = frozenset(asm_sum_df['asm_acc'])
 
 # Read input genes sequences
 seq_records = rgIO.read_and_filter_fasta(
@@ -525,8 +548,8 @@ if cache_mode:
     print('{} genomes left to_process'.format(len(asm_accs - cached_asm_accs)))
     del prev_aberrant_seqIDs
 else:
-    cached_aberrant_seqIDs = set()
-    cached_asm_accs = set()
+    cached_aberrant_seqIDs = frozenset()
+    cached_asm_accs = frozenset()
 # end if
 
 
@@ -544,10 +567,10 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
 
     # Iterate over assemblies
     asm_accs_left = asm_accs - cached_asm_accs
-    for i, asm_acc in enumerate(asm_accs_left):
+    for i, asm_acc in enumerate(asm_accs_left, 1):
         print(
             '\r{} -- Doing genome #{}/{}: {}' \
-                .format(get_time(), i+1, len(asm_accs_left), asm_acc),
+                .format(get_time(), i, len(asm_accs_left), asm_acc),
             end=' '*10
         )
 
@@ -559,15 +582,19 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
         # end if
 
         # Get all seqIDs of genes from current genome
-        curr_seqIDs = set(selected_seq_records.keys())
+        curr_seqIDs = frozenset(selected_seq_records.keys())
 
         # Select rows corresponding to current assembly
-        curr_ass_df = rt_long_df[rt_long_df['asm_acc'] == asm_acc]
+        curr_ass_df = rt_long_df.filter(
+            pl.col('asm_acc') == asm_acc
+        )
 
         # Select pivotal genes
         max_score = curr_ass_df['bscore'].max()
-        pivotal_seqIDs = set(
-            curr_ass_df[curr_ass_df['bscore'] > (max_score - 1e-6)]['target']
+        pivotal_seqIDs = frozenset(
+            curr_ass_df.filter(
+                pl.col('bscore') > (max_score - 1e-6)
+            )['target']
         )
 
         # Record seqIDs of pivotal genes
@@ -593,7 +620,13 @@ with open(pivotal_genes_fpath, 'wt') as pivotal_genes_outfile, \
                 seq_record = selected_seq_records[seqID]
 
                 # Perform pairwise alignment of current gene and current pivotal gene
-                pivotal_aln_record, aln_record = pairwise_align(pivotal_seq_record, seq_record, mafft_fpath)
+                pivotal_aln_record, aln_record = pairwise_align(
+                    pivotal_seq_record,
+                    seq_record,
+                    mafft_fpath,
+                    tmp_dirpath,
+                    n_threads
+                )
 
                 # Save some statistics of performaed alignment
                 pident = pairwise_percent_identity(pivotal_aln_record, aln_record)

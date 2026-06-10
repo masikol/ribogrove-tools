@@ -112,10 +112,6 @@ def find_failed_seqIDs(in_short_out_fpath):
         ).alias('custom_fail')
     )
 
-    print(
-        short_out_df.filter(pl.col('custom_fail') == True)
-    )
-
     return tuple(
         short_out_df.filter(
             pl.col('custom_fail') == True

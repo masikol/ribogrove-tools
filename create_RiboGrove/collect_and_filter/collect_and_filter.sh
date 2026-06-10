@@ -353,7 +353,9 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --prev-final-fasta "${PREV_FINAL_GENES_FASTA}" \
     --prev-aberrant-seqIDs "${PREV_ABERRANT_SEQIDS}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
+    --tmp-dir "${TMP_DIR}" \
     --mafft "${MAFFT}" \
+    --threads "${MAFFT_THREADS}" \
     --deletion-len-threshold "${DELETION_LEN_THRESHOLD}"
 else
   python3 "${SCRIPTS_DIR}/find_aberrant_genes.py" \
@@ -362,7 +364,9 @@ else
     --in-asm-sum "${ASS_SUM_FINAL}" \
     --ribotyper-long-out-tsv "${RIBOTYPER_LONG_OUT_TSV}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
+    --tmp-dir "${TMP_DIR}" \
     --mafft "${MAFFT}" \
+    --threads "${MAFFT_THREADS}" \
     --deletion-len-threshold "${DELETION_LEN_THRESHOLD}"
 fi
 
@@ -401,7 +405,7 @@ python3 "${SCRIPTS_DIR}/annotate_seq_names.py" \
 
 # == Make result sequences pretty: 70 bp per line ==
 
-tmp_fasta="${WORKDIR}/tmp.fasta"
+tmp_fasta="${TMP_DIR}/tmp.fasta"
 cat "${ANNOTATED_RESULT_FASTA}" | "${SEQKIT}" seq -uw 70 > "${tmp_fasta}"
 cat "${tmp_fasta}" > "${ANNOTATED_RESULT_FASTA}"
 rm -v "${tmp_fasta}"
@@ -431,7 +435,7 @@ python3 "${SCRIPTS_DIR}/annotate_seq_names.py" \
 
 # == Make result sequences pretty: 70 bp per line ==
 
-tmp_fasta="${WORKDIR}/tmp.fasta"
+tmp_fasta="${TMP_DIR}/tmp.fasta"
 cat "${ANNOTATED_DISCARDED_FASTA}" | "${SEQKIT}" seq -uw 70 > "${tmp_fasta}"
 cat "${tmp_fasta}" > "${ANNOTATED_DISCARDED_FASTA}"
 rm -v "${tmp_fasta}"
