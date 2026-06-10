@@ -122,8 +122,7 @@ import hashlib
 import subprocess as sp
 from functools import reduce
 
-import numpy as np
-import pandas as pd
+import polars as pl
 from Bio import SeqIO
 
 from src.rg_tools_time import get_time
@@ -287,19 +286,19 @@ def parse_pcr_plain_result(mfeprimer_result_text):
     output_rows = tuple(
         parse_pcr_plain_rows(mfeprimer_result_text)
     )
-    output_df = pd.DataFrame(
+    output_df = pl.DataFrame(
         data=output_rows,
-        columns=OUT_COLNAMES
+        schema=OUT_COLNAMES,
+        orient='row'
     )
 
-    output_df.drop_duplicates(
+    output_df = output_df.unique(
         subset=[
             'seqID',
             'product_size',
             'f_start', 'f_end',
             'r_start', 'r_end',
-        ],
-        inplace=True
+        ]
     )
     return output_df
 # end def
@@ -353,16 +352,19 @@ def write_deduplicated_output(output_df, uniq_seq_records, outfile):
 
     for seq, seqID_list in uniq_seq_records.items():
         seq_hash = md5_hash(seq)
-        curr_seq_df = output_df[output_df['seqID'] == seq_hash].copy()
+        curr_seq_df = output_df.filter(
+            pl.col('seqID') == seq_hash
+        ).clone()
 
         for seqID in seqID_list:
-            curr_seq_df['seqID'] = np.repeat(seqID, curr_seq_df.shape[0])
-            curr_seq_df.to_csv(
+            curr_seq_df = curr_seq_df.with_columns(
+                pl.lit(seqID).alias('seqID')
+            )
+            curr_seq_df.write_csv(
                 outfile,
-                sep='\t',
-                index=False,
-                header=False,
-                na_rep='NA'
+                separator='\t',
+                include_header=False,
+                null_value='NA'
             )
             # end for
         # end with
