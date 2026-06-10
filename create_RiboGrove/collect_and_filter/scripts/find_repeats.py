@@ -91,15 +91,24 @@ parser.add_argument(
     required=True
 )
 
+# "Cache" files
+
+parser.add_argument(
+    '--prev-repeats-table',
+    help='file `repeats.tsv` from the prevoius RiboGrove release workdir',
+    required=False
+)
+
 args = parser.parse_args()
 
 
 # == Import them now ==
 import sys
-from typing import Tuple
+from typing import Tuple, Sequence
 
-import repeatfinder as rf # https://github.com/deprekate/RepeatFinder
+import polars as pl
 from Bio import SeqIO
+import repeatfinder as rf # https://github.com/deprekate/RepeatFinder
 
 import src.rg_tools_IO as rgIO
 
@@ -110,6 +119,23 @@ ribotyper_fail_fpath = os.path.abspath(args.ribotyper_fail_seqIDs)
 aberrant_fpath = os.path.abspath(args.aberrant_seqIDs)
 out_fail_fpath = os.path.abspath(args.out_fail_file)
 out_repeats_log_fpath = os.path.abspath(args.out_repeats_log)
+
+cache_mode = not args.prev_repeats_table is None
+if cache_mode:
+    prev_repeats_table_fpath = os.path.abspath(args.prev_repeats_table)
+    if not os.path.isfile(prev_repeats_table_fpath):
+        print('Error!')
+        print('File `{}` does not exist'.format(prev_repeats_table_fpath))
+        sys.exit(1)
+    # end if
+    prev_fail_seqIDs_fpath = os.path.join(
+        os.path.dirname(prev_repeats_table_fpath),
+        'repeats_fail_seqIDs.txt'
+    )
+else:
+    prev_repeats_table_fpath = None
+    prev_fail_seqIDs_fpath = None
+# end if
 
 
 for f in (seqs_fpath, ribotyper_fail_fpath, aberrant_fpath):
@@ -147,7 +173,35 @@ print(seqs_fpath)
 print(ribotyper_fail_fpath)
 print(aberrant_fpath)
 print(f'Repeats length threshold = {repeat_len_threshold}')
+if cache_mode:
+    print(prev_repeats_table_fpath)
+    print(prev_fail_seqIDs_fpath)
+# end if
 print()
+
+
+
+def read_prev_repeats_df(prev_repeats_table_fpath: str) -> pl.DataFrame:
+    return pl.read_csv(
+        prev_repeats_table_fpath,
+        separator='\t'
+    )
+# end def
+
+def read_prev_fail_seqIDs(prev_fail_seqIDs_fpath: str) -> Sequence[str]:
+    with open(prev_fail_seqIDs_fpath, 'rt') as in_handle:
+        seqIDs = tuple(map(
+            str.strip,
+            in_handle.readlines()
+        ))
+    # end with
+    return seqIDs
+# end def
+
+def get_repeat_len(repeat_out: Tuple[int, int, int, int]):
+    # Function for calculating length of a repeat
+    return repeat_out[1] - repeat_out[0] + 1
+# end def
 
 
 # Some values for status messages
@@ -163,10 +217,21 @@ seq_records = rgIO.read_and_filter_fasta(
 num_seqs = len(seq_records) # tally input sequences
 
 
-def get_repeat_len(repeat_out: Tuple[int, int, int, int]):
-    # Function for calculating length of a repeat
-    return repeat_out[1] - repeat_out[0] + 1
-# end def
+if cache_mode:
+    all_curr_seqIDs = frozenset(map(
+        lambda sr: sr.id,
+        seq_records
+    ))
+    prev_repeats_df = read_prev_repeats_df(prev_repeats_table_fpath)
+    prev_repeats_df = prev_repeats_df.filter(
+        pl.col('seqID').is_in(all_curr_seqIDs)
+    )
+    cache_seqIDs = frozenset(prev_repeats_df['seqID']) & all_curr_seqIDs
+    del all_curr_seqIDs
+else:
+    prev_repeats_df = None
+    cache_seqIDs = frozenset()
+# end if
 
 
 # == Proceed ==
@@ -185,6 +250,10 @@ with open(out_repeats_log_fpath, 'wt') as out_log_file, \
             # Primt status message
             print(f'\r{i+1}/{num_seqs}', end=' ')
             next_report += inc
+        # end if
+
+        if record.id in cache_seqIDs:
+            continue
         # end if
 
         # Find repeats
@@ -206,6 +275,19 @@ with open(out_repeats_log_fpath, 'wt') as out_log_file, \
             # end if
         # end for
     # end for
+
+    if cache_mode:
+        prev_repeats_df.write_csv(
+            out_log_file,
+            separator='\t',
+            include_header=False
+        )
+
+        prev_fail_seqIDs = read_prev_fail_seqIDs(prev_fail_seqIDs_fpath)
+        for seqID in prev_fail_seqIDs:
+            out_seqID_file.write('{}\n'.format(seqID))
+        # end for
+    # end if
 # end with
 
 print(f'\r{i+1}/{num_seqs}')

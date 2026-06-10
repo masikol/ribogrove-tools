@@ -171,6 +171,7 @@ if [[ ! -z "${PREV_WORKDIR}" ]]; then
   PREV_PERBASE_ENTROPY_FILE="${prev_aberr_dir}/per_base_entropy.json.gz"
   PREV_PRIMERS_DIR="${PREV_WORKDIR}/primers_coverage"
   PREV_ABERRANT_SEQIDS="${prev_aberr_dir}/aberrant_seqIDs.txt"
+  PREV_REPEATS="${prev_aberr_dir}/repeats.tsv"
 else
   CACHE_MODE=false
 fi
@@ -372,13 +373,24 @@ fi
 
 # == Find repeats in genes sequences ==
 
-python3 "${SCRIPTS_DIR}/find_repeats.py" \
-  --in-fasta-file "${ALL_GENES_FASTA}" \
-  --ribotyper-fail-seqIDs "${RIBOTYPER_FAIL_SEQIDS_FPATH}" \
-  --aberrant-seqIDs "${ABERRANT_SEQIDS_FPATH}" \
-  --repeat-len-threshold "${REPEAT_LEN_THRESHOLD}" \
-  --out-fail-file "${REPEAT_FAIL_SEQIDS_FPATH}" \
-  --out-repeats-log "${REPEATS_FPATH}"
+if [[ "${CACHE_MODE}" == true ]]; then
+  python3 "${SCRIPTS_DIR}/find_repeats.py" \
+    --in-fasta-file "${ALL_GENES_FASTA}" \
+    --ribotyper-fail-seqIDs "${RIBOTYPER_FAIL_SEQIDS_FPATH}" \
+    --aberrant-seqIDs "${ABERRANT_SEQIDS_FPATH}" \
+    --repeat-len-threshold "${REPEAT_LEN_THRESHOLD}" \
+    --out-fail-file "${REPEAT_FAIL_SEQIDS_FPATH}" \
+    --out-repeats-log "${REPEATS_FPATH}" \
+    --prev-repeats-table "${PREV_REPEATS}"
+else
+  python3 "${SCRIPTS_DIR}/find_repeats.py" \
+    --in-fasta-file "${ALL_GENES_FASTA}" \
+    --ribotyper-fail-seqIDs "${RIBOTYPER_FAIL_SEQIDS_FPATH}" \
+    --aberrant-seqIDs "${ABERRANT_SEQIDS_FPATH}" \
+    --repeat-len-threshold "${REPEAT_LEN_THRESHOLD}" \
+    --out-fail-file "${REPEAT_FAIL_SEQIDS_FPATH}" \
+    --out-repeats-log "${REPEATS_FPATH}"
+fi
 
 
 
