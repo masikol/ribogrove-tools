@@ -12,8 +12,9 @@ from functools import reduce
 from collections import OrderedDict
 
 import flask
-import numpy as np
-import pandas as pd
+# TODO: remove
+# import numpy as np
+import polars as pl
 
 
 from src.ribogrove_size import make_ribogrove_size_dict, format_size_dict
@@ -212,60 +213,95 @@ RIBOGROVE_ZENODO_DOI = '10.5281/zenodo.17190266'
 def make_gene_stats_df(base_counts_fpath,
                        taxonomy_fpath,
                        categories_fpath):
-    base_counts_df = pd.read_csv(base_counts_fpath, sep='\t')
-    taxonomy_df = pd.read_csv(taxonomy_fpath, sep='\t')
-    categories_df = pd.read_csv(categories_fpath, sep='\t')
+    base_counts_df = pl.read_csv(base_counts_fpath, separator='\t')
+    taxonomy_df = pl.read_csv(taxonomy_fpath, separator='\t')
+    categories_df = pl.read_csv(categories_fpath, separator='\t')
 
-    base_counts_df['asm_acc'] = np.repeat('', base_counts_df.shape[0])
-    base_counts_df = base_counts_df.apply(set_asm_acc, axis=1)
+    # TODO: remove
+    # base_counts_df['asm_acc'] = np.repeat('', base_counts_df.shape[0])
+    # base_counts_df = base_counts_df.apply(set_asm_acc, axis=1)
+    base_counts_df = base_counts_df.with_columns(
+        pl.col('seqID').map_elements(
+            parse_asm_acc,
+            return_dtype=pl.String
+        ).alias('asm_acc')
+    )
 
-    gene_stats_df = base_counts_df[['asm_acc', 'seqID', 'len']].merge(
+    # TODO: remove
+    # gene_stats_df = base_counts_df[['asm_acc', 'seqID', 'len']].merge(
+    #     taxonomy_df,
+    #     on='asm_acc',
+    #     how='left'
+    # ).merge(
+    #     categories_df[['asm_acc', 'category']],
+    #     on='asm_acc',
+    #     how='left'
+    # )
+
+    gene_stats_df = base_counts_df.select(pl.col('asm_acc', 'seqID', 'len')).join(
         taxonomy_df,
         on='asm_acc',
         how='left'
-    ).merge(
-        categories_df[['asm_acc', 'category']],
+    ).join(
+        categories_df.select(pl.col('asm_acc', 'category')),
         on='asm_acc',
         how='left'
     )
     return gene_stats_df
 # end def
 
-def set_asm_acc(row):
-    # TODO: parse asm_acc using the function in src...
-    row['asm_acc'] = row['seqID'].partition(':')[0]
-    return row
+def parse_asm_acc(seqID):
+    return seqID.partition(':')[0]
 # end def
 
 def get_file_size_MB(fpath):
-
     size_in_bytes = os.path.getsize(fpath)
     size_in_megabytes = size_in_bytes / 1024 / 1024
-
     return size_in_megabytes
 # end def
 
 
+# TODO: remove
+# def set_strain_name(row):
+#     global STRAIN_DESIGNATION_PATTERN
+#     if pd.isnull(row['infraspecific_name']):
+#         row['infraspecific_name'] = ''
+#     # end if
+#     strain_name_reobj = STRAIN_DESIGNATION_PATTERN.search(row['infraspecific_name'])
+#     if not strain_name_reobj is None:
+#         strain_designation = strain_name_reobj.group(1)
+#         if not row['organism_name'].endswith(strain_designation):
+#             row['strain_name'] = '{} strain {}'.format(
+#                 row['organism_name'],
+#                 strain_designation
+#             )
+#         else:
+#             row['strain_name'] = row['organism_name']
+#         # end if
+#     else:
+#         row['strain_name'] = row['organism_name']
+#     # end if
+#     return row
+# # end def
+
 def set_strain_name(row):
+    strain_name = row['organism_name']
+
     global STRAIN_DESIGNATION_PATTERN
-    if pd.isnull(row['infraspecific_name']):
-        row['infraspecific_name'] = ''
-    # end if
     strain_name_reobj = STRAIN_DESIGNATION_PATTERN.search(row['infraspecific_name'])
+
     if not strain_name_reobj is None:
         strain_designation = strain_name_reobj.group(1)
         if not row['organism_name'].endswith(strain_designation):
-            row['strain_name'] = '{} strain {}'.format(
+            strain_name = '{} strain {}'.format(
                 row['organism_name'],
                 strain_designation
             )
         else:
-            row['strain_name'] = row['organism_name']
+            strain_name = row['organism_name']
         # end if
-    else:
-        row['strain_name'] = row['organism_name']
     # end if
-    return row
+    return strain_name
 # end def
 
 def parse_primer_pairs():
@@ -321,19 +357,28 @@ def parse_unwanted_primer_pairs():
 
 
 def split_top_df(df, top_n=10):
-    bacteria_df = df.query('Domain == "Bacteria"')
-    archaea_df = df.query('Domain == "Archaea"')
+    # TODO: remove pd
+    # bacteria_df = df.query('Domain == "Bacteria"')
+    # archaea_df = df.query('Domain == "Archaea"')
+    bacteria_df = df.filter(pl.col('Domain') == 'Bacteria')
+    archaea_df = df.filter(pl.col('Domain') == 'Archaea')
 
-    really_top_df = pd.concat(
+    really_top_df = pl.concat(
         [
-            bacteria_df.iloc[:top_n,],
-            archaea_df.iloc[:top_n,],
+            # TOOO: remove pd
+            # bacteria_df.iloc[:top_n,],
+            # archaea_df.iloc[:top_n,],
+            bacteria_df[:top_n],
+            archaea_df[:top_n],
         ]
     )
-    rest_df = pd.concat(
+    rest_df = pl.concat(
         [
-            bacteria_df.iloc[top_n:,],
-            archaea_df.iloc[top_n:,],
+            # TOOO: remove pd
+            # bacteria_df.iloc[top_n:,],
+            # archaea_df.iloc[top_n:,],
+            bacteria_df[top_n:],
+            archaea_df[top_n:],
         ]
     )
 
@@ -362,24 +407,44 @@ gene_stats_df = make_gene_stats_df(
     categories_fpath
 )
 # Read info about source genomes
-source_genomes_df = pd.read_csv(source_genomes_fpath, sep='\t')
-source_genomes_df['strain_name'] = np.repeat('', source_genomes_df.shape[0])
-source_genomes_df = source_genomes_df.apply(set_strain_name, axis=1)
+source_genomes_df = pl.read_csv(source_genomes_fpath, separator='\t')
+
+# TODO: remove
+# source_genomes_df['strain_name'] = np.repeat('', source_genomes_df.shape[0])
+# source_genomes_df = source_genomes_df.apply(set_strain_name, axis=1)
+source_genomes_df = source_genomes_df.with_columns(
+    pl.col('infraspecific_name').fill_null('')
+).with_columns(
+    pl.struct(['infraspecific_name', 'organism_name']).map_elements(
+        set_strain_name,
+        return_dtype=pl.String
+    ).alias('strain_name')
+)
+
 
 # Combine the two
+# TODO: remove
+# init_columns = gene_stats_df.columns
+# gene_stats_df = gene_stats_df.merge(
+#     source_genomes_df[['asm_acc', 'strain_name',]],
+#     on='asm_acc',
+#     how='left'
+# ).drop_duplicates(subset=init_columns)
+# del init_columns
+
 init_columns = gene_stats_df.columns
-gene_stats_df = gene_stats_df.merge(
-    source_genomes_df[['asm_acc', 'strain_name',]],
+gene_stats_df = gene_stats_df.join(
+    source_genomes_df.select(pl.col('asm_acc', 'strain_name')),
     on='asm_acc',
     how='left'
-).drop_duplicates(subset=init_columns)
+).unique(subset=init_columns)
 del init_columns
 
 # Parse primer pair data
 bacterial_primer_pairs, archaeal_primer_pairs = parse_primer_pairs()
 
 # Read entropy summary file
-entropy_summary_df = pd.read_csv(entropy_summary_fpath, sep='\t')
+entropy_summary_df = pl.read_csv(entropy_summary_fpath, separator='\t')
 
 # RiboGrove size
 print('Counting RiboGrove sequences')

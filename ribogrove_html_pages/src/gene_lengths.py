@@ -2,10 +2,10 @@
 from functools import partial
 
 import numpy as np
-import pandas as pd
+import polars as pl
 
+from src.util import remove_invalid_species
 from src.formatting import format_float_number
-from src.util import is_validlike_species_name
 
 
 def _init_len_dict():
@@ -52,12 +52,20 @@ def _init_len_dict():
 def make_ribogrove_len_dict(gene_stats_df):
     ribogrove_len_dict = _init_len_dict()
 
-    bacteria_df = gene_stats_df[
-        gene_stats_df['Domain'] == 'Bacteria'
-    ].reset_index()
-    archaea_df = gene_stats_df[
-        gene_stats_df['Domain'] == 'Archaea'
-    ].reset_index()
+    # TODO: remove
+    # bacteria_df = gene_stats_df[
+    #     gene_stats_df['Domain'] == 'Bacteria'
+    # ].reset_index()
+    # archaea_df = gene_stats_df[
+    #     gene_stats_df['Domain'] == 'Archaea'
+    # ].reset_index()
+
+    bacteria_df = gene_stats_df.filter(
+        pl.col('Domain') == 'Bacteria'
+    )
+    archaea_df = gene_stats_df.filter(
+        pl.col('Domain') == 'Archaea'
+    )
 
     # Calculate minimum lengths
     ribogrove_len_dict['min']['Bacteria'] = bacteria_df['len'].min()
@@ -68,16 +76,19 @@ def make_ribogrove_len_dict(gene_stats_df):
     ribogrove_len_dict['max']['Archaea'] = archaea_df['len'].max()
 
     # Make normalized (by species) dataframe
-    bacteria_normalized_df = bacteria_df[
-        is_validlike_species_name(bacteria_df['Species'])
-    ]
-    bacteria_normalized_df = bacteria_normalized_df.groupby('Species', as_index=False) \
-        .agg({'len': 'median'})
-    archaea_normalized_df = archaea_df[
-        is_validlike_species_name(archaea_df['Species'])
-    ]
-    archaea_normalized_df = archaea_normalized_df.groupby('Species', as_index=False) \
-        .agg({'len': 'median'})
+    # TODO: remove
+    # bacteria_normalized_df = bacteria_df[
+    #     is_validlike_species_name(bacteria_df['Species'])
+    # ]
+    # bacteria_normalized_df = bacteria_normalized_df.groupby('Species', as_index=False) \
+    #     .agg({'len': 'median'})
+    # archaea_normalized_df = archaea_df[
+    #     is_validlike_species_name(archaea_df['Species'])
+    # ]
+    # archaea_normalized_df = archaea_normalized_df.groupby('Species', as_index=False) \
+    #     .agg({'len': 'median'})
+    bacteria_normalized_df = _normalize_by_species(bacteria_df)
+    archaea_normalized_df  = _normalize_by_species(archaea_df)
 
     # 25-th percentile
     ribogrove_len_dict['25perc']['Bacteria'] = np.percentile(bacteria_normalized_df['len'], 25)
@@ -110,6 +121,13 @@ def make_ribogrove_len_dict(gene_stats_df):
     # end for
 
     return ribogrove_len_dict
+# end def
+
+def _normalize_by_species(df: pl.DataFrame) -> pl.DataFrame:
+    normalized_df = remove_invalid_species(df)
+    normalized_df = normalized_df.group_by('Species') \
+        .agg(pl.col('len').median())
+    return normalized_df
 # end def
 
 

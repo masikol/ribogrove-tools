@@ -4,16 +4,22 @@ import json
 from collections import OrderedDict
 from functools import partial, reduce
 
-import pandas as pd
+import polars as pl
 
 from src.formatting import format_int_number, format_float_number
 
 
 def make_ribogrove_primer_coverage_df(input_fpath):
-    df = pd.read_csv(input_fpath, sep='\t')
-    df = df[df['Rank'] == 'Phylum']
-
-    df = df.drop(['Rank'], axis=1)
+    # TODO: remove pd
+    # df = pd.read_csv(input_fpath, sep='\t')
+    # df = df[df['Rank'] == 'Phylum']
+    # df = df.drop(['Rank'], axis=1)
+    df = (
+        pl.scan_csv(input_fpath, separator='\t')
+        .filter(pl.col('Rank') == 'Phylum')
+        .drop('Rank')
+        .collect()
+    )
 
     bacterial_primer_pairs, archaeal_primer_pairs = parse_primer_pairs()
 
@@ -29,12 +35,11 @@ def make_ribogrove_primer_coverage_df(input_fpath):
         renamed_columns.update(d_rename_columns)
     # end for
 
-    df = df.rename(
-        columns=renamed_columns
-    )
+    df = df.rename(renamed_columns)
 
     print(df)
 
+    # TODO: remove pd
     return df[
         [
             'Domain',
@@ -44,6 +49,11 @@ def make_ribogrove_primer_coverage_df(input_fpath):
         + list(bacterial_primer_pairs.keys()) \
         + list(archaeal_primer_pairs.keys())
     ]
+    return df.select(pl.col(
+        ['Domain', 'Phylum', 'num_genomes',] \
+        + list(bacterial_primer_pairs.keys()) \
+        + list(archaeal_primer_pairs.keys())
+    ))
 # end def
 
 
@@ -90,21 +100,29 @@ def format_primer_coverage_df(primer_coverage_df,
 
     fmt_primer_df = _sort_rows_and_columns(primer_coverage_df)
 
-    fmt_primer_df['Phylum'] = fmt_primer_df['Phylum'] \
-        .map(_format_phylum_name)
+    # TODO: remove pd
+    # fmt_primer_df['Phylum'] = fmt_primer_df['Phylum'] \
+    #     .map(_format_phylum_name)
+    # fmt_primer_df['num_genomes'] = fmt_primer_df['num_genomes'] \
+    #     .map(curr_format_int_number)
 
-    fmt_primer_df['num_genomes'] = fmt_primer_df['num_genomes'] \
-        .map(curr_format_int_number)
+    fmt_primer_df = fmt_primer_df.with_columns(
+        pl.col('Phylum').map_elements(_format_phylum_name, return_dtype=pl.String),
+        pl.col('num_genomes').map_elements(curr_format_int_number, return_dtype=pl.String),
+    )
 
     bacterial_primer_pairs, archaeal_primer_pairs = parse_primer_pairs()
     primer_keys = list(bacterial_primer_pairs.keys()) \
                   + list(archaeal_primer_pairs.keys())
 
     for primer_key in primer_keys:
-        fmt_primer_df[primer_key] = fmt_primer_df[primer_key] \
-            .map(curr_format_float_number)
+        # TODO: remove pd
+        # fmt_primer_df[primer_key] = fmt_primer_df[primer_key] \
+        #     .map(curr_format_float_number)
+        fmt_primer_df = fmt_primer_df.with_columns(
+            p.col(primer_key).map_elements(curr_format_float_number, return_dtype=pl.String)
+        )
     # end for
-
 
     return fmt_primer_df
 # end def
@@ -114,15 +132,18 @@ def _sort_rows_and_columns(primer_df):
     bacterial_primer_pairs, archaeal_primer_pairs = parse_primer_pairs()
     ordered_primer_names = list(bacterial_primer_pairs.keys()) \
                          + list(archaeal_primer_pairs.keys())
-    fmt_primer_df = primer_df[
+    # TODO: remove pd
+    # fmt_primer_df = primer_df[
+    #     ['Domain', 'Phylum', 'num_genomes'] + ordered_primer_names
+    # ].sort_values(by='num_genomes', ascending=False)
+    fmt_primer_df = primer_df.select(pl.col(
         ['Domain', 'Phylum', 'num_genomes'] + ordered_primer_names
-    ].sort_values(by='num_genomes', ascending=False)
+    )).sort(by='num_genomes', descending=True)
 
-    return fmt_primer_df.copy()
+    return fmt_primer_df
 # end def
 
 
 def _format_phylum_name(phylum_name):
     return phylum_name.replace('Candidatus ', 'Ca. ')
 # end def
-
