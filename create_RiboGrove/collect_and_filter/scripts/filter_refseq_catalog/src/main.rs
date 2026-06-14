@@ -36,7 +36,7 @@ impl Config {
             },
             None => {
                 return Config {
-                    in_fpath: Some(in_fpath), // TODO: check existence, readability
+                    in_fpath: Some(in_fpath),
                     out_fpath: None,
                 };
             },
@@ -44,7 +44,7 @@ impl Config {
 
         Config {
             in_fpath: Some(in_fpath),
-            out_fpath: Some(out_fpath), // TODO: check dir existence
+            out_fpath: Some(out_fpath),
         }
     }
 
@@ -112,20 +112,19 @@ fn read_filter_and_write(config: &Config) -> Result<(), ()> {
 
         let col_values: Vec<&str> = line_str.split('\t').collect();
 
-        // TODO: make it a function to test it
         let acc_prefix = &col_values[ACC_COL_IDX][0..3];
-        if unwanted_prefixes.contains(acc_prefix) {
+        if detect_unwanted_prefix(acc_prefix, &unwanted_prefixes) {
             continue;
         }
 
         let dir_str = &col_values[DIR_COL_IDX];
-        if !check_wanted_dir(dir_str, &wanted_dirs) {
+        if !detect_wanted_dirs(dir_str, &wanted_dirs) {
             continue;
         }
 
         if let Err(err) = output_line(&mut writer, &line_str) {
             eprintln!("Error writing line `{:?}`", line_str);
-            eprintln!("{err}");
+            eprintln!("  {err}");
             return Err(());
         };
     }
@@ -141,7 +140,11 @@ fn get_reader(config: &Config) -> Result<Box<dyn BufRead>, ()> {
                     return Ok(Box::new(BufReader::new(handle)));
                 },
                 Err(err) => {
-                    eprintln!("Cannot open input file: {err}");
+                    eprintln!(
+                        "Cannot open input file `{}`: {}",
+                        fpath.display(),
+                        err
+                    );
                     return Err(());
                 }
             }
@@ -160,7 +163,11 @@ fn get_writer(config: &Config) -> Result<Box<dyn Write>, ()> {
                     return Ok(Box::new(BufWriter::new(handle)));
                 },
                 Err(err) => {
-                    eprintln!("Cannot open output file: {err}");
+                    eprintln!(
+                        "Cannot open output file `{}`: {}",
+                        fpath.display(),
+                        err
+                    );
                     return Err(());
                 }
             }
@@ -186,8 +193,13 @@ fn make_wanted_dir_vec() -> Vec<&'static str> {
     ]
 }
 
-fn check_wanted_dir(dir_str: &str,
-                    wanted_dirs: &Vec<&str>) -> bool {
+fn detect_unwanted_prefix(acc_prefix: &str,
+                          unwanted_prefixes: &HashSet<&str>) -> bool {
+    unwanted_prefixes.contains(acc_prefix)
+}
+
+fn detect_wanted_dirs(dir_str: &str,
+                      wanted_dirs: &Vec<&str>) -> bool {
     for dir in dir_str.split('|') {
         if wanted_dirs.contains(&dir) {
             return true;
@@ -293,49 +305,92 @@ mod tests_get_writer {
 }
 
 #[cfg(test)]
-mod tests_check_wanted_dir {
+mod tests_detect_wanted_dirs {
     use super::*;
 
     #[test]
-    fn test_check_wanted_dir_single_match() {
+    fn test_detect_wanted_dirs_single_match() {
         let wanted = vec!["bacteria", "archaea"];
-        assert!(check_wanted_dir("bacteria", &wanted));
+        assert!(detect_wanted_dirs("bacteria", &wanted));
     }
 
     #[test]
-    fn test_check_wanted_dir_pipe_contains_match() {
+    fn test_detect_wanted_dirs_pipe_contains_match() {
         let wanted = vec!["bacteria", "archaea"];
-        assert!(check_wanted_dir("bacteria|complete", &wanted));
+        assert!(detect_wanted_dirs("bacteria|complete", &wanted));
     }
 
     #[test]
-    fn test_check_wanted_dir_no_match() {
+    fn test_detect_wanted_dirs_no_match() {
         let wanted = vec!["bacteria", "archaea"];
-        assert!(!check_wanted_dir("fungi", &wanted));
+        assert!(!detect_wanted_dirs("fungi", &wanted));
     }
 
     #[test]
-    fn test_check_wanted_dir_pipe_no_match() {
+    fn test_detect_wanted_dirs_pipe_no_match() {
         let wanted = vec!["bacteria", "archaea"];
-        assert!(!check_wanted_dir("fungi|complete", &wanted));
+        assert!(!detect_wanted_dirs("fungi|complete", &wanted));
     }
 
     #[test]
-    fn test_check_wanted_dir_second_part_match() {
+    fn test_detect_wanted_dirs_second_part_match() {
         let wanted = vec!["bacteria", "archaea"];
-        assert!(check_wanted_dir("complete|bacteria", &wanted));
+        assert!(detect_wanted_dirs("complete|bacteria", &wanted));
     }
 
     #[test]
-    fn test_check_wanted_dir_empty_string() {
+    fn test_detect_wanted_dirs_empty_string() {
         let wanted = vec!["bacteria", "archaea"];
-        assert!(!check_wanted_dir("", &wanted));
+        assert!(!detect_wanted_dirs("", &wanted));
     }
 
     #[test]
-    fn test_check_wanted_dir_empty_wanted() {
+    fn test_detect_wanted_dirs_empty_wanted() {
         let wanted: Vec<&str> = vec![];
-        assert!(!check_wanted_dir("bacteria", &wanted));
+        assert!(!detect_wanted_dirs("bacteria", &wanted));
+    }
+}
+
+#[cfg(test)]
+mod tests_detect_unwanted_prefix {
+    use super::*;
+
+    fn full_unwanted_set() -> HashSet<&'static str> {
+        make_unwanted_prefix_set()
+    }
+
+    #[test]
+    fn test_nm_is_unwanted() {
+        assert!(detect_unwanted_prefix("NM_", &full_unwanted_set()));
+    }
+
+    #[test]
+    fn test_nc_is_not_unwanted() {
+        assert!(!detect_unwanted_prefix("NC_", &full_unwanted_set()));
+    }
+
+    #[test]
+    fn test_prefix_not_in_set() {
+        let set = HashSet::from(["NM_", "NR_"]);
+        assert!(!detect_unwanted_prefix("NZ_", &set));
+    }
+
+    #[test]
+    fn test_empty_prefix() {
+        let set = HashSet::from(["NM_", "NR_"]);
+        assert!(!detect_unwanted_prefix("", &set));
+    }
+
+    #[test]
+    fn test_empty_unwanted_set() {
+        let set: HashSet<&str> = HashSet::new();
+        assert!(!detect_unwanted_prefix("NM_", &set));
+    }
+
+    #[test]
+    fn test_case_sensitive() {
+        let set = HashSet::from(["NM_"]);
+        assert!(!detect_unwanted_prefix("nm_", &set));
     }
 }
 
