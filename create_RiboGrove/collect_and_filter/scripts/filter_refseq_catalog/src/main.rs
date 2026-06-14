@@ -112,6 +112,7 @@ fn read_filter_and_write(config: &Config) -> Result<(), ()> {
 
         let col_values: Vec<&str> = line_str.split('\t').collect();
 
+        // TODO: make it a function to test it
         let acc_prefix = &col_values[ACC_COL_IDX][0..3];
         if unwanted_prefixes.contains(acc_prefix) {
             continue;
@@ -195,7 +196,7 @@ fn check_wanted_dir(dir_str: &str,
     false
 }
 
-fn output_line(writer: &mut Box<dyn Write>,
+fn output_line(writer: &mut impl Write,
                out_string: &str) -> Result<(), Box<dyn Error>> {
     let out_strings = vec![
         out_string,
@@ -205,4 +206,169 @@ fn output_line(writer: &mut Box<dyn Write>,
         writer.write(&s.as_bytes())?;
     }
     Ok(())
+}
+
+
+#[cfg(test)]
+mod tests_get_reader {
+    use super::*;
+    use std::io::Read;
+    use std::fs;
+
+    #[test]
+    fn test_get_reader_with_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let fpath = dir.path().join("input.txt");
+        fs::write(&fpath, "hello\nworld").unwrap();
+
+        let config = Config {
+            in_fpath: Some(fpath),
+            out_fpath: None,
+        };
+        let mut reader = get_reader(&config).unwrap();
+        let mut content = String::new();
+        reader.read_to_string(&mut content).unwrap();
+        assert_eq!(content, "hello\nworld");
+    }
+
+    #[test]
+    fn test_get_reader_nonexistent_file() {
+        let config = Config {
+            in_fpath: Some(PathBuf::from("/tmp/__nonexistent_ribogrove_test__")),
+            out_fpath: None,
+        };
+        assert!(get_reader(&config).is_err());
+    }
+
+    #[test]
+    fn test_get_reader_stdin() {
+        let config = Config {
+            in_fpath: None,
+            out_fpath: None,
+        };
+        assert!(get_reader(&config).is_ok());
+    }
+}
+
+#[cfg(test)]
+mod tests_get_writer {
+    use super::*;
+    use std::fs;
+
+    #[test]
+    fn test_get_writer_with_file() {
+        let dir = tempfile::tempdir().unwrap();
+        let fpath = dir.path().join("output.txt");
+
+        let config = Config {
+            in_fpath: None,
+            out_fpath: Some(fpath.clone()),
+        };
+        {
+            let mut writer = get_writer(&config).unwrap();
+            writer.write_all(b"test data").unwrap();
+        }
+
+        let content = fs::read_to_string(&fpath).unwrap();
+        assert_eq!(content, "test data");
+    }
+
+    #[test]
+    fn test_get_writer_bad_path() {
+        let config = Config {
+            in_fpath: None,
+            out_fpath: Some(PathBuf::from("/nonexistent_dir_12345/out.txt")),
+        };
+        assert!(get_writer(&config).is_err());
+    }
+
+    #[test]
+    fn test_get_writer_stdout() {
+        let config = Config {
+            in_fpath: None,
+            out_fpath: None,
+        };
+        assert!(get_writer(&config).is_ok());
+    }
+}
+
+#[cfg(test)]
+mod tests_check_wanted_dir {
+    use super::*;
+
+    #[test]
+    fn test_check_wanted_dir_single_match() {
+        let wanted = vec!["bacteria", "archaea"];
+        assert!(check_wanted_dir("bacteria", &wanted));
+    }
+
+    #[test]
+    fn test_check_wanted_dir_pipe_contains_match() {
+        let wanted = vec!["bacteria", "archaea"];
+        assert!(check_wanted_dir("bacteria|complete", &wanted));
+    }
+
+    #[test]
+    fn test_check_wanted_dir_no_match() {
+        let wanted = vec!["bacteria", "archaea"];
+        assert!(!check_wanted_dir("fungi", &wanted));
+    }
+
+    #[test]
+    fn test_check_wanted_dir_pipe_no_match() {
+        let wanted = vec!["bacteria", "archaea"];
+        assert!(!check_wanted_dir("fungi|complete", &wanted));
+    }
+
+    #[test]
+    fn test_check_wanted_dir_second_part_match() {
+        let wanted = vec!["bacteria", "archaea"];
+        assert!(check_wanted_dir("complete|bacteria", &wanted));
+    }
+
+    #[test]
+    fn test_check_wanted_dir_empty_string() {
+        let wanted = vec!["bacteria", "archaea"];
+        assert!(!check_wanted_dir("", &wanted));
+    }
+
+    #[test]
+    fn test_check_wanted_dir_empty_wanted() {
+        let wanted: Vec<&str> = vec![];
+        assert!(!check_wanted_dir("bacteria", &wanted));
+    }
+}
+
+#[cfg(test)]
+mod tests_output_line {
+    use super::*;
+    use std::fs;
+
+    #[test]
+    fn test_output_line_writes_string_and_newline() {
+        let dir = tempfile::tempdir().unwrap();
+        let fpath = dir.path().join("out.txt");
+        let file = fs::File::create(&fpath).unwrap();
+        let mut writer: Box<dyn Write> = Box::new(std::io::BufWriter::new(file));
+
+        output_line(&mut writer, "hello").unwrap();
+        drop(writer);
+
+        let content = fs::read_to_string(&fpath).unwrap();
+        assert_eq!(content, "hello\n");
+    }
+
+    #[test]
+    fn test_output_line_writes_newline_only_for_empty_string() {
+        let dir = tempfile::tempdir().unwrap();
+        let fpath = dir.path().join("out.txt");
+        let file = fs::File::create(&fpath).unwrap();
+        let mut writer: Box<dyn Write> = Box::new(std::io::BufWriter::new(file));
+
+        output_line(&mut writer, "").unwrap();
+        drop(writer);
+
+        let content = fs::read_to_string(&fpath).unwrap();
+        assert_eq!(content, "\n");
+    }
 }
