@@ -1,4 +1,4 @@
-set -e
+set -euo pipefail
 
 function print_help {
   echo 'Usage:' >&2
@@ -101,7 +101,7 @@ done
 
 # |=== Configure all paths to intermediate and result files ===|
 
-FILTERED_REFSEQ_CATALOG_FILE="${REFSEQ_CATALOG_FILE/.catalog.gz/_filtered.catalog.gz}"
+REFSEQ_CATALOG_URL="https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/RefSeq-release${REFSEQ_RELEASE_NUM}.catalog.gz"
 
 if [[ "${TEST_MODE}" == false ]]; then
   ASS_SUM_LINK="https://ftp.ncbi.nlm.nih.gov/genomes/refseq/${DOMAIN}/assembly_summary.txt"
@@ -121,7 +121,7 @@ WHITELIST_SEQIDS_FILE="${SCRIPTS_DATA_DIR}/ad_hoc/whitelist_seqIDs.tsv"
 ALL_GENES_FASTA="${GENES_DIR}/all_collected.fasta"
 ALL_GENES_STATS="${GENES_STATS_DIR}/all_collected_stats.tsv"
 
-NEW_TAXDUM_DIR="$(dirname ${REFSEQ_CATALOG_FILE})/new_taxdump"
+NEW_TAXDUM_DIR="$(dirname ${FILTERED_REFSEQ_CATALOG_FILE})/new_taxdump"
 NEW_TAXDUMP_URL='https://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz'
 NEW_TAXDUMP_MD5_URL='https://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz.md5'
 NEW_TAXDUMP_ARCHIVE="${NEW_TAXDUM_DIR}/new_taxdump.tar.gz"
@@ -183,12 +183,31 @@ fi
 
 # |=== Proceed ===|
 
-# == Filter RefSeq .catalog file ==
+# == Download and filter RefSeq .catalog file ==
 
 if [[ "${REFSEQ_CATALOG_ALREADY_FILTERED}" == false ]]; then
-  python3 "${SCRIPTS_DIR}/filter_refseq_catalog.py" \
-    --raw-refseq-catalog "${REFSEQ_CATALOG_FILE}" \
-    --outfile "${FILTERED_REFSEQ_CATALOG_FILE}"
+  wget --quiet --spider "${REFSEQ_CATALOG_URL}"
+  if [[ $? != 0 ]]; then
+    echo "WARNING: cannot find RefSeq release catalog file at usual location" >&2
+    echo "Trying archive/ dir..." >&2
+    archive_refseq_catalog_url="https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/archive/RefSeq-release${REFSEQ_RELEASE_NUM}.catalog.gz"
+    wget --quiet --spider "${archive_refseq_catalog_url}"
+    if [[ $? != 0 ]]; then
+      echo "ERROR: cannot find RefSeq release catalog file" >&2
+      echo "URLs tried:" >&2
+      echo "  ${REFSEQ_CATALOG_URL}" >&2
+      echo "  ${archive_refseq_catalog_url}" >&2
+      exit 1
+    else
+      echo "SUCCESS! Found release catalog file." >&2
+      REFSEQ_CATALOG_URL="${archive_refseq_catalog_url}"
+    fi
+  fi
+
+  wget -O- "${REFSEQ_CATALOG_URL}" \
+      | gunzip  \
+      | python3 "${SCRIPTS_DIR}/filter_refseq_catalog.py" \
+      | gzip > "${FILTERED_REFSEQ_CATALOG_FILE}"
 fi
 
 

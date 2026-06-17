@@ -38,12 +38,6 @@ Please see examples of configuration files in the directory `config/`.
 
 Also, the configuration file specifies some pipeline parameters, such as Rfam RNA family ID and whether to calculate primer coverages of genomes or not.
 
-## NCBI files to download before run
-
-The pipeline requires the following files downloaded before run:
-
-1. A RefSeq `.catalog.gz` file from [https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/](https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/). E.g. for RiboGrove 7.213 you should use file `RefSeq-release213.catalog.gz`.
-
 ## Usage
 
 The pipeline should be run as follows:
