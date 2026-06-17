@@ -67,7 +67,7 @@ args = parser.parse_args()
 import sys
 import time
 
-import pandas as pd
+import polars as pl
 
 import src.rg_tools_IO as rgIO
 from src.rg_tools_time import get_time
@@ -102,7 +102,7 @@ print()
 
 
 def download_genomes(ass_sum_df, outdir, log_fpath):
-    total_genome_count = ass_sum_df.shape[0]
+    total_genome_count = ass_sum_df.height
     downloaded_count, already_here_count, failed_count = 0, 0, 0
 
     sys.stdout.write('{} -- 0/{:,} genomes done: 0 already here, 0 downloaded, 0 failed' \
@@ -111,7 +111,7 @@ def download_genomes(ass_sum_df, outdir, log_fpath):
     sys.stdout.flush()
 
     with open(log_fpath, 'wt') as logfile:
-        for i, row in ass_sum_df.iterrows():
+        for i, row in enumerate(ass_sum_df.to_dicts(), 1):
             asm_acc = row['asm_acc']
 
             downloader = GenomeDownloader(row, outdir)
@@ -145,7 +145,7 @@ def download_genomes(ass_sum_df, outdir, log_fpath):
 
             sys.stdout.write(
                 '\r{} -- {:,}/{:,} genomes done: {:,} already here, {:,} downloaded, {:,} failed' \
-                    .format(get_time(), i+1, total_genome_count, already_here_count, downloaded_count, failed_count)
+                    .format(get_time(), i, total_genome_count, already_here_count, downloaded_count, failed_count)
             )
             sys.stdout.flush()
         # end for
@@ -167,7 +167,7 @@ downloaded_count, already_here_count, failed_count = download_genomes(
 )
 
 
-total_genome_count = ass_sum_df.shape[0]
+total_genome_count = ass_sum_df.height
 
 print('\n{} -- Completed!'.format(get_time()))
 print('  {:,}/{:,} genomes were actually downloaded.'.format(downloaded_count, total_genome_count))

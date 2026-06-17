@@ -192,12 +192,10 @@ if [[ "${REFSEQ_CATALOG_ALREADY_FILTERED}" == false ]]; then
 fi
 
 
-# == Download assembly_summary.txt ==
+# # == Download assembly_summary.txt ==
 
 if [[ "${TEST_MODE}" == false ]]; then
-  curl \
-    "${ASS_SUM_LINK}" \
-    | tr -d '"' \
+  wget -O- "${ASS_SUM_LINK}" \
     | gzip > "${ASS_SUM}"
 fi
 
@@ -263,8 +261,8 @@ if [[ "${RANKEDLINEAGE_ALREADY_EXTRACTED}" != true ]]; then
     mkdir -v "${NEW_TAXDUM_DIR}"
   fi
   cd "${NEW_TAXDUM_DIR}"
-  curl "${NEW_TAXDUMP_URL}" -o "${NEW_TAXDUMP_ARCHIVE}"
-  curl "${NEW_TAXDUMP_MD5_URL}" -o "${NEW_TAXDUMP_ARCHIVE_MD5}"
+  wget "${NEW_TAXDUMP_URL}" -O "${NEW_TAXDUMP_ARCHIVE}"
+  wget "${NEW_TAXDUMP_MD5_URL}" -O "${NEW_TAXDUMP_ARCHIVE_MD5}"
   md5sum -c "${NEW_TAXDUMP_ARCHIVE_MD5}"
   tar xvf "${NEW_TAXDUMP_ARCHIVE}" rankedlineage.dmp
   ls "${RANKEDLINEAGE_FPATH}" # ensure its existance

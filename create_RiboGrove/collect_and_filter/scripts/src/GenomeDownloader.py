@@ -7,7 +7,6 @@ import time
 import subprocess as sp
 
 from Bio import SeqIO
-from pandas import Series
 
 from src.file_navigation import get_asm_data_dir_path, \
                                 get_asm_report_fpath, \
@@ -19,7 +18,7 @@ class GenomeDownloader:
     N_ATTEMPTS      = 3
     FAIL_SLEEP_TIME = 3
 
-    def __init__(self, asm_sum_row: Series, outdir):
+    def __init__(self, asm_sum_row: dict, outdir):
         self.assembly_accession = str(asm_sum_row['asm_acc'])
         self.asm_basedir_url    = str(asm_sum_row['ftp_path'])
         self.asm_name           = self._parse_asm_name(

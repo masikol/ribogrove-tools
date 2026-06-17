@@ -120,6 +120,7 @@ def read_asm_sum_file_polars(infpath, raw_summary=False):
         comment_prefix='##',
         n_threads=1,
         has_header=True,
+        quote_char=None,
         columns=columns,
         schema_overrides=colDTypes,
         null_values=['NA', 'na', '']
