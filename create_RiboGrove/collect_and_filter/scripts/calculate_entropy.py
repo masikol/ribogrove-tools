@@ -85,6 +85,12 @@ parser.add_argument(
     required=False
 )
 
+parser.add_argument(
+    '--asm-seqID-hash-diff',
+    help='file `gene_stats/hash_diff_table.tsv` made by script make_asm_seqID_hash_diff.py',
+    required=False
+)
+
 # Output files
 parser.add_argument(
     '-o',
@@ -146,8 +152,10 @@ except ValueError:
 cache_mode = not args.prev_per_base_entropy_file is None
 if cache_mode:
     prev_perbase_entropy_fpath = os.path.abspath(args.prev_per_base_entropy_file)
+    hash_diff_df_fpath = os.path.abspath(args.asm_seqID_hash_diff)
 else:
     prev_perbase_entropy_fpath = None
+    hash_diff_df_fpath   = None
 # end if
 
 
@@ -179,10 +187,12 @@ for d in (tmp_dirpath, os.path.dirname(outfpath)):
 
 # Check if previous ("cached") files is specified
 if cache_mode:
-    if not os.path.exists(prev_perbase_entropy_fpath):
-        print(f'Error: file `{prev_perbase_entropy_fpath}` does not exist')
-        sys.exit(1)
-    # end if
+    for fpath in (prev_perbase_entropy_fpath, hash_diff_df_fpath):
+        if not os.path.exists(fpath):
+            print(f'Error: file `{fpath}` does not exist')
+            sys.exit(1)
+        # end if
+    # end for
 # end if
 
 
@@ -191,7 +201,10 @@ print(categories_fpath)
 print(mafft_fpath)
 print(threads)
 print(tmp_dirpath)
-print(prev_perbase_entropy_fpath)
+if cache_mode:
+    print(prev_perbase_entropy_fpath)
+    print(hash_diff_df_fpath)
+# end if
 print()
 
 def select_gene_seqs(asm_acc: str,
@@ -375,6 +388,20 @@ if cache_mode:
     print('done')
     print(
         '{:,}/{:,} genomes are cached' \
+            .format(len(cached_asm_accs), len(asm_accs))
+    )
+
+    hash_diff_asm_accs = frozenset(
+        pl.read_csv(hash_diff_df_fpath, separator='\t')['asm_acc']
+    ) & asm_accs
+    print(
+        'Found {} category 1 assemblies whose seqID hash has changed since the previuos run'.format(
+            len(hash_diff_asm_accs)
+        )
+    )
+    cached_asm_accs = cached_asm_accs - hash_diff_asm_accs
+    print(
+        'So, {:,}/{:,} genomes are retained in cache' \
             .format(len(cached_asm_accs), len(asm_accs))
     )
 else:

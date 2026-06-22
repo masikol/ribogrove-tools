@@ -1,4 +1,4 @@
-set -euo pipefail
+set -eo pipefail
 
 function print_help {
   echo 'Usage:' >&2
@@ -120,6 +120,8 @@ WHITELIST_SEQIDS_FILE="${SCRIPTS_DATA_DIR}/ad_hoc/whitelist_seqIDs.tsv"
 
 ALL_GENES_FASTA="${GENES_DIR}/all_collected.fasta"
 ALL_GENES_STATS="${GENES_STATS_DIR}/all_collected_stats.tsv"
+ASM_SEQID_HASH_FILE="${GENES_STATS_DIR}/asm_seqID_hashes.txt"
+HASH_DIFF_TABLE="${GENES_STATS_DIR}/hash_diff_table.tsv"
 
 NEW_TAXDUM_DIR="$(dirname ${FILTERED_REFSEQ_CATALOG_FILE})/new_taxdump"
 NEW_TAXDUMP_URL='https://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz'
@@ -167,6 +169,7 @@ if [[ ! -z "${PREV_WORKDIR}" ]]; then
   PREV_TBLOUT_FILE="${prev_aberr_dir}/cmscan_output_table.tblout"
   PREV_ALL_GENES_FASTA="${PREV_WORKDIR}/gene_seqs/all_collected.fasta"
   PREV_ALL_GENES_STATS="${PREV_WORKDIR}/gene_stats/all_collected_stats.tsv"
+  PREV_ASM_SEQID_HASH_FILE="${PREV_WORKDIR}/gene_stats/asm_seqID_hashes.txt"
   PREV_FINAL_GENES_FASTA="${PREV_WORKDIR}/gene_seqs/final_gene_seqs_annotated.fasta"
   PREV_PERBASE_ENTROPY_FILE="${prev_aberr_dir}/per_base_entropy.json.gz"
   PREV_PRIMERS_DIR="${PREV_WORKDIR}/primers_coverage"
@@ -181,7 +184,9 @@ if [[ "${RANKEDLINEAGE_ALREADY_EXTRACTED}" == true && ! -f "${RANKEDLINEAGE_FPAT
   exit 1
 fi
 
+
 # |=== Proceed ===|
+set -u
 
 # == Download and filter RefSeq .catalog file ==
 
@@ -211,7 +216,7 @@ if [[ "${REFSEQ_CATALOG_ALREADY_FILTERED}" == false ]]; then
 fi
 
 
-# # == Download assembly_summary.txt ==
+# == Download assembly_summary.txt ==
 
 if [[ "${TEST_MODE}" == false ]]; then
   wget -O- "${ASS_SUM_LINK}" \
@@ -237,7 +242,8 @@ python3 "${SCRIPTS_DIR}/download_genomes.py" \
 
 
 # == Make replicon map ==
-
+buff_cache_mode="${CACHE_MODE}" # ad hoc for RiboGrove 29.235
+CACHE_MODE=false # ad hoc for RiboGrove 29.235
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/make_replicon_map.py" \
     --asm-sum "${ASS_SUM_FILT_1}" \
@@ -250,9 +256,12 @@ else
     --genomes-dir "${GENOMES_GBK_DIR}" \
     --out "${REPLICON_MAP}"
 fi
+CACHE_MODE="${buff_cache_mode}" # ad hoc for RiboGrove 29.235
 
 
 # == Make final Assembly summary file ==
+buff_cache_mode="${CACHE_MODE}" # ad hoc for RiboGrove 29.235
+CACHE_MODE=false # ad hoc for RiboGrove 29.235
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/filter_asm_summary_step2.py" \
     --in-asm-sum "${ASS_SUM_FILT_1}" \
@@ -270,6 +279,7 @@ else
     --genomes-dir "${GENOMES_GBK_DIR}" \
     --out-asm-sum "${ASS_SUM_FINAL}"
 fi
+CACHE_MODE="${buff_cache_mode}" # ad hoc for RiboGrove 29.235
 
 
 # == Download taxonomy (new_taxdump.tar.gz) and extract rankedlineage.dmp ==
@@ -299,7 +309,8 @@ python3 "${SCRIPTS_DIR}/make_taxonomy.py" \
 
 
 # == Extract 16S genes from downloaded genomes ==
-
+buff_cache_mode="${CACHE_MODE}" # ad hoc for RiboGrove 29.235
+CACHE_MODE=false # ad hoc for RiboGrove 29.235
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/extract_16S.py" \
     --asm-sum "${ASS_SUM_FINAL}" \
@@ -323,6 +334,26 @@ else
     --tmp-dir "${TMP_DIR}" \
     --threads "${CMSEARCH_THREADS}"
 fi
+CACHE_MODE="${buff_cache_mode}" # ad hoc for RiboGrove 29.235
+
+
+# == Make asm_seqID hash table ==
+python3 "${SCRIPTS_DIR}/fasta_to_asm_seqID_hashes.py" \
+  --input-fasta "${ALL_GENES_FASTA}" \
+  --output-tsv "${ASM_SEQID_HASH_FILE}"
+
+if [[ "${CACHE_MODE}" == true ]]; then
+  if [[ ! -f "${PREV_ASM_SEQID_HASH_FILE}" ]]; then
+    python3 "${SCRIPTS_DIR}/fasta_to_asm_seqID_hashes.py" \
+      --input-fasta "${PREV_ALL_GENES_FASTA}" \
+      --output-tsv "${PREV_ASM_SEQID_HASH_FILE}"
+  fi
+
+  python3 "${SCRIPTS_DIR}/make_asm_seqID_hash_diff.py" \
+    --current-hash-table "${ASM_SEQID_HASH_FILE}" \
+    --prev-hash-table "${PREV_ASM_SEQID_HASH_FILE}" \
+    --out "${HASH_DIFF_TABLE}"
+fi
 
 
 # == Assign categories to downloaded genomes ==
@@ -345,6 +376,7 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --ribotyper-threads "${RIBOTYPER_THREADS}" \
     --prev-short-out-tsv "${PREV_RIBOTYPER_SHORT_OUT_TSV}" \
     --prev-long-out-tsv "${PREV_RIBOTYPER_LONG_OUT_TSV}" \
+    --asm-seqID-hash-diff "${HASH_DIFF_TABLE}" \
     --acccept-file "${RIBOTYPER_ACCEPT_FILE}"
 else
   python3 "${SCRIPTS_DIR}/check_seqs_with_ribotyper.py" \
@@ -370,6 +402,7 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --ribotyper-long-out-tsv "${RIBOTYPER_LONG_OUT_TSV}" \
     --prev-final-fasta "${PREV_FINAL_GENES_FASTA}" \
     --prev-aberrant-seqIDs "${PREV_ABERRANT_SEQIDS}" \
+    --asm-seqID-hash-diff "${HASH_DIFF_TABLE}" \
     --outdir "${ABERRATIONS_AND_HETEROGENEITY_DIR}" \
     --tmp-dir "${TMP_DIR}" \
     --mafft "${MAFFT}" \
@@ -388,6 +421,7 @@ else
     --deletion-len-threshold "${DELETION_LEN_THRESHOLD}"
 fi
 
+
 # == Find repeats in genes sequences ==
 
 if [[ "${CACHE_MODE}" == true ]]; then
@@ -398,7 +432,8 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --repeat-len-threshold "${REPEAT_LEN_THRESHOLD}" \
     --out-fail-file "${REPEAT_FAIL_SEQIDS_FPATH}" \
     --out-repeats-log "${REPEATS_FPATH}" \
-    --prev-repeats-table "${PREV_REPEATS}"
+    --prev-repeats-table "${PREV_REPEATS}" \
+    --asm-seqID-hash-diff "${HASH_DIFF_TABLE}"
 else
   python3 "${SCRIPTS_DIR}/find_repeats.py" \
     --in-fasta-file "${ALL_GENES_FASTA}" \
@@ -408,7 +443,6 @@ else
     --out-fail-file "${REPEAT_FAIL_SEQIDS_FPATH}" \
     --out-repeats-log "${REPEATS_FPATH}"
 fi
-
 
 
 # == Drop sequences which didn't pass filters ==
@@ -491,6 +525,7 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --categories-file "${CATEGORIES_FILE}" \
     --outfile "${ENTROPY_FILE}" \
     --prev-per-base-entropy-file "${PREV_PERBASE_ENTROPY_FILE}" \
+    --asm-seqID-hash-diff "${HASH_DIFF_TABLE}" \
     --mafft "${MAFFT}" \
     --threads "${MAFFT_THREADS}"
 else

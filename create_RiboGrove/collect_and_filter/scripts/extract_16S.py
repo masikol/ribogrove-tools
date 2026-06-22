@@ -579,7 +579,7 @@ def extract_reannotated_genes(seq_record: SeqRecord,
                               topology: str,
                               asm_acc: int,
                               tmp_dir_path: str,
-                              cmsearch_threads: int):
+                              cmsearch_threads: int) -> list:
     # Function reannotates 16S rRNA genes in `seq_record` with cmsearch
     #   and extracts sequences of discovered genes from it.
 
@@ -665,6 +665,13 @@ def make_cache_dict(fasta_fpath, cached_asm_accs):
     return cache_dict
 # end def
 
+def get_seqIDs(seq_records: list[SeqRecord]) -> list[str]:
+    return tuple(map(
+        lambda sr: sr.id.partition(' ')[0],
+        seq_records
+    ))
+# end def
+
 
 # == Proceed ==
 
@@ -730,6 +737,7 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, \
                 null_value='NA'
             )
             del curr_cached_stats_df
+
             continue # cache hit
         # end if
 

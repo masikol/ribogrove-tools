@@ -86,6 +86,11 @@ from Bio import SeqIO
 import src.rg_tools_IO as rgIO
 from src.file_navigation import get_asm_report_fpath, get_genome_seqannot_fpath
 
+UNPLACED_LABELS = frozenset([
+    'unplaced-scaffold',
+    'unlocalized-scaffold',
+])
+
 
 asm_sum_fpath = os.path.realpath(args.asm_sum)
 outfpath = os.path.realpath(args.out)
@@ -151,26 +156,28 @@ def make_replicon_map(asm_sum_fpath,
         out_handle.write('{}\n'.format(sep.join([
             'asm_acc',
             'seq_acc',
-            'num_seqs',
-            'min_seq_len',
+            'seq_len',
             'unplaced_scaffold',
         ])))
 
         for asm_acc in all_accs:
             if cache_mode and asm_acc in cached_asm_accs:
-                seq_accessions = tuple(
-                    cached_df[cached_df['asm_acc'] == asm_acc]['seq_acc']
+                curr_cache_df = cached_df.filter(pl.col('asm_acc') == asm_acc)
+                curr_cache_df.write_csv(
+                    curr_cache_df,
+                    separator='\t',
+                    include_header=False,
+                    null_value='NA'
                 )
-            else:
-                replicon_info = extract_replicon_info(asm_acc, genomes_dirpath)
+                continue
             # end if
-            for seq_acc in replicon_info['seq_accs']:
+            replicon_info = extract_replicon_info(asm_acc, genomes_dirpath)
+            for seq_acc, info_dict in replicon_info.items():
                 out_handle.write('{}\n'.format(sep.join([
                     asm_acc,
                     seq_acc,
-                    str(replicon_info['num_seqs']),
-                    str(replicon_info['min_seq_len']),
-                    '1' if replicon_info['unplaced_scaffold'] == True else '0',
+                    str(info_dict['seq_len']),
+                    '1' if info_dict['unplaced_scaffold'] == True else '0',
                 ])))
             # end for
         # end for
@@ -179,10 +186,12 @@ def make_replicon_map(asm_sum_fpath,
 
 
 def load_prev_repl_map(all_curr_accs, prev_repl_map_fpath):
-    with gzip.open(prev_repl_map_fpath, 'rt') as infile:
-        prev_df = pd.read_csv(infile, sep='\t')
-    # end with
-    prev_df = prev_df.query('asm_acc in @all_curr_accs')
+    prev_df = (
+        pl.scan_csv(prev_repl_map_fpath, separator='\t')
+        .filter(p.col('asm_acc').is_in(all_curr_accs))
+        .collect()
+    )
+    prev_df = prev_df
     return prev_df
 # end def
 
@@ -202,24 +211,22 @@ def extract_replicon_info(asm_acc, genomes_dirpath):
         ]
     )
 
-    seq_accs = sorted(frozenset(report_df['refseq_acc']))
-    num_seqs = len(seq_accs)
-    min_seq_len = infer_min_seq_len(report_df, asm_acc, genomes_dirpath)
-    unplaced_scaffold = report_df.filter(
-        pl.col('seq_role') == 'unplaced-scaffold'
-    ).shape[0] != 0
+    seq_lengths = infer_seq_lengths(report_df, asm_acc, genomes_dirpath)
+    unplaced_scaffold_dict = {
+        row['refseq_acc']: row['seq_role'] in UNPLACED_LABELS for row in report_df.to_dicts()
+    }
 
     result_dict = {
-        'seq_accs': seq_accs,
-        'num_seqs': num_seqs,
-        'min_seq_len': min_seq_len,
-        'unplaced_scaffold': unplaced_scaffold,
+        seq_acc: {
+            'seq_len': seq_lengths[seq_acc],
+            'unplaced_scaffold': unplaced_scaffold_dict[seq_acc],
+        } for seq_acc in seq_lengths.keys()
     }
 
     return result_dict
 # end def
 
-def infer_min_seq_len(report_df, asm_acc, genomes_dirpath):
+def infer_seq_lengths(report_df, asm_acc, genomes_dirpath):
     all_lengths_are_ints = False
     try:
         _ = tuple(map(int, report_df['seq_len']))
@@ -228,25 +235,37 @@ def infer_min_seq_len(report_df, asm_acc, genomes_dirpath):
     else:
         all_lengths_are_ints = True
     # end try
-    if all_lengths_are_ints:
-        min_len = report_df['seq_len'].min()
+
+    some_seq_accs_are_na = any(map(
+        lambda seq_acc: seq_acc.upper() == 'NA',
+        report_df['refseq_acc']
+    ))
+
+    if all_lengths_are_ints and not some_seq_accs_are_na:
+        seq_lengths = {
+            row['refseq_acc']: int(row['seq_len']) for row in report_df.to_dicts()
+        }
     else:
-        print('Inferring minimum seq length for {} from gbk...'.format(asm_acc))
-        min_len = infer_min_seq_len_from_gbk(asm_acc, genomes_dirpath)
-        print('  {} bp'.format(min_len))
+        print(
+            'Inferring seq lengths for {} from gbk...'.format(asm_acc),
+            end=' '
+        )
+        seq_lengths = infer_seq_lengths_from_gbk(asm_acc, genomes_dirpath)
+        print('  {} bp'.format(';'.join(
+            tuple(map(str, seq_lengths.values()))
+        )))
     # end if
-    return min_len
+    return seq_lengths
 # end def
 
-def infer_min_seq_len_from_gbk(asm_acc, genomes_dirpath):
+def infer_seq_lengths_from_gbk(asm_acc, genomes_dirpath):
     infpath = get_genome_seqannot_fpath(asm_acc, genomes_dirpath)
     with gzip.open(infpath, 'rt') as in_handle:
         seq_records = tuple(SeqIO.parse(in_handle, 'genbank'))
     # end with
-    return min(map(
-        lambda sr: len(sr.seq),
-        seq_records
-    ))
+    return {
+        sr.id: len(sr.seq) for sr in seq_records
+    }
 # end def
 
 

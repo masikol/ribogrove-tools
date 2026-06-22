@@ -68,6 +68,12 @@ parser.add_argument(
     required=False
 )
 
+parser.add_argument(
+    '--asm-seqID-hash-diff',
+    help='file `gene_stats/hash_diff_table.tsv` made by script make_asm_seqID_hash_diff.py',
+    required=False
+)
+
 # Output files
 
 parser.add_argument(
@@ -115,6 +121,7 @@ import polars as pl
 from Bio import SeqIO
 
 import src.rg_tools_IO as rgIO
+from src.ribogrove_seqID import parse_asm_acc
 
 
 # For convenience
@@ -124,10 +131,12 @@ if not args.prev_short_out_tsv is None \
     cache_mode = True
     prev_short_out_fpath = os.path.abspath(args.prev_short_out_tsv)
     prev_long_out_fpath  = os.path.abspath(args.prev_long_out_tsv)
+    hash_diff_df_fpath = os.path.abspath(args.asm_seqID_hash_diff)
 else:
     cache_mode = False
     prev_short_out_fpath = None
     prev_long_out_fpath  = None
+    hash_diff_df_fpath   = None
 # end if
 outdpath = os.path.abspath(args.outdir)
 ribotyper_fpath = os.path.abspath(args.ribotyper)
@@ -160,7 +169,7 @@ if not os.path.isdir(outdpath):
 
 # Check if prev files exist
 if cache_mode:
-    for f in (prev_short_out_fpath, prev_long_out_fpath):
+    for f in (prev_short_out_fpath, prev_long_out_fpath, hash_diff_df_fpath):
         if not os.path.exists(f):
             print(f'Error: file `{f}` does not exist')
             sys.exit(1)
@@ -189,6 +198,7 @@ print(fasta_seqs_fpath)
 if cache_mode:
     print(f'Previous .short.out.tsv file: `{prev_short_out_fpath}`')
     print(f'Previous .long.out.tsv file: `{prev_long_out_fpath}`')
+    print(f'Hash diff table: `{hash_diff_df_fpath}`')
 # end if
 print(ribotyper_fpath)
 print(acccept_fpath)
@@ -269,7 +279,8 @@ def reformat_out_file(raw_short_out_fpath: str,
 
 def make_query_file(in_seqs_fpath: str,
                     cache_mode: bool,
-                    prev_short_out_fpath=None):
+                    prev_short_out_fpath=None,
+                    hash_diff_df_fpath=None):
     input_seq_records = rgIO.read_and_filter_fasta(in_seqs_fpath)
 
     # A temp file for sequences for ribotyper to process
@@ -279,18 +290,40 @@ def make_query_file(in_seqs_fpath: str,
     )
 
     if cache_mode:
+        print('Loading hash diff table')
+        hash_diff_asm_accs = frozenset(
+            pl.read_csv(hash_diff_df_fpath, separator='\t')['asm_acc']
+        )
+        print(
+            'Found {} assemblies whose seqID hash has changed since the previuos run'.format(
+                len(hash_diff_asm_accs)
+            )
+        )
+
         print('Loading previous .short.out.tsv file')
-
-        all_curr_seqIDs = frozenset(map(lambda r: r.id, input_seq_records))
-
+        
         # Read seqIDs from previous .short.out.tsv file
         prev_short_out_df = pl.read_csv(prev_short_out_fpath, separator='\t')
         prev_seqIDs = frozenset(prev_short_out_df['target'])
-
+        all_curr_seqIDs = frozenset(map(lambda r: r.id, input_seq_records))
         cached_seqIDs = all_curr_seqIDs & prev_seqIDs
 
         # Find seqIDs of sequences to be processed now by ribotyper
+        count_before = len(cached_seqIDs)
+        # Remove genes from assemblied present in hash_diff_asm_accs
+        cached_seqIDs = frozenset(filter(
+            lambda seqID: parse_asm_acc(seqID) not in hash_diff_asm_accs,
+            cached_seqIDs
+        ))
+        count_after = len(cached_seqIDs)
+        print((
+            '{} cached gene sequences have beed ignored '
+            'because seqID hash if their assemblies have changed '
+            'since the previuos run'
+        ).format(count_before - count_after))
+
         seqIDs_for_ribotyper = all_curr_seqIDs - cached_seqIDs
+
         seq_records_for_ribotyper = tuple(
             filter(
                 lambda r: r.id in seqIDs_for_ribotyper,
@@ -305,6 +338,7 @@ def make_query_file(in_seqs_fpath: str,
                     len(input_seq_records)
                 )
         )
+
         print(
             '{} sequences left to be processed by ribotyper' \
                 .format(len(seq_records_for_ribotyper))
@@ -449,7 +483,8 @@ final_long_out_fpath = raw_long_out_fpath + '.tsv'
 query_seqs_fpath, cached_short_out_df = make_query_file(
     fasta_seqs_fpath,
     cache_mode,
-    prev_short_out_fpath
+    prev_short_out_fpath,
+    hash_diff_df_fpath
 )
 
 run_ribotyper(

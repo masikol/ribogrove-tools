@@ -111,6 +111,12 @@ parser.add_argument(
     required=False
 )
 
+parser.add_argument(
+    '--asm-seqID-hash-diff',
+    help='file `gene_stats/hash_diff_table.tsv` made by script make_asm_seqID_hash_diff.py',
+    required=False
+)
+
 # Output files
 
 parser.add_argument(
@@ -186,9 +192,11 @@ if not args.prev_final_fasta is None \
    and not args.prev_aberrant_seqIDs is None:
     prev_final_fasta_fpath = os.path.abspath(args.prev_final_fasta)
     prev_aberrant_seqIDs_fpath = os.path.abspath(args.prev_aberrant_seqIDs)
+    hash_diff_df_fpath = os.path.abspath(args.asm_seqID_hash_diff)
 else:
     prev_final_fasta_fpath = None
     prev_aberrant_seqIDs_fpath = None
+    hash_diff_df_fpath   = None
 # end if
 outdpath = os.path.abspath(args.outdir)
 tmp_dirpath = os.path.abspath(args.tmp_dir)
@@ -259,6 +267,7 @@ print('deletion_len_threshold = {}'.format(deletion_len_threshold))
 if cache_mode:
     print(prev_final_fasta_fpath)
     print(prev_aberrant_seqIDs_fpath)
+    print(hash_diff_df_fpath)
 # end if
 print()
 
@@ -545,8 +554,24 @@ if cache_mode:
     cached_aberrant_seqIDs = get_cached_aberrant_seqIDs(seq_records, prev_aberrant_seqIDs)
     cached_asm_accs = make_cached_asm_accs(cached_aberrant_seqIDs, prev_final_fasta_fpath, asm_accs)
     print('{}/{} genomes are cached'.format(len(cached_asm_accs), len(asm_accs)))
+
+    hash_diff_asm_accs = frozenset(
+        pl.read_csv(hash_diff_df_fpath, separator='\t')['asm_acc']
+    )
+    print(
+        'Found {} assemblies whose seqID hash has changed since the previuos run'.format(
+            len(hash_diff_asm_accs)
+        )
+    )
+    cached_aberrant_seqIDs = frozenset(filter(
+        lambda seqID: parse_asm_acc(seqID) not in hash_diff_asm_accs,
+        cached_aberrant_seqIDs
+    ))
+    cached_asm_accs = cached_asm_accs - hash_diff_asm_accs
+    print('So, {}/{} genomes are retained in cache'.format(len(cached_asm_accs), len(asm_accs)))
+
     print('{} genomes left to_process'.format(len(asm_accs - cached_asm_accs)))
-    del prev_aberrant_seqIDs
+    del prev_aberrant_seqIDs, hash_diff_asm_accs
 else:
     cached_aberrant_seqIDs = frozenset()
     cached_asm_accs = frozenset()

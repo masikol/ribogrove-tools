@@ -99,6 +99,12 @@ parser.add_argument(
     required=False
 )
 
+parser.add_argument(
+    '--asm-seqID-hash-diff',
+    help='file `gene_stats/hash_diff_table.tsv` made by script make_asm_seqID_hash_diff.py',
+    required=False
+)
+
 args = parser.parse_args()
 
 
@@ -111,6 +117,7 @@ from Bio import SeqIO
 import repeatfinder as rf # https://github.com/deprekate/RepeatFinder
 
 import src.rg_tools_IO as rgIO
+from src.ribogrove_seqID import parse_asm_acc
 
 
 # For convenience
@@ -132,9 +139,11 @@ if cache_mode:
         os.path.dirname(prev_repeats_table_fpath),
         'repeats_fail_seqIDs.txt'
     )
+    hash_diff_df_fpath = os.path.abspath(args.asm_seqID_hash_diff)
 else:
     prev_repeats_table_fpath = None
     prev_fail_seqIDs_fpath = None
+    hash_diff_df_fpath   = None
 # end if
 
 
@@ -176,6 +185,7 @@ print(f'Repeats length threshold = {repeat_len_threshold}')
 if cache_mode:
     print(prev_repeats_table_fpath)
     print(prev_fail_seqIDs_fpath)
+    print(hash_diff_df_fpath)
 # end if
 print()
 
@@ -227,7 +237,24 @@ if cache_mode:
         pl.col('seqID').is_in(all_curr_seqIDs)
     )
     cache_seqIDs = frozenset(prev_repeats_df['seqID']) & all_curr_seqIDs
-    del all_curr_seqIDs
+    print('{}/{} genes are cached'.format(len(cache_seqIDs), len(all_curr_seqIDs)))
+
+    hash_diff_asm_accs = frozenset(
+        pl.read_csv(hash_diff_df_fpath, separator='\t')['asm_acc']
+    )
+    print(
+        'Found {} assemblies whose seqID hash has changed since the previuos run'.format(
+            len(hash_diff_asm_accs)
+        )
+    )
+    cache_seqIDs = frozenset(filter(
+        lambda seqID: parse_asm_acc(seqID) not in hash_diff_asm_accs,
+        cache_seqIDs
+    ))
+    print('So, {}/{} genes are retained in cache'.format(len(cache_seqIDs), len(all_curr_seqIDs)))
+    print("Note that there might just be no repeats in a sequence, so it won't appear in cache")
+
+    del all_curr_seqIDs, hash_diff_asm_accs
 else:
     prev_repeats_df = None
     cache_seqIDs = frozenset()

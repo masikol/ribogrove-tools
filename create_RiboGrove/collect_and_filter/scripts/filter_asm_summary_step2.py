@@ -426,9 +426,10 @@ print(
 )
 print()
 
+
 # == 3. Remove genomes with NNN in their sequences ==
 
-print('3. Removing 1) genomes with sequences containing NNN; 2) genomes wuth "map unlocalized" sequences')
+print('3. Removing 1) genomes with sequences containing NNN; 2) genomes with "map unlocalized" sequences')
 print('{} -- Start'.format(get_time()))
 yet_unasm_outfpath = os.path.join(
     os.path.dirname(outfpath),
