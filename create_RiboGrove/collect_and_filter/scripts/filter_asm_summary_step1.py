@@ -209,7 +209,8 @@ def write_output(asm_sum_df, outfpath):
         outfpath,
         separator='\t',
         include_header=True,
-        null_value='NA'
+        null_value='NA',
+        compression='gzip'
     )
 # end def
 

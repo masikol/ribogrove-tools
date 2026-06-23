@@ -111,6 +111,7 @@ else
 fi
 
 ASS_SUM_FILT_1="${GENOMES_DATA_DIR}/assembly_summary_filt1.txt.gz"
+ASS_SUM_FILT_2="${GENOMES_DATA_DIR}/assembly_summary_filt2.txt.gz"
 ASS_SUM_FINAL="${GENOMES_DATA_DIR}/assembly_summary_final.txt.gz"
 REPLICON_MAP="${GENOMES_DATA_DIR}/replicon_map.tsv.gz"
 
@@ -259,23 +260,28 @@ fi
 CACHE_MODE="${buff_cache_mode}" # ad hoc for RiboGrove 29.235
 
 
+# == Filter assembly summary ==
+
+python3 "${SCRIPTS_DIR}/filter_asm_summary_step2.py" \
+  --in-asm-sum "${ASS_SUM_FILT_1}" \
+  --replicon-map "${REPLICON_MAP}" \
+  --refseq-catalog "${FILTERED_REFSEQ_CATALOG_FILE}" \
+  --out-asm-sum "${ASS_SUM_FILT_2}"
+
+
 # == Make final Assembly summary file ==
 buff_cache_mode="${CACHE_MODE}" # ad hoc for RiboGrove 29.235
 CACHE_MODE=false # ad hoc for RiboGrove 29.235
 if [[ "${CACHE_MODE}" == true ]]; then
-  python3 "${SCRIPTS_DIR}/filter_asm_summary_step2.py" \
-    --in-asm-sum "${ASS_SUM_FILT_1}" \
-    --replicon-map "${REPLICON_MAP}" \
-    --refseq-catalog "${FILTERED_REFSEQ_CATALOG_FILE}" \
+  python3 "${SCRIPTS_DIR}/filter_asm_summary_step3.py" \
+    --in-asm-sum "${ASS_SUM_FILT_2}" \
     --genomes-dir "${GENOMES_GBK_DIR}" \
     --prev-asm-sum-final "${PREV_ASM_SUM_FINAL}" \
     --prev-yet-unasm-asm-accs "${PREV_ASM_ACCS_YET_UNASM}" \
     --out-asm-sum "${ASS_SUM_FINAL}"
 else
-  python3 "${SCRIPTS_DIR}/filter_asm_summary_step2.py" \
-    --in-asm-sum "${ASS_SUM_FILT_1}" \
-    --replicon-map "${REPLICON_MAP}" \
-    --refseq-catalog "${FILTERED_REFSEQ_CATALOG_FILE}" \
+  python3 "${SCRIPTS_DIR}/filter_asm_summary_step3.py" \
+    --in-asm-sum "${ASS_SUM_FILT_2}" \
     --genomes-dir "${GENOMES_GBK_DIR}" \
     --out-asm-sum "${ASS_SUM_FINAL}"
 fi
