@@ -8,6 +8,7 @@
 ## Command line arguments
 
 ### Input files:
+# TODO: update
 # 1. `-i / --in-asm-sum` -- an assembly summary file after the 1st step of filtering.
 #   Mandatory.
 # 2. `-m / --replicon-map` -- a replicon map file.
@@ -54,21 +55,9 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '-m',
-    '--replicon-map',
-    help="""a replicon map file.
-    This is the output of the script `make_replicon_map.py`""",
-    required=True
-)
-
-parser.add_argument(
-    '-a',
-    '--refseq-catalog',
-    help="""A RefSeq "catalog" file of the current release.
-This is the file `RefSeq-releaseXXX.catalog.gz` from here:
-https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/.
-It is better to filter this file with `filter_refseq_catalog.py` before running current script.
-""",
+    '-s',
+    '--in-sample-types',
+    help='file `sample_types.tsv` produced by the script `make_sample_type_table.py`',
     required=True
 )
 
@@ -77,7 +66,7 @@ It is better to filter this file with `filter_refseq_catalog.py` before running 
 parser.add_argument(
     '-o',
     '--out-asm-sum',
-    help='an assembly summary file after the 2nd filtering step',
+    help='output assembly summary',
     required=True
 )
 
@@ -89,20 +78,16 @@ import sys
 import gzip
 
 import polars as pl
-from Bio import SeqIO
 
 import src.rg_tools_IO as rgIO
-from src.rg_tools_time import get_time
-from src.file_navigation import get_genome_seqannot_fpath
 
 
 infpath = os.path.realpath(args.in_asm_sum)
-replicon_map_fpath = os.path.realpath(args.replicon_map)
-release_catalog_fpath = os.path.realpath(args.refseq_catalog)
+sample_type_df_fpath = os.path.realpath(args.in_sample_types)
 outfpath = os.path.realpath(args.out_asm_sum)
 
 # Check existance of the input files
-fpaths_to_check = (infpath, replicon_map_fpath, release_catalog_fpath,)
+fpaths_to_check = (infpath, sample_type_df_fpath,)
 for fpath in fpaths_to_check:
     if not os.path.exists(fpath):
         print(f'Error: file `{fpath}` does not exist!')
@@ -122,94 +107,21 @@ if not os.path.isdir(os.path.dirname(outfpath)):
 
 
 print(infpath)
-print(replicon_map_fpath)
-print(release_catalog_fpath)
+print(sample_type_df_fpath)
 print()
 
-
-def remove_nonrelease_genomes(in_asm_sum_df,
-                              replicon_map_df,
-                              release_catalog_fpath,
-                              nonrelease_outfpath):
-    all_seq_accs = frozenset(replicon_map_df['seq_acc'])
-    print('Reading large release-catalog file silently...')
-    curr_release_accs = get_curr_release_seq_accs(release_catalog_fpath)
-
-    print('Filtering...')
-    nonrelease_seq_accs = all_seq_accs - curr_release_accs
-
-    nonrelease_asm_accs = frozenset(
-        replicon_map_df.filter(
-            pl.col('seq_acc').is_in(nonrelease_seq_accs)
-        )['asm_acc']
-    )
-    # Filter remaining sequences
-
-    filt_asm_sum_df = in_asm_sum_df.filter(
-        ~pl.col('asm_acc').is_in(nonrelease_asm_accs)
-    )
-    # Save "nonrelease" accessions
-    with gzip.open(nonrelease_outfpath, 'wt') as nonrelease_file:
-        for asm_acc in nonrelease_asm_accs:
-            nonrelease_file.write('{}\n'.format(asm_acc))
-        # end for
-    # end with
-
-    print(
-        '{} -- Removed genomes not belonging to the current RefSeq release' \
-            .format(get_time())
-    )
-    print(
-        '  {:,} genomes do not belong to the current RefSeq release' \
-            .format(len(nonrelease_seq_accs))
-    )
-    print('  (their assembly accessions are written to `{}`)'.format(nonrelease_outfpath))
-
-    return filt_asm_sum_df
-# end def
-
-def get_curr_release_seq_accs(release_catalog_fpath):
-    # Read the catalog file
-    if release_catalog_fpath.endswith('.gz'):
-        open_func = gzip.open
-    else:
-        open_func = open
-    # end if
-
-    curr_release_accs = set()
-
-    with open_func(release_catalog_fpath, 'rt') as catalog_file:
-        acc_column_index = 2
-        dir_column_index = 3
-        separator = '\t'
-
-        for line in catalog_file:
-            line_vals = line.split(separator)
-            curr_release_accs.add(line_vals[acc_column_index])
-        # end for
-    # end with
-
-    return curr_release_accs
-# end def
-
-
-def remove_unplaced_scaffolds(filt_asm_sum_df, replicon_map_df):
-    asm_accs_to_rm = frozenset(
-        replicon_map_df.filter(pl.col('unplaced_scaffold') == 1)['asm_acc']
-    )
-
-    filt_asm_sum_df = filt_asm_sum_df.filter(
-        ~pl.col('asm_acc').is_in(asm_accs_to_rm)
-    )
-
-    print(
-        '{} -- Removed assemblies having at least one "unplaced-scaffold/unlocalized-scaffold"' \
-            .format(get_time())
-    )
-    print('  {:,} genomes are removed'.format(len(asm_accs_to_rm)))
-
-    return filt_asm_sum_df
-# end def
+SAMPLE_TYPES_TO_REMOVE = frozenset(map(
+    str.lower,
+    [
+        'Metagenome assemble',
+        'Metagenome assembly',
+        'metagenomic',
+        'metagenomic assembiy',
+        'metagenomic assembly',
+        'Metagenomic assembly',
+        'Metagenomic Assembly',
+    ]
+))
 
 
 # == Proceed ==
@@ -217,43 +129,62 @@ def remove_unplaced_scaffolds(filt_asm_sum_df, replicon_map_df):
 # Read input
 in_asm_sum_df = rgIO.read_ass_sum_file(infpath)
 
-replicon_map_df = pl.read_csv(
-    replicon_map_fpath,
-    separator='\t'
+sample_type_df = pl.read_csv(
+    sample_type_df_fpath,
+    separator='\t',
+    null_values=['', 'na', 'NA']
+).with_columns(
+    pl.col('sample_type').str.to_lowercase()
 )
 
-# == 1. Remove genomes which don't belong to the current RefSeq release ==
+in_asm_sum_df = in_asm_sum_df.join(
+    sample_type_df,
+    on='asm_acc',
+    how='left'
+)
 
-print('1. Removing genomes which don\'t belong to the current RefSeq release')
+num_genomes_before = in_asm_sum_df['asm_acc'].n_unique()
+print('Number of input genomes: {:,}'.format(num_genomes_before))
+print('Removing genomes that originate from metagenomic samples')
 print('{} -- Start'.format(get_time()))
-nonrelease_outfpath = os.path.join(
-    os.path.dirname(outfpath),
-    'asm_accs_nonrelease.txt.gz'
+
+filt_asm_sum_df = in_asm_sum_df.filter(
+    ~pl.col('sample_type').is_in(SAMPLE_TYPES_TO_REMOVE, nulls_equal=True)
 )
-filt_asm_sum_df = remove_nonrelease_genomes(
-    in_asm_sum_df,
-    replicon_map_df,
-    release_catalog_fpath,
-    nonrelease_outfpath
+
+print('{} -- done'.format(get_time()))
+num_genomes_after = filt_asm_sum_df['asm_acc'].n_unique()
+print(
+    '  {:,} genomes are removed'.format(
+        num_genomes_before - num_genomes_after
+    )
 )
 print(
-    '  {:,} genomes are retained'.format(filt_asm_sum_df.shape[0])
+    '  {:,} genomes are retained'.format(num_genomes_after)
 )
 print()
 
-
-# == 2. Remove assemblies having "unplaced-scaffolds" ==
-
-print('2. Removing assemblies having at least one "unplaced-scaffold/unlocalized-scaffold"')
-print('{} -- Start'.format(get_time()))
-filt_asm_sum_df = remove_unplaced_scaffolds(
-    filt_asm_sum_df,
-    replicon_map_df
+seem_like_metagenomic_df = filt_asm_sum_df.select(
+    pl.col('asm_acc', 'sample_type')
+).filter(
+    pl.col('sample_type').str.contains('metagenom')
 )
-print(
-    '  {:,} genomes are retained'.format(filt_asm_sum_df.shape[0])
-)
-print()
+
+
+if seem_like_metagenomic_df.height > 0:
+    print('\nWARNING!')
+    print('{} genomes still seem to originate from metagenomic samples,'.format(
+        seem_like_metagenomic_df.height
+    ))
+    print('  even though their `sample_type` do not appear in `SAMPLE_TYPES_TO_REMOVE`')
+    print('Here they are:')
+    for i, row in enumerate(seem_like_metagenomic_df.to_dicts(), 1):
+        print('  {}. {} -- `{}`'.format(i, row['asm_acc'], row['sample_type']))
+    # end for
+    print('And here are `SAMPLE_TYPES_TO_REMOVE`:')
+    print('  {}'.format(str(SAMPLE_TYPES_TO_REMOVE)))
+    sys.exit(1)
+# end if
 
 
 # == Write output ==

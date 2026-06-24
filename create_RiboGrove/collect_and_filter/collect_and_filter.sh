@@ -112,8 +112,10 @@ fi
 
 ASS_SUM_FILT_1="${GENOMES_DATA_DIR}/assembly_summary_filt1.txt.gz"
 ASS_SUM_FILT_2="${GENOMES_DATA_DIR}/assembly_summary_filt2.txt.gz"
+ASS_SUM_FILT_3="${GENOMES_DATA_DIR}/assembly_summary_filt3.txt.gz"
 ASS_SUM_FINAL="${GENOMES_DATA_DIR}/assembly_summary_final.txt.gz"
 REPLICON_MAP="${GENOMES_DATA_DIR}/replicon_map.tsv.gz"
+SAMPLE_TYPE_TABLE="${GENOMES_DATA_DIR}/sample_types.tsv"
 
 ASM_BLACKLIST_FPATH="${SCRIPTS_DATA_DIR}/ad_hoc/assembly_blacklist.tsv"
 BLACKLIST_SEQIDS_FILE="${SCRIPTS_DATA_DIR}/ad_hoc/blacklist_seqIDs.tsv"
@@ -234,10 +236,38 @@ python3 "${SCRIPTS_DIR}/filter_asm_summary_step1.py" \
   --out-ass-sum "${ASS_SUM_FILT_1}"
 
 
+# == Filter assembly summary: remove genomes that originate from metagenomic samples ==
+
+asm_accs_tempfile="${TMP_DIR}/tmp_asm_accs.txt"
+asm_data_tempfile="${TMP_DIR}/tmp_asm_data.json"
+
+zcat "${ASS_SUM_FILT_1}" \
+  | cut -f1 | tail -n +2 \
+> "${asm_accs_tempfile}"
+
+echo 'Requesting sample data from the NCBI using datasets program'
+echo "Saving to '${asm_data_tempfile}'..."
+datasets summary genome accession \
+  --inputfile "${asm_accs_tempfile}" \
+> "${asm_data_tempfile}"
+echo 'done'
+
+python3 "${SCRIPTS_DIR}/make_sample_type_table.py" \
+  -i "${asm_data_tempfile}" \
+  -o "${SAMPLE_TYPE_TABLE}"
+
+rm -v "${asm_accs_tempfile}" "${asm_data_tempfile}"
+
+python3 "${SCRIPTS_DIR}/filter_asm_summary_step2.py" \
+  --in-asm-sum "${ASS_SUM_FILT_1}" \
+  --in-sample-types "${SAMPLE_TYPE_TABLE}" \
+  --out-asm-sum "${ASS_SUM_FILT_2}"
+
+
 # == Download genomes ==
 
 python3 "${SCRIPTS_DIR}/download_genomes.py" \
-  --asm-sum "${ASS_SUM_FILT_1}" \
+  --asm-sum "${ASS_SUM_FILT_2}" \
   --outdir "${GENOMES_GBK_DIR}" \
   --log-file "${LOGS_DIR}/download_genomes.log"
 
@@ -247,13 +277,13 @@ buff_cache_mode="${CACHE_MODE}" # ad hoc for RiboGrove 29.235
 CACHE_MODE=false # ad hoc for RiboGrove 29.235
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/make_replicon_map.py" \
-    --asm-sum "${ASS_SUM_FILT_1}" \
+    --asm-sum "${ASS_SUM_FILT_2}" \
     --genomes-dir "${GENOMES_GBK_DIR}" \
     --prev-replicon-map "${PREV_REPLICON_MAP}" \
     --out "${REPLICON_MAP}"
 else
   python3 "${SCRIPTS_DIR}/make_replicon_map.py" \
-    --asm-sum "${ASS_SUM_FILT_1}" \
+    --asm-sum "${ASS_SUM_FILT_2}" \
     --genomes-dir "${GENOMES_GBK_DIR}" \
     --out "${REPLICON_MAP}"
 fi
@@ -262,26 +292,26 @@ CACHE_MODE="${buff_cache_mode}" # ad hoc for RiboGrove 29.235
 
 # == Filter assembly summary ==
 
-python3 "${SCRIPTS_DIR}/filter_asm_summary_step2.py" \
-  --in-asm-sum "${ASS_SUM_FILT_1}" \
+python3 "${SCRIPTS_DIR}/filter_asm_summary_step3.py" \
+  --in-asm-sum "${ASS_SUM_FILT_2}" \
   --replicon-map "${REPLICON_MAP}" \
   --refseq-catalog "${FILTERED_REFSEQ_CATALOG_FILE}" \
-  --out-asm-sum "${ASS_SUM_FILT_2}"
+  --out-asm-sum "${ASS_SUM_FILT_3}"
 
 
 # == Make final Assembly summary file ==
 buff_cache_mode="${CACHE_MODE}" # ad hoc for RiboGrove 29.235
 CACHE_MODE=false # ad hoc for RiboGrove 29.235
 if [[ "${CACHE_MODE}" == true ]]; then
-  python3 "${SCRIPTS_DIR}/filter_asm_summary_step3.py" \
-    --in-asm-sum "${ASS_SUM_FILT_2}" \
+  python3 "${SCRIPTS_DIR}/filter_asm_summary_step4.py" \
+    --in-asm-sum "${ASS_SUM_FILT_3}" \
     --genomes-dir "${GENOMES_GBK_DIR}" \
     --prev-asm-sum-final "${PREV_ASM_SUM_FINAL}" \
     --prev-yet-unasm-asm-accs "${PREV_ASM_ACCS_YET_UNASM}" \
     --out-asm-sum "${ASS_SUM_FINAL}"
 else
   python3 "${SCRIPTS_DIR}/filter_asm_summary_step3.py" \
-    --in-asm-sum "${ASS_SUM_FILT_2}" \
+    --in-asm-sum "${ASS_SUM_FILT_3}" \
     --genomes-dir "${GENOMES_GBK_DIR}" \
     --out-asm-sum "${ASS_SUM_FINAL}"
 fi
