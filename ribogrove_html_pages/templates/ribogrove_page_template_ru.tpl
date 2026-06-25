@@ -29,6 +29,8 @@
 <li><a href="#top-longest">Топ-10 самых длинных генов 16S рРНК</a></li>
 <li><a href="#top-shortest">Топ-10 самых коротких генов 16S рРНК</a></li>
 <li><a href="#top-copy-num">Tоп-10 геномов с наибольшим числом копий генов 16S рРНК</a></li>
+<li><a href="#top-density-highest">Топ-10 геномов с наибольшей плотностью генов 16S рРНК</a></li>
+<li><a href="#top-density-lowest">Топ-10 геномов с наименьшей плотностью генов 16S рРНК</a></li>
 <li><a href="#top-var">Tоп-10 геномов с наибольшей внутригеномной изменчивостью генов 16S рРНК</a></li>
 <li><a href="#primers-coverages">Спектр действия пар праймеров к разным V-участкам бактериальных генов 16S рРНК</a></li>
 </ul>
@@ -133,6 +135,10 @@
     <li>
       <span class="samp-highl">primer_pair_genomic_coverage.tsv</span><br>
       Это TSV-файл, который содержит геномное покрытие пар ПЦР-праймеров к разным V-участкам генов 16S рРНК. Например, для семейства <i>Enterobacteriaceae</i> геномное покрытие пары праймеров — это процент геномов <i>Enterobacteriaceae</i>, которые содержат как минимум один ген 16S рРНК, на матрице которого (теоритично) может сформироваться ПЦР-продукт с помощью этой пары праймеров.
+    </li>
+    <li>
+      <span class="samp-highl">primer_pair_genomic_coverage.tsv</span><br>
+      Это TSV-файл, который содержит значения плотности генов 16S рРНК для каждого генома. Плотность определяется как количество копий гена 16S рРНК, делённое на размер генома и умноженное на 1 миллион пар оснований; таким образом, это количество генов 16S рРНК на 1 млн. п.н.
     </li>
   </ol></small>
 </details>
@@ -454,6 +460,72 @@
   </tbody></table>
   </details>
 {% endif %}
+
+<div id="top-density-highest" class="pad-anchor"></div>
+<table class="sum-table"><caption>Топ-10 геномов с наибольшей плотностью генов 16S рРНК
+</caption>
+<tbody>
+<tr><th class="alnleft">Организм</th><th class="numcol">Плотность генов<br />16S рРНК<sup> *</sup></th><th class="numcol">Число копий<br />генов 16S рРНК</th><th class="numcol">Размер генома<sup> **</sup></th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
+<tr>
+<td colspan="6" class="subhead">Бактерии</td>
+</tr>
+{% for _, row in ribogrove_top_highest_density_df.query('Domain == "Bacteria"').iterrows() %}
+<tr class="sumtab-row">
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+<td class="numcol">{{ row['16S_rRNA_density'] }}</td>
+<td class="numcol">{{ row['16S_rRNA_gcn'] }}</td>
+<td class="numcol">{{ row['genome_size'] }}</td>
+<td><a href="https://www.ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+</tr>
+{% endfor %}
+<tr>
+<td colspan="6" class="subhead">Археи</td>
+</tr>
+{% for _, row in ribogrove_top_highest_density_df.query('Domain == "Archaea"').iterrows() %}
+<tr class="sumtab-row">
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+<td class="numcol">{{ row['16S_rRNA_density'] }}</td>
+<td class="numcol">{{ row['16S_rRNA_gcn'] }}</td>
+<td class="numcol">{{ row['genome_size'] }}</td>
+<td><a href="https://www.ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+<p><sup>*</sup> Плотность генов 16S рРНК — это число копий гена 16S рРНК, делённое на размер генома и умноженное на 1 миллион пар оснований, таким образом, это количество генов 16S рРНК на 1 млн. п.н.</p>
+<p><sup>**</sup> Размер генома — это сумма длин всех последовательностей сборки.</p>
+
+<div id="top-density-lowest" class="pad-anchor"></div>
+<table class="sum-table"><caption>Топ-10 геномов с наименьшей плотностью генов 16S рРНК
+</caption>
+<tbody>
+<tr><th class="alnleft">Организм</th><th class="numcol">Плотность генов<br />16S рРНК<sup> *</sup></th><th class="numcol">Число копий<br />генов 16S рРНК</th><th class="numcol">Размер генома<sup> **</sup></th><th class="alnleft">Код доступа<br>геномной сборки</th></tr>
+<tr>
+<td colspan="6" class="subhead">Бактерии</td>
+</tr>
+{% for _, row in ribogrove_top_lowest_density_df.query('Domain == "Bacteria"').iterrows() %}
+<tr class="sumtab-row">
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+<td class="numcol">{{ row['16S_rRNA_density'] }}</td>
+<td class="numcol">{{ row['16S_rRNA_gcn'] }}</td>
+<td class="numcol">{{ row['genome_size'] }}</td>
+<td><a href="https://www.ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+</tr>
+{% endfor %}
+<tr>
+<td colspan="6" class="subhead">Археи</td>
+</tr>
+{% for _, row in ribogrove_top_lowest_density_df.query('Domain == "Archaea"').iterrows() %}
+<tr class="sumtab-row">
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+<td class="numcol">{{ row['16S_rRNA_density'] }}</td>
+<td class="numcol">{{ row['16S_rRNA_gcn'] }}</td>
+<td class="numcol">{{ row['genome_size'] }}</td>
+<td><a href="https://www.ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
 
 <div id="top-var" class="pad-anchor"></div>
 <table class="sum-table">

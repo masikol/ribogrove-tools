@@ -160,6 +160,7 @@ COUNT_BASES_TABLE="${GENES_STATS_DIR}/base_counts.tsv"
 DISCARDED_COUNT_BASES_TABLE="${GENES_STATS_DIR}/discarded_base_counts.tsv"
 
 ENTROPY_FILE="${ABERRATIONS_AND_HETEROGENEITY_DIR}/entropy.tsv"
+DENSITY_FILE="${GENES_STATS_DIR}/16S_density.tsv"
 
 if [[ ! -z "${PREV_WORKDIR}" ]]; then
   CACHE_MODE=true
@@ -593,8 +594,16 @@ if [[ "${CALC_PRIMERS_COVERAGE}" == true ]]; then
     --outdir "${GCNS_DIR}"
 else
   python3 "${SCRIPTS_DIR}/calculate_GCNs.py" \
-    --final-base-counts "${DISCARDED_COUNT_BASES_TABLE}" \
+    --final-base-counts "${COUNT_BASES_TABLE}" \
     --outdir "${GCNS_DIR}"
 fi
+
+
+# == Calculate Gene Density ==
+
+python3 "${SCRIPTS_DIR}/calculate_16S_density.py" \
+  --in-replicon-map "${REPLICON_MAP}" \
+  --in-gcn-table "${GCNS_DIR}/16S_GCNs.tsv" \
+  --outfile "${DENSITY_FILE}"
 
 exit 0

@@ -24,6 +24,7 @@ from src.top_longest_genes import make_ribogrove_top_longest_df, format_longest_
 from src.top_shortest_genes import make_ribogrove_top_shortest_df, format_shortest_genes_df
 from src.top_copy_numbers import make_ribogrove_top_copy_numbers_df, format_top_copy_numbers_df
 from src.top_variability import make_ribogrove_top_intragenomic_var_df, format_top_intragenomic_var_df
+from src.top_density import make_top_density_df, format_top_density_var_df
 from src.primers_coverage import make_ribogrove_primer_coverage_df, format_primer_coverage_df
 from src.formatting import format_float_number
 from src.strains_names import retrieve_strain_name_en, \
@@ -101,6 +102,12 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    '--density',
+    help='per-genome values of 16S rRNA gene density (Archaea + Bacteria)`: `16S_density.tsv`',
+    required=True
+)
+
+parser.add_argument(
     '--zenodo-doi',
     help='Zenodo DOI of this particular RiboGrove release',
     required=True
@@ -148,6 +155,7 @@ categories_fpath = os.path.abspath(args.categories)
 entropy_summary_fpath = os.path.abspath(args.entropy_summary)
 source_genomes_fpath = os.path.abspath(args.source_genomes)
 primers_fpath = os.path.abspath(args.primers_cov)
+density_fpath = os.path.abspath(args.density)
 archive = args.archive
 outdpath = os.path.abspath(args.outdir)
 zenodo_doi = args.zenodo_doi
@@ -178,7 +186,8 @@ input_fpaths = (
     categories_fpath,
     entropy_summary_fpath,
     source_genomes_fpath,
-    primers_fpath
+    primers_fpath,
+    density_fpath,
 )
 
 for fpath in input_fpaths:
@@ -446,6 +455,10 @@ bacterial_primer_pairs, archaeal_primer_pairs = parse_primer_pairs()
 # Read entropy summary file
 entropy_summary_df = pl.read_csv(entropy_summary_fpath, separator='\t')
 
+# Read density file
+density_df = pl.read_csv(density_fpath, separator='\t')
+
+
 # RiboGrove size
 print('Counting RiboGrove sequences')
 ribogrove_size_dict = make_ribogrove_size_dict(
@@ -498,6 +511,26 @@ print('Finding top genomes with highest intragenomic variability of target genes
 ribogrove_top_intragenomic_var_df = make_ribogrove_top_intragenomic_var_df(
     entropy_summary_df,
     gene_stats_df
+)
+print('done\n')
+
+# RiboGrove top genomes with highest intragenomic variability of target genes
+print('Finding top genomes with highest 16S rRNA gene density')
+ribogrove_top_highest_density_df = make_top_density_df(
+    density_df,
+    source_genomes_df,
+    gene_stats_df,
+    top_type='highest'
+)
+print('done\n')
+
+# RiboGrove top genomes with lowest intragenomic variability of target genes
+print('Finding top genomes with lowest 16S rRNA gene density')
+ribogrove_top_lowest_density_df = make_top_density_df(
+    density_df,
+    source_genomes_df,
+    gene_stats_df,
+    top_type='lowest'
 )
 print('done\n')
 
@@ -656,6 +689,18 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
         decimal_separator
     )
 
+    fmt_ribogrove_top_highest_density_df = format_top_density_var_df(
+        ribogrove_top_highest_density_df,
+        thousand_separator,
+        decimal_separator
+    )
+
+    fmt_ribogrove_top_lowest_density_df = format_top_density_var_df(
+        ribogrove_top_lowest_density_df,
+        thousand_separator,
+        decimal_separator
+    )
+
     # Render the template
     with app.app_context():
         rendered_str = flask.render_template(
@@ -678,6 +723,8 @@ for template_fpath, thousand_separator, decimal_separator, outfpath, retrieve_st
                 ribogrove_top_intragenomic_var_df=fmt_ribogrove_top_intragenomic_var_df,
                 retrieve_strain_name=retrieve_strain_name,
                 ribogrove_primers_cov_df=fmt_ribogrove_primers_cov_df,
+                ribogrove_top_highest_density_df=fmt_ribogrove_top_highest_density_df,
+                ribogrove_top_lowest_density_df=fmt_ribogrove_top_lowest_density_df,
                 italicize_candidatus=italicize_candidatus,
                 bacterial_primer_pairs=bacterial_primer_pairs,
                 archaeal_primer_pairs=archaeal_primer_pairs,

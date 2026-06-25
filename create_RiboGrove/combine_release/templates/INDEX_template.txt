@@ -11,6 +11,7 @@ The metadata consists of the following files:
 8. entropy_summary.tsv
 9. 16S_GCNs.tsv
 10. primer_pair_genomic_coverage.tsv
+11. 16S_density.tsv
 
 
 |=== File descriptions ===|
@@ -96,6 +97,7 @@ Column descriptions:
 - Column `submitter`: Submitter: the submitting consortium or first position if a list of 
    organizations. The full submitter information is available in the NCBI 
    BioProject resource: www.ncbi.nlm.nih.gov/bioproject/
+- Column `genome_size`: sum of all assembly sequence lengths.
 
 
 
@@ -185,3 +187,13 @@ Column descriptions:
 - Column `Taxon`: taxon name for which coverage was calculated. For example, "Escherichia", "Bacillota" etc.
 - Column `Number of genomes`: number of genomes of the corresponding taxon represented in RiboGrove RELEASE_NUMBER_REPLACE.
 - All other columns (e.g. `27F-338R; V1-V2 (%)` and such) contain coverage values in per cent.
+
+
+== 16S_density.tsv ==
+
+This is a TSV file which contains 16S rRNA density values for each genome. Density is defined as 16S rRNA Gene Copy Number divided by genome size times 1 million base pairs, thus being the number of 16S rRNA genes per 1 megabase.
+
+Column descriptions:
+
+- Column `asm_acc`: the Assembly ID of a genome (https://www.ncbi.nlm.nih.gov/datasets/genome).
+- Column `16S_rRNA_density`: 16S rRNA density

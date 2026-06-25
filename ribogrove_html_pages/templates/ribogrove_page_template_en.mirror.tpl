@@ -46,6 +46,8 @@
 <li><a href="#top-longest">Top-10 longest 16S rRNA genes</a></li>
 <li><a href="#top-shortest">Top-10 shortest 16S rRNA genes</a></li>
 <li><a href="#top-copy-num">Top-10 genomes with the largest 16S rRNA copy numbers</a></li>
+<li><a href="#top-density-highest">Top-10 genomes with the highest 16S rRNA gene density</a></li>
+<li><a href="#top-density-lowest">Top-10 genomes with the lowest 16S rRNA gene density</a></li>
 <li><a href="#top-var">Top-10 genomes with the highest intragenomic variability of 16S rRNA genes</a></li>
 <li><a href="#primers-coverages">Coverage of primer pairs for different V-regions of bacterial 16S rRNA genes</a></li>
 </ul>
@@ -155,6 +157,10 @@
       <li>
         <span class="samp-highl">primer_pair_genomic_coverage.tsv</span><br>
         This is a TSV file which contains genomic coverage of primer pairs targeting different V-regions of 16S rRNA genes. For example, for <i>Enterobacteriaceae</i>, genomic coverage of a primer pair is the percent of <i>Enterobacteriaceae</i> genomes which contain at least one 16S rRNA gene that can (theoretically) produce a PCR product using the primer pair.
+      </li>
+      <li>
+        <span class="samp-highl">primer_pair_genomic_coverage.tsv</span><br>
+        This is a TSV file which contains 16S rRNA density values for each genome. Density is defined as 16S rRNA Gene Copy Number divided by genome size times 1 million base pairs, thus being the number of 16S rRNA genes per 1 megabase.
       </li>
     </ol></small>
   </details>
@@ -475,6 +481,72 @@
   </tbody></table>
   </details>
 {% endif %}
+
+<div id="top-density-highest" class="pad-anchor"></div>
+<table class="sum-table"><caption>Top-10 genomes with the highest density of 16S rRNA genes
+</caption>
+<tbody>
+<tr><th class="alnleft">Organism</th><th class="numcol">16S rRNA gene<br />density<sup> *</sup></th><th class="numcol">16S rRNA gene<br />copy number</th><th class="numcol">Genome size<sup> **</sup></th><th class="alnleft">Assembly<br>accession</th></tr>
+<tr>
+<td colspan="6" class="subhead">Bacteria</td>
+</tr>
+{% for _, row in ribogrove_top_highest_density_df.query('Domain == "Bacteria"').iterrows() %}
+<tr class="sumtab-row">
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+<td class="numcol">{{ row['16S_rRNA_density'] }}</td>
+<td class="numcol">{{ row['16S_rRNA_gcn'] }}</td>
+<td class="numcol">{{ row['genome_size'] }}</td>
+<td><a href="https://www.ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+</tr>
+{% endfor %}
+<tr>
+<td colspan="6" class="subhead">Archaea</td>
+</tr>
+{% for _, row in ribogrove_top_highest_density_df.query('Domain == "Archaea"').iterrows() %}
+<tr class="sumtab-row">
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+<td class="numcol">{{ row['16S_rRNA_density'] }}</td>
+<td class="numcol">{{ row['16S_rRNA_gcn'] }}</td>
+<td class="numcol">{{ row['genome_size'] }}</td>
+<td><a href="https://www.ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+<p><sup>*</sup> 16S rRNA gene density is 16S rRNA gene copy number divided by genome size times 1 million base pairs, thus being the number of 16S rRNA genes per 1 megabase.</p>
+<p><sup>**</sup> Genome size is the sum of all assembly sequence lengths.</p>
+
+<div id="top-density-lowest" class="pad-anchor"></div>
+<table class="sum-table"><caption>Top-10 genomes with the lowest density of 16S rRNA genes
+</caption>
+<tbody>
+<tr><th class="alnleft">Organism</th><th class="numcol">16S rRNA gene<br />density<sup> *</sup></th><th class="numcol">16S rRNA gene<br />copy number</th><th class="numcol">Genome size<sup> **</sup></th><th class="alnleft">Assembly<br>accession</th></tr>
+<tr>
+<td colspan="6" class="subhead">Bacteria</td>
+</tr>
+{% for _, row in ribogrove_top_lowest_density_df.query('Domain == "Bacteria"').iterrows() %}
+<tr class="sumtab-row">
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+<td class="numcol">{{ row['16S_rRNA_density'] }}</td>
+<td class="numcol">{{ row['16S_rRNA_gcn'] }}</td>
+<td class="numcol">{{ row['genome_size'] }}</td>
+<td><a href="https://www.ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+</tr>
+{% endfor %}
+<tr>
+<td colspan="6" class="subhead">Archaea</td>
+</tr>
+{% for _, row in ribogrove_top_lowest_density_df.query('Domain == "Archaea"').iterrows() %}
+<tr class="sumtab-row">
+<td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
+<td class="numcol">{{ row['16S_rRNA_density'] }}</td>
+<td class="numcol">{{ row['16S_rRNA_gcn'] }}</td>
+<td class="numcol">{{ row['genome_size'] }}</td>
+<td><a href="https://www.ncbi.nlm.nih.gov/assembly/{{ row['asm_acc'] }}">{{ row['asm_acc'] }}</a></td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
 
 <div id="top-var" class="pad-anchor"></div>
 <table class="sum-table"><caption>Top-10 genomes with the highest intragenomic variability of 16S rRNA genes

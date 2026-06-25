@@ -57,6 +57,13 @@ parser.add_argument(
     required=True
 )
 
+parser.add_argument(
+    '-m',
+    '--replicon-map',
+    help='directory that contains downloaded gbff.gz files',
+    required=True
+)
+
 # Cache files
 
 parser.add_argument(
@@ -98,6 +105,7 @@ from src.file_navigation import get_genome_seqannot_fpath
 
 infpath = os.path.realpath(args.in_asm_sum)
 genomes_dirpath = os.path.realpath(args.genomes_dir)
+replicon_map_fpath = os.path.realpath(args.replicon_map)
 outfpath = os.path.realpath(args.out_asm_sum)
 
 # Parse "cache" arguments
@@ -119,7 +127,7 @@ else:
 
 
 # Check existance of the input files
-fpaths_to_check = (infpath,)
+fpaths_to_check = (infpath, replicon_map_fpath,)
 if cache_mode:
     fpaths_to_check = fpaths_to_check + (cache_asm_sum_fpath, cache_yet_unasm_asm_accs_fpath)
 # end if
@@ -254,6 +262,17 @@ def get_cache_yet_unasm_asm_accs(cache_yet_unasm_asm_accs_fpath):
 # end def
 
 
+def make_genome_size_df(replicon_map_fpath: str) -> pl.DataFrame:
+    genome_size_df = (
+        pl.scan_csv(replicon_map_fpath, separator='\t')
+        .group_by('asm_acc')
+        .agg(pl.col('seq_len').sum().alias('genome_size'))
+        .collect()
+    )
+    return genome_size_df
+# end def
+
+
 
 # == Proceed ==
 
@@ -286,6 +305,9 @@ print(
     '  {:,} genomes are retained for further work' \
         .format(filt_asm_sum_df.shape[0])
 )
+
+genome_size_df = make_genome_size_df(replicon_map_fpath)
+filt_asm_sum_df = filt_asm_sum_df.join(genome_size_df, on='asm_acc', how='left')
 
 
 # == Write output ==

@@ -181,6 +181,14 @@ for f in "${BACTERIA_16S_GCN}" "${ARCHAEA_16S_GCN}"; do
 done
 RIBOGROVE_16S_GCN="${METADATA_DIR}/16S_GCNs.tsv"
 
+# 16S Density
+BACTERIA_16S_DENSITY="${BACTERIA_DIR}/gene_stats/16S_density.tsv"
+ARCHAEA_16S_DENSITY="${ARCHAEA_DIR}/gene_stats/16S_density.tsv"
+for f in "${BACTERIA_16S_DENSITY}" "${ARCHAEA_16S_DENSITY}"; do
+  check_file "${f}"
+done
+RIBOGROVE_16S_DENSITY="${METADATA_DIR}/16S_density.tsv"
+
 # Total primer coverage
 BACTERIA_PRIMER_COV_DIR="${BACTERIA_DIR}/primers_coverage"
 ARCHAEA_PRIMER_COV_DIR="${ARCHAEA_DIR}/primers_coverage"
@@ -358,6 +366,18 @@ echo "${RIBOGROVE_PRIMER_COVERAGE_TABLE}"
 if [[ -f "${tmp_file}" ]]; then
   rm "${tmp_file}"
 fi
+
+# 16S Density
+echo -n '16S Density...  '
+if [[ -f "${RIBOGROVE_16S_DENSITY}" ]]; then
+  # Empty the merged file
+  echo -n '' > "${RIBOGROVE_16S_DENSITY}"
+fi
+cat "${BACTERIA_16S_DENSITY}" > "${RIBOGROVE_16S_DENSITY}"
+cat "${ARCHAEA_16S_DENSITY}" \
+  | csvtk del-header -tT \
+  >> "${RIBOGROVE_16S_DENSITY}"
+echo "${RIBOGROVE_16S_DENSITY}"
 
 # Zip the metadata
 echo "Zipping the metadata directory: '${METADATA_DIR}/'"
