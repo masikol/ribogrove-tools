@@ -78,7 +78,6 @@ args = parser.parse_args()
 # == Import them now ==
 import sys
 import gzip
-from io import StringIO
 
 import polars as pl
 from Bio import SeqIO
@@ -114,11 +113,12 @@ if not os.path.isdir(os.path.dirname(outfpath)):
         os.makedirs(os.path.dirname(outfpath))
     except OSError as err:
         print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
+        print(err)
         sys.exit(1)
     # end try
 # end if
 
-cache_mode = not args.prev_replicon_map is None
+cache_mode = args.prev_replicon_map is not None
 if cache_mode:
     prev_repl_map_fpath = os.path.abspath(args.prev_replicon_map)
     if not os.path.isfile(prev_repl_map_fpath):
@@ -177,7 +177,7 @@ def make_replicon_map(asm_sum_fpath,
                     asm_acc,
                     seq_acc,
                     str(info_dict['seq_len']),
-                    '1' if info_dict['unplaced_scaffold'] == True else '0',
+                    '1' if info_dict['unplaced_scaffold'] else '0',
                 ])))
             # end for
         # end for
@@ -188,7 +188,7 @@ def make_replicon_map(asm_sum_fpath,
 def load_prev_repl_map(all_curr_accs, prev_repl_map_fpath):
     prev_df = (
         pl.scan_csv(prev_repl_map_fpath, separator='\t')
-        .filter(p.col('asm_acc').is_in(all_curr_accs))
+        .filter(pl.col('asm_acc').is_in(all_curr_accs))
         .collect()
     )
     prev_df = prev_df
@@ -230,8 +230,8 @@ def infer_seq_lengths(report_df, asm_acc, genomes_dirpath):
     all_lengths_are_ints = False
     try:
         _ = tuple(map(int, report_df['seq_len']))
-    except:
-        pass
+    except ValueError:
+        all_lengths_are_ints = False
     else:
         all_lengths_are_ints = True
     # end try
@@ -286,3 +286,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

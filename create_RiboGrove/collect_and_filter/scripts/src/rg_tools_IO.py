@@ -26,49 +26,53 @@ def read_ass_sum_file(infpath, raw_summary=False):
 
 def read_asm_sum_file_polars(infpath, raw_summary=False):
 
-    columns = [
-        '#assembly_accession',
-        'bioproject',
-        'biosample',
-        'wgs_master',
-        'refseq_category',
-        'taxid',
-        'species_taxid',
-        'organism_name',
-        'infraspecific_name',
-        'isolate',
-        'version_status',
-        'assembly_level',
-        'release_type',
-        'genome_rep',
-        'seq_rel_date',
-        'asm_name',
-        'asm_submitter',
-        'gbrs_paired_asm',
-        'paired_asm_comp',
-        'ftp_path',
-        'excluded_from_refseq',
-        'relation_to_type_material',
-        'asm_not_live_date',
-        # 'assembly_type',
-        # 'group',
-        # 'genome_size',
-        # 'genome_size_ungapped',
-        # 'gc_percent',
-        # 'replicon_count',
-        # 'scaffold_count',
-        # 'contig_count',
-        # 'annotation_provider',
-        # 'annotation_name',
-        # 'annotation_date',
-        # 'total_gene_count',
-        # 'protein_coding_gene_count',
-        # 'non_coding_gene_count',
-        # 'pubmed_id',
-    ]
+    columns = None # just read all columns
+    if raw_summary:
+        columns = [
+            '#assembly_accession',
+            'bioproject',
+            'biosample',
+            'wgs_master',
+            'refseq_category',
+            'taxid',
+            'species_taxid',
+            'organism_name',
+            'infraspecific_name',
+            'isolate',
+            'version_status',
+            'assembly_level',
+            'release_type',
+            'genome_rep',
+            'seq_rel_date',
+            'asm_name',
+            'asm_submitter',
+            'gbrs_paired_asm',
+            'paired_asm_comp',
+            'ftp_path',
+            'excluded_from_refseq',
+            'relation_to_type_material',
+            'asm_not_live_date',
+            # 'assembly_type',
+            # 'group',
+            # 'genome_size',
+            # 'genome_size_ungapped',
+            # 'gc_percent',
+            # 'replicon_count',
+            # 'scaffold_count',
+            # 'contig_count',
+            # 'annotation_provider',
+            # 'annotation_name',
+            # 'annotation_date',
+            # 'total_gene_count',
+            # 'protein_coding_gene_count',
+            # 'non_coding_gene_count',
+            # 'pubmed_id',
+        ]
+    # end if
 
     colDTypes = {
         '#assembly_accession': pl.String,
+        'asm_acc': pl.String,
         'bioproject': pl.String,
         'biosample': pl.String,
         'wgs_master': pl.String,
@@ -91,6 +95,7 @@ def read_asm_sum_file_polars(infpath, raw_summary=False):
         'excluded_from_refseq': pl.String,
         'relation_to_type_material': pl.String,
         'asm_not_live_date': pl.String,
+        'genome_size': pl.UInt32,
         # 'assembly_type': pl.String,
         # 'group': pl.String,
         # 'genome_size': pl.String,
@@ -107,12 +112,6 @@ def read_asm_sum_file_polars(infpath, raw_summary=False):
         # 'non_coding_gene_count': pl.String,
         # 'pubmed_id': pl.String,
     }
-
-    if not raw_summary:
-        columns[0] = 'asm_acc'
-        del colDTypes['#assembly_accession']
-        colDTypes['asm_acc'] =  pl.String
-    # end if
 
     asm_sum_df = pl.read_csv(
         infpath,
@@ -138,46 +137,49 @@ def read_asm_sum_file_polars(infpath, raw_summary=False):
 
 def read_asm_sum_file_pandas(infpath, raw_summary=False):
 
-    colNames = [
-        'asm_acc',
-        'bioproject',
-        'biosample',
-        'wgs_master',
-        'refseq_category',
-        'taxid',
-        'species_taxid',
-        'organism_name',
-        'infraspecific_name',
-        'isolate',
-        'version_status',
-        'assembly_level',
-        'release_type',
-        'genome_rep',
-        'seq_rel_date',
-        'asm_name',
-        'asm_submitter',
-        'gbrs_paired_asm',
-        'paired_asm_comp',
-        'ftp_path',
-        'excluded_from_refseq',
-        'relation_to_type_material',
-        'asm_not_live_date',
-        # 'assembly_type',
-        # 'group',
-        # 'genome_size',
-        # 'genome_size_ungapped',
-        # 'gc_percent',
-        # 'replicon_count',
-        # 'scaffold_count',
-        # 'contig_count',
-        # 'annotation_provider',
-        # 'annotation_name',
-        # 'annotation_date',
-        # 'total_gene_count',
-        # 'protein_coding_gene_count',
-        # 'non_coding_gene_count',
-        # 'pubmed_id',
-    ]
+    colNames = None # just read all columns
+    if raw_summary:
+        colNames = [
+            'asm_acc',
+            'bioproject',
+            'biosample',
+            'wgs_master',
+            'refseq_category',
+            'taxid',
+            'species_taxid',
+            'organism_name',
+            'infraspecific_name',
+            'isolate',
+            'version_status',
+            'assembly_level',
+            'release_type',
+            'genome_rep',
+            'seq_rel_date',
+            'asm_name',
+            'asm_submitter',
+            'gbrs_paired_asm',
+            'paired_asm_comp',
+            'ftp_path',
+            'excluded_from_refseq',
+            'relation_to_type_material',
+            'asm_not_live_date',
+            # 'assembly_type',
+            # 'group',
+            # 'genome_size',
+            # 'genome_size_ungapped',
+            # 'gc_percent',
+            # 'replicon_count',
+            # 'scaffold_count',
+            # 'contig_count',
+            # 'annotation_provider',
+            # 'annotation_name',
+            # 'annotation_date',
+            # 'total_gene_count',
+            # 'protein_coding_gene_count',
+            # 'non_coding_gene_count',
+            # 'pubmed_id',
+        ]
+    # end if
 
     colDTypes = {
         'asm_acc': str,
@@ -203,6 +205,7 @@ def read_asm_sum_file_pandas(infpath, raw_summary=False):
         'excluded_from_refseq': str,
         'relation_to_type_material': str,
         'asm_not_live_date': str,
+        'genome_size': pd.UInt32Dtype(),
         # 'assembly_type': pl.String,
         # 'group': pl.String,
         # 'genome_size': pl.String,
@@ -252,7 +255,7 @@ def read_and_filter_fasta(in_fasta_fpath,
     #   but keeps sequences listed in the whitelist.
 
     seqIDs_to_rm = _get_seqIDs_to_rm(filter_fpaths, blacklist, whitelist)
-    is_passing = lambda record: not record.id in seqIDs_to_rm
+    is_passing = lambda record: record.id not in seqIDs_to_rm
 
     if in_fasta_fpath.endswith('.gz'):
         open_func = gzip.open

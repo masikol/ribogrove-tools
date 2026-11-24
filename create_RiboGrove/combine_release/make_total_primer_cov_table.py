@@ -48,7 +48,7 @@ if not os.path.isfile(taxonomy_fpath):
     print('Error: file `{}` does not exist'.format(taxonomy_fpath))
     sys.exit(1)
 # end if
-if not target_domain in ('Bacteria', 'Archaea'):
+if target_domain not in ('Bacteria', 'Archaea'):
     print('Error: target domain is invalid: `{}`'.format(target_domain))
     print('Valid options: `Bacteria`, `Archaea`')
     sys.exit(1)
@@ -58,6 +58,7 @@ if not os.path.isdir(os.path.dirname(outfpath)):
         os.makedirs(os.path.dirname(outfpath))
     except OSError as err:
         print('Error. Cannot create dir `{}`'.format(os.path.dirname(outfpath)))
+        print(err)
         sys.exit(1)
     # end try
 # end if
@@ -118,7 +119,11 @@ def make_total_primer_coverage_df(primers_dirpath,
                                   taxonomy_fpath,
                                   target_domain):
 
-    taxonomy_df = pl.read_csv(taxonomy_fpath, separator='\t')
+    taxonomy_df = pl.read_csv(
+        taxonomy_fpath,
+        separator='\t',
+        null_values=['NA', 'na', '',]
+    )
     taxonomy_df = taxonomy_df.filter(pl.col('Domain') == target_domain)
 
     paths_to_raw_tables = _get_paths_to_raw_tables(
@@ -165,7 +170,7 @@ def _make_per_rank_primer_coverage_df(primers_dirpath,
 
 def _get_paths_to_raw_tables(primers_dirpath, all_primer_pair_dict):
     primer_keys_to_final_names = {
-        key: '{}.tsv'.format(key) for key in all_primer_pair_dict.keys()
+        key: '{}.tsv'.format(key) for key in all_primer_pair_dict
     }
 
     primer_keys_to_fpaths = {
@@ -189,11 +194,12 @@ def _count_genomes_per_rank(taxonomy_df, rank='Phylum'):
     per_rank_genome_count_df = (
         taxonomy_df.group_by(rank)
         .agg(pl.col('asm_acc').n_unique().alias('num_genomes'))
+        .filter(~pl.col(rank).is_null())
         .sort('num_genomes', descending=True)
     )
 
     return per_rank_genome_count_df
-# end def
+# end def1
 
 
 def _count_coverage_per_rank(paths_to_raw_tables,
@@ -213,7 +219,7 @@ def _count_coverage_per_rank(paths_to_raw_tables,
 
         primer_pair_df = (
             primer_pair_df.join(
-                taxonomy_df.select(['asm_acc', rank]), on='asm_acc', how='outer'
+                taxonomy_df.select(['asm_acc', rank]), on='asm_acc', how='full'
             )
             .unique()
             .filter(pl.col('seqID').is_not_null())

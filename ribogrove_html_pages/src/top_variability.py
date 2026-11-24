@@ -12,9 +12,6 @@ _IGNORE_ASM_ACCS = {
 
 
 def make_ribogrove_top_intragenomic_var_df(entropy_summary_df, gene_stats_df, top_num=10):
-
-    # TODO: remove
-    # entropy_tmp_df = entropy_summary_df.query('not asm_acc in @_IGNORE_ASM_ACCS')
     entropy_tmp_df = entropy_summary_df.filter(
         ~pl.col('asm_acc').is_in(_IGNORE_ASM_ACCS)
     )
@@ -30,17 +27,6 @@ def make_ribogrove_top_intragenomic_var_df(entropy_summary_df, gene_stats_df, to
         'Domain',
     ]
 
-    # Count copy numbers
-    # TODO: remove pd
-    # series_nunique = lambda x: x.nunique()
-    # gcn_df = gene_stats_df.groupby('asm_acc', as_index=False) \
-    #     .agg({'seqID': series_nunique}) \
-    #     .rename(columns={'seqID': 'copy_number'}) \
-    #     .merge(
-    #         gene_stats_df[['asm_acc', 'strain_name', 'Domain']].drop_duplicates(),
-    #         on='asm_acc',
-    #         how='left'
-    #     )
     gcn_df = gene_stats_df.group_by('asm_acc').agg(
         pl.col('seqID').n_unique().alias('copy_number')
     ).join(
@@ -50,12 +36,6 @@ def make_ribogrove_top_intragenomic_var_df(entropy_summary_df, gene_stats_df, to
     )
 
     # Map Assembly IDs to domain names
-    # TODO: remove pd
-    # entropy_tmp_df = entropy_tmp_df.merge(
-    #     gcn_df,
-    #     on='asm_acc',
-    #     how='left'
-    # )
     entropy_tmp_df = entropy_tmp_df.join(
         gcn_df,
         on='asm_acc',
@@ -63,26 +43,19 @@ def make_ribogrove_top_intragenomic_var_df(entropy_summary_df, gene_stats_df, to
     )
 
     # Create an output dataframe
-    # TODO: remove pd
-    # top_df = pd.DataFrame({colname: [] for colname in out_columns})
     top_rows = []
 
     # Do it for bacteria and for archaea
     for domain in ('Bacteria', 'Archaea'):
 
         # Create a dataframe of maximum sum of entropy for each genome
-        # TODO: remove pd
-        # domain_entropy_df = entropy_tmp_df[
-        #     entropy_tmp_df['Domain'] == domain
-        # ].sort_values(by='sum_entropy', ascending=False) \
-        #     .reset_index()
         domain_entropy_df = entropy_tmp_df \
             .filter(pl.col('Domain') == domain) \
             .sort(by='sum_entropy', descending=True)
 
         if domain_entropy_df.height == 0:
             return pl.DataFrame(
-                {colname: list() for colname in out_columns}
+                {colname: [] for colname in out_columns}
             )
         # end if
 

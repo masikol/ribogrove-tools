@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
-# The script filters downloaded Assembly Summary again:
-#   1) removes genomes which don’t belong to the current RefSeq release
-#     using the `.catalog` file;
-#   2) removes genomes with sequences containing at least 3 Ns in row.
+# The script filters the Assembly Summary file (filtering step 2):
+#   the script removes metagenomic assemblies
 
 ## Command line arguments
 
@@ -11,21 +9,12 @@
 # TODO: update
 # 1. `-i / --in-asm-sum` -- an assembly summary file after the 1st step of filtering.
 #   Mandatory.
-# 2. `-m / --replicon-map` -- a replicon map file.
-#   This is the output of the script `make_replicon_map.py`
-#   Mandatory.
-# 3. `-a / --refseq-catalog` -- A RefSeq "catalog" file of the current release.
-#   This is the file `RefSeq-releaseXXX.catalog.gz` from here:
-#   https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/.
-#   It is better to filter this file with `filter_refseq_catalog.py` before running current script.
-#   Mandatory.
-# 4. `-g / --genomes-dir` -- a directory where the downlaoded genomes are located.
-#   It is the output of the script `download_genomes.py`.
+# 2. `-s / --in-sample-types` -- the sample type table.
+#   This is the output of the script `make_sample_type_table.py`
 #   Mandatory.
 
 ### Output files:
-
-# 1. `--outfile` -- an assembly summary file after the 2nd filtering step.
+# 1. `--out-asm-sum` -- output assembly summary file.
 #   Mandatory.
 
 
@@ -75,7 +64,6 @@ args = parser.parse_args()
 
 # == Import them now ==
 import sys
-import gzip
 
 import polars as pl
 
@@ -101,6 +89,7 @@ if not os.path.isdir(os.path.dirname(outfpath)):
         os.makedirs(os.path.dirname(outfpath))
     except OSError as err:
         print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
+        print(err)
         sys.exit(1)
     # end try
 # end if
@@ -155,7 +144,7 @@ filt_asm_sum_df = in_asm_sum_df.filter(
 print('{} -- done'.format(get_time()))
 num_genomes_after = filt_asm_sum_df['asm_acc'].n_unique()
 print(
-    '  {:,} genomes are removed'.format(
+    '  {:,} genomes have been removed'.format(
         num_genomes_before - num_genomes_after
     )
 )

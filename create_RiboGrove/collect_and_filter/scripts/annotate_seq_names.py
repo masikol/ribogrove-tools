@@ -7,7 +7,7 @@
 ### Input files:
 # 1. `-f / --fasta-seqs-file` -- input fasta file to be annotated.
 #   This file is the output of the script `make_final_seqs.py`. Mandatory.
-# 2. `-t / --taxonomy` -- a TSV file mapping RiboGrove seqIDs to taxonomy.
+# 2. `-t / --taxonomy-file` -- a TSV file mapping RiboGrove seqIDs to taxonomy.
 #   This file is the output of the script `add_taxonomy_names.py`. Mandatory.
 # 3. `-c / --categories-file` -- a TSV file mapping RiboGrove seqIDs to categories.
 #   This file is the output of the script `assign_genome_categories.py`. Mandatory.
@@ -97,6 +97,7 @@ if not os.path.isdir(os.path.dirname(outfpath)):
     try:
         os.makedirs(os.path.dirname(outfpath))
     except OSError as err:
+        print(err)
         print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
         sys.exit(1)
     # end try
@@ -129,8 +130,6 @@ def get_taxonomy(asm_acc, tax_df):
     global TAX_SEP
 
     # Select line of taxonomy DF for current sequence
-    # TODO: remove
-    # curr_tax_record = tax_df.loc[asm_acc,]
     curr_tax_record = tax_df.filter(pl.col('asm_acc') == asm_acc).to_dicts()[0]
 
     raw_species_name = 'NA' if curr_tax_record['Species'] is None else curr_tax_record['Species']
@@ -162,8 +161,6 @@ def get_taxonomy(asm_acc, tax_df):
 
 
 def get_category(cat_df, asm_acc):
-    # TODO: remove
-    # category = cat_df[cat_df['asm_acc'] == asm_acc]['category'].values[0]
     category = cat_df.filter(
         pl.col('asm_acc') == asm_acc
     ).to_dicts()[0]['category']
@@ -260,3 +257,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

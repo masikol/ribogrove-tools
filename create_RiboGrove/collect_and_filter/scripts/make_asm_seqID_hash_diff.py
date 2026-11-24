@@ -1,5 +1,20 @@
 #!/usr/bin/env python3
 
+# The script makes a table listing genome shose "seqID-hash" (see fasta_to_asm_seqID_hashes.py)
+#   does not match the corresponding hash for the previous RiboGrove release.
+
+# CLI arguments
+
+## Input files:
+# 1. `-c / -current-hash-table` -- the table `asm_seqID_hashes.txt` for the CURRENT RiboGrove release
+#   Mandatory.
+# 2. `-o / -prev-hash-table` -- the table `asm_seqID_hashes.txt` for the PREVIOUS RiboGrove release
+#   Mandatory.
+
+## Output files:
+# 1. `--out` -- output diff table.
+#   Mandatory.
+
 import os
 import sys
 import argparse
@@ -17,9 +32,24 @@ sys.stderr.write(
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-c', '--current-hash-table', required=True)
-parser.add_argument('-p', '--prev-hash-table', required=True)
-parser.add_argument('-o', '--out', required=True)
+parser.add_argument(
+    '-c',
+    '--current-hash-table',
+    help='file `asm_seqID_hashes.txt` produced by script `fasta_to_asm_seqID_hashes.py`',
+    required=True
+)
+parser.add_argument(
+    '-p',
+    '--prev-hash-table',
+    help='file `asm_seqID_hashes.txt` produced by script `fasta_to_asm_seqID_hashes.py` for the prevoius RiboGrove release',
+    required=True
+)
+parser.add_argument(
+    '-o',
+    '--out',
+    help='output table listing genomes whose hashes do not match',
+    required=True
+)
 args = parser.parse_args()
 
 
@@ -42,6 +72,7 @@ if out_dir and not os.path.isdir(out_dir):
         os.makedirs(out_dir)
     except OSError as err:
         sys.stderr.write('Error: cannot create directory `{}`\n'.format(out_dir))
+        print(err, file=sys.stderr)
         sys.exit(1)
     # end try
 # end if

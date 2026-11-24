@@ -83,7 +83,7 @@ from src.file_navigation import primer_pair_key_2_outfpath
 # For convenience
 base_counts_fpath = os.path.abspath(args.final_base_counts)
 outdir_path = os.path.abspath(args.outdir)
-if not args.primers_dir is None:
+if args.primers_dir is not None:
     print('INFO: the script will calculate primer-wise GCNs as well')
     primers_mode = True
     primers_dirpath = os.path.abspath(args.primers_dir)
@@ -111,6 +111,7 @@ if not os.path.isdir(outdir_path):
         os.makedirs(outdir_path)
     except OSError as err:
         print(f'Error: cannot create directory `{outdir_path}`')
+        print(err)
         sys.exit(1)
     # end try
 # end if
@@ -128,7 +129,7 @@ def make_basic_gcn_df(base_counts_fpath):
     if 'ass_id' in base_count_df.columns:
         # Consistency with RiboGrove releases before 11.217
         base_count_df = base_count_df.rename({'ass_id': 'asm_acc'})
-    elif not 'asm_acc' in base_count_df.columns:
+    elif 'asm_acc' not in base_count_df.columns:
         # Consistency with RiboGrove releases after 21.227
         base_count_df = base_count_df.with_columns(
             pl.col('seqID').map_elements(
@@ -241,3 +242,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

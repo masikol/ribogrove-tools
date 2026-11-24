@@ -1,8 +1,8 @@
 
 def format_int_number(number, thousand_separator):
 
-    formatted_number = '{:_}' \
-        .format(int(number)) \
+    formatted_number = f'{int(number):_}' \
+         \
         .replace('_', thousand_separator)
 
     return formatted_number

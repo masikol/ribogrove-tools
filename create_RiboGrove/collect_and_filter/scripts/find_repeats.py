@@ -24,6 +24,12 @@
 # - `rep_seq` -- repeat sequence;
 #   Mandatory.
 
+### Cache files
+# 1. `--prev-repeats-table` -- file `repeats.tsv` from the prevoius RiboGrove release workdir.
+#   Optional.
+# 2. `--asm-seqID-hash-diff` -- file `gene_stats/hash_diff_table.tsv` made by script make_asm_seqID_hash_diff.py
+#   Optional.
+
 ## Dependencies:
 # 1. RepeatFinder must be installed. See https://github.com/deprekate/RepeatFinder
 
@@ -113,7 +119,6 @@ import sys
 from typing import Tuple, Sequence
 
 import polars as pl
-from Bio import SeqIO
 import repeatfinder as rf # https://github.com/deprekate/RepeatFinder
 
 import src.rg_tools_IO as rgIO
@@ -127,7 +132,7 @@ aberrant_fpath = os.path.abspath(args.aberrant_seqIDs)
 out_fail_fpath = os.path.abspath(args.out_fail_file)
 out_repeats_log_fpath = os.path.abspath(args.out_repeats_log)
 
-cache_mode = not args.prev_repeats_table is None
+cache_mode = args.prev_repeats_table is not None
 if cache_mode:
     prev_repeats_table_fpath = os.path.abspath(args.prev_repeats_table)
     if not os.path.isfile(prev_repeats_table_fpath):
@@ -161,6 +166,7 @@ for d in map(os.path.dirname, [out_fail_fpath, out_repeats_log_fpath]):
             os.makedirs(d)
         except OSError as err:
             print(f'Error: cannot create directory `{d}`')
+            print(err)
             sys.exit(1)
         # end try
     # end if
@@ -327,3 +333,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

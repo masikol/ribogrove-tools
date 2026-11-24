@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
-# The script filters downloaded Assembly Summary again:
+# The script filters the Assembly Summary file (filtering step 3):
 #   1) removes genomes which don’t belong to the current RefSeq release
 #     using the `.catalog` file;
-#   2) removes genomes with sequences containing at least 3 Ns in row.
+#   2) removes genomes having at least one "unplaced-scaffold / unlocalized-scaffold" sequence.
 
 ## Command line arguments
 
 ### Input files:
-# 1. `-i / --in-asm-sum` -- an assembly summary file after the 1st step of filtering.
+# 1. `-i / --in-asm-sum` -- an assembly summary file after the 2nd step of filtering.
 #   Mandatory.
 # 2. `-m / --replicon-map` -- a replicon map file.
 #   This is the output of the script `make_replicon_map.py`
@@ -17,9 +17,6 @@
 #   This is the file `RefSeq-releaseXXX.catalog.gz` from here:
 #   https://ftp.ncbi.nlm.nih.gov/refseq/release/release-catalog/.
 #   It is better to filter this file with `filter_refseq_catalog.py` before running current script.
-#   Mandatory.
-# 4. `-g / --genomes-dir` -- a directory where the downlaoded genomes are located.
-#   It is the output of the script `download_genomes.py`.
 #   Mandatory.
 
 ### Output files:
@@ -89,11 +86,9 @@ import sys
 import gzip
 
 import polars as pl
-from Bio import SeqIO
 
 import src.rg_tools_IO as rgIO
 from src.rg_tools_time import get_time
-from src.file_navigation import get_genome_seqannot_fpath
 
 
 infpath = os.path.realpath(args.in_asm_sum)
@@ -116,6 +111,7 @@ if not os.path.isdir(os.path.dirname(outfpath)):
         os.makedirs(os.path.dirname(outfpath))
     except OSError as err:
         print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
+        print(err)
         sys.exit(1)
     # end try
 # end if
@@ -180,7 +176,6 @@ def get_curr_release_seq_accs(release_catalog_fpath):
 
     with open_func(release_catalog_fpath, 'rt') as catalog_file:
         acc_column_index = 2
-        dir_column_index = 3
         separator = '\t'
 
         for line in catalog_file:
@@ -206,7 +201,7 @@ def remove_unplaced_scaffolds(filt_asm_sum_df, replicon_map_df):
         '{} -- Removed assemblies having at least one "unplaced-scaffold/unlocalized-scaffold"' \
             .format(get_time())
     )
-    print('  {:,} genomes are removed'.format(len(asm_accs_to_rm)))
+    print('  {:,} genomes have been removed'.format(len(asm_accs_to_rm)))
 
     return filt_asm_sum_df
 # end def
@@ -274,3 +269,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

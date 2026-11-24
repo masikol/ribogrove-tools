@@ -76,3 +76,5 @@ sys.stderr.write(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

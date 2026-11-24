@@ -1,5 +1,19 @@
 #!/usr/bin/env python3
 
+# The script makes a table listing a hash of sorted and concatenated seqIDs for each genome assembly in the dataset.\
+
+## Command line arguments
+
+### Input files:
+# 1. `-i / --input-fasta` -- input file 'all_collected.fasta'
+#   Mandatory.
+
+### Output files:
+
+# 1. `-o / --output-tsv` -- output table
+#   Mandatory.
+
+
 import os
 import sys
 import argparse
@@ -15,9 +29,20 @@ sys.stderr.write(
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-i', '--input-fasta', required=True)
-parser.add_argument('-o', '--output-tsv', required=True)
+parser.add_argument(
+    '-i',
+    '--input-fasta',
+    help='input fasta file `all_collected.fasta`',
+    required=True
+)
+parser.add_argument(
+    '-o',
+    '--output-tsv',
+    help='output hash table',
+    required=True
+)
 args = parser.parse_args()
+
 
 
 # == Import them now ==
@@ -42,6 +67,7 @@ if out_dir and not os.path.isdir(out_dir):
         os.makedirs(out_dir)
     except OSError as err:
         sys.stderr.write('Error: cannot create directory `{}`\n'.format(out_dir))
+        print(err)
         sys.exit(1)
     # end try
 # end if

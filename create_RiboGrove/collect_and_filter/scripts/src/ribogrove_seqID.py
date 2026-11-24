@@ -47,7 +47,7 @@ def update_seqID_v2_to_v3(old_seqID, asm_acc):
 
     old_match = re.match(V2_PATTERN, old_seqID)
 
-    if not old_match is None:
+    if old_match is not None:
         seq_acc     = old_match.group(2)
         seq_start   = old_match.group(3)
         seq_end     = old_match.group(4)
@@ -104,7 +104,7 @@ def update_seqID_v1_to_v2(old_seqID, ass_id):
 
     old_match = re.match(V1_PATTERN, old_seqID)
 
-    if not old_match is None:
+    if old_match is not None:
         acc         = old_match.group(1)
         seq_start   = old_match.group(2)
         seq_end     = old_match.group(3)
@@ -112,7 +112,7 @@ def update_seqID_v1_to_v2(old_seqID, ass_id):
         return make_seqID(ass_id, acc, seq_start, seq_end, strand_word)
     else:
         new_match = re.match(V2_PATTERN, old_seqID)
-        if not new_match is None:
+        if new_match is not None:
             old_ass_id = new_match.group(1)
             new_seq_id = old_seqID.replace(
                 'G_{}:'.format(old_ass_id),

@@ -113,6 +113,7 @@ fi
 ASS_SUM_FILT_1="${GENOMES_DATA_DIR}/assembly_summary_filt1.txt.gz"
 ASS_SUM_FILT_2="${GENOMES_DATA_DIR}/assembly_summary_filt2.txt.gz"
 ASS_SUM_FILT_3="${GENOMES_DATA_DIR}/assembly_summary_filt3.txt.gz"
+ASS_SUM_FILT_4="${GENOMES_DATA_DIR}/assembly_summary_filt4.txt.gz"
 ASS_SUM_FINAL="${GENOMES_DATA_DIR}/assembly_summary_final.txt.gz"
 REPLICON_MAP="${GENOMES_DATA_DIR}/replicon_map.tsv.gz"
 SAMPLE_TYPE_TABLE="${GENOMES_DATA_DIR}/sample_types.tsv"
@@ -120,6 +121,7 @@ SAMPLE_TYPE_TABLE="${GENOMES_DATA_DIR}/sample_types.tsv"
 ASM_BLACKLIST_FPATH="${SCRIPTS_DATA_DIR}/ad_hoc/assembly_blacklist.tsv"
 BLACKLIST_SEQIDS_FILE="${SCRIPTS_DATA_DIR}/ad_hoc/blacklist_seqIDs.tsv"
 WHITELIST_SEQIDS_FILE="${SCRIPTS_DATA_DIR}/ad_hoc/whitelist_seqIDs.tsv"
+FORCE_CMSCAN_TABLE="${SCRIPTS_DATA_DIR}/ad_hoc/force_extract_with_cmsearch.tsv"
 
 ALL_GENES_FASTA="${GENES_DIR}/all_collected.fasta"
 ALL_GENES_STATS="${GENES_STATS_DIR}/all_collected_stats.tsv"
@@ -182,6 +184,10 @@ if [[ ! -z "${PREV_WORKDIR}" ]]; then
 else
   CACHE_MODE=false
 fi
+
+START_DATETIME=$(date +%Y%m%d_%H%M%S)
+DOWNLOAD_GENOMES_LOG="${LOGS_DIR}/download_genomes_$(date +%Y%m%d_%H%M%S).log"
+ANI_REASSIGNMENT_LOG="${LOGS_DIR}/ANI_reassignment_$(date +%Y%m%d_%H%M%S).log"
 
 if [[ "${RANKEDLINEAGE_ALREADY_EXTRACTED}" == true && ! -f "${RANKEDLINEAGE_FPATH}" ]]; then
   echo "Error: -x option is provided but the file '${RANKEDLINEAGE_FPATH}' does not actually exist." >&2
@@ -270,7 +276,7 @@ python3 "${SCRIPTS_DIR}/filter_asm_summary_step2.py" \
 python3 "${SCRIPTS_DIR}/download_genomes.py" \
   --asm-sum "${ASS_SUM_FILT_2}" \
   --outdir "${GENOMES_GBK_DIR}" \
-  --log-file "${LOGS_DIR}/download_genomes.log"
+  --log-file "${DOWNLOAD_GENOMES_LOG}"
 
 
 # == Make replicon map ==
@@ -300,23 +306,34 @@ python3 "${SCRIPTS_DIR}/filter_asm_summary_step3.py" \
   --out-asm-sum "${ASS_SUM_FILT_3}"
 
 
-# == Make final Assembly summary file ==
+# == Filter assembly summary step 4 ==
 buff_cache_mode="${CACHE_MODE}" # ad hoc for RiboGrove 29.235
 CACHE_MODE=false # ad hoc for RiboGrove 29.235
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/filter_asm_summary_step4.py" \
     --in-asm-sum "${ASS_SUM_FILT_3}" \
     --genomes-dir "${GENOMES_GBK_DIR}" \
+    --replicon-map "${REPLICON_MAP}" \
     --prev-asm-sum-final "${PREV_ASM_SUM_FINAL}" \
     --prev-yet-unasm-asm-accs "${PREV_ASM_ACCS_YET_UNASM}" \
-    --out-asm-sum "${ASS_SUM_FINAL}"
+    --out-asm-sum "${ASS_SUM_FILT_4}"
 else
-  python3 "${SCRIPTS_DIR}/filter_asm_summary_step3.py" \
+  python3 "${SCRIPTS_DIR}/filter_asm_summary_step4.py" \
     --in-asm-sum "${ASS_SUM_FILT_3}" \
     --genomes-dir "${GENOMES_GBK_DIR}" \
-    --out-asm-sum "${ASS_SUM_FINAL}"
+    --replicon-map "${REPLICON_MAP}" \
+    --out-asm-sum "${ASS_SUM_FILT_4}"
 fi
 CACHE_MODE="${buff_cache_mode}" # ad hoc for RiboGrove 29.235
+
+
+# == Amend taxids according to ANI reports, make final assembly summary ==
+python3 "${SCRIPTS_DIR}/fix_species_by_ANI.py" \
+  --in-asm-sum "${ASS_SUM_FILT_4}" \
+  --in-raw-asm-sum "${ASS_SUM}" \
+  --genomes-dir "${GENOMES_GBK_DIR}" \
+  --out-asm-sum "${ASS_SUM_FINAL}" \
+|& tee "${ANI_REASSIGNMENT_LOG}"
 
 
 # == Download taxonomy (new_taxdump.tar.gz) and extract rankedlineage.dmp ==
@@ -354,6 +371,7 @@ if [[ "${CACHE_MODE}" == true ]]; then
     --genomes-dir "${GENOMES_GBK_DIR}" \
     --out-fasta "${ALL_GENES_FASTA}" \
     --out-stats "${ALL_GENES_STATS}" \
+    --force-cmscan-table "${FORCE_CMSCAN_TABLE}" \
     --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
     --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
     --prev-all-genes-fasta "${PREV_ALL_GENES_FASTA}" \
@@ -366,6 +384,7 @@ else
     --genomes-dir "${GENOMES_GBK_DIR}" \
     --out-fasta "${ALL_GENES_FASTA}" \
     --out-stats "${ALL_GENES_STATS}" \
+    --force-cmscan-table "${FORCE_CMSCAN_TABLE}" \
     --cmsearch "${CMSEARCH_FOR_EXTRACT_16S}" \
     --rfam-family-cm "${RFAM_FAMILY_FOR_EXTRACT_16S}" \
     --tmp-dir "${TMP_DIR}" \
@@ -430,7 +449,6 @@ python3 "${SCRIPTS_DIR}/find_ribotyper_fail_seqs.py" \
 
 
 # == Find aberrant genes and record long indels ==
-
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/find_aberrant_genes.py" \
     --fasta-seqs-file "${ALL_GENES_FASTA}" \
@@ -490,7 +508,6 @@ python3 "${SCRIPTS_DIR}/make_final_seqs.py" \
   --repeats-fail-seqIDs "${REPEAT_FAIL_SEQIDS_FPATH}" \
   --blacklist-seqIDs "${BLACKLIST_SEQIDS_FILE}" \
   --whitelist-seqIDs "${WHITELIST_SEQIDS_FILE}" \
-  --replicon-map "${REPLICON_MAP}" \
   --out-fasta-file "${FINAL_GENES_FASTA}"
 
 

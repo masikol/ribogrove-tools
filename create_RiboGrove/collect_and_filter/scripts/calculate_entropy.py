@@ -22,6 +22,9 @@
 ### "Cached" files:
 # 1. `--prev-per-base-entropy-file` -- a file of per-base entropy from the workdir
 #   of the previous RiboGrove release (per_base_*_entropy.json.gz).
+# 2. `--asm-seqID-hash-diff` -- file `gene_stats/hash_diff_table.tsv`
+#   made by the script make_asm_seqID_hash_diff.py
+#   Optional.
 
 ### Dependencies:
 # 1. `--mafft` -- a MAFFT (https://mafft.cbrc.jp/alignment/software/) aligner executable.
@@ -119,7 +122,7 @@ from array import array
 import subprocess as sp
 from io import StringIO
 from functools import reduce
-from typing import Sequence, Dict, List
+from typing import Sequence, List
 
 import numpy as np
 import polars as pl
@@ -149,7 +152,7 @@ except ValueError:
     print('Error: threads must be an integer > 0. Your value: `{}`'.format(threads))
 # end try
 
-cache_mode = not args.prev_per_base_entropy_file is None
+cache_mode = args.prev_per_base_entropy_file is not None
 if cache_mode:
     prev_perbase_entropy_fpath = os.path.abspath(args.prev_per_base_entropy_file)
     hash_diff_df_fpath = os.path.abspath(args.asm_seqID_hash_diff)
@@ -180,6 +183,7 @@ for d in (tmp_dirpath, os.path.dirname(outfpath)):
             os.makedirs(d)
         except OSError as err:
             print(f'Error: cannot create directory `{d}`')
+            print(err)
             sys.exit(1)
         # end try
     # end if
@@ -505,3 +509,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

@@ -8,12 +8,9 @@ import re
 import sys
 import json
 import argparse
-from functools import reduce
 from collections import OrderedDict
 
 import flask
-# TODO: remove
-# import numpy as np
 import polars as pl
 
 
@@ -226,26 +223,12 @@ def make_gene_stats_df(base_counts_fpath,
     taxonomy_df = pl.read_csv(taxonomy_fpath, separator='\t')
     categories_df = pl.read_csv(categories_fpath, separator='\t')
 
-    # TODO: remove
-    # base_counts_df['asm_acc'] = np.repeat('', base_counts_df.shape[0])
-    # base_counts_df = base_counts_df.apply(set_asm_acc, axis=1)
     base_counts_df = base_counts_df.with_columns(
         pl.col('seqID').map_elements(
             parse_asm_acc,
             return_dtype=pl.String
         ).alias('asm_acc')
     )
-
-    # TODO: remove
-    # gene_stats_df = base_counts_df[['asm_acc', 'seqID', 'len']].merge(
-    #     taxonomy_df,
-    #     on='asm_acc',
-    #     how='left'
-    # ).merge(
-    #     categories_df[['asm_acc', 'category']],
-    #     on='asm_acc',
-    #     how='left'
-    # )
 
     gene_stats_df = base_counts_df.select(pl.col('asm_acc', 'seqID', 'len')).join(
         taxonomy_df,
@@ -270,36 +253,12 @@ def get_file_size_MB(fpath):
 # end def
 
 
-# TODO: remove
-# def set_strain_name(row):
-#     global STRAIN_DESIGNATION_PATTERN
-#     if pd.isnull(row['infraspecific_name']):
-#         row['infraspecific_name'] = ''
-#     # end if
-#     strain_name_reobj = STRAIN_DESIGNATION_PATTERN.search(row['infraspecific_name'])
-#     if not strain_name_reobj is None:
-#         strain_designation = strain_name_reobj.group(1)
-#         if not row['organism_name'].endswith(strain_designation):
-#             row['strain_name'] = '{} strain {}'.format(
-#                 row['organism_name'],
-#                 strain_designation
-#             )
-#         else:
-#             row['strain_name'] = row['organism_name']
-#         # end if
-#     else:
-#         row['strain_name'] = row['organism_name']
-#     # end if
-#     return row
-# # end def
-
 def set_strain_name(row):
     strain_name = row['organism_name']
 
-    global STRAIN_DESIGNATION_PATTERN
     strain_name_reobj = STRAIN_DESIGNATION_PATTERN.search(row['infraspecific_name'])
 
-    if not strain_name_reobj is None:
+    if strain_name_reobj is not None:
         strain_designation = strain_name_reobj.group(1)
         if not row['organism_name'].endswith(strain_designation):
             strain_name = '{} strain {}'.format(
@@ -366,26 +325,18 @@ def parse_unwanted_primer_pairs():
 
 
 def split_top_df(df, top_n=10):
-    # TODO: remove pd
-    # bacteria_df = df.query('Domain == "Bacteria"')
-    # archaea_df = df.query('Domain == "Archaea"')
     bacteria_df = df.filter(pl.col('Domain') == 'Bacteria')
     archaea_df = df.filter(pl.col('Domain') == 'Archaea')
 
     really_top_df = pl.concat(
         [
-            # TOOO: remove pd
-            # bacteria_df.iloc[:top_n,],
-            # archaea_df.iloc[:top_n,],
+
             bacteria_df[:top_n],
             archaea_df[:top_n],
         ]
     )
     rest_df = pl.concat(
         [
-            # TOOO: remove pd
-            # bacteria_df.iloc[top_n:,],
-            # archaea_df.iloc[top_n:,],
             bacteria_df[top_n:],
             archaea_df[top_n:],
         ]
@@ -400,6 +351,12 @@ def split_top_df(df, top_n=10):
 # Some Flask stuff
 app = flask.Flask('RiboGrove page maker')
 app.instance_path = os.path.abspath(os.path.dirname(__file__))
+
+# INject polars
+@app.context_processor
+def inject_polars():
+    return {'pl': pl}
+# end if
 
 # Get RefSeq release on which the cueernt RiboGrove release is based
 refseq_release = ribogrove_release_number.partition('.')[2]
@@ -418,9 +375,18 @@ gene_stats_df = make_gene_stats_df(
 # Read info about source genomes
 source_genomes_df = pl.read_csv(source_genomes_fpath, separator='\t')
 
-# TODO: remove
-# source_genomes_df['strain_name'] = np.repeat('', source_genomes_df.shape[0])
-# source_genomes_df = source_genomes_df.apply(set_strain_name, axis=1)
+# Replaece organism_name with the new, ANI-corrected, one
+org_name_df = (
+    pl.read_csv(taxonomy_fpath, separator='\t')
+    .select(pl.col('asm_acc', 'organism_name'))
+)
+source_genomes_df = source_genomes_df.drop('organism_name')
+source_genomes_df = source_genomes_df.join(
+    org_name_df,
+    on='asm_acc',
+    how='left'
+)
+
 source_genomes_df = source_genomes_df.with_columns(
     pl.col('infraspecific_name').fill_null('')
 ).with_columns(
@@ -432,15 +398,6 @@ source_genomes_df = source_genomes_df.with_columns(
 
 
 # Combine the two
-# TODO: remove
-# init_columns = gene_stats_df.columns
-# gene_stats_df = gene_stats_df.merge(
-#     source_genomes_df[['asm_acc', 'strain_name',]],
-#     on='asm_acc',
-#     how='left'
-# ).drop_duplicates(subset=init_columns)
-# del init_columns
-
 init_columns = gene_stats_df.columns
 gene_stats_df = gene_stats_df.join(
     source_genomes_df.select(pl.col('asm_acc', 'strain_name')),

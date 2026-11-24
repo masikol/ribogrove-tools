@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
 
-# The script filters Assembly Summary:
+# The script filters the Assembly Summary file (filtering step 4):
 #   it removes genomes with sequences containing at least 3 Ns in row.
 
 ## Command line arguments
 
 ### Input files:
-# 1. `-i / --in-asm-sum` -- an assembly summary file after the 1st step of filtering.
+# 1. `-i / --in-asm-sum` -- an assembly summary file after the 3rd step of filtering.
 #   Mandatory.
 # 2. `-g / --genomes-dir` -- a directory where the downlaoded genomes are located.
 #   It is the output of the script `download_genomes.py`.
+#   Mandatory.
+# 3. `-m / --replicon-map` -- a replicon map file.
+#   This is the output of the script `make_replicon_map.py`
 #   Mandatory.
 
 ### Cache files:
@@ -21,7 +24,7 @@
 
 ### Output files:
 
-# 1. `--outfile` -- an assembly summary file after the 2nd filtering step.
+# 1. `--out-asm-sum` -- an assembly summary file after the 2nd filtering step.
 #   Mandatory.
 
 
@@ -99,7 +102,6 @@ import polars as pl
 from Bio import SeqIO
 
 import src.rg_tools_IO as rgIO
-from src.rg_tools_time import get_time
 from src.file_navigation import get_genome_seqannot_fpath
 
 
@@ -149,6 +151,7 @@ if not os.path.isdir(os.path.dirname(outfpath)):
         os.makedirs(os.path.dirname(outfpath))
     except OSError as err:
         print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
+        print(err)
         sys.exit(1)
     # end try
 # end if
@@ -212,7 +215,7 @@ def remove_yet_unassembled(asm_sum_df,
     # end with
 
     print(
-        '\n{} -- Removed 1) genomes with sequences containing NNN; and 2) genomes with "map unlocalized" sequences' \
+        '\n{} -- Removed genomes with sequences containing NNN' \
             .format(get_time())
     )
     print(
@@ -230,9 +233,6 @@ def check_if_genome_is_yet_unasm(seqannot_fpath):
             if seq_contains_NNN(seq_record):
                 return True
             # end if
-            if 'MAP UNLOCALIZED' in seq_record.description.upper():
-                return True
-            # end if
         # end for
     # end with
 
@@ -240,7 +240,7 @@ def check_if_genome_is_yet_unasm(seqannot_fpath):
 # end def
 
 def seq_contains_NNN(seq_record):
-    return 'NNN' in seq_record.seq
+    return 'NNN' in str(seq_record.seq).upper()
 # end def
 
 
@@ -288,7 +288,7 @@ else:
 # end def
 
 
-print('Removing 1) genomes with sequences containing NNN; 2) genomes with "map unlocalized" sequences')
+print('Removing genomes with sequences containing NNN')
 print('{} -- Start'.format(get_time()))
 yet_unasm_outfpath = os.path.join(
     os.path.dirname(outfpath),
@@ -328,3 +328,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(1)

@@ -94,7 +94,7 @@ Column descriptions:
 - Column `asm_name`: Assembly name: the submitter's name for the genome assembly, when one was 
    provided, otherwise a default name, in the form ASM#####v#, is provided by 
    NCBI. Assembly names are not unique.
-- Column `submitter`: Submitter: the submitting consortium or first position if a list of 
+- Column `asm_submitter`: Submitter: the submitting consortium or first position if a list of 
    organizations. The full submitter information is available in the NCBI 
    BioProject resource: www.ncbi.nlm.nih.gov/bioproject/
 - Column `genome_size`: sum of all assembly sequence lengths.

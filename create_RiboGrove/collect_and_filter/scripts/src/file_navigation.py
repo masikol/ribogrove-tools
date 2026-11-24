@@ -15,6 +15,20 @@ def get_asm_report_fpath(asm_accession, genomes_dirpath):
     )
 # end def
 
+def get_ani_report_fpath(asm_accession, genomes_dirpath):
+    return os.path.join(
+        get_asm_data_dir_path(asm_accession, genomes_dirpath),
+        '{}_ani_report.txt'.format(asm_accession)
+    )
+# end def
+
+def get_ani_report_not_found_fpath(asm_accession, genomes_dirpath):
+    return os.path.join(
+        get_asm_data_dir_path(asm_accession, genomes_dirpath),
+        'ani_report_not_found.txt'
+    )
+# end def
+
 
 def get_asm_data_dir_path(asm_accession, genomes_dirpath):
     # GCF_900012635.1

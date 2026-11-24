@@ -293,41 +293,40 @@ GCF_051669205.1	only rRNA and tRNA genes on a "plasmid"
 GCF_051861385.1	only rRNA and tRNA genes on a "plasmid"
 GCF_051912505.1	only rRNA and tRNA genes on a "plasmid"
 GCF_963360705.1	only rRNA and tRNA genes on a "plasmid"
-GCF_001718835.1	more than 1% of either chromosome or rrn-containing plasmid has zero read coverage
-GCF_029625475.1	more than 1% of either chromosome or rrn-containing plasmid has zero read coverage
-GCF_038693235.1	more than 1% of either chromosome or rrn-containing plasmid has zero read coverage
-GCF_012647365.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_002059225.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_005222145.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_012295505.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_002068175.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_015710975.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_005222205.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_900637865.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_015710815.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_017086545.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_900637875.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_036512515.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_005222165.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_017363615.2	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_019048245.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_016454345.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
-GCF_030585325.1	poor assembly quality: repeat misassembly
-GCF_030389775.1	poor assembly quality: repeat misassembly
-GCF_013731155.1	poor assembly quality: repeat misassembly
-GCF_020388395.1	poor assembly quality: repeat misassembly
-GCF_001457675.1	poor assembly quality: repeat misassembly
-GCF_055721425.2	no .gbff files available yet, TODO remove this line in further releases
-GCF_055721445.2	no .gbff files available yet, TODO remove this line in further releases
-GCF_055721725.2	no .gbff files available yet, TODO remove this line in further releases
-GCF_057682525.1	no .gbff files available yet, TODO remove this line in further releases
-GCF_057682545.1	no .gbff files available yet, TODO remove this line in further releases
-GCF_057682555.1	no .gbff files available yet, TODO remove this line in further releases
-GCF_057682645.1	no .gbff files available yet, TODO remove this line in further releases
-GCF_057682655.1	no .gbff files available yet, TODO remove this line in further releases
-GCF_057682685.1	no .gbff files available yet, TODO remove this line in further releases
-GCF_057683165.1	no .gbff files available yet, TODO remove this line in further releases
+# TODO: review these rrn-plm detected "poor" entries
+# GCF_001718835.1	more than 1% of either chromosome or rrn-containing plasmid has zero read coverage
+# GCF_029625475.1	more than 1% of either chromosome or rrn-containing plasmid has zero read coverage
+# GCF_038693235.1	more than 1% of either chromosome or rrn-containing plasmid has zero read coverage
+# GCF_012647365.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_002059225.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_005222145.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_012295505.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_002068175.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_015710975.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_005222205.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_900637865.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_015710815.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_017086545.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_900637875.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_036512515.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_005222165.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_017363615.2	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_019048245.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_016454345.1	chromosome or rrn-containing plasmid is not circular (reads show this) despite the annotaation
+# GCF_030389775.1	poor assembly quality: repeat misassembly
+# GCF_013731155.1	poor assembly quality: repeat misassembly
+# GCF_020388395.1	poor assembly quality: repeat misassembly
+# GCF_001457675.1	poor assembly quality: repeat misassembly
 GCF_016107705.1	poor assembly quality
 GCF_056393665.1	poor assembly quality
 GCF_054187855.1	16S gene len varies from 506 to 1252
 GCF_054328655.1	16S gene len varies from 133 to 861
+GCF_057584475.1	assembly not found: seems, they have removed it
+GCF_057584465.1	assembly not found: seems, they have removed it
+GCF_002068175.1	I have verified the assembly myself. The genome is assembled incorrectly: there are no rrn-containing extrachromosomal elements.
+GCF_012295505.1	I have verified the assembly myself. The genome is assembled incorrectly: there are no rrn-containing extrachromosomal elements.
+GCF_030585325.1	I have verified the assembly myself. The genome is assembled incorrectly: there are no rrn-containing extrachromosomal elements.
+GCF_046619455.1	I have verified the assembly myself. The genome is assembled incorrectly: there are no rrn-containing extrachromosomal elements.
+GCF_900660545.1	I have verified the assembly myself. The genome is assembled incorrectly: there are no rrn-containing extrachromosomal elements.
+GCF_964273305.1	I have verified the assembly myself. The genome is assembled incorrectly: there are no rrn-containing extrachromosomal elements.
+GCF_057198295.1	complete rRNAs :: 12, 1, 1 (5S, 16S, 23S); The single 16S rRNA gene sequence is incomplete

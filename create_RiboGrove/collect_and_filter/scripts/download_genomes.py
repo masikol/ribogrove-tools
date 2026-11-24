@@ -67,8 +67,6 @@ args = parser.parse_args()
 import sys
 import time
 
-import polars as pl
-
 import src.rg_tools_IO as rgIO
 from src.rg_tools_time import get_time
 from src.GenomeDownloader import GenomeDownloader, DownloadStatus
@@ -91,6 +89,7 @@ for some_dir in (outdir, os.path.dirname(log_fpath)):
             os.makedirs(some_dir)
         except OSError as err:
             print(f'Error: cannot create directory `{some_dir}`')
+            print(err)
             sys.exit(1)
         # end try
     # end if

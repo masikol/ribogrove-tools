@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 # The script records which gene sequences didn’t pass the `ribotyper` filter,
-#   i.e. sequences with the following unexpected features:
-#   "NoHits", "UnacceptableModel", "MinusStrand", "LowScore", "LowCoverage".
+#   i.e. sequences with the following unexpected features, see FAIL_FEATURES
 
 ## Command line arguments
 
@@ -57,7 +56,6 @@ args = parser.parse_args()
 
 # == Import them now ==
 import sys
-from typing import Tuple
 
 import polars as pl
 
@@ -81,6 +79,7 @@ if not os.path.isdir(os.path.dirname(out_fail_fpath)):
             'Error: cannot create directory `{}`' \
                 .format(os.path.dirname(out_fail_fpath))
         )
+        print(err)
         sys.exit(1)
     # end try
 # end if
@@ -114,7 +113,7 @@ def find_failed_seqIDs(in_short_out_fpath):
 
     return tuple(
         short_out_df.filter(
-            pl.col('custom_fail') == True
+            pl.col('custom_fail')
         )['target']
     )
 # end def

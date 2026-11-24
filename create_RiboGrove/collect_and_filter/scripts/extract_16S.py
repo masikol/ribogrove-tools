@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 
-# The script extracts sequences of 16S genes from the downloaded genomes in GenBank format.
+# The script extracts sequences of 16S genes from the downloaded GenBank-formatted genome assemblies.
 # If the GenBank file of a genomic sequence does not include the statement that it
 #   was annotated with the PGAP (https://www.ncbi.nlm.nih.gov/genome/annotation_prok/),
-#   the script will re-annotate this sequence with cmsearch (http://eddylab.org/infernal/) 1.1.1
-#   and Rfam (https://rfam.xfam.org/) 12.0, to be fully consistent with the PGAP.
+#   the script will re-annotate this sequence with cmsearch (http://eddylab.org/infernal/)
+#   and Rfam (https://rfam.xfam.org/), to be consistent with the PGAP.
 # If the original 16S rRNA gene annotation of a circular sequence includes the first or
-#   the last base of the sequence, the script appends 2,000 5′‑terminal bases to 3′-end
+#   the last base of the sequence, the script appends 5,000 5′‑terminal bases to 3′-end
 #   of this sequence prior to re-annotation, in order not to miss genes interrupted by sequence start.
 
 ## Command line arguments
@@ -16,6 +16,10 @@
 # 2. `-g / --genomes-dir` -- the directory where the downloaded `.gbk.gz` files are located
 #   (see script `download_genomes.py`).
 #   Mandatory.
+# 3. `--force-cmscan-table`-- the file data/ad_hoc/force_extract_with_cmsearch.tsv
+
+## Temp dir
+# 1. `--tmp-dir` -- a directory for temporary files
 
 ### Output files:
 # 1. `-o / --out-fasta` -- a fasta file containing sequences of extracted genes.
@@ -32,10 +36,13 @@
 #   which is the output of this script, but for the previous RefSeq release.#
 #   Optional.
 
+### Params
+# 1. `-t / --threads` -- number of threads for cmsearch
+
 ### Dependencies:
 # 1. `--cmsearch` -- a `cmsearch` program executable from Infernal (http://eddylab.org/infernal/).
-#   Please, use Infernal 1.1.1 with this script, to be fully consistent with the PGAP. Mandatory.
-# 2. `-r / --rfam-family-cm` -- an (uncompressed) `.cm` file containing a Rfam's (version 12.0)
+#    Mandatory.
+# 2. `-r / --rfam-family-cm` -- an (uncompressed) `.cm` file containing a Rfam's
 #    covariance models: ftp://ftp.ebi.ac.uk/pub/databases/Rfam/12.0/Rfam.cm.gz. Mandatory.
 
 
@@ -74,6 +81,13 @@ parser.add_argument(
     '--tmp-dir',
     help='a directory for temp files',
     required=False,
+    default='/tmp'
+)
+
+parser.add_argument(
+    '--force-cmscan-table',
+    help='the file data/ad_hoc/force_extract_with_cmsearch.tsv',
+    required=True,
     default='/tmp'
 )
 
@@ -137,10 +151,8 @@ args = parser.parse_args()
 # == Import them now ==
 import sys
 import gzip
-import statistics as sts
-from typing import List, Tuple
+from typing import List
 
-import numpy as np
 import polars as pl
 from Bio import SeqIO
 from Bio.Seq import Seq
@@ -157,6 +169,7 @@ asm_sum_fpath = os.path.realpath(args.asm_sum)
 genomes_dirpath = os.path.realpath(args.genomes_dir)
 fasta_outfpath = os.path.realpath(args.out_fasta)
 outstats_fpath = os.path.realpath(args.out_stats)
+force_cmscan_fpath = os.path.realpath(args.force_cmscan_table)
 
 cmsearch_fpath = os.path.realpath(args.cmsearch)
 rfam_family_fpath = os.path.realpath(args.rfam_family_cm)
@@ -165,7 +178,7 @@ tmp_dir_path = os.path.realpath(args.tmp_dir)
 cmsearch_threads = int(args.threads)
 
 
-if not args.prev_all_genes_fasta is None and not args.prev_all_genes_stats is None:
+if args.prev_all_genes_fasta is not None and args.prev_all_genes_stats is not None:
     cache_mode = True
     prev_all_fasta_fpath = os.path.abspath(args.prev_all_genes_fasta)
     prev_all_stats_fpath = os.path.abspath(args.prev_all_genes_stats)
@@ -195,6 +208,7 @@ for some_dir in map(os.path.dirname, [fasta_outfpath, outstats_fpath]):
             os.makedirs(some_dir)
         except OSError as err:
             print(f'Error: cannot create directory `{some_dir}`')
+            print(err)
             sys.exit(1)
         # end try
     # end if
@@ -585,7 +599,7 @@ def extract_reannotated_genes(seq_record: SeqRecord,
 
     # Save original length of sequence
     original_len = len(seq_record.seq)
-    len_circ_tail = min(original_len, 2000)
+    len_circ_tail = min(original_len, 5000)
 
     # Make circular sequence a bit longer in order to annotate properly
     #   genes truncated by sequecne start
@@ -604,7 +618,14 @@ def extract_reannotated_genes(seq_record: SeqRecord,
 
     # Now we have `tblout_fpath` and cam extract genes sequences from `seq_record`
 
-    tblout_df = pl.read_csv(tblout_fpath, separator='\t')
+    tblout_df = pl.read_csv(
+        tblout_fpath,
+        separator='\t'
+    ).filter(~pl.col('target_name').is_null())
+
+    if tblout_df.height == 0:
+        return list()
+    # end if
 
     if topology == 'circular':
         tblout_df = amend_coordinates_on_extended_seq(
@@ -678,6 +699,9 @@ def get_seqIDs(seq_records: list[SeqRecord]) -> list[str]:
 # Read input data
 
 asm_sum_df = rgIO.read_ass_sum_file(asm_sum_fpath)
+force_cmscan_asm_accs = frozenset(
+    pl.read_csv(force_cmscan_fpath, separator='\t')['asm_acc']
+)
 
 # Read "cached" data
 if cache_mode:
@@ -689,6 +713,7 @@ if cache_mode:
     )
     cached_stats_df = cached_stats_df.rename({'acc': 'seq_acc'})
     cached_asm_accs = frozenset(cached_stats_df['asm_acc'])
+    cached_asm_accs = cached_asm_accs - force_cmscan_asm_accs
 
     cached_dict = make_cache_dict(prev_all_fasta_fpath, cached_asm_accs)
     print('{} -- done'.format(get_time()))
@@ -712,6 +737,7 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, \
     for i, row in enumerate(asm_sum_df.to_dicts(), 1):
 
         asm_acc = row['asm_acc']
+
         status_str = '\r{} -- Doing {}/{}: {}'.format(
             get_time(), i, n_asms, asm_acc
         )
@@ -767,7 +793,13 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, \
                 topology = seq_record.annotations['topology']
             # end if
 
-            if improper_16S_annotation or (seq_start_truncation and topology == 'circular'):
+            annotate_with_cmscan = (
+                asm_acc in force_cmscan_asm_accs
+                or improper_16S_annotation
+                or (seq_start_truncation and topology == 'circular')
+            )
+
+            if annotate_with_cmscan:
                 # Reannotate 16S rRNA genes using cmsearch
                 # And extract reannotated genes
                 extracted_genes = extract_reannotated_genes(
@@ -805,3 +837,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

@@ -60,7 +60,7 @@ outfpath = os.path.abspath(args.outfile)
 
 # Check arguments
 if not os.path.exists(infpath):
-    print(f'Error: file `{fpath}` does not exist.')
+    print(f'Error: file `{infpath}` does not exist.')
     sys.exit(1)
 # end if
 
@@ -76,32 +76,47 @@ if not os.path.isdir(os.path.dirname(outfpath)):
 print(infpath)
 print()
 
+SEP = '\t'
 
 with open(infpath, 'rt') as infile, open(outfpath, 'w') as outfile:
 
-    outfile.write(f'seqID\ta\tt\tg\tc\tr\ty\tw\ts\tk\tm\th\tv\tb\td\tn\tlen\n')
+    outfile.write('{}\n'.format(SEP.join([
+        'seqID',
+        'a', 't', 'g', 'c',
+        'r', 'y', 'w', 's', 'k', 'm',
+        'h', 'v', 'b', 'd',
+        'n',
+        'len',
+    ])))
 
     for i, record in enumerate(SeqIO.parse(infile, 'fasta')):
 
         seq = str(record.seq).upper()
 
-        a = seq.count('A')
-        t = seq.count('T')
-        g = seq.count('G')
-        c = seq.count('C')
-        r = seq.count('R')
-        y = seq.count('Y')
-        w = seq.count('W')
-        s = seq.count('S')
-        k = seq.count('K')
-        m = seq.count('M')
-        h = seq.count('H')
-        v = seq.count('V')
-        b = seq.count('B')
-        d = seq.count('D')
-        n = seq.count('N')
+        a = str(seq.count('A'))
+        t = str(seq.count('T'))
+        g = str(seq.count('G'))
+        c = str(seq.count('C'))
+        r = str(seq.count('R'))
+        y = str(seq.count('Y'))
+        w = str(seq.count('W'))
+        s = str(seq.count('S'))
+        k = str(seq.count('K'))
+        m = str(seq.count('M'))
+        h = str(seq.count('H'))
+        v = str(seq.count('V'))
+        b = str(seq.count('B'))
+        d = str(seq.count('D'))
+        n = str(seq.count('N'))
 
-        outfile.write(f'{record.id}\t{a}\t{t}\t{g}\t{c}\t{r}\t{y}\t{w}\t{s}\t{k}\t{m}\t{h}\t{v}\t{b}\t{d}\t{n}\t{len(seq)}\n')
+        outfile.write('{}\n'.format(SEP.join([
+            record.id,
+            a, t, g, c,
+            r, y, w, s, k, m,
+            h, v, b, d,
+            n,
+            str(len(seq))
+        ])))
     # end for
 # end with
 
@@ -113,3 +128,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

@@ -30,6 +30,12 @@
 # - `aberrant_seqIDs.txt` -- seqIDs of discovered aberrant genes, one per line.
 #   Mandatory.
 
+
+### Tmp dir
+# 1. `--tmp-dir` -- a directory for temporary files.
+#   Default: /tmp.
+
+
 ### Dependencies:
 # 1. `--mafft` -- [mafft](https://mafft.cbrc.jp/alignment/software/) aligner executable
 #   for multiple sequence alignment. Mandatory.
@@ -38,6 +44,8 @@
 # 1. `--deletion-len-threshold` -- a threshold value for length of an deletion.
 #   If deletion has length higher than this value, gene having this deletion will
 #   be regarded as an aberrant gene. Integer number > 0. Mandatory.
+# 2. `--threads` -- number of threads for mafft.
+#   Default: 1.
 
 ### "Cached" files:
 # 1. `--prev-final-fasta` -- a final fasta file of 16S rRNA gene sequences
@@ -45,6 +53,9 @@
 #   Optional.
 # 2. `--prev-aberrant-seqIDs` -- file `aberrant_seqIDs.txt`
 #   from the previous RiboGrove release.
+#   Optional.
+# 3. `--asm-seqID-hash-diff` -- file `gene_stats/hash_diff_table.tsv`
+#   made by the script make_asm_seqID_hash_diff.py
 #   Optional.
 
 
@@ -175,7 +186,6 @@ from typing import Sequence, Dict, Tuple
 
 import polars as pl
 from Bio import SeqIO
-from Bio import SeqUtils
 from Bio.SeqRecord import SeqRecord
 
 import src.rg_tools_IO as rgIO
@@ -188,8 +198,8 @@ ribotyper_fail_fpath = os.path.abspath(args.ribotyper_fail_seqIDs)
 asm_sum_fpath = os.path.abspath(args.in_asm_sum)
 ribotyper_long_fpath = os.path.abspath(args.ribotyper_long_out_tsv)
 mafft_fpath = os.path.abspath(args.mafft)
-if not args.prev_final_fasta is None \
-   and not args.prev_aberrant_seqIDs is None:
+if args.prev_final_fasta is not None \
+   and args.prev_aberrant_seqIDs is not None:
     prev_final_fasta_fpath = os.path.abspath(args.prev_final_fasta)
     prev_aberrant_seqIDs_fpath = os.path.abspath(args.prev_aberrant_seqIDs)
     hash_diff_df_fpath = os.path.abspath(args.asm_seqID_hash_diff)
@@ -237,13 +247,14 @@ if not os.path.isdir(outdpath):
         os.makedirs(outdpath)
     except OSError as err:
         print(f'Error: cannot create directory `{outdpath}`')
+        print(err)
         sys.exit(1)
     # end try
 # end if
 
 # Check if cache files are specified
-if not prev_final_fasta_fpath is None \
-   and not prev_aberrant_seqIDs_fpath is None:
+if prev_final_fasta_fpath is not None \
+   and prev_aberrant_seqIDs_fpath is not None:
     # A flag variable for convenience
     cache_mode = True
     for f in (prev_final_fasta_fpath, prev_aberrant_seqIDs_fpath):
@@ -482,7 +493,8 @@ def read_rt_long_df(ribotyper_long_fpath, ribotyper_fail_fpath):
             'scdiff': pl.String,
             'scd_per_nt': pl.String,
             'unexpected_features': pl.String,
-        }
+        },
+        null_values=['-', 'NA', 'na', '',]
     )
 
     # Remove sequences which failed ribotyper filter
@@ -726,3 +738,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

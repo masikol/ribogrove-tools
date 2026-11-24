@@ -52,14 +52,6 @@ def _init_len_dict():
 def make_ribogrove_len_dict(gene_stats_df):
     ribogrove_len_dict = _init_len_dict()
 
-    # TODO: remove
-    # bacteria_df = gene_stats_df[
-    #     gene_stats_df['Domain'] == 'Bacteria'
-    # ].reset_index()
-    # archaea_df = gene_stats_df[
-    #     gene_stats_df['Domain'] == 'Archaea'
-    # ].reset_index()
-
     bacteria_df = gene_stats_df.filter(
         pl.col('Domain') == 'Bacteria'
     )
@@ -76,17 +68,6 @@ def make_ribogrove_len_dict(gene_stats_df):
     ribogrove_len_dict['max']['Archaea'] = archaea_df['len'].max()
 
     # Make normalized (by species) dataframe
-    # TODO: remove
-    # bacteria_normalized_df = bacteria_df[
-    #     is_validlike_species_name(bacteria_df['Species'])
-    # ]
-    # bacteria_normalized_df = bacteria_normalized_df.groupby('Species', as_index=False) \
-    #     .agg({'len': 'median'})
-    # archaea_normalized_df = archaea_df[
-    #     is_validlike_species_name(archaea_df['Species'])
-    # ]
-    # archaea_normalized_df = archaea_normalized_df.groupby('Species', as_index=False) \
-    #     .agg({'len': 'median'})
     bacteria_normalized_df = _normalize_by_species(bacteria_df)
     archaea_normalized_df  = _normalize_by_species(archaea_df)
 
@@ -132,7 +113,7 @@ def _normalize_by_species(df: pl.DataFrame) -> pl.DataFrame:
 
 
 def format_len_dict(ribogrove_len_dict, thousand_separator, decimal_separator):
-    fmt_ribogrove_len_dict = dict()
+    fmt_ribogrove_len_dict = {}
 
     curr_format_float = partial(
         format_float_number,
@@ -142,7 +123,7 @@ def format_len_dict(ribogrove_len_dict, thousand_separator, decimal_separator):
     )
 
     for metric_name in ribogrove_len_dict.keys():
-        fmt_ribogrove_len_dict[metric_name] = dict()
+        fmt_ribogrove_len_dict[metric_name] = {}
         for column_name, metric_value in ribogrove_len_dict[metric_name].items():
             if metric_name != 'modes':
                 fmt_ribogrove_len_dict[metric_name][column_name] = curr_format_float(metric_value)

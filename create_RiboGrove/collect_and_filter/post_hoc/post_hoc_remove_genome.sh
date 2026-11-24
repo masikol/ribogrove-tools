@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eu
+set -euo pipefail
 
 # Get argumenets
 CONF_FILE="$1"
@@ -50,10 +50,16 @@ echo '---------'
 
 GENOMES_DATA_DIR="${WORKDIR}/genomes_data"
 ASS_SUM_FILT_1="${GENOMES_DATA_DIR}/assembly_summary_filt1.txt.gz"
+ASS_SUM_FILT_2="${GENOMES_DATA_DIR}/assembly_summary_filt2.txt.gz"
+ASS_SUM_FILT_3="${GENOMES_DATA_DIR}/assembly_summary_filt3.txt.gz"
+ASS_SUM_FILT_4="${GENOMES_DATA_DIR}/assembly_summary_filt4.txt.gz"
 ASS_SUM_FINAL="${GENOMES_DATA_DIR}/assembly_summary_final.txt.gz"
 REPLICON_MAP="${GENOMES_DATA_DIR}/replicon_map.tsv.gz"
 gzipped_files_to_edit=(
     "${ASS_SUM_FILT_1}"
+    "${ASS_SUM_FILT_2}"
+    "${ASS_SUM_FILT_3}"
+    "${ASS_SUM_FILT_4}"
     "${ASS_SUM_FINAL}"
     "${REPLICON_MAP}"
 )
@@ -90,6 +96,7 @@ plain_files_to_edit=(
     "${ABERRATIONS_AND_HETEROGENEITY_DIR}/pident_pivotal_genes.tsv"
     "${ABERRATIONS_AND_HETEROGENEITY_DIR}/pivotal_genes.tsv"
     ${RIBOTYPER_OUTDIR}/*
+    "${GENOMES_DATA_DIR}/sample_types.tsv"
 )
 
 GENES_DIR="${WORKDIR}/gene_seqs"

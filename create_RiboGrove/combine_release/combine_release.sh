@@ -246,7 +246,7 @@ if [[ -f "${RIBOGROVE_SOURCE_GENOMES}" ]]; then
   # Empty the merged file
   echo -n '' > "${RIBOGROVE_SOURCE_GENOMES}"
 fi
-columns='asm_acc,taxid,species_taxid,organism_name,infraspecific_name,assembly_level,genome_rep,seq_rel_date,asm_name,submitter'
+columns='asm_acc,taxid,species_taxid,organism_name,infraspecific_name,assembly_level,genome_rep,seq_rel_date,asm_name,asm_submitter,genome_size'
 zcat "${BACTERIA_ASM_SUM}" \
   | csvtk cut -tTf "${columns}" \
   > "${RIBOGROVE_SOURCE_GENOMES}"

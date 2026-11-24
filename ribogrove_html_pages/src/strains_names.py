@@ -105,14 +105,26 @@ def _amend_strain_name(strain_name, asm_acc, organism_name_template):
             species='stadtmanae',
             strain='MGYG-HGUT-02164'
         )
-    elif asm_acc == 'GCF_963668415.1':
-        return 'Uncultured <i>Methanospirillum</i> sp.'
-    elif asm_acc == 'GCF_963668475.1':
+    elif asm_acc == 'GCF_963668415.1' or asm_acc == 'GCF_963668475.1':
         return 'Uncultured <i>Methanospirillum</i> sp.'
     elif asm_acc == 'GCF_963674485.1':
         return 'Uncultured <i>Methanolobus</i> sp.'
     elif asm_acc == 'GCF_009217585.1':
         return '{} <sup>**</sup>'.format(strain_name)
+    elif asm_acc == 'GCF_964031255.1':
+        return '<i>Ca.</i> Tremblayella sp. 54826'
+    elif asm_acc == 'GCF_045866255.1':
+        return '<i>Ca.</i> Nardonella sp. Pin-AIST'
+    elif asm_acc == 'GCF_004296515.1':
+        return '<i>Ca.</i> Nardonella sp. Pin-AIST'
+    elif asm_acc == 'GCF_004296475.1':
+        return '<i>Ca.</i> Nardonella sp. NARSGI1'
+    elif asm_acc == 'GCF_013373785.3':
+        return organism_name_template.format(
+            genus='Bradyrhizobium',
+            species='septentrionale',
+            strain='162S2'
+        )
     elif 'ATCC 33223 ATCC 33223; 39E' in strain_name:
         return strain_name.replace(
             'ATCC 33223 ATCC 33223; 39E',

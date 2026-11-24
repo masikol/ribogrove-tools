@@ -1,6 +1,5 @@
 
 import os
-import sys
 import glob
 import gzip
 import time
@@ -10,7 +9,9 @@ from Bio import SeqIO
 
 from src.file_navigation import get_asm_data_dir_path, \
                                 get_asm_report_fpath, \
-                                get_genome_seqannot_fpath
+                                get_ani_report_fpath, \
+                                get_genome_seqannot_fpath, \
+                                get_ani_report_not_found_fpath
 
 
 class GenomeDownloader:
@@ -29,12 +30,21 @@ class GenomeDownloader:
             self.assembly_accession,
             outdir
         )
+        self.ani_report_fpath = get_ani_report_fpath(
+            self.assembly_accession,
+            outdir
+        )
         self.asm_report_check_time_fpath = self.asm_report_fpath + '.modify_timestamp'
+        self.ani_report_check_time_fpath = self.ani_report_fpath + '.modify_timestamp'
         self.asm_seqannot_fpath = get_genome_seqannot_fpath(
             self.assembly_accession,
             outdir
         )
         self.asm_seqannot_check_time_fpath = self.asm_seqannot_fpath + '.modify_timestamp'
+        self.ani_report_not_found_fpath = get_ani_report_not_found_fpath(
+            self.assembly_accession,
+            outdir
+        )
     # end def
 
 
@@ -88,6 +98,7 @@ class GenomeDownloader:
         try:
             self._check_genome_files_exist()
             self._check_asm_report_content()
+            self._check_ani_report_content()
             self._check_seqannot_content()
         except DownloadError:
             return False
@@ -99,6 +110,14 @@ class GenomeDownloader:
     def _check_downloaded_files(self):
         self._check_genome_files_exist()
         self._check_asm_report_content()
+        # ANI report is may be absent, it is optional
+        try:
+            self._check_ani_report_content()
+        except ANIRepoertNotFoundError:
+            self._set_ani_report_not_found()
+        else:
+            self._unset_ani_report_not_found()
+        # end try
         self._check_seqannot_content()
     # end def
 
@@ -107,9 +126,12 @@ class GenomeDownloader:
             raise FilesMissingError('Genome dir does not exist')
         # end if
 
-        asm_report_is_ok = self._check_asm_report_exists()
-        seqannot_is_ok = self._check_seqannot_file_exists()
-        if not (asm_report_is_ok and seqannot_is_ok):
+        file_statuses = (
+            self._check_asm_report_exists(),
+            self._check_ani_report_exists(),
+            self._check_seqannot_file_exists(),
+        )
+        if not all(file_statuses):
             raise FilesMissingError('Cannot find genome files')
         # end if
     # end def
@@ -125,6 +147,17 @@ class GenomeDownloader:
         # end if
         not_empty = os.path.getsize(self.asm_report_fpath) > 0
         return not_empty
+    # end def
+
+    def _check_ani_report_exists(self):
+        ani_report_exists = os.path.isfile(self.ani_report_fpath)
+        if ani_report_exists:
+            not_empty = os.path.getsize(self.ani_report_fpath) > 0
+            ani_report_exists = ani_report_exists and not_empty
+        # end if
+
+        ani_report_not_found_exists = os.path.isfile(self.ani_report_not_found_fpath)
+        return ani_report_exists or ani_report_not_found_exists
     # end def
 
     def _check_seqannot_file_exists(self):
@@ -147,6 +180,24 @@ class GenomeDownloader:
         # end if
     # end def
 
+    def _check_ani_report_content(self):
+        if not os.path.isfile(self.ani_report_fpath):
+            raise ANIRepoertNotFoundError(
+                'ANI report file not found at NCBI server: 404.'
+            )
+        # end if
+        if self._ani_report_modified():
+            with open(self.ani_report_fpath, 'rt') as infile:
+                if 'Error 404' in infile.read():
+                    raise ANIRepoertNotFoundError(
+                        'ANI report file not found at NCBI server: 404.'
+                    )
+                # end if
+            # end with
+            self._rewrite_ani_report_timestamp()
+        # end if
+    # end def
+
     def _asm_report_modified(self):
         if not os.path.exists(self.asm_report_check_time_fpath):
             return True
@@ -155,11 +206,28 @@ class GenomeDownloader:
                < os.path.getmtime(self.asm_report_fpath)
     # end def
 
+    def _ani_report_modified(self):
+        if not os.path.exists(self.ani_report_check_time_fpath):
+            return True
+        # end if
+        return os.path.getmtime(self.ani_report_check_time_fpath) \
+               < os.path.getmtime(self.ani_report_fpath)
+    # end def
+
     def _rewrite_asm_report_timestamp(self):
         if os.path.exists(self.asm_report_check_time_fpath):
             os.unlink(self.asm_report_check_time_fpath)
         # end if
-        with open(self.asm_report_check_time_fpath, 'wt') as file:
+        with open(self.asm_report_check_time_fpath, 'wt') as _:
+            pass
+        # end with
+    # end def
+
+    def _rewrite_ani_report_timestamp(self):
+        if os.path.exists(self.ani_report_check_time_fpath):
+            os.unlink(self.ani_report_check_time_fpath)
+        # end if
+        with open(self.ani_report_check_time_fpath, 'wt') as _:
             pass
         # end with
     # end def
@@ -172,10 +240,12 @@ class GenomeDownloader:
                 if self._seqannot_file_is_404():
                     raise Error404('.gbff.gz file not found at NCBI server: 404.')
                 else:
-                    raise gzip.BadGzipFile('.gbff.gz file is not a gzip file')
+                    raise gzip.BadGzipFile(
+                        '.gbff.gz file is not a gzip file: {}'.format(err)
+                    )
                 # end if
-            except NoSeqsError as err:
-                raise NoSeqsError('.gbff.gz file is not a GenBank file.')
+            except NoSeqsError:
+                raise NoSeqsError('.gbff.gz file is not a GenBank file: no seqs found in it.')
             # end try
             self._rewrite_asm_seqannot_timestamp()
         # end if
@@ -193,7 +263,7 @@ class GenomeDownloader:
         if os.path.exists(self.asm_seqannot_check_time_fpath):
             os.unlink(self.asm_seqannot_check_time_fpath)
         # end if
-        with open(self.asm_seqannot_check_time_fpath, 'wt') as file:
+        with open(self.asm_seqannot_check_time_fpath, 'wt') as _:
             pass
         # end with
     # end def
@@ -239,8 +309,15 @@ class GenomeDownloader:
         if not self._genome_dir_exists():
             self._make_genome_dir()
         # end if
-        self._download_asm_report()
+
         self._download_seqannot()
+        self._download_asm_report()
+
+        # Remove "ANI report not found" file and try to download it again
+        if os.path.isfile(self.ani_report_not_found_fpath):
+            os.unlink(self.ani_report_not_found_fpath)
+        # end if
+        self._download_ani_report()
     # end def
 
     def _make_genome_dir(self):
@@ -248,15 +325,15 @@ class GenomeDownloader:
             os.makedirs(self.genome_dirpath)
         except OSError as err:
             err_msg = 'Error: cannot create directory `{}`: {}' \
-                .format(genome_dirpath, err)
+                .format(self.genome_dirpath, err)
             print(err_msg)
             raise DownloadError(err_msg)
         # end try
     # end def
 
     def _download_asm_report(self):
-        download_url = self._make_asm_report_url()
         save_fpath = self.asm_report_fpath
+        download_url = self._make_asm_report_url()
         self._download_file(download_url, save_fpath)
     # end def
 
@@ -268,6 +345,26 @@ class GenomeDownloader:
         # Dir url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/900/012/635/GCF_900012635.1_Pyrococcus_chitonophagus_genome_sequence
         # File name: GCF_900012635.1_Pyrococcus_chitonophagus_genome_sequence_assembly_report.txt
         return '{}/{}_{}_assembly_report.txt'.format(
+            self.asm_basedir_url.rstrip('/'),
+            self.assembly_accession,
+            self.asm_name
+        )
+    # end def
+
+    def _download_ani_report(self):
+        download_url = self._make_ani_report_url()
+        save_fpath = self.ani_report_fpath
+        self._download_file(download_url, save_fpath)
+    # end def
+
+    def _make_ani_report_url(self):
+        # E.g.
+        # Dir url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/762/265/GCF_000762265.1_ASM76226v1
+        # File name: GCF_000762265.1_ASM76226v1_ani_report.txt
+        # Or
+        # Dir url: https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/900/012/635/GCF_900012635.1_Pyrococcus_chitonophagus_genome_sequence
+        # File name: GCF_900012635.1_Pyrococcus_chitonophagus_genome_sequence_ani_report.txt
+        return '{}/{}_{}_ani_report.txt'.format(
             self.asm_basedir_url.rstrip('/'),
             self.assembly_accession,
             self.asm_name
@@ -298,8 +395,8 @@ class GenomeDownloader:
     # end def
 
     def _download_seqannot(self):
-        download_url = self._make_seqannot_url()
         save_fpath = self.asm_seqannot_fpath
+        download_url = self._make_seqannot_url()
         self._download_file(download_url, save_fpath)
     # end def
 
@@ -315,6 +412,23 @@ class GenomeDownloader:
             self.assembly_accession,
             self.asm_name
         )
+    # end def
+
+    def _set_ani_report_not_found(self):
+        for fpath in (self.ani_report_fpath, self.ani_report_check_time_fpath):
+            if os.path.isfile(fpath):
+                os.unlink(fpath)
+            # end if 
+        # end for
+        with open(self.ani_report_not_found_fpath, 'wt') as _:
+            pass
+        # end with
+    # end def
+
+    def _unset_ani_report_not_found(self):
+        if os.path.isfile(self.ani_report_not_found_fpath):
+            os.unlink(self.ani_report_not_found_fpath)
+        # end if
     # end def
 # end class
 
@@ -345,5 +459,9 @@ class NoSeqsError(DownloadError):
 # end class
 
 class Error404(DownloadError):
+    pass
+# end class
+
+class ANIRepoertNotFoundError(Error404):
     pass
 # end class

@@ -34,6 +34,8 @@ A configuration file specifies location of:
 
 3) dependencies.
 
+4) parameters such as threads to use, some nucleotide sequence length thresholds etc.
+
 Please see examples of configuration files in the directory `config/`.
 
 Also, the configuration file specifies some pipeline parameters, such as Rfam RNA family ID and whether to calculate primer coverages of genomes or not.
@@ -76,11 +78,11 @@ bash collect_and_filter.sh config/bacteria_config.conf -t
 
 ### Python packages:
 
-1. numpy. Installation: `pip3 install numpy`. Tested on version 2.2.1.
+1. numpy. Installation: `pip3 install numpy`. Tested on version 2.5.3.
 
-2. pandas. Installation: `pip3 install pandas`. Tested on version 2.2.3.
+2. polars. Installation: `pip3 install polars`. Tested on version 1.44.2.
 
-3. Biopython. Installation: `pip3 install biopython`. Tested on version 1.84.
+3. Biopython. Installation: `pip3 install biopython`. Tested on version 1.87.
 
 4. [repeatfinder](https://github.com/deprekate/RepeatFinder). Installation: `pip3 install repeatfinder`. Tested on version 1.10.
 

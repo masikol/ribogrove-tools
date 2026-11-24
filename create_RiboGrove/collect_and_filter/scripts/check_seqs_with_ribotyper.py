@@ -21,11 +21,17 @@
 #   `data/bacteria.accept`
 #   Mandatory.
 
+### Parameters
+# 1. `--ribotyper-threads` -- number of threads for ribotyper to use.
+#   Default: 1.
+
 ### "Cached" files:
 # 1. `--prev-short-out-tsv` -- file `ribotyper_out.ribotyper.short.out` from the
 #   previous RiboGrove release.
 # 2. `--prev-long-out-tsv`` -- file `ribotyper_out.ribotyper.long.out` from the
 #   previous RiboGrove release.
+# 3. `--asm-seqID-hash-diff` -- file `gene_stats/hash_diff_table.tsv`
+#   made by the script make_asm_seqID_hash_diff.py
 
 import os
 from src.rg_tools_time import get_time
@@ -126,8 +132,8 @@ from src.ribogrove_seqID import parse_asm_acc
 
 # For convenience
 fasta_seqs_fpath = os.path.abspath(args.in_fasta_file)
-if not args.prev_short_out_tsv is None \
-   and not args.prev_long_out_tsv is None:
+if args.prev_short_out_tsv is not None \
+   and args.prev_long_out_tsv is not None:
     cache_mode = True
     prev_short_out_fpath = os.path.abspath(args.prev_short_out_tsv)
     prev_long_out_fpath  = os.path.abspath(args.prev_long_out_tsv)
@@ -163,6 +169,7 @@ if not os.path.isdir(outdpath):
         os.makedirs(outdpath)
     except OSError as err:
         print(f'Error: cannot create directory `{outdpath}`')
+        print(err)
         sys.exit(1)
     # end try
 # end if
@@ -263,8 +270,8 @@ def reformat_out_file(raw_short_out_fpath: str,
     # Remove first `idx` column
     squeeze_spaces_pattern = re.compile(r' +')
     for i in range(len(lines)):
-        l = re.sub(squeeze_spaces_pattern, '\t', lines[i])
-        lines[i] = l.partition('\t')[2] # remove first column
+        line = re.sub(squeeze_spaces_pattern, '\t', lines[i])
+        lines[i] = line.partition('\t')[2] # remove first column
     # end for
 
     # Write result lines to original file
@@ -545,3 +552,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

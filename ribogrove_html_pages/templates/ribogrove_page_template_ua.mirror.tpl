@@ -90,15 +90,10 @@
 <h3>Категорії геномів</h3>
 <p>Всі геноми, з якіх бралися дані для створення RiboGrove, були розділені на три категорії згідно з їхньою надійностю:</p>
 <ol style="list-style:none;">
-  <li><strong>Категорія 1</strong> (найбільша надійність). Геноми, які не демонструють прикмет низкоякісної збірки і які були секвенувані за допомогою технології PacBio або комбінації (Oxford&nbsp;Nanopore&nbsp;+&nbsp;Illumina) або (Oxford&nbsp;Nanopore&nbsp;+&nbsp;Illumina).</li>
+  <li><strong>Категорія 1</strong> (найбільша надійність). Геноми, які не демонструють прикмет низкоякісної збірки і які були секвенувані за допомогою технології PacBio або комбінації (Oxford&nbsp;Nanopore&nbsp;+&nbsp;Illumina) або (Oxford&nbsp;Nanopore&nbsp;+&nbsp;MGI).</li>
   <li><strong>Категорія 2.</strong> Геноми, які не демонструють прикмет низкоякісної збірки, секвенувані за допомогою будь-якої іншої технології (або ті, для яких технологія секвенування не була задекларувана).</li>
-  <li><strong>Категорія 3</strong> (найменша надійність). Геноми, які демонструють принаймні одну прикмету низкоякісної збірки.</li>
+  <li><strong>Катэгорыя 3</strong> (найменшая надзейнасць). Геноми з як мінімум однією звироднілою основою в послідовностях генів 16S рРНК.</li>
 </ol>
-<p>Прикмети низкоякісної збірки</p>
-<ul>
-  <li>Геном утримує принаймні одну звироднілу основу у послідовностях його генів 16S рРНК.</li>
-  <li>Збірка генома утримує принаймні один запис бази даних RefSeq, у назві якої є фраза «map unlocalized», і цей запис утримує послідовность гена 16S рРНК або його частину.</li>
-</ul>
 <br>
 <p>Програми, за допомогую яких RiboGrove була створена, знаходиться у наступному ҐітХаб-репозиторії: <a href="https://github.com/masikol/ribogrove-tools">ribogrove-tools</a>.</p>
 <hr>
@@ -276,7 +271,7 @@
 <tbody>
 <tr><th class="numcol">Кількість копій <sup>*</sup></th><th class="alncenter" colspan="2">Бактерії</th><th class="alncenter" colspan="2">Археї</th></tr>
 <tr><td></td><td>Кількість видів</td><td>Відсоток видів, %</td><td>Кількість видів</td><td>Відсоток видів, %</td></tr>
-{% for _, row in ribogrove_copy_number_df.iterrows() %}
+{% for row in ribogrove_copy_number_df.to_dicts() %}
 <tr class="sumtab-row">
 <td class="numcol">{{ row['copy_number'] }}</td>
 <td class="numcol">{{ row['number_of_species_bacteria'] }}</td>
@@ -296,7 +291,7 @@
 <tr>
 <td colspan="4" class="subhead">Бактерії</td>
 </tr>
-{% for _, row in really_top_longest_df.query('Domain == "Bacteria"').iterrows() %}
+{% for row in really_top_longest_df.filter(pl.col('Domain') == "Bacteria").to_dicts() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -305,14 +300,14 @@
 </tr>
 {% endfor %}
 </tbody></table>
-{% if rest_top_longest_df.query('Domain == "Bacteria"').shape[0] > 0 %}
+{% if rest_top_longest_df.filter(pl.col('Domain') == "Bacteria").shape[0] > 0 %}
   <details>
   <summary><i>Позосталі гени такої ж довжижи (у десятку не увійшли випадково)</i></summary>
   <table class="sum-table"><tbody>
   <tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.<</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
   <tr>
   </tr>
-  {% for _, row in rest_top_longest_df.query('Domain == "Bacteria"').iterrows() %}
+  {% for row in rest_top_longest_df.filter(pl.col('Domain') == "Bacteria").to_dicts() %}
   <tr class="sumtab-row">
   <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
   <td class="numcol">{{ row['len'] }}</td>
@@ -326,7 +321,7 @@
 <td colspan="4" class="subhead">Археї</td>
 </tr>
 <tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.<</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
-{% for _, row in really_top_longest_df.query('Domain == "Archaea"').iterrows() %}
+{% for row in really_top_longest_df.filter(pl.col('Domain') == "Archaea").to_dicts() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -335,14 +330,14 @@
 </tr>
 {% endfor %}
 </tbody></table>
-{% if rest_top_longest_df.query('Domain == "Archaea"').shape[0] > 0 %}
+{% if rest_top_longest_df.filter(pl.col('Domain') == "Archaea").shape[0] > 0 %}
   <details>
   <summary><i>Позосталі гени такої ж довжижи (у десятку не увійшли випадково)</i></summary>
   <table class="sum-table"><tbody>
   <tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.<</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
   <tr>
   </tr>
-  {% for _, row in rest_top_longest_df.query('Domain == "Archaea"').iterrows() %}
+  {% for row in rest_top_longest_df.filter(pl.col('Domain') == "Archaea").to_dicts() %}
   <tr class="sumtab-row">
   <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
   <td class="numcol">{{ row['len'] }}</td>
@@ -361,7 +356,7 @@
 <tr>
 <td colspan="4" class="subhead">Бактерії</td>
 </tr>
-{% for _, row in really_top_shortest_df.query('Domain == "Bacteria"').iterrows() %}
+{% for row in really_top_shortest_df.filter(pl.col('Domain') == "Bacteria").to_dicts() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -370,12 +365,12 @@
 </tr>
 {% endfor %}
 </tbody></table>
-{% if rest_top_shortest_df.query('Domain == "Bacteria"').shape[0] > 0 %}
+{% if rest_top_shortest_df.filter(pl.col('Domain') == "Bacteria").shape[0] > 0 %}
   <details>
     <summary><i>Позосталі гени такої ж довжижи (у десятку не увійшли випадково)</i></summary>
   <table class="sum-table"><tbody>
   <tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
-  {% for _, row in rest_top_shortest_df.query('Domain == "Bacteria"').iterrows() %}
+  {% for row in rest_top_shortest_df.filter(pl.col('Domain') == "Bacteria").to_dicts() %}
   <tr class="sumtab-row">
   <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
   <td class="numcol">{{ row['len'] }}</td>
@@ -391,7 +386,7 @@
 <td colspan="4" class="subhead">Археї</td>
 </tr>
 <tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
-{% for _, row in really_top_shortest_df.query('Domain == "Archaea"').iterrows() %}
+{% for row in really_top_shortest_df.filter(pl.col('Domain') == "Archaea").to_dicts() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['len'] }}</td>
@@ -400,12 +395,12 @@
 </tr>
 {% endfor %}
 </tbody></table>
-{% if rest_top_shortest_df.query('Domain == "Archaea"').shape[0] > 0 %}
+{% if rest_top_shortest_df.filter(pl.col('Domain') == "Archaea").shape[0] > 0 %}
   <details>
     <summary><i>Позосталі гени такої ж довжижи (у десятку не увійшли випадково)</i></summary>
   <table class="sum-table"><tbody>
   <tr><th class="alnleft">Організм</th><th class="numcol">Довжина, п.о.</th><th class="alnleft">SeqID <sup>*</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
-  {% for _, row in rest_top_shortest_df.query('Domain == "Archaea"').iterrows() %}
+  {% for row in rest_top_shortest_df.filter(pl.col('Domain') == "Archaea").to_dicts() %}
   <tr class="sumtab-row">
   <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
   <td class="numcol">{{ row['len'] }}</td>
@@ -424,7 +419,7 @@
 <tr>
 <td colspan="4" class="subhead">Бактерії</td>
 </tr>
-{% for _, row in really_top_gcn_df.query('Domain == "Bacteria"').iterrows() %}
+{% for row in really_top_gcn_df.filter(pl.col('Domain') == "Bacteria").to_dicts() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
@@ -432,12 +427,12 @@
 </tr>
 {% endfor %}
 </tbody></table>
-{% if rest_top_gcn_df.query('Domain == "Bacteria"').shape[0] > 0 %}
+{% if rest_top_gcn_df.filter(pl.col('Domain') == "Bacteria").shape[0] > 0 %}
   <details>
     <summary><i>Позосталі геноми з такою ж кількістю копій (у десятку не увійшли випадково)</i></summary>
   <table class="sum-table"><tbody>
   <tr><th class="alnleft">Організм</th><th class="numcol">Кількість копій</th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
-    {% for _, row in rest_top_gcn_df.query('Domain == "Bacteria"').iterrows() %}
+    {% for row in rest_top_gcn_df.filter(pl.col('Domain') == "Bacteria").to_dicts() %}
     <tr class="sumtab-row">
     <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
     <td class="numcol">{{ row['copy_number'] }}</td>
@@ -452,7 +447,7 @@
 <tr>
 <td colspan="4" class="subhead">Археї</td>
 </tr>
-{% for _, row in really_top_gcn_df.query('Domain == "Archaea"').iterrows() %}
+{% for row in really_top_gcn_df.filter(pl.col('Domain') == "Archaea").to_dicts() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['copy_number'] }}</td>
@@ -461,12 +456,12 @@
 {% endfor %}
 </tbody>
 </table>
-{% if rest_top_gcn_df.query('Domain == "Archaea"').shape[0] > 0 %}
+{% if rest_top_gcn_df.filter(pl.col('Domain') == "Archaea").shape[0] > 0 %}
   <details>
     <summary><i>Позосталі геноми з такою ж кількістю копій (у десятку не увійшли випадково)</i></summary>
   <table class="sum-table"><tbody>
   <tr><th class="alnleft">Організм</th><th class="numcol">Кількість копій</th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
-    {% for _, row in rest_top_gcn_df.query('Domain == "Archaea"').iterrows() %}
+    {% for row in rest_top_gcn_df.filter(pl.col('Domain') == "Archaea").to_dicts() %}
     <tr class="sumtab-row">
     <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
     <td class="numcol">{{ row['copy_number'] }}</td>
@@ -481,11 +476,11 @@
 <table class="sum-table"><caption>Топ-10 геномів з найвищою щільністю генів 16S рРНК
 </caption>
 <tbody>
-<tr><th class="alnleft">Організм</th><th class="numcol">Щільність генів<br />16S рРНК<sup> *</sup></th><th class="numcol">Кількість копій<br />генів 16S рРНК</th><th class="numcol">Розмір геному<sup> **</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
+<tr><th class="alnleft">Організм</th><th class="numcol">Щільність генів<br />16S рРНК<sup> *</sup></th><th class="numcol">Кількість копій<br />генів 16S рРНК</th><th class="numcol">Розмір геному</th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
 <tr>
 <td colspan="6" class="subhead">Бактериї</td>
 </tr>
-{% for _, row in ribogrove_top_highest_density_df.query('Domain == "Bacteria"').iterrows() %}
+{% for row in ribogrove_top_highest_density_df.filter(pl.col('Domain') == "Bacteria").to_dicts() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['16S_rRNA_density'] }}</td>
@@ -497,7 +492,7 @@
 <tr>
 <td colspan="6" class="subhead">Археї</td>
 </tr>
-{% for _, row in ribogrove_top_highest_density_df.query('Domain == "Archaea"').iterrows() %}
+{% for row in ribogrove_top_highest_density_df.filter(pl.col('Domain') == "Archaea").to_dicts() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['16S_rRNA_density'] }}</td>
@@ -509,17 +504,16 @@
 </tbody>
 </table>
 <p><sup>*</sup> Щільність гена 16S рРНК — це кількість копій гена 16S рРНК, поділена на розмір генома і помножена на 1 мільйон пар основ, таким чином, це кількість генів 16S рРНК на 1 млн. п.о.</p>
-<p><sup>**</sup> Розмір генома — це сума довжин усіх послідовностей збірки.</p>
 
 <div id="top-density-lowest" class="pad-anchor"></div>
 <table class="sum-table"><caption>Топ-10 геномів з найнижчою щільністю генів 16S рРНК
 </caption>
 <tbody>
-<tr><th class="alnleft">Організм</th><th class="numcol">Щільність генів<br />16S рРНК<sup> *</sup></th><th class="numcol">Кількість копій<br />генів 16S рРНК</th><th class="numcol">Розмір генома<sup> **</sup></th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
+<tr><th class="alnleft">Організм</th><th class="numcol">Щільність генів<br />16S рРНК</th><th class="numcol">Кількість копій<br />генів 16S рРНК</th><th class="numcol">Розмір генома</th><th class="alnleft">Код доступу<br>геномної збірки</th></tr>
 <tr>
 <td colspan="6" class="subhead">Бактериї</td>
 </tr>
-{% for _, row in ribogrove_top_lowest_density_df.query('Domain == "Bacteria"').iterrows() %}
+{% for row in ribogrove_top_lowest_density_df.filter(pl.col('Domain') == "Bacteria").to_dicts() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['16S_rRNA_density'] }}</td>
@@ -531,7 +525,7 @@
 <tr>
 <td colspan="6" class="subhead">Археї</td>
 </tr>
-{% for _, row in ribogrove_top_lowest_density_df.query('Domain == "Archaea"').iterrows() %}
+{% for row in ribogrove_top_lowest_density_df.filter(pl.col('Domain') == "Archaea").to_dicts() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['16S_rRNA_density'] }}</td>
@@ -551,7 +545,7 @@
 <tr>
 <td colspan="6" class="subhead">Бактерії</td>
 </tr>
-{% for _, row in ribogrove_top_intragenomic_var_df.query('Domain == "Bacteria"').iterrows() %}
+{% for row in ribogrove_top_intragenomic_var_df.filter(pl.col('Domain') == "Bacteria").to_dicts() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['sum_entropy'] }}</td>
@@ -564,7 +558,7 @@
 <tr>
 <td colspan="6" class="subhead">Археї</td>
 </tr>
-{% for _, row in ribogrove_top_intragenomic_var_df.query('Domain == "Archaea"').iterrows() %}
+{% for row in ribogrove_top_intragenomic_var_df.filter(pl.col('Domain') == "Archaea").to_dicts() %}
 <tr class="sumtab-row">
 <td>{{ retrieve_strain_name(row['strain_name'], row['asm_acc']) }}</td>
 <td class="numcol">{{ row['sum_entropy'] }}</td>
@@ -601,7 +595,7 @@
   <th class="numcol">{{ primer_pair_name.replace('-', '–<br />') }}<br />(%)</th>
   {% endfor %}
 </tr>
-{% for _, row in ribogrove_primers_cov_df.query('Domain == "Bacteria"').iterrows() %}
+{% for row in ribogrove_primers_cov_df.filter(pl.col('Domain') == "Bacteria").to_dicts() %}
 <tr class="sumtab-row">
   <td>{{ italicize_candidatus(row['Phylum']) }}</td>
   <td class="numcol">{{ row['num_genomes'] }}</td>
@@ -628,7 +622,7 @@
   <th class="numcol">{{ primer_pair_name.replace('-', '–<br />') }}<br />(%)</th>
   {% endfor %}
 </tr>
-{% for _, row in ribogrove_primers_cov_df.query('Domain == "Archaea"').iterrows() %}
+{% for row in ribogrove_primers_cov_df.filter(pl.col('Domain') == "Archaea").to_dicts() %}
 <tr class="sumtab-row">
   <td>{{ italicize_candidatus(row['Phylum']) }}</td>
   <td class="numcol">{{ row['num_genomes'] }}</td>
@@ -658,7 +652,7 @@
   <th class="numcol">{{ primer_pair_name.replace('-', '–<br />') }}<br />(%)</th>
   {% endfor %}
 </tr>
-{% for _, row in ribogrove_primers_cov_df.query('Domain == "Bacteria"').iterrows() %}
+{% for row in ribogrove_primers_cov_df.filter(pl.col('Domain') == "Bacteria").to_dicts() %}
 <tr class="sumtab-row">
   <td>{{ italicize_candidatus(row['Phylum']) }}</td>
   <td class="numcol">{{ row['num_genomes'] }}</td>
@@ -688,7 +682,7 @@
     <th class="numcol">{{ primer_pair_name.replace('-', '–<br />') }}<br />(%)</th>
     {% endfor %}
   </tr>
-  {% for _, row in ribogrove_primers_cov_df.query('Domain == "Archaea"').iterrows() %}
+  {% for row in ribogrove_primers_cov_df.filter(pl.col('Domain') == "Archaea").to_dicts() %}
   <tr class="sumtab-row">
     <td>{{ italicize_candidatus(row['Phylum']) }}</td>
     <td class="numcol">{{ row['num_genomes'] }}</td>

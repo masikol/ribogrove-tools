@@ -5,7 +5,7 @@
 # The file is for example this one: https://ftp.ncbi.nlm.nih.gov/genomes/refseq/archaea/assembly_summary.txt
 # "Filters" means that the script:
 #   1) retains only genomes of “Complete Genome” and “Chromosome” completeness;
-#   2) removes “Whole genome shotgun” sequences, since they don’t represent completely assembled genomes;
+#   2) removes genomes marked as "excluded from RefSeq"
 #   3) removes genomes from the blacklist (`data/ad_hoc/assembly_blacklist.tsv`).
 
 ## Command line arguments
@@ -30,7 +30,6 @@
 
 
 import os
-import sys
 
 from src.rg_tools_time import get_time
 
@@ -92,9 +91,7 @@ args = parser.parse_args()
 
 # == Import them now ==
 import sys
-import gzip
 
-import numpy as np
 import polars as pl
 
 import src.rg_tools_IO as rgIO
@@ -120,6 +117,7 @@ if not os.path.isdir(os.path.dirname(outfpath)):
         os.makedirs(os.path.dirname(outfpath))
     except OSError as err:
         print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
+        print(str(err))
         sys.exit(1)
     # end try
 # end if
@@ -130,10 +128,22 @@ print(blacklist_fpath)
 print()
 
 
+# https://www.ncbi.nlm.nih.gov/datasets/docs/v2/glossary/
+# Accessed 2026-11-04
+# Assembly level
+# The highest assembly level for any object in the assembly. The values are as follows:
+# - Complete genome
+# All chromosomes are gapless and contain runs of nine or less ambiguous bases (Ns), there are no unplaced or unlocalized scaffolds, and all the expected chromosomes are present (i.e., the assembly is not noted as having partial genome representation). Plasmids and organelles may or may not be included in the assembly, but if they are present, the sequences are gapless. The chromosome sequences may not be fully complete from telomere-to-telomere (T2T).
+# - Chromosome
+# There is sequence for one or more chromosomes. This may be a completely sequenced chromosome without gaps or a chromosome containing spans with gaps between them. There may also be unplaced or unlocalized sequences.
+# - Scaffold
+# One or more contigs are connected across gaps of 10 or more bases to create scaffolds. All sequences are unplaced or unlocalized.
+# - Contig
+# All sequences do not contain gaps. All sequences are unplaced or unlocalized. Includes ultra-contig assemblies based on long read sequencing with no gaps.
 
 ALLOWED_ASM_LEVELS = (
     'Complete Genome',
-    'Chromosome'
+    'Chromosome',
 )
 
 
@@ -238,7 +248,7 @@ print('   {:,} genomes are retained.'.format(step2_rownum))
 # 3.
 asm_sum_df = remove_blacklist(asm_sum_df, blacklist_fpath)
 step3_rownum = asm_sum_df.shape[0]
-print('3. Blacklist genomes are removed.')
+print('3. Blacklist genomes have been removed.')
 print('   {:,} genomes are retained.'.format(step3_rownum))
 
 

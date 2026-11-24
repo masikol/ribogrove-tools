@@ -1,6 +1,20 @@
 #!/usr/bin/env python3
 
+# The script craetes a table matching assembly accessions (e.g. GCF_006738645.1)
+#   to the  "sample_type" field from the corresponding BioSample record
+
+## Command line arguments
+### Input files:
+# 1. `-i / --in-asm-data` -- The file `tmp_asm_data.json` produced by `datasets summary genome accession` program call.
+#   Mandatory.
+### Output files:
+# 1. `-o / --outfile` -- Output TSV table path.
+#   Mandatory.
+
+
 import os
+import sys
+
 from src.rg_tools_time import get_time
 
 print(
@@ -39,14 +53,13 @@ outfpath = os.path.abspath(args.outfile)
 
 
 if not os.path.isfile(infpath):
-    print(f'Error: file `{asm_sum_fpath}` does not exist')
+    print(f'Error: file `{infpath}` does not exist')
     sys.exit(1)
 # end if
 
 
 # == Import them now ==
 
-import sys
 import json
 
 # == Proceed ==

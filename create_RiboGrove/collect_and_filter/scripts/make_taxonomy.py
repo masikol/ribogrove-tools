@@ -10,6 +10,9 @@
 # 2. `-l / --ranked-lineage` -- file rankedlineage.tsv from NCBI's new_taxdump archive
 #   see https://ftp.ncbi.nlm.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz
 #   Mandatory.
+# 3. `-d / --domain` -- domain name: "bacteria" or "archaea".
+#   Mandatory.
+
 
 ### Output files:
 # 1. `-o / --out` -- output taxonomy file.
@@ -70,12 +73,19 @@ args = parser.parse_args()
 
 
 # == Import them now ==
+import re
 import sys
+import http
+import time
+import socket
 
 import polars as pl
+from Bio import Entrez
 
 import src.rg_tools_IO as rgIO
 
+# NCBI requires an email for Entrez requests
+Entrez.email = 'sikolenko@mbio.bas-net.by'
 
 # For convenience
 asm_sum_fpath = os.path.abspath(args.asm_sum)
@@ -99,6 +109,7 @@ if not os.path.isdir(os.path.dirname(outfpath)):
         os.makedirs(os.path.dirname(outfpath))
     except OSError as err:
         print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
+        print(err)
         sys.exit(1)
     # end try
 # end if
@@ -146,22 +157,21 @@ def fill_empty_species_name(row):
 # end def
 
 
-def lingering_https_get_request(server, url, request_for=None, acc=None):
-    # Function performs a "lingering" HTTPS request.
-    # It means that the function tries to get the response
-    #     again and again if the request fails.
-    #
-    # :param server: server address;
-    # :type server: str;
-    # :param url: the rest of url;
-    # :type url: str;
-    # :param request_for: some comment for error message;
-    # :type request_for: str;
-    # :param acc: target accession or some ID;
-    # :type acc: str;
-    #
-    # Returns obtained response coded in UTF-8 ('str').
+def get_lineage_for_taxid(taxid: str) -> dict:
+    ranks_of_interest = (
+        'Domain',
+        'Kingdom',
+        'Phylum',
+        'Class',
+        'Order',
+        'Family',
+        'Genus',
+        'Species'
+    )
 
+    result = {rank: None for rank in ranks_of_interest}
+
+    # Fetch the taxonomy record as XML
     error = True
 
     # We can get spurious 404 or sth due to instability of NCBI servers work.
@@ -172,150 +182,58 @@ def lingering_https_get_request(server, url, request_for=None, acc=None):
 
     while error:
         try:
-            conn = http.client.HTTPSConnection(server, timeout=30) # create connection
-            conn.request('GET', url) # ask for if there areresults
-            response = conn.getresponse() # get the resonse
-
-            if response.code != 200:
-                if attempt_i < max_attempts and 'ncbi.nlm.nih.gov' in server:
-                    print('Error {}: {}.'.format(response.code, response.reason))
-                    print('It may be due to instable work of NCBI servers.')
-                    print('{} attempts to connect left, waiting 15 sec...'\
-                        .format(max_attempts - attempt_i))
-                    attempt_i += 1
-                else:
-                    print('Cannot find {} for {}.'.format(request_for, acc))
-                    print('Request failed with status code {}: {}'\
-                        .format(response.code, response.reason))
-                    return ''
-                # end if
-            # end if
-
-            resp_content = str(response.read(), 'utf-8') # get response text
+            handle = Entrez.efetch(db='taxonomy', id=taxid, retmode='xml')
+            records = Entrez.read(handle)
         except (OSError,\
                 http.client.RemoteDisconnected,\
                 socket.gaierror,\
                 http.client.CannotSendRequest) as err:
-            comment_str = ''
-            if not request_for is None:
-                comment_str += ' requesting for {}'.format(request_for)
-                if not acc is None:
-                    comment_str += ' (accession: `{}`)'.format(acc)
-                # end if
-                comment_str += '.'
-            # end if
             print()
-            print('Can\'t connect to `{}`{}'.format(server + url, comment_str))
-            print( str(err) )
-            print('the program will sleep for 30 seconds and try to connect again.')
+            print("Can't connect to Entrez requestring for taxid {}".format(taxid))
+            print(str(err))
+            print('The program will sleep for 30 seconds and try to connect again.')
             time.sleep(30)
         else:
             error = False # if no exception ocured, get out of the loop
         finally:
-            conn.close()
+            handle.close()
         # end try
-    # end while
-    return resp_content
-# end def
+    # 3nd while
 
-
-def request_missing_taxonomy(taxid):
-    # Function retrieves taxonomy of a hit from NCBI.
-    #
-    # :param taxid: target Taxonomy ID;
-    # :type taxid: int;
-
-    ranks = ('Domain', 'Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species')
-
-    # These words at second (with index 1) position of title indicate that
-    #   actual species name are specified after it.
-    second_words_not_species = ('species', 'sp.', 'strain', 'str.', 'bacterium')
-
-    # Get taxonomy page of the organism
-    taxonomy_url = '/Taxonomy/Browser/wwwtax.cgi?mode=Info&id={}'.format(taxid)
-    taxonomy_text = lingering_https_get_request('www.ncbi.nlm.nih.gov',
-        taxonomy_url, 'taxonomy', taxid)
-
-    # This pattern will match taxonomic names along with their ranks
-    tax_rank_pattern = r'TITLE=\"([a-z ]+)\"\>([A-Z].+?)\</a\>'
-
-    # Get all taxonomic names of the organism
-    taxonomy = re.findall(tax_rank_pattern, taxonomy_text)
-
-    # E.g., this record has no appropriate ranks: CP034535
-    # Merely return it's definition
-    if len(taxonomy) == 0:
-        return {
-            'organism_name': 'NA',
-            'Domain': 'NA',
-            'Kingdom': 'NA',
-            'Phylum': 'NA',
-            'Class': 'NA',
-            'Order': 'NA',
-            'Family': 'NA',
-            'Genus': 'NA',
-            'Species': 'NA',
-        }
+    if not records:
+        return result
     # end if
 
-    # We will convert ranks to lowercase just in case.
-    taxonomy_dict = {
-        tax_tuple[0].lower(): tax_tuple[1] for tax_tuple in taxonomy
+    record = records[0]
+    result['organism_name'] = record['ScientificName']
+
+    # NCBI uses 'superkingdom' for what is strictly called Domain
+    rank_aliases = {
+        'superkingdom': 'Domain',
+        'domain': 'Domain',
     }
 
-    # We will leave only following taxonomic ranks: domain, kingdom, phylum, class, order, family, genus.
-    # Species name requires special handling, it will be added later.
-    ranks_to_select = ranks[:-1]
+    # LineageEx is a list of dicts, each with 'Rank' and 'ScientificName'
+    for ancestor in record.get('LineageEx', []):
+        ncbi_rank = ancestor.get('Rank', '').lower()
+        name = ancestor.get('ScientificName', '')
 
-    # Remove redundant ranks
-    all_available_ranks = set(taxonomy_dict.keys())
-    for rank_name in all_available_ranks:
-        if not rank_name in ranks_to_select:
-            del taxonomy_dict[rank_name]
+        # Map NCBI rank to our requested rank names
+        mapped_rank = rank_aliases.get(ncbi_rank, ncbi_rank.capitalize())
+
+        if mapped_rank in result and result[mapped_rank] is None:
+            result[mapped_rank] = name
         # end if
     # end for
 
-    # Parse and add taxonomy name to the dictionary
-    organism_name = re.search(r"\<title\>Taxonomy browser \((.+)\)\</title\>", taxonomy_text).group(1)
-    taxonomy_dict['organism_name'] = organism_name
-
-    # Check if species name is specified like other ranks:
-    check_direct_species_patt = r'TITLE=\"(species)\"\>([A-Za-z0-9 \.]+)\</a\>'
-    match_direct_species = re.search(check_direct_species_patt, taxonomy_text)
-
-    if not match_direct_species is None:
-        # If species name is specified like other ranks, merely add it to list:
-        taxonomy_dict['Species'] = taxonomy_dict['Genus'] + ' ' + match_direct_species.group(2).partition(' ')[2]
-    else:
-        # Otherwise we need to parse species name from organism_name
-
-        # Get words
-        organism_name_words = organism_name.split(' ')
-
-        # We will take all this words as species name.
-        #   Example: MN908947
-        try:
-            if organism_name_words[1] in second_words_not_species:
-                taxonomy_dict['Species'] = taxonomy_dict['Genus'] + ' ' + ' '.join(organism_name_words[1:])
-            else:
-                taxonomy_dict['Species'] = taxonomy_dict['Genus'] + ' ' + organism_name_words[1]
-            # end if
-        except IndexError:
-            # Handle absence of species name, e.g., this: AC150248.3
-            # Well, nothing to append in this case!
-            pass
-        # end try
+    # The query organism itself is not in LineageEx; add it if it matches a requested rank
+    query_rank = record.get('Rank', '').lower()
+    mapped_query_rank = rank_aliases.get(query_rank, query_rank.capitalize())
+    if mapped_query_rank in result and result[mapped_query_rank] is None:
+        result[mapped_query_rank] = record.get('ScientificName')
     # end if
 
-    # Fill in missing ranks with NAs
-    obtained_ranks = set(taxonomy_dict.keys())
-    for rank_name in ranks:
-        if not rank_name in obtained_ranks:
-            taxonomy_dict[rank_name] = 'NA'
-        # end if
-    # end for
-
-    return taxonomy_dict
+    return result
 # end def
 
 
@@ -332,36 +250,40 @@ def fill_missing_taxonomy(row: tuple) -> tuple:
     # Phylum
     # Kingdom
     # Domain
-
-    asm_acc = row[0]
-    taxid = row[1]
     organism_name = row[2]
 
     if organism_name is None:
+        asm_acc = row[0]
+        taxid = row[1]
+
         print(f'Requesting taxonomy for taxid {taxid}... ')
-        taxonomy_dict = request_missing_taxonomy(taxid)
+        taxonomy_dict = get_lineage_for_taxid(taxid)
         
         if taxonomy_dict['organism_name'] == 'NA':
-            seq_title = asm_sum_df.filter(pl.col('asm_acc') == asm_acc)['title'][0]
+            raw_org_name = asm_sum_df.filter(pl.col('asm_acc') == asm_acc)['raw_organism_name'][0]
             strings_to_rm = (
                 ', complete sequence',
                 ', complete genome',
                 ' map unlocalized',
             )
             for str_to_rm in strings_to_rm:
-                seq_title = seq_title.replace(str_to_rm, '')
+                raw_org_name = raw_org_name.replace(str_to_rm, '')
             # end for
 
-            taxonomy_dict['organism_name'] = seq_title
+            taxonomy_dict['organism_name'] = raw_org_name
             print(f'Cannot find taxonomy for taxid {taxid} at the NCBI website')
             print(f'Using the RefSeq title as the taxonomy name: `{taxonomy_dict["organism_name"]}`')
+            print('The script will terminate with a non-ero status code.')
+            print('Please fill the missing taxonomy data manually')
+            global EXIT_CODE
+            EXIT_CODE = 1
         else:
             print(taxonomy_dict)
         # end if
 
         # Update row with taxonomy values
         for rank_name, taxon_name in taxonomy_dict.items():
-            taxonomy_row[rank_name] = taxon_name
+            taxonomy_dict[rank_name] = taxon_name
         # end for
 
         taxonomy_tuple = (
@@ -377,12 +299,15 @@ def fill_missing_taxonomy(row: tuple) -> tuple:
             taxonomy_dict['Kingdom'],
             taxonomy_dict['Domain'],
         )
-    
-    return taxonomy_tuple
+        return taxonomy_tuple
+    # end if
+    return row
 # end def
 
 
 # == Proceed ==
+
+EXIT_CODE = 0
 
 # Reformat rankedlineage file
 print(f'Reformatting file `{rankedlineage_path}` in order to make it manageable...')
@@ -419,9 +344,6 @@ rankedlineage_df = pl.read_csv(
     null_values=['NA', 'na', '']
 )
 
-# Remove columns of no interest
-rankedlineage_df = rankedlineage_df.drop('organism_name')
-
 
 # Make per-genome taxonomy file
 
@@ -429,6 +351,8 @@ print('Creating taxonomy file')
 
 # Read per-genome taxid file
 asm_sum_df = rgIO.read_ass_sum_file(asm_sum_fpath)
+# Rename obsolete organism_name: it will be substituted by that from rankedlineage_df
+asm_sum_df = asm_sum_df.rename({'organism_name': 'raw_organism_name'})
 
 # Merge per-genome taxid file to rankedlineage file
 taxonomy_df = asm_sum_df \
@@ -450,22 +374,6 @@ taxonomy_df = asm_sum_df \
     )
 del rankedlineage_df
 
-# Sometimes information is missing for some taxids in rankedlineage.dmp
-# Request the missing taxonomy from NCBI Taxonomy
-
-missing_taxids = frozenset(
-    taxonomy_df.filter(
-        pl.col('organism_name').is_null()
-    )['taxid']
-)
-if len(missing_taxids) != 0:
-    print(f'Taxonomy is missing for {len(missing_taxids)} Taxonomy IDs')
-    print('The script will request the taxonomy for them from the NCBI website')
-    taxonomy_df = taxonomy_df.map_rows(fill_missing_taxonomy)
-# end if
-del missing_taxids
-
-
 # Amend species names
 taxonomy_df = taxonomy_df.with_columns(
     pl.struct(['Species', 'organism_name']).map_elements(
@@ -474,6 +382,23 @@ taxonomy_df = taxonomy_df.with_columns(
     ).alias('Species')
 )
 
+# Sometimes information is missing for some taxids in rankedlineage.dmp
+# Request the missing taxonomy from NCBI Taxonomy
+missing_taxids = frozenset(
+    taxonomy_df.filter(
+        pl.col('organism_name').is_null()
+    )['taxid']
+)
+if len(missing_taxids) != 0:
+    print(f'Taxonomy is missing for {len(missing_taxids)} Taxonomy IDs')
+    print('The script will request the taxonomy for them from the NCBI website')
+    column_names = list(taxonomy_df.columns)
+    taxonomy_df = taxonomy_df.map_rows(fill_missing_taxonomy)
+    taxonomy_df.columns = column_names
+# end if
+del missing_taxids
+
+print(taxonomy_df.columns)
 
 # Write output per-genome file
 taxonomy_df.write_csv(
@@ -492,3 +417,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(EXIT_CODE)

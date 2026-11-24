@@ -13,7 +13,7 @@ def make_top_density_df(density_df,
                         top_num=10) -> pl.DataFrame:
 
     gcn_df = gene_stats_df.group_by('asm_acc').agg(
-        pl.col('seqID').n_unique().alias('copy_number')
+        pl.col('seqID').n_unique().alias('16S_rRNA_gcn')
     )
 
     density_df = density_df.join(
@@ -21,7 +21,7 @@ def make_top_density_df(density_df,
         on='asm_acc',
         how='left'
     ).join(
-        source_genomes_df.select(p.col('asm_acc', 'genome_size')),
+        source_genomes_df.select(pl.col('asm_acc', 'genome_size')),
         on='asm_acc',
         how='left'
     ).join(
@@ -41,65 +41,25 @@ def make_top_density_df(density_df,
         'Domain',
     ]
 
-    # Create an output dataframe
-    # TODO: remove pd
-    # top_df = pd.DataFrame({colname: [] for colname in out_columns})
-    top_rows = []
     sort_descending = top_type == 'highest'
+
+    top_dfs = []
 
     # Do it for bacteria and for archaea
     for domain in ('Bacteria', 'Archaea'):
-
-        # Create a dataframe of maximum density for each genome
-        domain_density_df = density_df \
-            .filter(pl.col('Domain') == domain) \
+        domain_top_density_df = (
+            density_df
+            .filter(pl.col('Domain') == domain)
             .sort(by='16S_rRNA_density', descending=sort_descending)
-
-        if domain_density_df.height == 0:
-            return pl.DataFrame(
-                {colname: list() for colname in out_columns}
-            )
-        # end if
-
-        # We will stop if we reach `top_num` genomes
-        #   and if the next (`top_num`+1)th one has the same density as `top_num`th one
-        #   we wil add (`top_num`+1)th genome too
-        top_i = 0
-        next_density_the_same = _check_next_trait_the_same(domain_density_df, top_i)
-
-        while top_i < top_num or next_density_the_same:
-
-            row = domain_density_df.row(top_i, named=True)
-
-            top_rows.append({
-                'asm_acc':           row['asm_acc'],
-                '16S_rRNA_density':  row['16S_rRNA_density'],
-                '16S_rRNA_gcn':      row['16S_rRNA_gcn'],
-                'genome_size':       row['genome_size'],
-                'strain_name':       row['strain_name'],
-                'Domain':            row['Domain'],
-            })
-
-            if top_i == domain_density_df.height - 1:
-                break
-            # end if
-
-            # Update contition variables
-            next_density_the_same = _check_next_trait_the_same(domain_density_df, top_i)
-            top_i += 1
-        # end while
+            .head(top_num)
+        )
+        
+        top_dfs.append(
+            domain_top_density_df.select(pl.col(out_columns))
+        )
     # end for
 
-    # Build final DataFrame
-    if len(top_rows) != 0:
-        top_df = pl.DataFrame(top_rows, orient='row')
-    else:
-        top_df = pl.DataFrame(
-            schema={
-                col: pl.String() for col in out_columns
-            }
-        )
-    # end if
+    top_df = pl.concat(top_dfs)
 
     print(top_df)
 
@@ -129,7 +89,7 @@ def format_top_density_var_df(top_df, thousand_separator, decimal_separator):
         format_float_number,
         thousand_separator=thousand_separator,
         decimal_separator=decimal_separator,
-        digits=2
+        digits=3
     )
 
     fmt_top_df = top_df.with_columns(

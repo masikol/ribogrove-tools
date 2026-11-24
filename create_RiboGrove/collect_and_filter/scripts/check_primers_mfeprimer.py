@@ -127,7 +127,6 @@ from Bio import SeqIO
 
 from src.rg_tools_time import get_time
 from src.primers import make_primer_pair_key
-from src.ribogrove_seqID import parse_asm_acc
 from src.file_navigation import primer_pair_key_2_outfpath
 
 
@@ -168,7 +167,7 @@ for fpath in (fasta_fpath, mfeprimer_fpath):
     # end if
 # enb for
 
-if not args.mfe_tmp_dir is None:
+if args.mfe_tmp_dir is not None:
     tmp_dirpath = os.path.abspath(args.mfe_tmp_dir)
 else:
     tmp_dirpath = os.path.join(outdir_path, 'tmp')
@@ -221,6 +220,17 @@ print()
 # Configure k-mer for mfeprimer.
 # Additionaly, it it minimal number of perfectly matching 3'-terminal primer bases.
 K_MER_SIZE = 8
+
+DESCRIPTION_PATTERN = re.compile(
+    r'Descriptions of \[ ([0-9]+) \] potential amplicons'
+)
+
+# A regex pattern for searching PCR results parameters
+AMPLICON_PATTERN = re.compile(r'''Amp [0-9]+: .+ \+ .+ ==> ([0-9a-z]+):[0-9]+-[0-9]+[ ]*
+[ ]*
+[ ]*Size = ([0-9]+) bp, GC content = [0-9\.]+%, Tm = [0-9\.-]+ .C, Ta = [0-9\.-]+ .C[ ]*
+[ ]*F: Tm = ([0-9\.-]+) .C, Delta G = ([0-9\.-]+) kcal/mol, Start = ([0-9]+), End = ([0-9]+)[ ]*
+[ ]*R: Tm = ([0-9\.-]+) .C, Delta G = ([0-9\.-]+) kcal/mol, Start = ([0-9]+), End = ([0-9]+)''')
 
 
 def parse_all_primer_pairs(primer_pairs_fpath):
@@ -304,10 +314,7 @@ def parse_pcr_plain_result(mfeprimer_result_text):
 # end def
 
 def parse_pcr_plain_rows(mfeprimer_result_text):
-        num_ampl_reobj = re.search(
-            r'Descriptions of \[ ([0-9]+) \] potential amplicons',
-            mfeprimer_result_text
-        )
+        num_ampl_reobj = DESCRIPTION_PATTERN.search(mfeprimer_result_text)
         if num_ampl_reobj is None:
             print('ERROR')
             print('Cannot parse MFEPrimer stdout: cannot find number of found amplicons')
@@ -320,14 +327,7 @@ def parse_pcr_plain_rows(mfeprimer_result_text):
             return
         # end if
 
-        # A regex pattern for searching PCR results parameters
-        amplicon_pattern = r'''Amp [0-9]+: .+ \+ .+ ==> ([0-9a-z]+):[0-9]+-[0-9]+[ ]*
-[ ]*
-[ ]*Size = ([0-9]+) bp, GC content = [0-9\.]+%, Tm = [0-9\.-]+ .C, Ta = [0-9\.-]+ .C[ ]*
-[ ]*F: Tm = ([0-9\.-]+) .C, Delta G = ([0-9\.-]+) kcal/mol, Start = ([0-9]+), End = ([0-9]+)[ ]*
-[ ]*R: Tm = ([0-9\.-]+) .C, Delta G = ([0-9\.-]+) kcal/mol, Start = ([0-9]+), End = ([0-9]+)'''
-
-        matches = re.finditer(amplicon_pattern, mfeprimer_result_text)
+        matches = AMPLICON_PATTERN.finditer(mfeprimer_result_text)
 
         for match_obj in matches:
             output_values = [
@@ -644,3 +644,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

@@ -3,11 +3,10 @@
 # The script assigns categories to downloaded genomes. Categories are assigned according
 #   to the reliability of a genome assembly.
 # The categories are the following:
-# Category 1. A genome is not of category 3, and it was sequenced using PacBio or ONT+Illumina or ONT+MGI.
-# Category 2. A genome is not of category 3, and it was sequenced neither using PacBio nor ONT+Illumina nor ONT+MGI.
+# Category 1. The genome is not of category 3, and it was sequenced using PacBio or ONT+Illumina or ONT+MGI.
+# Category 2. The genome is not of category 3, and it was sequenced neither using PacBio nor ONT+Illumina nor ONT+MGI.
 # Category 3. At least one of the following is true:
-#   - A genome has at least one degenerate base in its SSU gene sequences.
-#     and the sequence contains an SSU gene (or a part of it).
+#   - The genome has at least one degenerate base in its SSU gene sequences.
 
 ## Command line arguments
 
@@ -94,15 +93,11 @@ args = parser.parse_args()
 # == Import them now ==
 import re
 import sys
-import gzip
 import subprocess as sp
-from typing import Dict, List, Sequence, TextIO
+from typing import List, Sequence
 
 import polars as pl
-from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
 
-from src.ribogrove_seqID import update_seqID_column_v2_to_v3
 from src.file_navigation import get_asm_report_fpath
 
 
@@ -140,6 +135,7 @@ if not os.path.isdir(os.path.dirname(outfpath)):
         os.makedirs(os.path.dirname(outfpath))
     except OSError as err:
         print(f'Error: cannot create directory `{os.path.dirname(outfpath)}`')
+        print(err)
         sys.exit(1)
     # end try
 # end if
@@ -348,7 +344,7 @@ stats_df = pl.read_csv(
 
 # == Proceed ==
 
-print('Starting assigning categories for genomes')
+print('Assigning categories to genomes...')
 
 with open(outfpath, 'wt') as outfile:
 
@@ -387,7 +383,7 @@ with open(outfpath, 'wt') as outfile:
         category = None
         if degenerate_in_16S:
             category = CATEGORY_3
-        elif not seqtech is None:
+        elif seqtech is not None:
             is_nanopore_var = is_nanopore(seqtech)
             seqtech_is_cat1 = is_pacbio(seqtech) \
                               or (is_illumina(seqtech) and is_nanopore_var) \
@@ -405,7 +401,7 @@ with open(outfpath, 'wt') as outfile:
         out_row_str = '\t'.join(
             [
                 asm_acc, category,
-                seqtech if not seqtech is None else 'NA',
+                seqtech if seqtech is not None else 'NA',
                 '1' if degenerate_in_16S else '0',
             ]
         )
@@ -432,3 +428,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)

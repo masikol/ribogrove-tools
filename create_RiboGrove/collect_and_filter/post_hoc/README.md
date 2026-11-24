@@ -1,6 +1,6 @@
 This directory contains scripts which can remove all traces a genome assembly from a RiboGrove workdir (e.g. `RiboGrove_23.229/bacteria`).
 
-**Attention!** This scripts do not add assembly accessions to the blacklist. Please, do it yourself.
+**Attention!** These scripts do not add assembly accessions to the blacklist. Please, do it yourself.
 
 The main script is `post_hoc_remove_genome.sh`. Usage:
 

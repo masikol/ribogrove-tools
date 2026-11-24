@@ -28,9 +28,6 @@
 #   Mandatory.
 # 6. `--whitelist-seqIDs` -- a file of seqIDs you know should not be discarded.
 #   Mandatory.
-# 7. `-m / --replicon-map` -- a replicon map file.
-#   This is the output of the script `make_replicon_map.py`.
-#   Mandatory.
 
 ### Output files:
 # 1. `--out-fasta-file` -- output fasta file of final sequences.
@@ -93,14 +90,6 @@ parser.add_argument(
     required=True
 )
 
-parser.add_argument(
-    '-m',
-    '--replicon-map',
-    help="""a replicon map file.
-    This is the output of the script `make_replicon_map.py`""",
-    required=True
-)
-
 # Output files
 
 parser.add_argument(
@@ -128,7 +117,6 @@ aberrant_fpath = os.path.abspath(args.aberrant_seqIDs)
 repeats_fail_fpath = os.path.abspath(args.repeats_fail_seqIDs)
 blacklist_fpath = os.path.abspath(args.blacklist_seqIDs)
 whitelist_fpath = os.path.abspath(args.whitelist_seqIDs)
-replicon_map_fpath = os.path.abspath(args.replicon_map)
 out_fasta_fpath = os.path.abspath(args.out_fasta_file)
 
 
@@ -137,7 +125,6 @@ fpaths_to_check = (
     ribotyper_fail_fpath,
     aberrant_fpath,
     repeats_fail_fpath,
-    replicon_map_fpath,
     blacklist_fpath,
     whitelist_fpath,
 )
@@ -155,6 +142,7 @@ if not os.path.isdir(os.path.dirname(out_fasta_fpath)):
         os.makedirs(os.path.dirname(out_fasta_fpath))
     except OSError as err:
         print(f'Error: cannot create directory `{os.path.dirname(out_fasta_fpath)}`')
+        print(err)
         sys.exit(1)
     # end try
 # end if
@@ -164,7 +152,6 @@ print(input_seqs_fpath)
 print(ribotyper_fail_fpath)
 print(aberrant_fpath)
 print(repeats_fail_fpath)
-print(replicon_map_fpath)
 print(blacklist_fpath)
 print(whitelist_fpath)
 print()
@@ -204,3 +191,5 @@ print(
         get_time(), os.path.basename(__file__)
     )
 )
+
+sys.exit(0)
