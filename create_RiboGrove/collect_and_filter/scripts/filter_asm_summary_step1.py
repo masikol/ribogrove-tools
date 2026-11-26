@@ -143,7 +143,8 @@ print()
 
 ALLOWED_ASM_LEVELS = (
     'Complete Genome',
-    'Chromosome',
+    # TODO: remove
+    # 'Chromosome',
 )
 
 

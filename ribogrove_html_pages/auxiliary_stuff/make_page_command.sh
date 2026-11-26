@@ -140,6 +140,23 @@ python3 make_ribogrove_release_page.py \
   --density /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/29.235/metadata/16S_density.tsv \
   --outdir /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_pages/29.235 \
   --seqkit /usr/bin/seqkit \
-  --zenodo-doi '10.5281/zenodo.XXXXX' \
-  --zenodo-record-id 'XXXXXX'
+  --zenodo-doi '10.5281/zenodo.24502836' \
+  --zenodo-record-id '24502836'
+
+python3 make_ribogrove_release_page.py \
+  --release-num 30.236 \
+  --release-date 2026-11-26 \
+  --final-fasta /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/30.236/ribogrove_30.236_sequences.fasta.gz \
+  --metadata /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/30.236/metadata_ribogrove_30.236.zip \
+  --base-counts /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/30.236/metadata/gene_seqs_base_counts.tsv \
+  --taxonomy /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/30.236/metadata/taxonomy.tsv \
+  --categories /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/30.236/metadata/categories.tsv \
+  --entropy-summary /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/30.236/metadata/entropy_summary.tsv \
+  --source-genomes /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/30.236/metadata/source_RefSeq_genomes.tsv \
+  --primers-cov /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/30.236/metadata/primer_pair_genomic_coverage.tsv \
+  --density /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_releases/30.236/metadata/16S_density.tsv \
+  --outdir /mnt/cager-beast/m.2.2/RiboGrove/RiboGrove_pages/30.236 \
+  --seqkit /usr/bin/seqkit \
+  --zenodo-doi '10.5281/zenodo.24553274' \
+  --zenodo-record-id '24553274'
   

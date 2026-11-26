@@ -163,11 +163,14 @@ def make_replicon_map(asm_sum_fpath,
         for asm_acc in all_accs:
             if cache_mode and asm_acc in cached_asm_accs:
                 curr_cache_df = cached_df.filter(pl.col('asm_acc') == asm_acc)
-                curr_cache_df.write_csv(
-                    curr_cache_df,
-                    separator='\t',
-                    include_header=False,
-                    null_value='NA'
+                # Convert to pandas because stupid polars
+                #   corrupts gzip stream if passed this way
+                curr_cache_df.to_pandas().to_csv(
+                    out_handle,
+                    sep='\t',
+                    index=False,
+                    header=False,
+                    na_rep='NA'
                 )
                 continue
             # end if

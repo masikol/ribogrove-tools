@@ -280,8 +280,6 @@ python3 "${SCRIPTS_DIR}/download_genomes.py" \
 
 
 # == Make replicon map ==
-buff_cache_mode="${CACHE_MODE}" # ad hoc for RiboGrove 29.235
-CACHE_MODE=false # ad hoc for RiboGrove 29.235
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/make_replicon_map.py" \
     --asm-sum "${ASS_SUM_FILT_2}" \
@@ -294,7 +292,6 @@ else
     --genomes-dir "${GENOMES_GBK_DIR}" \
     --out "${REPLICON_MAP}"
 fi
-CACHE_MODE="${buff_cache_mode}" # ad hoc for RiboGrove 29.235
 
 
 # == Filter assembly summary ==
@@ -307,8 +304,6 @@ python3 "${SCRIPTS_DIR}/filter_asm_summary_step3.py" \
 
 
 # == Filter assembly summary step 4 ==
-buff_cache_mode="${CACHE_MODE}" # ad hoc for RiboGrove 29.235
-CACHE_MODE=false # ad hoc for RiboGrove 29.235
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/filter_asm_summary_step4.py" \
     --in-asm-sum "${ASS_SUM_FILT_3}" \
@@ -324,7 +319,6 @@ else
     --replicon-map "${REPLICON_MAP}" \
     --out-asm-sum "${ASS_SUM_FILT_4}"
 fi
-CACHE_MODE="${buff_cache_mode}" # ad hoc for RiboGrove 29.235
 
 
 # == Amend taxids according to ANI reports, make final assembly summary ==
@@ -363,8 +357,6 @@ python3 "${SCRIPTS_DIR}/make_taxonomy.py" \
 
 
 # == Extract 16S genes from downloaded genomes ==
-buff_cache_mode="${CACHE_MODE}" # ad hoc for RiboGrove 29.235
-CACHE_MODE=false # ad hoc for RiboGrove 29.235
 if [[ "${CACHE_MODE}" == true ]]; then
   python3 "${SCRIPTS_DIR}/extract_16S.py" \
     --asm-sum "${ASS_SUM_FINAL}" \
@@ -390,7 +382,6 @@ else
     --tmp-dir "${TMP_DIR}" \
     --threads "${CMSEARCH_THREADS}"
 fi
-CACHE_MODE="${buff_cache_mode}" # ad hoc for RiboGrove 29.235
 
 
 # == Make asm_seqID hash table ==

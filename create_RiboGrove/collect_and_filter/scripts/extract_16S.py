@@ -675,7 +675,7 @@ def extract_reannotated_genes(seq_record: SeqRecord,
 
 
 def make_cache_dict(fasta_fpath, cached_asm_accs):
-    cache_dict = {asm_acc: list() for asm_acc in cached_asm_accs}
+    cache_dict = {asm_acc: [] for asm_acc in cached_asm_accs}
     seq_records = tuple(SeqIO.parse(fasta_fpath, 'fasta'))
 
     for sr in seq_records:
@@ -711,9 +711,7 @@ if cache_mode:
         prev_all_stats_fpath,
         separator='\t'
     )
-    cached_stats_df = cached_stats_df.rename({'acc': 'seq_acc'})
     cached_asm_accs = frozenset(cached_stats_df['asm_acc'])
-    cached_asm_accs = cached_asm_accs - force_cmscan_asm_accs
 
     cached_dict = make_cache_dict(prev_all_fasta_fpath, cached_asm_accs)
     print('{} -- done'.format(get_time()))
@@ -753,7 +751,7 @@ with open(fasta_outfpath, 'wt') as fasta_outfile, \
             # end for
 
             curr_cached_stats_df = cached_stats_df.filter(
-                pl.col('asm_acc') == 'asm_acc'
+                pl.col('asm_acc') == asm_acc
             )
 
             curr_cached_stats_df.write_csv(
